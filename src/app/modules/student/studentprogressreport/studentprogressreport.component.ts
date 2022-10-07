@@ -318,7 +318,7 @@ export class StudentprogressreportComponent implements OnInit {
           this.GradedMarksResults.push(OverAllGradeRow);
 
         }
-        console.log("this.GradedMarksResults",this.GradedMarksResults)
+        //console.log("this.GradedMarksResults",this.GradedMarksResults)
         this.loading = false;
         this.PageLoading = false;
         this.GradedSubjectsDataSource = new MatTableDataSource<any>(this.GradedMarksResults);

@@ -13,13 +13,16 @@ mat-form-field {
   {
     flex:1 1 400px;
   }
-  .mat-column-ParentId,
+  
   .mat-column-Confidential,
   .mat-column-Sequence,
   .mat-column-Active,
   .mat-column-Action{
-    flex:1 1 80px;
+    flex:1 1 60px;
+  }
+  .mat-column-ParentId{
+    flex:1 1 120px;
   }
   .mat-column-Title{
-    flex:1 1 120px;
+    flex:1 1 140px;
   }

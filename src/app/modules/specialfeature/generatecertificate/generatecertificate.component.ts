@@ -123,6 +123,7 @@ export class GenerateCertificateComponent implements OnInit {
     //this.loadTheme();
     //debugger;
     this.searchForm = this.fb.group({
+      searchExamId: [0],
       searchClassId: [0],
       searchStudentGroupId: [0],
       searchActivityId: [0],
@@ -215,6 +216,7 @@ export class GenerateCertificateComponent implements OnInit {
         "SectionId",
         "RollNo",
         "AdmissionDate",
+        "AdmissionNo",
         "StudentId",
         "BatchId",
         "HouseId"
@@ -305,11 +307,12 @@ export class GenerateCertificateComponent implements OnInit {
             _house = objhouse[0].MasterDataName;
           var _lastname = d.Student.LastName == null || d.Student.LastName == '' ? '' : " " + d.Student.LastName;
           this.StudentForVariables.push(
-            { name: "ToDay", val: this.datepipe.transform(new Date(), 'dd/MM/yyyy') },
+            { name: "ToDay", val: moment(new Date()).format('DD/MM/YYYY') },
             { name: "StudentClass", val: _studentClass + _section },
             { name: "Section", val: _section },
             { name: "RollNo", val: d.RollNo },
-            { name: "AdmissionDate", val: d.AdmissionDate },
+            { name: "AdmissionNo", val: d.AdmissionNo },
+            { name: "AdmissionDate", val: moment(d.AdmissionDate).format('DD/MM/YYYY') },
             { name: "StudentName", val: d.Student.FirstName + _lastname },
             { name: "FatherName", val: d.Student.FatherName },
             { name: "MotherName", val: d.Student.MotherName },
@@ -318,7 +321,7 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "PresentAddress", val: d.Student.PresentAddress },
             { name: "WhatsAppNumber", val: d.Student.WhatsAppNumber },
             { name: "PinCode", val: d.Student.Pincode },
-            { name: "DOB", val: this.datepipe.transform(d.Student.DOB, 'dd/MM/yyyy') },
+            { name: "DOB", val: moment(d.Student.DOB).format('DD/MM/YYYY') },
             { name: "BloodGroup", val: _bloodgroup },
             { name: "Category", val: _category },
             { name: "BankAccountNo", val: d.Student.BankAccountNo },
@@ -350,11 +353,26 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "Secured", val: _Rank }
           )
         })
+
         this.StudentForVariables.push(
           { name: "FeePaidTill", val: this.FeePaidLastMonth },
           { name: "Attendance", val: this.AttendanceStatusSum }
         )
-        console.log('this.StudentForVariables',this.StudentForVariables);
+        this.Organization[0].forEach(o => {
+          this.StudentForVariables.push({ "name": o.name, val: o.val });
+        })
+        var examId = this.searchForm.get("searchExamId").value;
+        var examName = '';
+        if (examId > 0)
+          examName = this.Exams.filter(z => z.ExamId == examId)[0].ExamName;
+
+        this.ExamStudentResults.forEach(e => {
+          this.StudentForVariables.push({
+            "name": e.FirstCol, val: e[examName]
+          })
+        })
+
+        //console.log('this.StudentForVariables',this.StudentForVariables);
         this.GenerateCertificate();
 
       }
@@ -365,18 +383,125 @@ export class GenerateCertificateComponent implements OnInit {
   clearData() {
 
   }
+  // GetExams() {
+
+  //   var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+
+  //   let list: List = new List();
+
+  //   list.fields = [
+  //     "ExamId", "ExamNameId", "ClassGroupId",
+  //     "StartDate", "EndDate",
+  //     "ReleaseResult", "AttendanceStartDate"];
+  //   list.PageName = "Exams";
+  //   list.filter = ["Active eq 1 " + orgIdSearchstr];
+  //   //list.orderBy = "ParentId";
+
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       this.Exams = [];
+  //       data.value.forEach(e => {
+  //         //var _examName = '';
+  //         var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active == 1)
+  //         if (obj.length > 0) {
+  //           //_examName = obj[0].MasterDataName
+  //           this.Exams.push({
+  //             ExamId: e.ExamId,
+  //             ExamName: obj[0].MasterDataName,
+  //             ClassGroupId: e.ClassGroupId,
+  //             StartDate: e.StartDate,
+  //             EndDate: e.EndDate,
+  //             AttendanceStartDate: e.AttendanceStartDate,
+  //             //AttendanceModeId: e.AttendanceModeId,
+  //             Sequence: obj[0].Sequence,
+  //             ReleaseResult: e.ReleaseResult
+  //           })
+  //         }
+  //       })
+  //       this.Exams = this.Exams.sort((a, b) => a.Sequence - b.Sequence);
+  //     })
+  // }
+  ExamStudentResults = [];
+  DisplayColumns = [
+    "FirstCol"
+  ];
+  GetExamGrandTotal() {
+    debugger;
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var _examId = this.searchForm.get("searchExamId").value;
+    if (_examId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    filterStr += ' and StudentClassId eq ' + this.StudentClassId;
+    filterStr += ' and ExamId eq ' + _examId;
+
+    let list: List = new List();
+    list.fields = [
+      "ExamId",
+      "StudentClassId",
+      "TotalMarks",
+      "MarkPercent",
+      "Attendance",
+      "ClassStrength",
+      "Division",
+      "Rank",
+      "Active"
+    ];
+
+    list.PageName = "ExamStudentResults";
+    list.filter = [filterStr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.ExamStudentResults = [];
+        this.ExamStudentResults.push(
+          { "FirstCol": "Grand Total" },
+          { "FirstCol": "Percentage (%)" },
+          { "FirstCol": "Division" },
+          { "FirstCol": "Rank" },
+          { "FirstCol": "Attendance" },
+          { "FirstCol": "Class Strength" });
+        var ToInclude = [
+          { "ColumnName": "TotalMarks", "Display": "Grand Total" },
+          { "ColumnName": "MarkPercent", "Display": "Percentage (%)" },
+          { "ColumnName": "Division", "Display": "Division" },
+          { "ColumnName": "Rank", "Display": "Rank" },
+          { "ColumnName": "Attendance", "Display": "Attendance" },
+          { "ColumnName": "ClassStrength", "Display": "Class Strength" }
+        ]
+
+        data.value.forEach(eachexam => {
+          var _ExamName = '';
+          var obj = this.Exams.filter(exam => exam.ExamId == eachexam.ExamId);
+          if (obj.length > 0) {
+            _ExamName = obj[0].ExamName;
+            eachexam.ExamName = _ExamName;
+            if (this.DisplayColumns.indexOf(_ExamName) == -1)
+              this.DisplayColumns.push(_ExamName);
+            Object.keys(eachexam).forEach(col => {
+              var objcolumn = ToInclude.filter(include => include.ColumnName == col);
+              if (objcolumn.length > 0) {
+                var resultrow = this.ExamStudentResults.filter(f => f.FirstCol == objcolumn[0].Display)
+                resultrow[0][_ExamName] = eachexam[objcolumn[0].ColumnName]
+              }
+            })
+          }
+        })
+      });
+  }
   StyleStr = '';
   CertificateDescription = '';
   GenerateCertificate() {
     debugger;
-    this.CertificateDescription='';
+    this.CertificateDescription = '';
     var _certificateBody = JSON.parse(JSON.stringify(this.AllCertificateConfig.filter(a => a.ParentId == this.searchForm.get("searchCertificateTypeId").value)));
     if (_certificateBody.length == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Certificate not defined!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
+    this.backgroundimage = '';
     for (var i = 0; i < _certificateBody.length; i++) {
       if (_certificateBody[i].Title.toLowerCase() == "background-image") {
         this.backgroundimage = _certificateBody[i].Description;
@@ -411,12 +536,19 @@ export class GenerateCertificateComponent implements OnInit {
         return;
       }
     }
-
+    if (this.backgroundimage.indexOf('http') == -1) {
+      this.backgroundimage = 'assets/images/certificatebackground.jpg';
+    }
     ////console.log("_certificateBody",_certificateBody);
+    // this.Organization[0].forEach(orgdet => {
+    //   header.Description = header.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
+    // })
+    debugger;
     _certificateBody.forEach(c => {
       this.StudentForVariables.forEach(s => {
         if (c.Description.includes('[' + s.name.trim() + ']'))
           c.Description = c.Description.replaceAll('[' + s.name.trim() + ']', s.val);
+        c.Description = c.Description.replaceAll("[" + this.Organization[0].name + "]", this.Organization[0].val);
       });
     })
     _certificateBody = _certificateBody.sort((a, b) => a.Sequence - b.Sequence);
@@ -581,7 +713,8 @@ export class GenerateCertificateComponent implements OnInit {
     row.Action = false;
     this.SelectedActivity = [];
     this.SelectedActivity.push(row);
-    this.CertificateDescription='';
+    this.CertificateDescription = '';
+    this.StyleStr = '';
     this.GetStudentAttendance();
   }
   Save() {
@@ -677,11 +810,13 @@ export class GenerateCertificateComponent implements OnInit {
   //   document.body.innerHTML = originalContents;
 
   // }
-
+  SelectedCertificateType = '';
   CheckType() {
     debugger;
     var _certificateId = this.searchForm.get("searchCertificateTypeId").value;
     var obj = this.CertificateTypes.filter(f => f.CertificateConfigId == _certificateId);
+    if (obj.length > 0)
+      this.SelectedCertificateType = obj[0].Title.toLowerCase()
     if (obj.length > 0 && (obj[0].Title.toLowerCase() == 'sports certificate' || obj[0].Title.toLowerCase() == 'moments certificate')) {
       this.SportsCertificate = true;
     }
@@ -762,6 +897,8 @@ export class GenerateCertificateComponent implements OnInit {
         this.Batches = this.tokenstorage.getBatches()
         //this.GetStudentClasses();
         this.GetOrganization();
+        //this.GetTotalAttendance();
+        this.GetExams();
       });
   }
   clear() {
@@ -1075,13 +1212,17 @@ export class GenerateCertificateComponent implements OnInit {
       return;
     }
     this.loading = true;
+    this.StyleStr = '';
     if (this.SportsCertificate) {
 
       this.GetSportsResult()
 
     }
-    else
+    else {
+      this.GetExamGrandTotal();
       this.GetStudentAttendance();
+    }
+
   }
   GetOrganization() {
 
@@ -1171,13 +1312,18 @@ export class GenerateCertificateComponent implements OnInit {
 
     var str = `.container{
       position: relative;
+      display: flex;
+      justify-content: center;
       margin:0px;
       padding: 0px;
+
     }
-    .container img{
-      width: 100%;
+    img { border: 0; }
+
+     .container img{
+       width: 100%;
       
-    }`;
+     }`;
     this.StyleStr += str;
 
     let printContents, popupWin;

@@ -59,7 +59,8 @@
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
                     <mat-select [(ngModel)]="element.ParentId" [value]="element.ParentId">
-                        <mat-option *ngFor="let item of AllCertificateConfig" [value]="item.CertificateConfigId">
+                       
+                        <mat-option *ngFor="let item of TopCertificateConfig" [value]="item.CertificateConfigId">
                             {{item.Title}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -110,5 +111,5 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
             style="align-items: center;"></mat-row>
     </mat-table>
-    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[3,5,10,20,50]"></mat-paginator>
+    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,50]"></mat-paginator>
 </div>

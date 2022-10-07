@@ -147,6 +147,11 @@ export class CertificateconfigComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter description.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    if (row.ParentId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select parent.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     let checkFilterString = "Title eq '" + row.Title + "' and ParentId eq " + row.ParentId
     this.RowsToUpdate = 0;
@@ -236,6 +241,7 @@ export class CertificateconfigComponent implements OnInit {
         });
   }
   AllCertificateConfig = [];
+  TopCertificateConfig =[];
   GetAllCertificateConfig() {
     debugger;
     var filterStr = "Active eq true and (OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"]+")";
@@ -258,6 +264,8 @@ export class CertificateconfigComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllCertificateConfig = [...data.value];
+        var _certificatetypeId = this.AllCertificateConfig.filter(f=>f.Title.toLowerCase() =='certificate type')[0].CertificateConfigId;
+        this.TopCertificateConfig = this.AllCertificateConfig.filter(a=>a.ParentId ==_certificatetypeId);
         this.loadingFalse();
       });
   }
@@ -306,6 +314,7 @@ export class CertificateconfigComponent implements OnInit {
         if (this.CertificateConfigList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
+        this.CertificateConfigList = this.CertificateConfigList.sort((a,b)=>a.Sequence - b.Sequence);
         this.dataSource = new MatTableDataSource<ICertificateConfig>(this.CertificateConfigList);
         this.dataSource.paginator = this.paginator;
         this.loadingFalse();

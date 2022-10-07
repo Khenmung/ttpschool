@@ -24,20 +24,31 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="350">
+                <mat-form-field appearance="outline" [style.width.px]="330">
                     <mat-label>Student</mat-label>
-                    <input type="text" matInput (change)="clear()" [readonly]="loading" formControlName="searchStudentName"
-                        [matAutocomplete]="auto">
+                    <input type="text" matInput (change)="clear()" [readonly]="loading"
+                        formControlName="searchStudentName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                         <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
                             {{option.Name}}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
+                <div *ngIf="SelectedCertificateType=='provisional certificate'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Exam</mat-label>
+                        <mat-select formControlName="searchExamId">
+                            <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                                {{item.ExamName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
                 <div *ngIf="SportsCertificate">
                     <mat-form-field appearance="outline">
                         <mat-label>Group</mat-label>
-                        <mat-select formControlName="searchStudentGroupId" [disabled]="loading" (selectionChange)="clear()">
+                        <mat-select formControlName="searchStudentGroupId" [disabled]="loading"
+                            (selectionChange)="clear()">
                             <mat-option value="0">select</mat-option>
                             <!-- <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled"> -->
                             <mat-option *ngFor="let list of Houses" [value]="list.MasterDataId">
@@ -138,7 +149,7 @@
             </div>
             <div #printSection *ngIf="GeneratedCertificatelist.length==0">
                 <div class="container">
-                    <img style="margin:15px 0px 0px 0px;padding:0px" [src]="backgroundimage">
+                    <img style="margin:0px;padding:0px;max-height:700px" width="" height="" [src]="backgroundimage">
                     <span class="contentwrapper" [innerHTML]="CertificateDescription | encodeHTML">
                     </span>
                 </div>
@@ -165,8 +176,7 @@
                     </mat-icon>
                 </button>
                 <button [disabled]="loading || Permission=='read' || CertificateElements.length==0" matTooltip="print"
-                (click)="print()"    
-                mat-raised-button color="accent">
+                    (click)="print()" mat-raised-button color="accent">
                     <mat-icon>print</mat-icon>
                 </button>
                 <!-- <button [disabled]="loading || Permission=='read' || CertificateElements.length==0" matTooltip="print"
