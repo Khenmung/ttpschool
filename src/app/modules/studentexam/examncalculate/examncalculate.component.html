@@ -51,7 +51,7 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || ExamNCalculateList.length==0" matTooltip="add new" mat-mini-fab
+                        <button [disabled]="loading || ExamNCalculateList.length==0" matTooltip="save all" mat-mini-fab
                         (click)="SaveAll()">
                         <mat-icon>all_out</mat-icon>
                         <mat-icon *ngIf="loading">

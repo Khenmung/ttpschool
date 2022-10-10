@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Exam Subject Marks</strong></div>
+        <div><strong>Custom Exam</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
@@ -33,8 +33,8 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Subject</mat-label>
-                    <mat-select formControlName="searchClassSubjectId">
-                        <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.ClassSubjectId">
+                    <mat-select formControlName="searchSubjectId">
+                        <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
                             {{item.SubjectName}}
                         </mat-option>
                     </mat-select>

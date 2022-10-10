@@ -1,22 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { filter } from 'mathjs';
-import alasql from 'alasql';
 
 @Component({
-  selector: 'app-examstudentsubjectresult',
-  templateUrl: './examstudentsubjectresult.component.html',
-  styleUrls: ['./examstudentsubjectresult.component.scss']
+  selector: 'app-customexam',
+  templateUrl: './customexam.component.html',
+  styleUrls: ['./customexam.component.scss']
 })
-export class ExamstudentsubjectresultComponent implements OnInit {
+export class CustomexamComponent implements OnInit {
   PageLoading = true;
   ResultReleased = 0;
   LoginUserDetail: any[] = [];
@@ -86,7 +84,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       searchExamId: [0],
       searchClassId: [0],
       searchSectionId: [''],
-      searchClassSubjectId: [0],
+      searchSubjectId: [0],
     });
     this.PageLoad();
   }
@@ -187,7 +185,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           this.ExamStudentSubjectResultData.BatchId = this.SelectedBatchId;
           this.ExamStudentSubjectResultData.ExamStatus = _examstatus;
           this.ExamStudentSubjectResultData.Marks = row.Marks;
-          console.log("this.ExamStudentSubjectResultData",this.ExamStudentSubjectResultData)
+
           if (this.ExamStudentSubjectResultData.ExamStudentSubjectResultId == 0) {
             this.ExamStudentSubjectResultData["CreatedDate"] = new Date();
             this.ExamStudentSubjectResultData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -246,8 +244,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           f.ClassName = f.Class.ClassName;
           return f;
         });
-        this.loading = false;
-        this.PageLoading = false;
+        this.loading=false;
+        this.PageLoading=false;
       })
   }
   FilteredClasses = [];
@@ -262,10 +260,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   GetStudentSubjects() {
     debugger;
-
-    var _classId = this.searchForm.get("searchClassId").value;
-    var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
-    var _examId = this.searchForm.get("searchExamId").value
+    
+    var _classId =this.searchForm.get("searchClassId").value;
+    var _subjectId =this.searchForm.get("searchSubjectId").value;
+    var _examId =this.searchForm.get("searchExamId").value
     if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -278,7 +276,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (_classSubjectId == 0) {
+    if ( _subjectId== 0) {
       this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -286,9 +284,9 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += " and BatchId eq " + this.SelectedBatchId;
-    //var _classSubjectId = this.ClassSubjects.filter(c => c.ClassId == _classId && c.SubjectId == _subjectId)[0].ClassSubjectId;
+    var _classSubjectId = this.ClassSubjects.filter(c=>c.ClassId == _classId && c.SubjectId == _subjectId)[0].ClassSubjectId;
     filterStr += " and ClassSubjectId eq " + _classSubjectId;
-
+    
     let list: List = new List();
     list.fields = [
       'StudentClassSubjectId',
@@ -345,10 +343,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           }
         })
         //console.log("this.StudentSubjects",this.StudentSubjects)
-        this.loading = false;
+        this.loading = false; 
         this.PageLoading = false;
         this.GetSubjectMarkComponents(_classSubjectId);
-      }, error => {
+      },error=>{
         debugger;
         console.log(error)
       });
@@ -359,7 +357,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     //this.GetSpecificStudentGrades();
   }
   GetStudents() {
-    this.loading = true;
+    this.loading=true;
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
 
     let list: List = new List();
@@ -411,14 +409,14 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             Active: cs.Active,
             SubjectId: cs.SubjectId,
             ClassId: cs.ClassId,
-            Confidential: cs.Confidential,
+            Confidential:cs.Confidential,
             ClassSubject: _class + '-' + _subject,
             SubjectName: _subject,
             SubjectCategoryId: cs.SubjectCategoryId
           }
         })
-        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage, this.ClassSubjects);
-        this.loading = false;
+        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage,this.ClassSubjects);
+        this.loading=false;
       })
   }
   GetSubjectMarkComponents(pClassSubjectId) {
@@ -447,10 +445,11 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe((data: any) => {
         this.SubjectMarkComponents = data.value.filter(x => x.ClassSubject.Active == 1)
         this.SubjectMarkComponents = this.SubjectMarkComponents.map(c => {
-          var _sequence = 0;
-          var _sequenceObj = this.MarkComponents.filter(s => s.MasterDataId == c.SubjectComponentId);
-          if (_sequenceObj.length > 0) {
-            _sequence = _sequenceObj[0].Sequence
+          var _sequence =0;
+          var _sequenceObj =this.MarkComponents.filter(s=>s.MasterDataId ==c.SubjectComponentId);
+          if(_sequenceObj.length>0)
+          {
+            _sequence=_sequenceObj[0].Sequence
           }
           return {
             "ClassSubjectMarkComponentId": c.ClassSubjectMarkComponentId,
@@ -458,7 +457,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             "SubjectId": c.ClassSubject.SubjectId,
             "ClassSubjectId": c.ClassSubjectId,
             "SubjectComponentId": c.SubjectComponentId,
-            "Sequence": _sequence,
+            "Sequence":_sequence,
             "ExamId": c.ExamId,
             "FullMark": c.FullMark,
             "PassMark": c.PassMark,
@@ -466,37 +465,40 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         });
 
         this.StudentSubjects.forEach(ss => {
-          ss.Components = this.SubjectMarkComponents.filter(sc => sc.ClassSubjectId == ss.ClassSubjectId).sort((a, b) => a.Sequence - b.Sequence);
+          ss.Components = this.SubjectMarkComponents.filter(sc => sc.ClassSubjectId == ss.ClassSubjectId).sort((a,b)=>a.Sequence -b.Sequence);
         })
         this.GetExamStudentSubjectResults();
       })
   }
-  ExamMarkFormula = '';
   GetExamStudentSubjectResults() {
     debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentSubjectResult = [];
     this.StoredForUpdate = [];
-    this.loading = true;
-
-    var _examId = this.searchForm.get("searchExamId").value;
-    var _examMarkFormulaObj = this.Exams.filter(e => e.ExamId == _examId && e.MarkFormula.length > 0);
-    if (_examMarkFormulaObj.length > 0)
-      this.ExamMarkFormula = _examMarkFormulaObj[0].MarkFormula;
-    if (this.ExamMarkFormula.length > 0)
-      this.GetMultiExamsStudentSubjectResults();
-    else
-      this.GetOneExamResult([]);
-
-  }
-  GetOneExamResult(pMarks) {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
+    // if (this.searchForm.get("searchExamId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // var _classId =this.searchForm.get("searchClassId").value;
+    // var _sectionId =this.searchForm.get("searchSectionId").value;
 
-    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    //var filterstr = '';
+    // if (this.searchForm.get("searchClassId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (this.searchForm.get("searchSectionId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (this.searchForm.get("searchSubjectId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     this.loading = true;
+    //this.GetStudentSubjects(_classId,_sectionId);
     var _examId = this.searchForm.get("searchExamId").value;
     filterstr = 'ExamId eq ' + _examId;
 
@@ -524,7 +526,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         //debugger;
         var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
           return studentsubject.ClassId == this.searchForm.get("searchClassId").value
-            && studentsubject.ClassSubjectId == this.searchForm.get("searchClassSubjectId").value
+            && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value
             && studentsubject.SectionId == this.searchForm.get("searchSectionId").value
         });
 
@@ -554,7 +556,6 @@ export class ExamstudentsubjectresultComponent implements OnInit {
               var _toPush;
               if (this.displayedColumns.indexOf(_ComponentName) == -1)
                 this.displayedColumns.push(_ComponentName)
-
               _toPush = {
                 ExamStudentSubjectResultId: existing[0].ExamStudentSubjectResultId,
                 ExamId: existing[0].ExamId,
@@ -582,19 +583,6 @@ export class ExamstudentsubjectresultComponent implements OnInit {
               var _componentName = this.MarkComponents.filter(c => c.MasterDataId == component.SubjectComponentId)[0].MasterDataName;
               if (this.displayedColumns.indexOf(_componentName) == -1)
                 this.displayedColumns.push(_componentName)
-              var averageMark = [];
-              var _mark = 0;
-              if (pMarks.length > 0) {
-                averageMark = pMarks.filter(p => p.StudentClassSubjectId == ss.StudentClassSubjectId)
-                if (averageMark.length > 0) {
-                  _mark = averageMark[0].Marks;
-                }
-              }
-              var _examstatus =0;
-              if(component.PassMark<_mark)
-              {
-                _examstatus
-              }
               _toPush = {
                 ExamStudentSubjectResultId: 0,
                 ExamId: this.searchForm.get("searchExamId").value,
@@ -607,124 +595,52 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 SubjectMarkComponent: _componentName,
                 FullMark: component.FullMark,
                 PassMark: component.PassMark,
-                Marks: _mark,
+                Marks: 0,
                 Grade: '',
                 ExamStatus: 0,
                 Active: 0,
                 Action: true
               }
-              _toPush[_componentName] = _mark;
-              forDisplay[_componentName] = _mark;
+              _toPush[_componentName] = 0;
+              forDisplay[_componentName] = 0;
 
               this.StoredForUpdate.push(_toPush);
             }
           })
-          forDisplay["Action"] = true;
+          forDisplay["Action"] = '';
           this.ExamStudentSubjectResult.push(forDisplay);
 
         })
-        this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.sort((a, b) => a.StudentClassSubject.localeCompare(b.StudentClassSubject));
-        console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
+        this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.sort((a,b)=> a.StudentClassSubject.localeCompare(b.StudentClassSubject));
+        console.log("this.ExamStudentSubjectResult",this.ExamStudentSubjectResult)
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
         this.loading = false; this.PageLoading = false;
       })
   }
-  MultiExamsStudentSubjectResult = [];
-  GetMultiExamsStudentSubjectResults() {
-    debugger;
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.MultiExamsStudentSubjectResult = [];
-    this.StoredForUpdate = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = '', mainfilter = 'Active eq 1';
-    this.loading = true;
-
-    //var _classId = this.searchForm.get("searchClassId").value;
-    var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
-    var _examId = this.searchForm.get("searchExamId").value;
-
-
-    var _examMarkFormulaObj = this.Exams.filter(e => e.ExamId == _examId && e.MarkFormula.length > 0);
-    var _examMarkFormula = '';
-    if (_examMarkFormulaObj.length > 0)
-      _examMarkFormula = _examMarkFormulaObj[0].MarkFormula;
-
-    this.Exams.forEach((m, indx) => {
-      if (_examMarkFormula.includes(m.ExamName)) {
-        filterstr += 'ExamId eq ' + m.ExamId + " or ";
-      }
-    })
-
-    if (filterstr.length > 0)
-    {
-
-      filterstr = filterstr.substring(0,filterstr.length - 4)
-      filterstr = "Active eq true and (" + filterstr + ")";
-
-    }
-      
-    else
-      filterstr = 'Active eq true'
-
-    if (_classSubjectId > 0) {
-     // filterstr += ' and ClassSubjectId eq ' + _classSubjectId;
-      mainfilter += ' and ClassSubjectId eq ' + _classSubjectId;
-    }
-
-    let list: List = new List();
-    list.fields = [
-      "StudentClassSubjectId",
-      "ClassSubjectId",
-      "StudentClassId",
-      "SubjectId"
-    ];
-    list.PageName = 'StudentClassSubjects'
-    list.lookupFields = ["ExamResultSubjectMarks($filter=" + filterstr + ";$select=ExamId,StudentClassId,StudentClassSubjectId,Marks)"];
-    list.filter = [mainfilter + orgIdSearchstr];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        var result = [];
-
-        data.value.forEach(d => {
-
-          //loop through each exam marks
-          d.ExamResultSubjectMarks.forEach(s => {
-
-            var item = {
-              StudentClassSubjectId: s.StudentClassSubjectId,
-              ExamId: s.ExamId,
-              Marks: s.Marks,
-              StudentClassId: d.StudentClassId,
-              ClassSubjectId: d.ClassSubjectId,
-              SubjectId: d.SubjectId
-            }
-
-            result.push(item);
-          });
-        });
-
-        var distinctExam = alasql("select distinct ExamId from ? ", [result]);
-
-        var resultmarksum = alasql("select sum(Marks) Marks,StudentClassSubjectId from ? group by StudentClassSubjectId", [result]);
-        resultmarksum.forEach(f => {
-          f.Marks = parseFloat((f.Marks / distinctExam.length).toFixed(2));
-        })
-
-        this.GetOneExamResult(resultmarksum);
-      })
-  }
   StudentGrades = [];
   SelectedClassStudentGrades = [];
   ClassGroupMapping = [];
+  // GetClassGroupMapping() {
+  //   var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+  //   //+ ' and BatchId eq ' + this.SelectedBatchId;
 
+  //   let list: List = new List();
+
+  //   list.fields = ["ClassId,ClassGroupId"];
+  //   list.PageName = "ClassGroupMappings";
+  //   list.filter = ["Active eq 1" + orgIdSearchstr];
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       this.ClassGroupMapping = [...data.value];
+  //     })
+  // }
   GetStudentGradeDefn() {
     this.contentservice.GetStudentGrade(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
         this.StudentGrades = [...data.value];
       })
-    this.PageLoading = false;
+      this.PageLoading=false;
   }
   GetSpecificStudentGrades() {
     debugger;
@@ -775,7 +691,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     })
   }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
     //var columnexist;
@@ -855,7 +771,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId", "ReleaseResult", "ClassGroupId", "MarkFormula"];
+    list.fields = ["ExamId", "ExamNameId", "ReleaseResult", "ClassGroupId"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
 
@@ -873,12 +789,11 @@ export class ExamstudentsubjectresultComponent implements OnInit {
               ExamId: e.ExamId,
               ExamName: _examName,
               ReleaseResult: e.ReleaseResult,
-              ClassGroupId: e.ClassGroupId,
-              MarkFormula: e.MarkFormula
+              ClassGroupId: e.ClassGroupId
             });
           }
         })
-        this.PageLoading = false;
+        this.PageLoading=false;
         //console.log("exams", this.Exams);
         //this.GetStudentSubjects();
       })
@@ -917,4 +832,5 @@ export interface IExamStudentSubjectResult {
   Active: number;
   Action: boolean;
 }
+
 

@@ -429,11 +429,7 @@ export class GenerateCertificateComponent implements OnInit {
     debugger;
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _examId = this.searchForm.get("searchExamId").value;
-    if (_examId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+
     filterStr += ' and StudentClassId eq ' + this.StudentClassId;
     filterStr += ' and ExamId eq ' + _examId;
 
@@ -1206,7 +1202,15 @@ export class GenerateCertificateComponent implements OnInit {
       this.contentservice.openSnackBar("Please select student!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
+    
+    if (this.SelectedCertificateType.toLowerCase() == 'provisional certificate' || this.SelectedCertificateType.toLowerCase() == 'transfer certificate') {
+      var _examId = this.searchForm.get("searchExamId").value;
+      if (_examId == 0) {
+        this.loading = false;
+        this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+    }
     if (this.searchForm.get("searchCertificateTypeId").value == 0) {
       this.contentservice.openSnackBar("Please select certificate type!", globalconstants.ActionText, globalconstants.RedBackground);
       return;

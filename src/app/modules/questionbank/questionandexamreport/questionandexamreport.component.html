@@ -27,6 +27,14 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            <!-- <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>year</mat-label>
+                <mat-select formControlName="searchBatchId" (selectionChange)="cleardata()">
+                    <mat-option *ngFor="let item of Batches" [value]="item.BatchId">
+                        {{item.BatchName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field> -->
 
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSyllabusDetail()">
                 <mat-icon>search</mat-icon>

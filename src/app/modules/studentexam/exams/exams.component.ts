@@ -48,7 +48,7 @@ export class ExamsComponent implements OnInit {
     ExamNameId: 0,
     StartDate: Date,
     EndDate: Date,
-    //Sequence:0,
+    MarkFormula:'',
     ClassGroupId: 0,
     ReleaseResult: 0,
     ReleaseDate: null,
@@ -63,7 +63,7 @@ export class ExamsComponent implements OnInit {
     'StartDate',
     'EndDate',
     'ClassGroupId',
-    //'Sequence',
+    'MarkFormula',
     'AttendanceStartDate',
     'ReleaseDate',
     'ReleaseResult',
@@ -126,6 +126,7 @@ export class ExamsComponent implements OnInit {
       ExamName: '',
       StartDate: new Date(),
       EndDate: new Date(),
+      MarkFormula:'',
       Sequence:0,
       ClassGroupId: 0,
       ReleaseResult: 0,
@@ -211,6 +212,7 @@ export class ExamsComponent implements OnInit {
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
           this.ExamsData.ClassGroupId = row.ClassGroupId;
+          this.ExamsData.MarkFormula = row.MarkFormula;
           this.ExamsData.AttendanceStartDate = row.AttendanceStartDate;
           this.ExamsData.ReleaseResult = row.ReleaseResult;
           this.ExamsData.BatchId = this.SelectedBatchId;
@@ -272,7 +274,7 @@ export class ExamsComponent implements OnInit {
 
     list.fields = [
       "ExamId", "ExamNameId", "StartDate",
-      "EndDate", "ClassGroupId", "AttendanceStartDate",
+      "EndDate", "ClassGroupId", "AttendanceStartDate","MarkFormula",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -299,6 +301,7 @@ export class ExamsComponent implements OnInit {
               ExamName: e.MasterDataName,
               AttendanceStartDate: new Date(),
               Sequence:e.Sequence,
+              MarkFormula:'',
               StartDate: new Date(),
               EndDate: new Date(),
               ReleaseResult: 0,
@@ -564,6 +567,7 @@ export interface IExams {
   ExamId: number;
   ExamNameId: number;
   ExamName: string;
+  MarkFormula:string;
   StartDate: Date;
   EndDate: Date;
   Sequence:number;

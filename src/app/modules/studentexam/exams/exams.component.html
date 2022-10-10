@@ -89,19 +89,17 @@ marks can no longer be entered/edited for that examination.
                 {{element.ReleaseDate}}
             </mat-cell>
         </ng-container>
-        <!-- <ng-container matColumnDef="AttendanceModeId">
-            <mat-header-cell *matHeaderCellDef>Attendance Mode
+        <ng-container matColumnDef="MarkFormula">
+            <mat-header-cell *matHeaderCellDef>, Separated Exam Names
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <mat-select [(ngModel)]="element.AttendanceModeId" (selectionChange)="onBlur(element)"
-                        [value]="element.AttendanceModeId">
-                        <mat-option *ngFor="let item of AttendanceModes" [value]="item.MasterDataId">{{item.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
+                    <textarea matInput [maxlength]="100" autocomplete="Off" (blur)="onBlur(element)"
+                     [(ngModel)]="element.MarkFormula" 
+                     [value]="element.MarkFormula"></textarea>
                 </mat-form-field>
             </mat-cell>
-        </ng-container> -->
+        </ng-container>
         <ng-container matColumnDef="Active">
             <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -112,9 +110,7 @@ marks can no longer be entered/edited for that examination.
         </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-                <!-- <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
-                            <mat-icon>add</mat-icon>
-                        </button> -->
+               
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"

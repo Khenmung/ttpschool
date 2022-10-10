@@ -5,10 +5,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ExamncalculateComponent } from './examncalculate/examncalculate.component';
 
 @NgModule({
   declarations: [studentexamComponents],

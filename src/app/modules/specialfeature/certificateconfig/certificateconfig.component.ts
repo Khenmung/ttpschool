@@ -46,6 +46,7 @@ export class CertificateconfigComponent implements OnInit {
   };
   filteredMaster:any=[];
   CertificateConfigForUpdate = [];
+  StudentVariableNames =[];
   displayedColumns = [
     "CertificateConfigId",
     "Title",
@@ -110,7 +111,7 @@ export class CertificateconfigComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         //this.GroupId = this.tokenstorage.getGroupId();
-
+        this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();

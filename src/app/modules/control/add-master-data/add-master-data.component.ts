@@ -142,7 +142,7 @@ export class AddMasterDataComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
 
-        this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
+        
         this.OrgId = this.UserDetails[0]["orgId"];
         this.searchForm.patchValue({ "OrgId": this.OrgId });
         this.GetMastersForAutoComplete();

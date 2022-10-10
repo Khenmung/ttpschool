@@ -34,7 +34,8 @@
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
-                <div *ngIf="SelectedCertificateType=='provisional certificate'">
+                <div
+                    *ngIf="SelectedCertificateType=='provisional certificate' || SelectedCertificateType=='transfer certificate'">
                     <mat-form-field appearance="outline">
                         <mat-label>Exam</mat-label>
                         <mat-select formControlName="searchExamId">
@@ -88,20 +89,22 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <button [disabled]="loading" matTooltip="view" mat-raised-button color="accent"
-                    (click)="GetCertificates()">
-                    <mat-icon>search</mat-icon>
-                    <mat-icon *ngIf="loading">
-                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                    </mat-icon>
-                </button>
-                <button [disabled]="loading" matTooltip="issued certificates" mat-raised-button color="accent"
-                    (click)="GetGeneratedCertificate()">
-                    <mat-icon>format_list_bulleted</mat-icon>
-                    <mat-icon *ngIf="loading">
-                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                    </mat-icon>
-                </button>
+                <div style="margin-bottom: 15px;">
+                    <button [disabled]="loading" matTooltip="view" mat-raised-button color="accent"
+                        (click)="GetCertificates()">
+                        <mat-icon>search</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
+                    <button [disabled]="loading" matTooltip="issued certificates" mat-raised-button color="accent"
+                        (click)="GetGeneratedCertificate()">
+                        <mat-icon>format_list_bulleted</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
+                </div>
                 <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
                 </button> -->

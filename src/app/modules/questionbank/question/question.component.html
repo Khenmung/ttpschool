@@ -47,8 +47,9 @@
         </div>
         <div style="margin-top:10px">
             <mat-form-field appearance="outline" [style.width.px]="420">
-                <mat-label>unit detail</mat-label>
+                <mat-label>Unit detail</mat-label>
                 <mat-select formControlName="searchUnitDetailId">
+                    <mat-option value="0">select</mat-option>
                     <mat-option *ngFor="let item of UnitDetails" [value]="item.SyllabusId">{{item.UnitDetail}}
                     </mat-option>
                 </mat-select>
