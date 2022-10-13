@@ -8,6 +8,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
+import { StudentSubjectReportComponent } from '../studentsubjectreport/studentsubjectreport.component';
 
 
 @Component({
@@ -20,9 +21,9 @@ export class SubjectBoardComponent implements AfterViewInit {
   components:any = [
     SubjectTypesComponent,
     ClassSubjectDetailComponent,
-    //TeachersubjectComponent,
     StudentSubjectMarkCompComponent,
     studentsubjectdashboardComponent,
+    StudentSubjectReportComponent,
     AssignStudentclassdashboardComponent
     
   ];
@@ -32,6 +33,7 @@ export class SubjectBoardComponent implements AfterViewInit {
     { "label": "Subject Detail", "faIcon": '' },
     { "label": "Subject Mark Component", "faIcon": '' },
     { "label": "Student Subject", "faIcon": '' },
+    { "label": "example", "faIcon": '' },
     { "label": "example", "faIcon": '' },
     { "label": "example", "faIcon": '' }
   ];
@@ -85,6 +87,10 @@ export class SubjectBoardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT)
     comindx = this.components.indexOf(studentsubjectdashboardComponent);
+    this.GetComponents(perObj, comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECTREPORT)
+    comindx = this.components.indexOf(StudentSubjectReportComponent);
     this.GetComponents(perObj, comindx)
 
     

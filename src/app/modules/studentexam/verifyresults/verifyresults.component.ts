@@ -580,7 +580,7 @@ export class VerifyResultsComponent implements OnInit {
               }
             })
           }
-
+          var errormessageforEachSubject = '';
           forEachSubjectOfStud.forEach(eachsubj => {
 
             var _objSubjectCategory = this.SubjectCategory.filter(f => f.MasterDataId == eachsubj.SubjectCategoryId)
@@ -592,93 +592,102 @@ export class VerifyResultsComponent implements OnInit {
             var _subjectPassMarkFullMark = alasql("select ClassSubjectId,SUM(PassMark) as PassMark,SUM(FullMark) as FullMark FROM ? where ClassSubjectId = ? GROUP BY ClassSubjectId",
               [_examSubjectMarkComponentDefn, eachsubj.ClassSubjectId]);
             if (_subjectPassMarkFullMark.length == 0) {
-              this.contentservice.openSnackBar("Component not defined the subject: " + eachsubj.Subject, globalconstants.ActionText, globalconstants.RedBackground);
+              errormessageforEachSubject += "\nComponent not defined for the subject: " + eachsubj.Subject;
+              //this.contentservice.openSnackBar("Component not defined for the subject: " + eachsubj.Subject, globalconstants.ActionText, globalconstants.RedBackground);
               return;
             }
-            var failedInComponent = false;
-            var subjectComponent = _examSubjectMarkComponentDefn.filter(comp => comp.PassMark > 0 && comp.ClassSubjectId == eachsubj.ClassSubjectId)
-            subjectComponent.forEach(compmarkobtained => {
-              var componentobtainedmark = filteredExistingData.filter(eres => eres.StudentClassSubjectId == eachsubj.StudentClassSubjectId
-                && eres.ClassSubjectMarkComponentId == compmarkobtained.ClassSubjectMarkComponentId)
-              if (componentobtainedmark.length > 0) {
-                if (!failedInComponent && componentobtainedmark[0].Marks < compmarkobtained.PassMark) {
+            else {
+              var failedInComponent = false;
+              var subjectComponent = _examSubjectMarkComponentDefn.filter(comp => comp.PassMark > 0 && comp.ClassSubjectId == eachsubj.ClassSubjectId)
+              subjectComponent.forEach(compmarkobtained => {
+                var componentobtainedmark = filteredExistingData.filter(eres => eres.StudentClassSubjectId == eachsubj.StudentClassSubjectId
+                  && eres.ClassSubjectMarkComponentId == compmarkobtained.ClassSubjectMarkComponentId)
+                if (componentobtainedmark.length > 0) {
+                  if (!failedInComponent && componentobtainedmark[0].Marks < compmarkobtained.PassMark) {
+                    failedInComponent = true;
+                  }
+                }
+                else
                   failedInComponent = true;
+              })
+              var _statusFail = true;
+
+              if (markObtained.length > 0) {
+                var ExamResultSubjectMarkData = {
+                  ExamResultSubjectMarkId: 0,
+                  StudentClassId: 0,
+                  ExamId: 0,
+                  StudentClassSubjectId: 0,
+                  Marks: 0,
+                  Grade: '',
+                  OrgId: 0,
+                  Active: 0,
+                  BatchId: 0
+                }
+                ExamResultSubjectMarkData.Active = 1;
+                ExamResultSubjectMarkData.BatchId = this.SelectedBatchId;
+                ExamResultSubjectMarkData.ExamId = markObtained[0].ExamId;
+                ExamResultSubjectMarkData.ExamResultSubjectMarkId = 0;
+                ExamResultSubjectMarkData.Marks = markObtained[0].Marks;
+                ExamResultSubjectMarkData.OrgId = this.LoginUserDetail[0]['orgId'];
+                ExamResultSubjectMarkData.StudentClassId = ss.StudentClassId;
+                ExamResultSubjectMarkData.StudentClassSubjectId = eachsubj.StudentClassSubjectId;
+                ExamResultSubjectMarkData.Grade = '';
+
+                if (_subjectCategoryName == 'grading') {
+
+                  if (markObtained[0].Marks != undefined) {
+                    //var rows = [];
+                    //rows.push(markObtained[0]);
+
+                    var _grade = this.SetGrade(markObtained, eachsubj.SubjectCategoryId);
+                    markObtained[0].Grade = globalconstants.decodeSpecialChars(_grade);
+                    ForGrading[eachsubj.Subject] = markObtained[0].Grade;
+                    ExamResultSubjectMarkData.Grade = markObtained[0].Grade;
+                  }
+                  else
+                    ForGrading[eachsubj.Subject] = '';
+
+                  if (this.GradingDisplayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
+                    this.GradingDisplayedColumns.push(eachsubj.Subject)
+                }
+                else if (_subjectCategoryName == 'marking') {
+
+                  if (!failedInComponent)
+                    _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
+
+                  ForNonGrading["FullMark"] = this.ClassFullMark;
+
+                  if (failedInComponent || _statusFail) {
+                    ForNonGrading["FailCount"]++;
+                  }
+                  else
+                    ForNonGrading["PassCount"]++;
+
+                  if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
+                    this.displayedColumns.push(eachsubj.Subject)
+                  if (markObtained.length > 0) {
+                    ForNonGrading[eachsubj.Subject] = (failedInComponent || _statusFail) ? "(" + markObtained[0].Marks + ")" : markObtained[0].Marks;
+                    //console.log("markObtained[0].Marks",markObtained[0].Marks)
+                    //console.log("ForNonGrading[Total]",ForNonGrading["Total"])
+                    ForNonGrading["Total"] = (parseFloat(ForNonGrading["Total"]) + parseFloat(markObtained[0].Marks)).toFixed(2);
+                  }
                 }
               }
-              else
-                failedInComponent = true;
-            })
-            var _statusFail = true;
-
-            if (markObtained.length > 0) {
-              var ExamResultSubjectMarkData = {
-                ExamResultSubjectMarkId: 0,
-                StudentClassId: 0,
-                ExamId: 0,
-                StudentClassSubjectId: 0,
-                Marks: 0,
-                Grade: '',
-                OrgId: 0,
-                Active: 0,
-                BatchId: 0
-              }
-              ExamResultSubjectMarkData.Active = 1;
-              ExamResultSubjectMarkData.BatchId = this.SelectedBatchId;
-              ExamResultSubjectMarkData.ExamId = markObtained[0].ExamId;
-              ExamResultSubjectMarkData.ExamResultSubjectMarkId = 0;
-              ExamResultSubjectMarkData.Marks = markObtained[0].Marks;
-              ExamResultSubjectMarkData.OrgId = this.LoginUserDetail[0]['orgId'];
-              ExamResultSubjectMarkData.StudentClassId = ss.StudentClassId;
-              ExamResultSubjectMarkData.StudentClassSubjectId = eachsubj.StudentClassSubjectId;
-              ExamResultSubjectMarkData.Grade = '';
-
-              if (_subjectCategoryName == 'grading') {
-
-                if (markObtained[0].Marks != undefined) {
-                  //var rows = [];
-                  //rows.push(markObtained[0]);
-
-                  var _grade = this.SetGrade(markObtained, eachsubj.SubjectCategoryId);
-                  markObtained[0].Grade = globalconstants.decodeSpecialChars(_grade);
-                  ForGrading[eachsubj.Subject] = markObtained[0].Grade;
-                  ExamResultSubjectMarkData.Grade = markObtained[0].Grade;
-                }
-                else
-                  ForGrading[eachsubj.Subject] = '';
-
-                if (this.GradingDisplayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
-                  this.GradingDisplayedColumns.push(eachsubj.Subject)
-              }
-              else if (_subjectCategoryName == 'marking') {
-
-                if (!failedInComponent)
-                  _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
-
-                ForNonGrading["FullMark"] = this.ClassFullMark;
-
-                if (failedInComponent || _statusFail) {
-                  ForNonGrading["FailCount"]++;
-                }
-                else
-                  ForNonGrading["PassCount"]++;
-
-                if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
-                  this.displayedColumns.push(eachsubj.Subject)
-                if (markObtained.length > 0) {
-                  ForNonGrading[eachsubj.Subject] = (failedInComponent || _statusFail) ? "(" + markObtained[0].Marks + ")" : markObtained[0].Marks;
-                  //console.log("markObtained[0].Marks",markObtained[0].Marks)
-                  //console.log("ForNonGrading[Total]",ForNonGrading["Total"])
-                  ForNonGrading["Total"] = (parseFloat(ForNonGrading["Total"]) + parseFloat(markObtained[0].Marks)).toFixed(2);
-                }
-              }
+              //preparing each subject for insert.
+              if (ExamResultSubjectMarkData != undefined)
+                this.VerifiedResult.ExamResultSubjectMark.push(JSON.parse(JSON.stringify(ExamResultSubjectMarkData)))
             }
-            //preparing each subject for insert.
-            if (ExamResultSubjectMarkData != undefined)
-              this.VerifiedResult.ExamResultSubjectMark.push(JSON.parse(JSON.stringify(ExamResultSubjectMarkData)))
           })
-          //for each subject display 
-          this.ExamStudentSubjectResult.push(ForNonGrading);
-          this.ExamStudentSubjectGrading.push(ForGrading);
+
+          if (errormessageforEachSubject.length > 0) {
+            this.contentservice.openSnackBar(errormessageforEachSubject, globalconstants.ActionText, globalconstants.RedBackground);
+          }
+          else {
+            //for each subject display 
+            this.ExamStudentSubjectResult.push(ForNonGrading);
+            this.ExamStudentSubjectGrading.push(ForGrading);
+          }
         })
 
         //for each student
@@ -808,6 +817,7 @@ export class VerifyResultsComponent implements OnInit {
         this.GetStudents(0);
 
         this.GetStudentGradeDefn();
+        this.loading = false;
       });
   }
   GetClassGroup() {

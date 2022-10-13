@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -10,6 +10,7 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { filter } from 'mathjs';
 import alasql from 'alasql';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-examstudentsubjectresult',
@@ -17,6 +18,8 @@ import alasql from 'alasql';
   styleUrls: ['./examstudentsubjectresult.component.scss']
 })
 export class ExamstudentsubjectresultComponent implements OnInit {
+@ViewChild(MatPaginator) paginator:MatPaginator;
+
   PageLoading = true;
   ResultReleased = 0;
   LoginUserDetail: any[] = [];
@@ -135,7 +138,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   UpdateOrSave(row, valuerow) {
 
-    //debugger;   
+    debugger;   
     if (row.Marks > row.FullMark) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Marks cannot be greater than FullMark (" + row.FullMark + ").", globalconstants.ActionText, globalconstants.RedBackground);
@@ -186,7 +189,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           this.ExamStudentSubjectResultData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ExamStudentSubjectResultData.BatchId = this.SelectedBatchId;
           this.ExamStudentSubjectResultData.ExamStatus = _examstatus;
-          this.ExamStudentSubjectResultData.Marks = row.Marks;
+          this.ExamStudentSubjectResultData.Marks = parseFloat(row.Marks);
           console.log("this.ExamStudentSubjectResultData",this.ExamStudentSubjectResultData)
           if (this.ExamStudentSubjectResultData.ExamStudentSubjectResultId == 0) {
             this.ExamStudentSubjectResultData["CreatedDate"] = new Date();
@@ -624,9 +627,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
 
         })
         this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.sort((a, b) => a.StudentClassSubject.localeCompare(b.StudentClassSubject));
-        console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
+        //console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
+        this.dataSource.paginator = this.paginator;
         this.loading = false; this.PageLoading = false;
       })
   }

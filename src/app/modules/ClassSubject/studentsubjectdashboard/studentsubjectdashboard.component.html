@@ -1,86 +1,91 @@
 <!-- <div> -->
-    <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Student Subject</strong></div>
-    </div>
-    <!-- <alert></alert> -->
-    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline">
-            <mat-label>Class</mat-label>
-            <mat-select formControlName="searchClassId">
-                <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
-                    {{item.ClassName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-            <mat-label>Section</mat-label>
-            <mat-select formControlName="searchSectionId">
-                <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
-                    {{item.MasterDataName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentClassSubject()">
-             <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-        </button>
-        <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
-            <mat-icon>clear_all</mat-icon>
-        </button>
-    </form>
-    Subject can be assigned to student defined in student class.
-    <div style="overflow: auto;">
-        <mat-table #table [dataSource]="dataSource" matSort>
-
-            <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    <div style="display: flex;flex-direction: column;">
-                        <span style="display: flex;justify-content: start;">{{disCol!='Action'?disCol:''}}</span>
-                        <div *ngIf="StudentSubjectList.length>0" fxLayoutAlign="center center">
-                            <span *ngIf="disCol=='Student'">
-                                <mat-form-field style="width: 120px;">
-                                    <mat-label>Search</mat-label>
-                                    <input matInput [formControl]="nameFilter" autocomplete="Off">
-                                </mat-form-field>
-                            </span>
-                            <!-- <span *ngIf="disCol=='Action'">Select&nbsp;</span> -->
-                            <mat-checkbox fxLayoutAlign="center center" matTooltip="select all" *ngIf="disCol=='Action'"
-                                (click)="$event.stopPropagation()" (change)="SelectAll($event)">
+<div style="padding:15px 15px 10px 15px;">
+    <div><strong>Student Subject</strong></div>
+</div>
+<!-- <alert></alert> -->
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<form [formGroup]="searchForm">
+    <mat-form-field appearance="outline" [style.width.px]="150">
+        <mat-label>Class</mat-label>
+        <mat-select formControlName="searchClassId">
+            <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                {{item.ClassName}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" [style.width.px]="150">
+        <mat-label>Section</mat-label>
+        <mat-select formControlName="searchSectionId">
+            <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                {{item.MasterDataName}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentClassSubject()">
+        <mat-icon>search</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
+    </button>
+    <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+        <mat-icon>clear_all</mat-icon>
+    </button>
+</form>
+Subject can be assigned to student defined in student class.
+<div style="overflow: auto;margin-right: 15px;">
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+            <mat-header-cell *matHeaderCellDef mat-sort-header style="height:100%;align-self: stretch;display:flex;justify-content: flex-end;">
+                <div style="display:flex;flex-direction: column;height:100%;width:100%">
+                    <div style="display: flex;flex-direction: column; justify-content: end;height:100%">
+                        <div style="writing-mode: tb-rl;transform: rotate(-180deg);">{{disCol!='Action' && disCol!='Student'?disCol:''}}</div>
+                        <div style="margin-top:10px" *ngIf="disCol!='Action' && disCol!='Student'">
+                            <mat-checkbox fxLayoutAlign="center center" matTooltip="select {{disCol}} for all"
+                                (click)="$event.stopPropagation()" (change)="SelectAllRowInColumn($event,disCol)">
                             </mat-checkbox>
-                            <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
-                                matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
-                                <mat-icon>all_out</mat-icon>
-                <mat-icon *ngIf="loading">
-                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                </mat-icon>
-                            </button>
                         </div>
                     </div>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-checkbox matTooltip="select {{disCol}}" *ngIf="disCol !='Student'"
-                        (click)="$event.stopPropagation()" (change)="SelectAllInRow(element,$event,disCol)"
-                        [checked]="element[disCol]==1?true:false">
-                    </mat-checkbox>
-                    <div fxLayout="column" fxLayoutAlign="center end">
-                        <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read' || !element.Action"
-                            matTooltip="save" 
-mat-raised-button color="accent" (click)="SaveRow(element)">
-                             <mat-icon>save</mat-icon>
+                    <div *ngIf="StudentSubjectList.length>0" style="display:flex;align-items: flex-start;justify-content: flex-end;">
+                        <span *ngIf="disCol=='Student'">
+                            <mat-form-field style="width: 120px;">
+                                <mat-label>Search</mat-label>
+                                <input matInput [formControl]="nameFilter" autocomplete="Off">
+                            </mat-form-field>
+                        </span>
+                        <!-- <span *ngIf="disCol=='Action'">Select&nbsp;</span> -->
+                        <mat-checkbox style="margin-right:15px" fxLayoutAlign="center center" matTooltip="select all" *ngIf="disCol=='Action'"
+                            (click)="$event.stopPropagation()" (change)="SelectAll($event)">
+                        </mat-checkbox>
+                        <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
+                            matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
+                            <mat-icon>all_out</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>
                         </button>
                     </div>
-                    {{disCol=='Student'?element[disCol]:''}}
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-        </mat-table>
-    </div>
-    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
+                </div>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-checkbox matTooltip="select {{disCol}}" *ngIf="disCol !='Student'"
+                    (click)="$event.stopPropagation()" (change)="SelectAllInRow(element,$event,disCol)"
+                    [checked]="element[disCol]==1?true:false">
+                </mat-checkbox>
+                <div fxLayout="column" fxLayoutAlign="center end">
+                    <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read' || !element.Action"
+                        matTooltip="save" mat-raised-button color="accent" (click)="SaveRow(element)">
+                        <mat-icon>save</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
+                </div>
+                {{disCol=='Student'?element[disCol]:''}}
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    </mat-table>
+</div>
+<mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
 <!-- </div> -->

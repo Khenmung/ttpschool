@@ -21,7 +21,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./studentsubjectdashboard.component.scss']
 })
 export class studentsubjectdashboardComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   //@Input() StudentClassId:number;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -209,7 +209,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ClassSubjects";
-    list.lookupFields = ["StudentClassSubjects($filter=Active eq 1;$select=ClassSubjectId,SubjectId,StudentClassId,StudentClassSubjectId,Active)"];
+    list.lookupFields = ["StudentClassSubjects($select=ClassSubjectId,SubjectId,StudentClassId,StudentClassSubjectId,Active)"];
 
     list.filter = ["Active eq 1 and " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -403,6 +403,11 @@ export class studentsubjectdashboardComponent implements OnInit {
       });
 
   }
+  // SelectAllRowInColumn(col){
+  //   this.StudentSubjectList.forEach(element => {
+  //     this.SelectColumn(element, col);
+  //   })
+  // }
   SelectAll(event) {
     //var event ={checked:true}
     this.StudentSubjectList.forEach(element => {
@@ -421,6 +426,25 @@ export class studentsubjectdashboardComponent implements OnInit {
       searchSubjectId: 0,
       searchSubjectTypeId: 0,
       //searchBatchId: this.SelectedBatchId
+    });
+  }
+  // SelectColumn(element,colName) {
+  //   this.SelectAllInRow(element, col);
+  // }
+  SelectAllRowInColumn(event, colName) {
+    debugger;
+    this.StudentSubjectList.forEach(element => {
+      var currentrow = this.StoreForUpdate.filter(f => f.Subject == colName && f.StudentClassId == element.StudentClassId);
+      if (event.checked) {
+        currentrow[colName] = 1;
+        element[colName] = 1;
+      }
+      else {
+        currentrow[colName] = 0;
+        element[colName] = 0;
+        currentrow[0].SubjectCount = 0;
+      }
+      element.Action = true;
     });
   }
   SelectAllInRow(element, event, colName) {
@@ -486,12 +510,18 @@ export class studentsubjectdashboardComponent implements OnInit {
     groupbySubjectType.forEach(element => {
       //element.SelectHowMany =0 meeans optional
       //element.SelectHowMany >20 means compulsory 
-      if (element.SelectHowMany > 0 && element.SelectHowMany < 30 && element.SubjectCount != element.SelectHowMany)
+      if (element.SelectHowMany > 0 && element.SelectHowMany < 30 && element.SubjectCount != element.SelectHowMany) {
+
         subjectCounterr += " Subject type " + element.SubjectType + " must have " + element.SelectHowMany + " subject(s) selected.";
+      }
+
     });
+
     StudentSubjects.forEach(s => {
-      if (s.SelectHowMany > 30 && s.SubjectCount != s.SelectHowMany)
+      if (s.SelectHowMany > 30 && s.SubjectCount != s.SelectHowMany) {
+        debugger;
         subjectCounterr += " Subject type " + s.SubjectType + " must have " + s.SelectHowMany + " subject(s) selected.";
+      }
     })
     /////////
     if (subjectCounterr.length > 0) {
@@ -513,7 +543,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           }
           ////console.log('data to update',data)
           if (row.length > 0)
-            this.UpdateOrSave(data);
+            this.UpdateOrSave(data, element);
         }
       }
     }
@@ -530,7 +560,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
         });
   }
-  UpdateOrSave(row) {
+  UpdateOrSave(row, element) {
     //debugger;
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
       " and StudentClassId eq " + row.StudentClassId
@@ -566,14 +596,14 @@ export class studentsubjectdashboardComponent implements OnInit {
             delete this.StudentSubjectData["UpdatedDate"];
             delete this.StudentSubjectData["UpdatedBy"];
             ////console.log('insert', this.StudentSubjectData);
-            this.insert(row);
+            this.insert(row, element);
           }
           else {
             delete this.StudentSubjectData["CreatedDate"];
             delete this.StudentSubjectData["CreatedBy"];
             this.StudentSubjectData["UpdatedDate"] = new Date();
             this.StudentSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(row);
+            this.update(row, element);
           }
           row.Action = false;
 
@@ -581,7 +611,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       });
   }
 
-  insert(row) {
+  insert(row, element) {
 
     //debugger;
     this.dataservice.postPatch('StudentClassSubjects', this.StudentSubjectData, 0, 'post')
@@ -593,20 +623,21 @@ export class studentsubjectdashboardComponent implements OnInit {
 
           if (this.rowCount == Object.keys(row).length - 3) {
             this.loading = false; this.PageLoading = false;
-            //this.GetStudentClassSubject();
+            element.Action = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
-  update(row) {
+  update(row, element) {
 
     this.dataservice.postPatch('StudentClassSubjects', this.StudentSubjectData, this.StudentSubjectData.StudentClassSubjectId, 'patch')
       .subscribe(
         (data: any) => {
           this.edited = false;
-          row.Action = false;
+
           this.rowCount++;
           if (this.rowCount == Object.keys(row).length - 3) {
+            element.Action = false;
             this.loading = false; this.PageLoading = false;
             //this.GetStudentClassSubject();
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);

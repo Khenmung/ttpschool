@@ -114,7 +114,7 @@ export class ExamsComponent implements OnInit {
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
         this.GetSubjectComponents();
-        this.GetStudentSubjects();
+        //this.GetStudentSubjects();
       }
     }
   }

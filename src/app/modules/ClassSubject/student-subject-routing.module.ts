@@ -8,17 +8,19 @@ import { SubjectTypesComponent } from './subject-types/subject-types.component';
 import { SubjectBoardComponent } from './subjectboard/subjectboard.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { PromoteclassComponent } from './promoteclass/promoteclass.component';
+import { StudentSubjectReportComponent } from './studentsubjectreport/studentsubjectreport.component';
 
 const routes: Routes = [
   {
     path: '', component: HomeComponent,
     children: [
-      { path: '', component: SubjectBoardComponent,//runGuardsAndResolvers:'always'
-     },
+      {
+        path: '', component: SubjectBoardComponent,//runGuardsAndResolvers:'always'
+      },
       { path: 'studentsubject', component: studentsubjectdashboardComponent },
       { path: 'subjecttypes', component: SubjectTypesComponent },
       { path: 'components', component: StudentSubjectMarkCompComponent },
-      
+
     ]
   }
 ];
@@ -28,13 +30,13 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class StudentSubjectRoutingModule { }
-export const StudentSubjectComponents=[
+export const StudentSubjectComponents = [
   ClassSubjectDetailComponent,
   studentsubjectdashboardComponent,
   SubjectTypesComponent,
-  StudentSubjectMarkCompComponent, 
+  StudentSubjectMarkCompComponent,
   SubjectBoardComponent,
   AssignStudentclassdashboardComponent,
-  PromoteclassComponent
-
+  PromoteclassComponent,
+  StudentSubjectReportComponent
 ]

@@ -1,4 +1,11 @@
-
+mat-cell,mat-header-cell{
+    align-self: stretch;
+    justify-content: center;
+    border-right: 1px solid lightgray;
+}
+mat-form-field{
+    width:98%;
+}
 mat-form-field,button{
     margin-right:15px;
 }
@@ -7,4 +14,8 @@ button{
 }
 mat-cell:first-of-type {
     padding-left: 0px;
+}
+.mat-column-StudentClassSubject{
+    justify-content: flex-start;
+    flex: 1 1 200px;
 }

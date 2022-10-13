@@ -8,9 +8,17 @@ mat-cell:first-of-type{
 .mat-row {
     height: auto;
 }
-mat-cell,mat-header-cell{
+mat-header-cell{
     border-right: 1px solid lightgray;
-    padding: 10px;
+    //padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items:center;
+    align-self: stretch;
+}
+mat-cell{
+    border-right: 1px solid lightgray;
+    //padding: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,19 +26,20 @@ mat-cell,mat-header-cell{
 }
 .mat-column-Student{
     justify-content: flex-start;
+    flex: 1 1 150px;
 }
-.mat-cell {
-    padding: 0px;
-}
+// .mat-cell {
+//     padding: 0px;
+// }
 .mat-column-Division{
     justify-content:center;
-
+    flex: 1 1 120px;
 }
 
-mat-cell:nth-child(1),
-mat-header-cell:nth-child(1) {
-    flex: 0 0 10%;
-}
+// mat-cell:nth-child(1),
+// mat-header-cell:nth-child(1) {
+//     flex: 0 0 10%;
+// }
 
 // .mat-footer-row,
 // .mat-header-row,

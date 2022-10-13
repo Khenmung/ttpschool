@@ -31,6 +31,7 @@
                 </button>
             </form>
         </div>
+        <div><b>Grade Points</b> is for student's everage grade calculation.</div>
         <div style="width: 100%;">
             <mat-table style="overflow: auto;min-width: 60vw;min-height: 60vh;" #table [dataSource]="dataSource">
                 <ng-container matColumnDef="StudentGradeId">
@@ -71,7 +72,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Points">
-                    <mat-header-cell *matHeaderCellDef>Points
+                    <mat-header-cell *matHeaderCellDef>Grade Points
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">

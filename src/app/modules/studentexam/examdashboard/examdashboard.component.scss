@@ -7,6 +7,9 @@
 //         margin-top: 150px;
 //     }
 // }
-mat-card{
-    width: 100vw;
+// mat-card{
+//     width: 100%;
+// }
+:host{
+    width:100%;
 }

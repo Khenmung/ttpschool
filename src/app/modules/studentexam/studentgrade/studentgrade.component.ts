@@ -51,8 +51,8 @@ export class StudentgradeComponent implements OnInit {
   displayedColumns = [
     "StudentGradeId",
     "GradeName",
-    "Formula",
     "Points",
+    "Formula",    
     "ClassGroupId",
     "SubjectCategoryId",
     "GradeStatusId",

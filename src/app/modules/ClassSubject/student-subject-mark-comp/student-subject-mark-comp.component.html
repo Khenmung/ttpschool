@@ -40,7 +40,9 @@
             <mat-icon>copy_all</mat-icon>
         </button>
     </form>
-    <div>If examination has been released, subject component cannot be updated.</div>
+    <div>If examination has been released, subject component cannot be updated. If a subject component's Pass Mark is > 0, 
+        it means student has to pass on that component. If all components' Pass Mark is equal to zero, 
+        passing criteria is based on <b>Student Grade</b> definition.</div>
     <mat-table #table [dataSource]="dataSource" matSort>
 
         <ng-container matColumnDef="ClassSubject">
