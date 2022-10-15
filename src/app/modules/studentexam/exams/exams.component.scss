@@ -1,3 +1,6 @@
+:host{
+    width:100%;
+}
 mat-form-field{
     margin-right: 15px;
     width:98%;
@@ -6,7 +9,7 @@ button {
     margin-right: 15px;
 }
 
-mat-cell:first-of-type {
+mat-cell:first-of-type,mat-header-cell:first-of-type {
     padding-left: 0px;
 }
 .mat-column-ReleaseDate{
@@ -19,7 +22,7 @@ mat-cell:first-of-type {
 .mat-column-EndDate,
 .mat-column-ClassGroupId
 {
-    flex:1 1 135px;
+    flex:1 0 135px;
 }
 //.mat-column-Sequence,
 .mat-column-AttendanceStartDate{
@@ -29,7 +32,7 @@ mat-cell:first-of-type {
 .mat-column-Active,
 .mat-column-ReleaseResult {
     justify-content: center;
-    flex:1 1 80px;
+    flex:1 0 80px;
 }
 .mat-column-ExamId{
     flex:1 0 70px;

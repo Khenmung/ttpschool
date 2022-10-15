@@ -11,8 +11,8 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" style="width: 150px;">
-            <mat-label>Search</mat-label>
+        <mat-form-field appearance="outline" style="width: 250px;">
+            <mat-label>club/house/remarks</mat-label>
             <mat-select formControlName="searchRemarkId">
                 <mat-option value="0">select</mat-option>
                 <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled">

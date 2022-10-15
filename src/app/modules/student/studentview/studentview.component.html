@@ -1,5 +1,5 @@
 <div style="padding: 15px 0px 0px 15px;font-weight: bold;">
-    <span style="margin-right:15px;">Student View</span>    
+    <span style="margin-right:15px;">Student View</span>
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 
@@ -7,7 +7,9 @@
     <mat-table [dataSource]="datasourcePrimaryInfo" style="margin: 15px;width:50%">
         <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
             <mat-header-cell *matHeaderCellDef>
-                {{disCol=='Text'?'Primary Info':''}}
+                <div *ngIf="disCol=='Text'">
+                    <mat-icon>info</mat-icon> Primary Info
+                </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <span *ngIf="disCol=='Text'">
@@ -28,7 +30,9 @@
         <mat-table [dataSource]="datasourceContact" style="margin: 15px;">
             <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                 <mat-header-cell *matHeaderCellDef>
-                    {{disCol=='Text'?'Contact Info':''}}
+                    <div *ngIf="disCol=='Text'">
+                        <mat-icon>contact_page</mat-icon>Contact Info
+                    </div>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <span *ngIf="disCol=='Text'">
@@ -47,7 +51,9 @@
     <mat-table [dataSource]="datasourceAdditionalInfo" style="margin: 15px;width:50%;">
         <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
             <mat-header-cell *matHeaderCellDef>
-                {{disCol=='Text'?'Additional Info':''}}
+                <div *ngIf="disCol=='Text'">
+                    <mat-icon>note_add</mat-icon>Additional Info
+                </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <span *ngIf="disCol=='Text'">
@@ -64,7 +70,9 @@
         <mat-table [dataSource]="datasourceBankAccountInfo" style="margin: 15px;">
             <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                 <mat-header-cell *matHeaderCellDef>
-                    {{disCol=='Text'?'Bank Account Info':''}}
+                    <div *ngIf="disCol=='Text'">
+                        <mat-icon>account_balance</mat-icon>Bank Account Info
+                    </div>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <span *ngIf="disCol=='Text'">
@@ -80,7 +88,9 @@
         <mat-table [dataSource]="datasourceStudentClassInfo" style="margin: 15px;">
             <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                 <mat-header-cell *matHeaderCellDef>
-                    {{disCol=='Text'?'Class Course':''}}
+                    <div *ngIf="disCol=='Text'">
+                        <mat-icon>class</mat-icon>Class/Course
+                    </div>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <span *ngIf="disCol=='Text'">
@@ -99,7 +109,9 @@
     <mat-table [dataSource]="datasourceAttendanceInfo" style="margin: 15px;">
         <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
             <mat-header-cell *matHeaderCellDef>
-                {{disCol=='Text'?'Attendance':''}}
+                <div *ngIf="disCol=='Text'">
+                    <mat-icon>pan_tool</mat-icon>Attendance
+                </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <span *ngIf="disCol=='Text'">
@@ -115,7 +127,9 @@
     </mat-table>
 </div>
 <mat-list>
-    <div mat-subheader style="background-color:#e6e6e6;padding:20px">Activity/Achievement</div>
+    <div mat-subheader style="background-color:#e6e6e6;padding:20px">
+        <mat-icon>local_activity</mat-icon>Activity/Achievement
+    </div>
     <mat-list-item *ngFor="let item of SportsResultList">
         <mat-icon mat-list-icon>military_tech</mat-icon>
         <div mat-line>{{item.Rank}}: {{item.Achievement}}</div>

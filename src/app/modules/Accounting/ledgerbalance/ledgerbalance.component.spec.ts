@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LedgerAccountComponent } from './ledger-account.component';
+import { LedgerBalanceComponent } from './ledgerbalance.component';
 
 describe('LedgerAccountComponent', () => {
-  let component: LedgerAccountComponent;
-  let fixture: ComponentFixture<LedgerAccountComponent>;
+  let component: LedgerBalanceComponent;
+  let fixture: ComponentFixture<LedgerBalanceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LedgerAccountComponent ]
+      declarations: [ LedgerBalanceComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LedgerAccountComponent);
+    fixture = TestBed.createComponent(LedgerBalanceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

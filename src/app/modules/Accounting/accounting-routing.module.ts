@@ -4,8 +4,9 @@ import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { JournalEntryComponent } from './JournalEntry/JournalEntry.component';
 import { AccountingboardComponent } from './accountingboard/accountingboard.component';
 import { TrialBalanceComponent } from './trial-balance/trial-balance.component';
-import { GeneralLedgerComponent } from './ledger-account/ledger-account.component';
+import { LedgerAccountComponent } from './ledgeraccount/ledgeraccount.component';
 import { AccountNatureComponent } from './accountnature/accountnature.component';
+import { LedgerBalanceComponent } from './ledgerbalance/ledgerbalance.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ export const AccountingComponents=[
   JournalEntryComponent,
   TrialBalanceComponent,
   AccountingboardComponent,
-  GeneralLedgerComponent,
-  AccountNatureComponent
+  LedgerAccountComponent,
+  AccountNatureComponent,
+  LedgerBalanceComponent
 ]

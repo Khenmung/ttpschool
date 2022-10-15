@@ -1,6 +1,9 @@
 :host{
     width: 100%;
 }
+mat-cell:first-of-type,mat-header-cell:first-of-type{
+    padding-left: 0px;
+}
 mat-form-field{
     //margin-right: 15px;
     width:98%;
@@ -15,14 +18,14 @@ button{
 .mat-column-StartDate,.mat-column-EndDate,.mat-column-StudyAreaId,.mat-column-StudyModeId{
     flex: 1 0 135px;
 }
-.mat-column-MaxStudent,.mat-column-MinStudent,
-.mat-column-Action,.mat-column-Confidential{
+.mat-column-MaxStudent,.mat-column-MinStudent
+{
     flex: 1 0 100px;
 }
 .mat-column-ClassId{
-    flex: 1 1 50px;
+    flex: 1 0 40px;
 }
-.mat-column-Sequence,.mat-column-DurationId,.mat-column-Active{
+.mat-column-Sequence,.mat-column-DurationId,.mat-column-Active,.mat-column-Action,.mat-column-Confidential{
     justify-content: center;
     flex: 1 0 80px;
 }

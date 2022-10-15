@@ -57,7 +57,7 @@ export class AddMasterDataComponent implements OnInit {
     "MasterDataName",
     "ParentId",
     "Description",
-    "Logic",
+    //"Logic",
     "Sequence",
     "Confidential",
     "Active",

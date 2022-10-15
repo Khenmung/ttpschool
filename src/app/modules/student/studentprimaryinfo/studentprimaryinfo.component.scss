@@ -1,4 +1,7 @@
-
+::ng-deep .mat-tab-body-content{
+    width: 99% !important;
+    overflow: hidden !important;
+}
 mat-form-field{
     margin-right: 15px;
     width: 98%;

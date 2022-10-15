@@ -399,7 +399,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             'SelectHowMany': fromdb.SubjectType.SelectHowMany
           })
         })
-        console.log("this.ClassSubjectList", this.ClassSubjectList)
+        //console.log("this.ClassSubjectList", this.ClassSubjectList)
       });
 
   }
@@ -484,8 +484,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     ////////
     //console.log("this.StudentSubjectList", this.StudentSubjectList);
     let StudentSubjects = this.StoreForUpdate.filter(s => s.StudentClassId == element.StudentClassId);
-    var groupbySubjectType = alasql("select SubjectTypeId,SubjectType,SelectHowMany from ? group by SubjectTypeId,SubjectType,SelectHowMany"
-      , [StudentSubjects])
+    var groupbySubjectType = alasql("select distinct SubjectTypeId,SubjectType,SelectHowMany from ? ", [StudentSubjects])
     var matchrow;
     for (var prop in element) {
       matchrow = StudentSubjects.filter(x => x.Subject == prop)
@@ -493,10 +492,10 @@ export class studentsubjectdashboardComponent implements OnInit {
         var resultarray = groupbySubjectType.filter(f => f.SubjectTypeId == matchrow[0].SubjectTypeId);
         if (element[prop] == 1) {
           //assuming greater than 20 means compulsory subject types
-          if (resultarray[0].SelectHowMany > 30)
-            matchrow[0].SubjectCount = resultarray[0].SelectHowMany;
-          //resultarray[0].SubjectCount = resultarray[0].SelectHowMany;
-          else
+          // if (resultarray[0].SelectHowMany > 30)
+          //   matchrow[0].SubjectCount = resultarray[0].SelectHowMany;
+          // //resultarray[0].SubjectCount = resultarray[0].SelectHowMany;
+          // else
             resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 1 : resultarray[0].SubjectCount + 1;
         }
         else {
@@ -504,25 +503,27 @@ export class studentsubjectdashboardComponent implements OnInit {
         }
       }
     }
-    //console.log("groupbySubjectType", groupbySubjectType)
-    //console.log("StudentSubjects", StudentSubjects)
+    var _compulsory =groupbySubjectType.filter(f=>f.SubjectType.toLowerCase()=='compulsory')
+    var _otherThanCompulsory =groupbySubjectType.filter(f=>f.SubjectType.toLowerCase()!='compulsory')
     var subjectCounterr = '';
-    groupbySubjectType.forEach(element => {
+    _otherThanCompulsory.forEach(noncompulsory => {
       //element.SelectHowMany =0 meeans optional
-      //element.SelectHowMany >20 means compulsory 
-      if (element.SelectHowMany > 0 && element.SelectHowMany < 30 && element.SubjectCount != element.SelectHowMany) {
-
-        subjectCounterr += " Subject type " + element.SubjectType + " must have " + element.SelectHowMany + " subject(s) selected.";
+      if (noncompulsory.SubjectCount != noncompulsory.SelectHowMany) {
+        subjectCounterr += " Subject type " + noncompulsory.SubjectType + " must have " + noncompulsory.SelectHowMany + " subject(s) selected.";
       }
-
     });
-
-    StudentSubjects.forEach(s => {
-      if (s.SelectHowMany > 30 && s.SubjectCount != s.SelectHowMany) {
-        debugger;
-        subjectCounterr += " Subject type " + s.SubjectType + " must have " + s.SelectHowMany + " subject(s) selected.";
-      }
-    })
+    var compulsorysubjectCount =StudentSubjects.filter(c=>c.SubjectType.toLowerCase()=='compulsory')
+    
+    if(compulsorysubjectCount.length>_compulsory[0].SubjectCount)
+    {
+      subjectCounterr += " Subject type " + _compulsory[0].SubjectType + " must have " + _compulsory[0].SelectHowMany + " subject(s) selected";
+    }
+    // _compulsory.forEach(s => {
+    //   if (s.SelectHowMany > 30 && s.SubjectCount != s.SelectHowMany) {
+    //     debugger;
+    //     subjectCounterr += " Subject type " + s.SubjectType + " must have " + s.SelectHowMany + " subject(s) selected.";
+    //   }
+    // })
     /////////
     if (subjectCounterr.length > 0) {
       this.loading = false; this.PageLoading = false;

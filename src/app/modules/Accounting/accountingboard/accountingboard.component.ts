@@ -5,7 +5,8 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AccountNatureComponent } from '../accountnature/accountnature.component';
 import { JournalEntryComponent } from '../JournalEntry/JournalEntry.component';
-import { GeneralLedgerComponent } from '../ledger-account/ledger-account.component';
+import { LedgerAccountComponent } from '../ledgeraccount/ledgeraccount.component';
+import { LedgerBalanceComponent } from '../ledgerbalance/ledgerbalance.component';
 import { TrialBalanceComponent } from '../trial-balance/trial-balance.component';
 
 @Component({
@@ -17,13 +18,15 @@ export class AccountingboardComponent implements AfterViewInit {
   components:any = [
     JournalEntryComponent,
     AccountNatureComponent,
-    GeneralLedgerComponent,
+    LedgerAccountComponent,
+    LedgerBalanceComponent,
     TrialBalanceComponent
   ];
   LoginUserDetail=[];
   tabNames = [
     { 'label': 'Plan', 'faIcon': '' },
     { 'label': 'Plan Feature', 'faIcon': '' },  
+    { 'label': 'Plan Feature', 'faIcon': '' },    
     { 'label': 'Plan Feature', 'faIcon': '' },    
     { 'label': 'Plan Feature', 'faIcon': '' }    
   ];
@@ -67,11 +70,15 @@ export class AccountingboardComponent implements AfterViewInit {
     this.GetComponents(perObj,comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.LEDGERACCOUNT)
-    var comindx = this.components.indexOf(GeneralLedgerComponent);
+    var comindx = this.components.indexOf(LedgerAccountComponent);
     this.GetComponents(perObj,comindx)
     
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.ACCOUNTNATURE)
     var comindx = this.components.indexOf(AccountNatureComponent);
+    this.GetComponents(perObj,comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.LEDGERBALANCE)
+    var comindx = this.components.indexOf(LedgerBalanceComponent);
     this.GetComponents(perObj,comindx)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

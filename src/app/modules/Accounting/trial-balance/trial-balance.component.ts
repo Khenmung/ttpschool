@@ -14,7 +14,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
-import { IGeneralLedger } from '../ledger-account/ledger-account.component';
+import { IGeneralLedger } from '../ledgeraccount/ledgeraccount.component';
 import {SwUpdate} from '@angular/service-worker';
 
 @Component({

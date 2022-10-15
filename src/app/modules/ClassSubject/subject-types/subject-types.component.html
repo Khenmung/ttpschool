@@ -3,7 +3,7 @@
         <div><strong>Subject Types</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <!-- <alert></alert> -->
+    <i>For "Compulsory", no. of subjects to select should be 1.</i>
     <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="SubjectTypeId">
             <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Id
