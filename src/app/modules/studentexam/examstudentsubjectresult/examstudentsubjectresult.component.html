@@ -4,7 +4,7 @@
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
-<div style="padding: 15px;" fxLayout="row wrap">
+<div style="padding: 15px;flex-direction: column;">
     <!-- <div style="width: 100%;"> -->
     <form [formGroup]="searchForm">
         <mat-form-field appearance="outline" [style.width.px]="200">
@@ -80,11 +80,23 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
-        <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,50,100]">
-        </mat-paginator>
+        <div>
+            <mat-paginator *ngIf="ExamStudentSubjectResult.length>0" style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,50,100]">
+            </mat-paginator>
+        </div>
+    </div>
+    <div style="margin-top:30px;" data-expand="false" #expandWrap>
+        <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+            <mat-icon>info</mat-icon>
+            Guides...</span>
+        <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+            <ol>Settings required before mark entry.
+                <li>Subject Category for each class subjects.</li>
+                <li>Subject Components.</li>
+                <li>Student Subjects.</li>
+                <li>Student Grade.</li>
+                <li>Exam N Calculate.</li>
+            </ol>
+        </span>
     </div>
 </div>
-
-
-<!-- </div> -->
-<!-- </div> -->

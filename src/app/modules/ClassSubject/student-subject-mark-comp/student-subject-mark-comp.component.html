@@ -12,15 +12,15 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Class/Course</mat-label>
             <mat-select formControlName="searchClassId" (selectionChange)="SelectClassSubject()">
-                <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                <mat-option *ngFor="let p of SelectedClasses" [value]="p.ClassId">
                     {{p.ClassName}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Subject</mat-label>
             <mat-select formControlName="searchSubjectId" #SubjectId (selectionChange)="cleardata()">
                 <mat-option value="0">All</mat-option>
@@ -40,9 +40,7 @@
             <mat-icon>copy_all</mat-icon>
         </button>
     </form>
-    <div>If examination has been released, subject component cannot be updated. If a subject component's Pass Mark is > 0, 
-        it means student has to pass on that component. If all components' Pass Mark is equal to zero, 
-        passing criteria is based on <b>Student Grade</b> definition.</div>
+
     <mat-table #table [dataSource]="dataSource" matSort>
 
         <ng-container matColumnDef="ClassSubject">
@@ -61,7 +59,9 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field>
-                    <input #fullMark="ngModel" matInput (blur)="onBlur(element)" type="number" max="1000"
+                    <input #fullMark="ngModel" matInput
+                    style="text-align: right;"
+                    (blur)="onBlur(element)" type="number" max="1000"
                         [value]="element.FullMark" [(ngModel)]="element.FullMark" />
                     <mat-error *ngIf="fullMark?.invalid">
                         <div *ngIf="fullMark.errors.max">Max is 1000</div>
@@ -71,10 +71,12 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="PassMark">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Component Pass Mark </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field>
-                    <input (blur)="onBlur(element)" #PassMark="ngModel" matInput type="number" [max]="1000"
+                    <input (blur)="onBlur(element)"
+                    style="text-align: right;"
+                    #PassMark="ngModel" matInput type="number" [max]="1000"
                         [value]="element.PassMark" [(ngModel)]="element.PassMark" />
                     <mat-error *ngIf="PassMark?.invalid">
                         <div *ngIf="PassMark.errors.max">Max is 1000</div>
@@ -82,10 +84,24 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="OverallPassMark">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Subject Pass Mark </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field>
+                    <input (blur)="onBlur(element)" 
+                    style="text-align: right;"
+                    #OverallPassMark="ngModel" autocomplete="Off" matInput type="number"
+                        [max]="1000" [value]="element.OverallPassMark" [(ngModel)]="element.OverallPassMark" />
+                    <mat-error *ngIf="OverallPassMark?.invalid">
+                        <div *ngIf="OverallPassMark.errors.max">Max is 1000</div>
+                    </mat-error>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="Active">
             <mat-header-cell *matHeaderCellDef>
                 <mat-checkbox matTooltip="select all" (click)="$event.stopPropagation()" (change)="SelectAll($event)">
-                </mat-checkbox>
+                </mat-checkbox>&nbsp; Active
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element)"
@@ -116,5 +132,21 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
+</div>
+<div style="margin-top:30px;" data-expand="false" #expandWrap>
+    <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+        <mat-icon>info</mat-icon>
+        Guides..
+    </span>
+    <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+        <ul>
+            <li>
+                <div>If examination has been released, subject component cannot be updated. If a subject component's
+                    Pass Mark is > 0, it means student has to pass on that component.</div>
+            </li>
+            <li>If all components' Pass Mark is equal to zero,
+                passing criteria is based on <b>Subject Pass Mark</b>.</li>
+        </ul>
+    </span>
 </div>
 <!-- </div> -->

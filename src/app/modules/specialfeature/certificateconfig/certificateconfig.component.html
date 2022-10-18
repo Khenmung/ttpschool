@@ -59,7 +59,7 @@
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
                     <mat-select [(ngModel)]="element.ParentId" [value]="element.ParentId">
-                       
+
                         <mat-option *ngFor="let item of TopCertificateConfig" [value]="item.CertificateConfigId">
                             {{item.Title}}</mat-option>
                     </mat-select>
@@ -113,9 +113,21 @@
     </mat-table>
     <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,50]"></mat-paginator>
 </div>
-<div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center" class="boxes">
-    <strong>Below variable name can be added in certificate definition.</strong>
-    <div *ngFor="let item of StudentVariableNames">
-        {{item}}
-    </div>
+<div style="margin-top:30px;" data-expand="false" #expandWrap>
+    <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+        <mat-icon>info</mat-icon>
+        Guides..</span>
+    <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+        <ol>
+            <li>
+                <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center" class="boxes">
+                    <strong>Below variable name can be added in certificate definition.</strong>
+                    <div *ngFor="let item of StudentVariableNames">
+                        {{item}}
+                    </div>
+                </div>
+            </li>
+
+        </ol>
+    </span>
 </div>

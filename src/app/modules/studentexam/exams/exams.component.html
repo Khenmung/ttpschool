@@ -4,9 +4,7 @@
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
-Until result released, result will not be available for public view. After result released, student exam status will be
-generated and
-marks can no longer be entered/edited for that examination.
+
 <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
 <div style="width: 100%;overflow: auto;justify-content: center;">
     <mat-table #table [dataSource]="dataSource">
@@ -52,11 +50,11 @@ marks can no longer be entered/edited for that examination.
             <mat-header-cell *matHeaderCellDef> Attendance Start Date </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <mat-label>Attendance Start Date</mat-label><input [value]="element.AttendanceStartDate" 
-                    [(ngModel)]="element.AttendanceStartDate" matInput [matDatepicker]="AttendanceStartDate"
-                    (dateChange)="onBlur(element)" autocomplete="off">
-                <mat-datepicker-toggle matSuffix [for]="AttendanceStartDate"></mat-datepicker-toggle>
-                <mat-datepicker #AttendanceStartDate></mat-datepicker>      
+                    <mat-label>Attendance Start Date</mat-label><input [value]="element.AttendanceStartDate"
+                        [(ngModel)]="element.AttendanceStartDate" matInput [matDatepicker]="AttendanceStartDate"
+                        (dateChange)="onBlur(element)" autocomplete="off">
+                    <mat-datepicker-toggle matSuffix [for]="AttendanceStartDate"></mat-datepicker-toggle>
+                    <mat-datepicker #AttendanceStartDate></mat-datepicker>
                 </mat-form-field>
             </mat-cell>
         </ng-container>
@@ -95,8 +93,7 @@ marks can no longer be entered/edited for that examination.
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
                     <textarea matInput [maxlength]="100" autocomplete="Off" (blur)="onBlur(element)"
-                     [(ngModel)]="element.MarkFormula" 
-                     [value]="element.MarkFormula"></textarea>
+                        [(ngModel)]="element.MarkFormula" [value]="element.MarkFormula"></textarea>
                 </mat-form-field>
             </mat-cell>
         </ng-container>
@@ -110,7 +107,7 @@ marks can no longer be entered/edited for that examination.
         </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-               
+
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"
@@ -127,6 +124,17 @@ marks can no longer be entered/edited for that examination.
     </mat-table>
     <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
 </div>
-
-<!-- </div> -->
-<!-- </div> -->
+<div style="margin-top:30px;" data-expand="false" #expandWrap>
+    <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+        <mat-icon>info</mat-icon>
+        Guides..</span>
+    <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+        <ul>
+            <li><b>Average Of</b> column is for Average exam. This column will contains comma separated exam names.</li>
+            <li><b>Attendance Start Date</b> is used for attendance display in exam result.
+                Total Attendance will be calculated from this date till exam <b>End Date</b>.</li>
+            <li>Unless <b>Release Result</b> is ticked, result will not be available for public view. After result released, 
+                student exam status will be generated and marks can no longer be entered/edited for that examination.</li>
+        </ul>
+    </span>
+</div>

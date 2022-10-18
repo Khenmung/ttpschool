@@ -589,7 +589,7 @@ export class VerifyResultsComponent implements OnInit {
 
             var markObtained = alasql("select ExamId,StudentClassSubjectId,SUM(Marks) as Marks FROM ? where StudentClassSubjectId = ? GROUP BY StudentClassSubjectId,ExamId",
               [filteredExistingData, eachsubj.StudentClassSubjectId]);
-            var _subjectPassMarkFullMark = alasql("select ClassSubjectId,SUM(PassMark) as PassMark,SUM(FullMark) as FullMark FROM ? where ClassSubjectId = ? GROUP BY ClassSubjectId",
+            var _subjectPassMarkFullMark = alasql("select ClassSubjectId,SUM(PassMark) as PassMark,SUM(FullMark) as FullMark,SUM(OverallPassMark) as OverallPassMark FROM ? where ClassSubjectId = ? GROUP BY ClassSubjectId",
               [_examSubjectMarkComponentDefn, eachsubj.ClassSubjectId]);
             if (_subjectPassMarkFullMark.length == 0) {
               errormessageforEachSubject += "\nComponent not defined for the subject: " + eachsubj.Subject;
@@ -654,7 +654,9 @@ export class VerifyResultsComponent implements OnInit {
                 else if (_subjectCategoryName == 'marking') {
 
                   if (!failedInComponent)
-                    _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
+                  _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].OverallPassMark;
+                  
+                  //_statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].OverallPassMark
 
                   ForNonGrading["FullMark"] = this.ClassFullMark;
 
@@ -1034,7 +1036,7 @@ export class VerifyResultsComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
 
-    list.fields = ["ClassSubjectMarkComponentId", "ExamId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark"];
+    list.fields = ["ClassSubjectMarkComponentId", "ExamId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark","OverallPassMark"];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=SubjectTypeId,ClassId,Active)"];
     list.filter = ["ExamId ne null and Active eq 1 " + orgIdSearchstr];

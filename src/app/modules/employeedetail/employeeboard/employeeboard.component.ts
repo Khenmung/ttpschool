@@ -6,7 +6,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { EducationhistoryComponent } from '../educationhistory/educationhistory.component';
 import { EmployeeComponent } from '../employee/employee.component';
-import { EmployeeactivityComponent } from '../employeeactivity/employeeactivity.component';
+import { EmployeeactivityComponent } from '../../employeeactivity/employeeactivity/employeeactivity.component';
 import { EmployeedocumentsComponent } from '../employeedocuments/employeedocuments.component';
 import { EmployeeskillComponent } from '../employeeskill/employeeskill.component';
 import { FamilyComponent } from '../family/family.component';

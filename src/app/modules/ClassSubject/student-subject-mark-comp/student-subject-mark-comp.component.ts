@@ -9,7 +9,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-student-subject-mark-comp',
@@ -19,10 +19,6 @@ import {SwUpdate} from '@angular/service-worker';
 export class StudentSubjectMarkCompComponent implements OnInit {
   PageLoading = true;
   @ViewChild(MatSort) sort: MatSort;
-  options = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
 
   loading = false;
   Permission = '';
@@ -53,6 +49,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     ExamId: 0,
     FullMark: 0,
     PassMark: 0,
+    OverallPassMark:0,
     BatchId: 0,
     OrgId: 0,
     Active: 0
@@ -103,10 +100,19 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.SelectedApplicationId = +this.token.getSelectedAPPId();
 
     this.GetMasterData();
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        this.ClassGroupMappings = data.value.map(m=>{
+          m.ClassName = m.Class.ClassName;
+          m.ClassId = m.Class.ClassId;
+          return m;
+        })
+      })
 
   }
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
-  displayedColumns = ['ClassSubject', 'SubjectComponent', 'FullMark', 'PassMark', 'Active', 'Action'];
+  ClassGroupMappings = [];
+  displayedColumns = ['ClassSubject', 'SubjectComponent', 'FullMark', 'PassMark','OverallPassMark', 'Active', 'Action'];
   cleardata() {
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>([]);
@@ -176,6 +182,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           this.classSubjectComponentData.ExamId = row.ExamId;
           this.classSubjectComponentData.FullMark = row.FullMark == '' ? 0 : row.FullMark;
           this.classSubjectComponentData.PassMark = row.PassMark == '' ? 0 : row.PassMark;
+          this.classSubjectComponentData.OverallPassMark = row.OverallPassMark == '' ? 0 : row.OverallPassMark;
           this.classSubjectComponentData.BatchId = this.SelectedBatchId;
           this.classSubjectComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
 
@@ -328,6 +335,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       this.GetClassSubjectComponent(1)
   }
   DisableSaveButton = false;
+  SelectedClasses =[];
   DisableSave() {
     var examobj = this.Exams.filter(f => f.ExamId == this.searchForm.get("searchExamId").value);
     if (examobj.length > 0) {
@@ -340,6 +348,9 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       this.DisableSaveButton = false;
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>([]);
+    var _selectedClassGroupId = examobj[0].ClassGroupId;
+    this.SelectedClasses = this.ClassGroupMappings.filter(g=>g.ClassGroupId ==_selectedClassGroupId);
+
   }
   GetClassSubjectComponent(previousbatch) {
 
@@ -367,6 +378,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       "ExamId",
       "FullMark",
       "PassMark",
+      "OverallPassMark",
       "BatchId",
       "OrgId",
       "Active"
@@ -412,6 +424,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
                 SubjectComponent: this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName,
                 FullMark: 0,
                 PassMark: 0,
+                OverallPassMark:0,
                 BatchId: 0,
                 Active: 0,
                 Action: false
@@ -424,7 +437,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
         if (this.ELEMENT_DATA.length == 0)
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
-
+        //console.log("this.ELEMENT_DATA",this.ELEMENT_DATA)
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
@@ -460,6 +473,7 @@ export interface ISubjectMarkComponent {
   BatchId: number;
   FullMark: number,
   PassMark: number,
+  OverallPassMark:number,
   Active: number;
   Action: boolean;
 }

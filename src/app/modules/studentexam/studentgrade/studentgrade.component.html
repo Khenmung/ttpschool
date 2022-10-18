@@ -31,7 +31,7 @@
                 </button>
             </form>
         </div>
-        <div><b>Grade Points</b> is for student's everage grade calculation.</div>
+       
         <div style="width: 100%;">
             <mat-table style="overflow: auto;min-width: 60vw;min-height: 60vh;" #table [dataSource]="dataSource">
                 <ng-container matColumnDef="StudentGradeId">
@@ -157,5 +157,16 @@
             ngbPopover="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." popoverTitle="Popover on top">
             Popover on top
         </button> -->
+    </div>
+    <div style="margin-top:30px;" data-expand="false" #expandWrap>
+        <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+            <mat-icon>info</mat-icon>
+            Guides..</span>
+        <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+            <ol>
+                <li><b>Grade Points</b> is for student's everage grade calculation.</li>
+                <li>Sequence is mandatory since it defines the sequence of formula execution.</li>
+            </ol>
+        </span>
     </div>
 </div>

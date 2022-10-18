@@ -143,6 +143,10 @@ export class globalconstants {
                     "ATTENDANCE": "attendance",
                     "EMPLOYMENTHISTORY": "employment history",
                     "EMPLOYEEPROFILE": "employee profile"
+                },
+                "employeeactivity":{
+                    "EMPLOYEEACTIVITY":"employee activity",
+                    "ACTIVITY":"activity"
                 }
             },
             "edu": {
@@ -395,8 +399,10 @@ export class globalconstants {
                 "EMPLOYEESKILL": "employee skill",
                 "EMPLOYEEPROFILECATEGORY": "employee profile category",
                 "EMPLOYEEPROFILESUBCATEGORY": "employee profile sub category",
-                "EMPLOYEEUPLOADTYPE": "employee upload type"
-
+                "EMPLOYEEUPLOADTYPE": "employee upload type",
+                "EMPLOYEEACTIVITYSESSION": "employee activity session",
+                "EMPLOYEEACTIVITYCATEGORY": "employee activity category",
+                "EMPLOYEEACTIVITY": "employee activity"
             },
             "StudentVariableName": [
                 "Today",

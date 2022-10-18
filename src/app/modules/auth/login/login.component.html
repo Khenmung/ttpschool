@@ -1,51 +1,110 @@
 <!-- <div fxLayoutAlign="start start" > -->
+<div style="display:flex;justify-content: space-around;width:100%;flex-wrap: wrap;margin-top:60px">
+    <div style="width:50%;font-size: 14px;margin:30px">
+        <!-- <div style="font-size:26px;margin-bottom:30px;flex-wrap: wrap;">Features and Purpose of Education Management
+            System
+        </div>
+        <p>
+            <b>Enquiries and Admissions Management</b><br>
+            With the help of the Education Management System, the most commonly asked questions and enquiries regarding
+            admissions can be easily answered. This can free up a lot of time and resources
+            which can be allocated elsewhere.
+        </p>
+        <p>
+            <b>Management of Fee Collections</b><br>
+            Fee collection can be made easy with the help of the Educational Management System, as it
+            calculates and displays fee amount, due and payment details.
+        </p>
+        <p>
+            <b>Examination Management</b><br>
+            An Education Management System can be useful for planning, scheduling, and informing important
+            information about exams by using scheduling. It can also be used to publish exam
+            results that can be accessed by the students and teachers. Further detailed reports can be created using
+            this data, and based on this, student performance can be tracked.
+        </p>
+        <p>
+            <b>Student Information Management</b><br>
+            This feature helps teachers and parents to access essential information on students' academic activities
+            quickly and easily. This may include fee attendance records, exam results, payment history, and general
+            academic progress.
+        </p>
+        <p>
+            <b>Attendance Management</b><br>
+            Attendance tracking and its management is made entirely easier. Teachers and school administrators do not
+            need to track attendance manually but
+            simply evaluate automatically generated reports and check where there are issues.
+        </p>
+        <p>
+            <b>Lesson Plans & Assignments</b><br>
+            An Education Management System makes it easy for teachers to share assignments and lesson plans with
+            students and their parents in advance. These can be downloaded or printed if required.
+        </p>
+        <p>
+            <b>Automatic Certificate Generation</b><br>
+            Using Education Management System, Students' education related certificate and other sports activities can
+            be generated and print easily.
+        </p>
+        <p>
+            <b>Timetable management </b><br> This function allows you to quickly organize and sort out the subjects and time
+            allocated to each of them according to the class and teacher. A hurriedly made timetable will only bring
+            confusion and more hurdles in running your educational institute smoothly.
+        </p>
+        <p>
+            <b>Evaluation and Assessment</b>
+            This module enables to conduct online test and exams. Evaluation or assessment of the students can be conducted 
+            by defining question and answer that can be re-used over and over again that can saves teachers' huge amount of time.
 
+            Teachers can evaluate online tests and exams using the school management system.
+        </p> -->
+    </div>
+    <div style="margin-top:150px;">
+        <mat-card>
+            <mat-card-title style="margin:30px 0px 0px 30px;">Login</mat-card-title>
+            <mat-card-content>
+                <mat-spinner *ngIf="loading" diameter="25" style="margin:15px;position:relative;margin-left: 50%;">
+                </mat-spinner>
+                <form [formGroup]="loginForm" novalidate style="margin:30px;display: flex;flex-direction: column;">
+                    <mat-form-field>
+                        <mat-label for="username">Email</mat-label>
+                        <input type="text" matInput formControlName="username" required autocomplete="Off" />
+                    </mat-form-field>
+                    <span style="display:flex;width:100%;align-items: baseline;">
+                        <mat-form-field style="width:98%;margin-right: 15px;">
+                            <mat-label for="password">Password</mat-label>
+                            <input [type]="password" matInput formControlName="password" required minlength="6"
+                                autocomplete="Off" />
+                        </mat-form-field>
+                        <span (click)="showhidePassword()">
+                            <mat-icon>{{visibility}}</mat-icon>
+                        </span>
+                    </span>
+                    <div style="margin: 15px 15px 15px 0px;display: flex;flex-direction: row;">
 
-<mat-card>
-    <mat-card-title style="margin:30px 0px 0px 30px;">Login</mat-card-title>
-    <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="25" style="margin:15px;position:relative;margin-left: 50%;">
-        </mat-spinner>
-        <form [formGroup]="loginForm" novalidate style="margin:30px;display: flex;flex-direction: column;">
-            <mat-form-field>
-                <mat-label for="username">Email</mat-label>
-                <input type="text" matInput formControlName="username" required autocomplete="Off" />
-            </mat-form-field>
-            <span style="display:flex;width:100%;align-items: baseline;">
-                <mat-form-field style="width:98%;margin-right: 15px;">
-                    <mat-label for="password">Password</mat-label>
-                    <input [type]="password" matInput formControlName="password" required minlength="6"
-                        autocomplete="Off" />
-                </mat-form-field>
-                <span (click)="showhidePassword()">
-                    <mat-icon>{{visibility}}</mat-icon>
-                </span>
-            </span>
-            <div style="margin: 15px 15px 15px 0px;display: flex;flex-direction: row;">
+                        <button [disabled]="loading" mat-raised-button color="accent" (click)="onSubmit()"
+                            matTooltip="login">
+                            <mat-icon>login</mat-icon>
+                        </button>
+                        <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" mat-raised-button>
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </div>
+                    <div style="margin: 15px 15px 15px 0px;">
+                        <a [routerLink]="['/auth/forgot']">Forgot password</a>
+                    </div>
+                    <div style="margin: 15px 15px 15px 0px;">
+                        New user? <a [routerLink]="['/auth/signup']">Sign up</a>
+                    </div>
+                    <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)"
+                        class="alert alert-danger">
 
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="onSubmit()" matTooltip="login">
-                    <mat-icon>login</mat-icon>
-                </button>
-                <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" mat-raised-button>
-                    <mat-icon>cancel</mat-icon>
-                </button>
-            </div>
-            <div style="margin: 15px 15px 15px 0px;">
-                <a [routerLink]="['/auth/forgot']">Forgot password</a>
-            </div>
-            <div style="margin: 15px 15px 15px 0px;">
-                New user? <a [routerLink]="['/auth/signup']">Sign up</a>
-            </div>
-            <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
-
-                <div *ngIf="f.username.errors?.['required']">
-                    Email is required.
-                </div>
-                <!-- <div *ngIf="f.username.errors?.['minlength']">
+                        <div *ngIf="f.username.errors?.['required']">
+                            Email is required.
+                        </div>
+                        <!-- <div *ngIf="f.username.errors?.['minlength']">
                         User name must be at least 6 characters long.
                     </div>                     -->
-            </div>
-            <!-- <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
+                    </div>
+                    <!-- <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
 
                     <div *ngIf="f.password.errors?.['required']">
                         password is required.
@@ -54,12 +113,13 @@
                         password must be at least 6 characters long.
                     </div>                    
                 </div> -->
-        </form>
-        <!-- </div> -->
-        <div class="alert alert-success col-md-12" *ngIf="isLoggedIn">
-            Logged in as {{ username }}.
-        </div>
+                </form>
+                <!-- </div> -->
+                <div class="alert alert-success col-md-12" *ngIf="isLoggedIn">
+                    Logged in as {{ username }}.
+                </div>
 
-    </mat-card-content>
-</mat-card>
-<!-- </div> -->
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

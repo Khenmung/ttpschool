@@ -16,15 +16,22 @@ button{
     margin-right: 15px;
 }
 .mat-card{
+    justify-content: center;
     position: relative;
     height: max-content;
     //margin-top:100px; 
-    margin: 60px;
-    width: 50%;
+    //margin: 60px;
+    width: 500px;
 }
 .width100{
     width: 100%;
 }
 .width80{
     width: 40%;
+}
+@media only screen and (max-width: 500px) {
+    mat-card{
+        width: 100%;
+    }
+    
 }

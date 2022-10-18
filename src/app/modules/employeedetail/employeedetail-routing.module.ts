@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { EducationhistoryComponent } from './educationhistory/educationhistory.component';
 import { EmployeeComponent } from './employee/employee.component';
-import { EmployeeactivityComponent } from './employeeactivity/employeeactivity.component';
+import { EmployeeactivityComponent } from '../employeeactivity/employeeactivity/employeeactivity.component';
 import { EmployeeboardComponent } from './employeeboard/employeeboard.component';
 import { EmployeedocumentsComponent } from './employeedocuments/employeedocuments.component';
 import { EmployeesearchComponent } from './employeesearch/employeesearch.component';
@@ -36,6 +36,5 @@ export const EmployeeDetailComponents = [
   FamilyComponent,
   EmployeesearchComponent,
   EmployeeskillComponent,
-  GradehistoryComponent,
-  EmployeeactivityComponent
+  GradehistoryComponent
 ]

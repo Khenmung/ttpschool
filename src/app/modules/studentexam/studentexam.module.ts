@@ -7,6 +7,7 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import {CdkAccordionModule} from '@angular/cdk/accordion';
 
 @NgModule({
   declarations: [studentexamComponents],
@@ -19,8 +20,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MaterialModule,
     StudentSubjectModule,
     SharedhomepageModule,
-    FlexLayoutModule
-    //MatFormFieldModule
+    FlexLayoutModule,
+    CdkAccordionModule
   ],
   exports:[
     studentexamComponents,

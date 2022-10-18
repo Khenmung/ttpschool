@@ -135,6 +135,10 @@ const routes: Routes = [
     path: 'globaladmin/inv',
     loadChildren: () => import('./modules/globaladmininvoice/globaladmininvoice.module').then(m => m.GlobaladmininvoiceModule)
   },
+  {
+    path: 'emp/employeeactivity',
+    loadChildren: () => import('./modules/employeeactivity/employeeactivity.module').then(m=>m.EmployeeactivityModule)
+  },
   { path: '**', component: NotfoundComponent },
   
 

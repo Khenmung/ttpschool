@@ -2,8 +2,12 @@
 //     //position: absolute;
 //     margin-top: 100px;
 // }
+// mat-cell{
+//     width: 99%;
+// }
 mat-form-field{
     margin-right:15px;
+    width:99%;
 }
 button{
     margin-right:15px;
@@ -13,10 +17,15 @@ button{
 {
     flex: 1 1 150px;
 }
-.mat-column-Action
-.mat-column-Active,
+//.mat-column-Action
+.mat-column-Active{
+    justify-content: center;
+    flex: 1 1 70px;
+}
 .mat-column-FullMark,
 .mat-column-PassMark,
+.mat-column-OverallPassMark,
 .mat-column-Action{
-    flex: 1 1 100px;
+    justify-content: flex-end;
+    flex: 1 0 100px;
 }

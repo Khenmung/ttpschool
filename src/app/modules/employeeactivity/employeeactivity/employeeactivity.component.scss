@@ -1,18 +1,19 @@
 mat-form-field{
     width: 98%;
+    margin-right: 15px;
 }
-.mat-column-EmployeeActivityId,.mat-column-Active,.mat-column-Action{
+.mat-column-Active,.mat-column-Action{
     flex:0 0 100px;
 }
 .mat-column-EmployeeActivityId{
     flex:0 0 70px;
 }
-.mat-column-ActivityDate{
+.mat-column-AchievementDate{
     flex:0 0 130px;
 }
 .mat-column-EmployeeActivity{
     flex:0 0  150px;
 }
-.mat-column-EmployeeActivityCategory,.mat-column-EmployeeActivitySubCategory{
+.mat-column-Category,.mat-column-SubCategory{
     flex:0 0  120px;
 }

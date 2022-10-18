@@ -27,10 +27,6 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
-  options = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   Designations = [];
   filterOrgIdNBatchId = '';
   filterOrgIdOnly = '';

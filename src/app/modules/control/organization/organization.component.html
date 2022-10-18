@@ -2,12 +2,9 @@
     <div><strong>Organization</strong></div>
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-<!-- <alert></alert> -->
-<!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
 <form [formGroup]="searchForm">
     <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
         <mat-form-field appearance="outline">
-            <!-- <mat-label>Organization</mat-label> -->
             <mat-select formControlName="searchCustomerId">
                 <mat-option [value]="0">select</mat-option>
                 <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
@@ -18,10 +15,10 @@
         <span *ngIf="LoginUserDetail[0]['org'] =='TTP'">
             <button [disabled]="loading || Permission=='read'" matTooltip="search" mat-raised-button color="accent"
                 (click)="GetOrganizationDetail()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
         </span>
         <div style="width: 100%;display: flex;justify-content: center;">
@@ -46,9 +43,6 @@
 
     </div>
     <mat-grid-list cols="2" rowHeight="90px">
-        <!-- <mat-grid-tile [colspan]="1" [rowspan]="1">
-            {{OrganizationId}}
-        </mat-grid-tile> -->
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline" fxFlex>
                 <mat-label>Address</mat-label>
@@ -116,20 +110,6 @@
                 <input formControlName="WebSite" (blur)="OnBlur()" autocomplete="Off" #input matInput [maxlength]="250">
             </mat-form-field>
         </mat-grid-tile>
-        <!-- <mat-grid-tile [colspan]="1" [rowspan]="1" style="display: flex;justify-content:flex-end">             -->
-
-        <!-- <mat-checkbox (click)="deActivate($event)" formControlName="Active">
-        </mat-checkbox>&nbsp; Active -->
-        <!-- </mat-grid-tile>
-        <mat-grid-tile [colspan]="1" [rowspan]="1" style="display: flex;justify-content:flex-start"> -->
-        <!-- <button [disabled]="loading || !Action" matTooltip="save" 
-mat-raised-button color="accent" (click)="UpdateOrSave()">
-             <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-        </button> -->
-        <!-- </mat-grid-tile> -->
     </mat-grid-list>
     <div style="display: flex;justify-content: center;align-items: baseline; width:100%">
         <span>
@@ -137,136 +117,14 @@ mat-raised-button color="accent" (click)="UpdateOrSave()">
                 <mat-checkbox (change)="deActivate($event)" formControlName="Active">
                 </mat-checkbox>&nbsp; Active &nbsp;&nbsp;
             </span>
-            <button [disabled]="loading || !Action" matTooltip="save" 
-mat-raised-button color="accent" (click)="UpdateOrSave()">
-                 <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+            <button [disabled]="loading || !Action" matTooltip="save" mat-raised-button color="accent"
+                (click)="UpdateOrSave()">
+                <mat-icon>save</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
         </span>
     </div>
 </form>
 
-<!-- <mat-table #table [dataSource]="dataSource">
-    <ng-container matColumnDef="OrganizationId">
-        <mat-header-cell *matHeaderCellDef>Id
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.OrganizationId}}
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Address">
-        <mat-header-cell *matHeaderCellDef>Address
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
-                <textarea matInput [(ngModel)]="element.Address" [value]="element.Address"></textarea>
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="RegistrationNo">
-        <mat-header-cell *matHeaderCellDef>Registration No.
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
-                <textarea matInput [(ngModel)]="element.RegistrationNo" [value]="element.RegistrationNo"></textarea>
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="CountryId">
-        <mat-header-cell *matHeaderCellDef>Country
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
-                <mat-select (selectionChange)="PopulateState($event)" [(ngModel)]="element.CountryId"
-                    [value]="element.CountryId">
-                    <mat-option *ngFor="let item of Country" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="StateId">
-        <mat-header-cell *matHeaderCellDef>State
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
-                <mat-select (selectionChange)="PopulateCity($event)" [(ngModel)]="element.StateId"
-                    [value]="element.StateId">
-                    <mat-option *ngFor="let item of States" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="CityId">
-        <mat-header-cell *matHeaderCellDef>City
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
-                <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.CityId" [value]="element.CityId">
-                    <mat-option *ngFor="let item of City" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Contact">
-        <mat-header-cell *matHeaderCellDef>Contact
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
-                <input (onBlur)="onBlur(element)" autocomplete="Off" matInput [(ngModel)]="element.Contact"
-                    [value]="element.Contact" [maxlength]="12">
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="CreatedDate">
-        <mat-header-cell *matHeaderCellDef>Registered On
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.CreatedDate|date:'dd/MM/yyyy hh:mm'}}
-     
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="ValidTo">
-        <mat-header-cell *matHeaderCellDef>Valid Till
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.ValidTo|date:'dd/MM/yyyy hh:mm'}}      
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Active">
-        <mat-header-cell *matHeaderCellDef style="justify-content: center;"> Active </mat-header-cell>
-        <mat-cell *matCellDef="let element" style="justify-content: center;">
-            <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                [checked]="element.Active==1?true:false">
-            </mat-checkbox>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Action">
-        <mat-header-cell *matHeaderCellDef>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-            <button [disabled]="loading || !element.Action" matTooltip="save" 
-mat-raised-button color="accent"
-                (click)="UpdateOrSave(element)">
-                 <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-            </button>
-        </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" style="display: flex;align-items: baseline;">
-    </mat-row>
-</mat-table>
-<mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,30]"></mat-paginator> -->
-<!-- </div> -->
-<!-- <div style="width:100%; display: flex;align-items: center; justify-content: center;padding: 15px 15px 15px 0px">
-    <button [disabled]="loading" class="mat-raised-button" matTooltip="login" (click)="login()">
-        <mat-icon>login</mat-icon>
-    </button>
-</div> -->

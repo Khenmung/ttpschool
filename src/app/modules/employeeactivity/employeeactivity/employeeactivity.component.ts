@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
-import { UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -9,26 +9,19 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-employeeactivity',
   templateUrl: './employeeactivity.component.html',
   styleUrls: ['./employeeactivity.component.scss']
 })
-export class EmployeeactivityComponent implements OnInit { PageLoading=true;
+export class EmployeeactivityComponent implements OnInit {
+  PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   SelectedApplicationId = 0;
   EmployeeId = 0;
   Permission = '';
@@ -36,9 +29,11 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
   loading = false;
   EmployeeActivityList: IEmployeeActivity[] = [];
   SelectedBatchId = 0;
+  EmployeeActivity=[];
+  EmployeeActivitySession = [];
   EmployeeActivityCategories = [];
   EmployeeActivitySubCategories = [];
-  Classes = [];
+  //Classes = [];
   Batches = [];
   Employees: IEmployee[] = [];
   filteredOptions: Observable<IEmployee[]>;
@@ -47,21 +42,29 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
 
   EmployeeActivityData = {
     EmployeeActivityId: 0,
-    Activity: '',
-    EmployeeActivityCategoryId: 0,
-    EmployeeActivitySubCategoryId: 0,
-    ActivityDate: new Date(),
+    Achievement: '',
+    RankId: 0,
+    ActivityNameId: 0,
+    GroupId: 0,
+    CategoryId: 0,
+    SubCategoryId: 0,
     EmployeeId: 0,
-    Active: 0
+    AchievementDate: new Date(),
+    SessionId: 0,
+    BatchId: 0,
+    OrgId: 0,
+    Active: 0,
   };
   EmployeeActivityForUpdate = [];
   displayedColumns = [
-    "EmployeeActivityId",
-    "EmployeeActivityCategoryId",
-    "EmployeeActivitySubCategoryId",    
-    "Activity",
-    "ActivityDate",
-    "Active",
+    'EmployeeActivityId',
+    'Achievement',
+    'Secured',
+    'CategoryId',
+    'SubCategoryId',
+    'AchievementDate',
+    'SessionId',
+    'Active',
     'Action'
   ];
   searchForm: UntypedFormGroup;
@@ -69,10 +72,9 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
     private nav: Router,
-    private shareddata: SharedataService,
     private datepipe: DatePipe,
+    private fb: UntypedFormBuilder,
   ) { }
 
   ngOnInit(): void {
@@ -84,15 +86,17 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
       })
     })
     //debugger;
-    // this.searchForm = this.fb.group({
-    //   searchStudentName: [0]
-    // });
-    // this.filteredOptions = this.searchForm.get("searchStudentName").valueChanges
-    //   .pipe(
-    //     startWith(''),
-    //     map(value => typeof value === 'string' ? value : value.Name),
-    //     map(Name => Name ? this._filter(Name) : this.Students.slice())
-    //   );
+    this.searchForm = this.fb.group({
+      searchEmployeeName: [0],
+      searchActivity:[0],
+      searchSession:[0]
+    });
+    this.filteredOptions = this.searchForm.get("searchEmployeeName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(Name => Name ? this._filter(Name) : this.Employees.slice())
+      );
     this.EmployeeId = this.tokenstorage.getEmployeeId();
     this.PageLoad();
   }
@@ -120,13 +124,6 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
-        if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.Classes = [...data.value];
-
-          });
-
-        }
 
       }
     }
@@ -140,19 +137,23 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
   AddNew() {
     var newItem = {
       EmployeeActivityId: 0,
-      Activity: '',
-      EmployeeActivityCategoryId: 0,
-      EmployeeActivitySubCategoryId: 0,
-      ActivityDate: new Date(),
+      Achievement: '',
+      RankId: 0,
+      ActivityNameId: 0,
+      GroupId: 0,
+      CategoryId: 0,
+      SubCategoryId: 0,
       EmployeeId: 0,
-      Active: 0,
+      AchievementDate: new Date(),
+      SessionId: 0,
+      BatchId: 0,
       Action: false
     }
     this.EmployeeActivityList = [];
@@ -162,16 +163,31 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
   UpdateOrSave(row) {
 
     //debugger;
+    var _employeeId = this.searchForm.get("searchEmployeeName").value.EmployeeId;
+    var _sessionId = this.searchForm.get("searchSessionId").value;
     this.loading = true;
-    let checkFilterString = "EmployeeActivityCategoryId eq " + row.EmployeeActivityCategoryId +
-    " and EmployeeActivitySubCategoryId eq " + row.EmployeeActivitySubCategoryId;
-    " and EmployeeId eq " + row.EmployeeId +     
-    " and ActivityDate eq " + this.datepipe.transform(row.ActivityDate,'yyyy-MM-dd');
+    if (_employeeId == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select employee.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_sessionId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    let checkFilterString = "Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    if (row.CategoryId > 0)
+      checkFilterString += " and CategoryId eq " + row.CategoryId
+    if (row.SubCategoryId > 0)
+      checkFilterString += " and SubCategoryId eq " + row.SubCategoryId;
 
+    if (_sessionId > 0)
+      checkFilterString += " and SessionId eq " + _sessionId;
+    checkFilterString += " and EmployeeId eq " + _employeeId
 
     if (row.EmployeeActivityId > 0)
       checkFilterString += " and EmployeeActivityId ne " + row.EmployeeActivityId;
-    checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
     list.fields = ["EmployeeActivityId"];
     list.PageName = "EmployeeActivities";
@@ -181,7 +197,7 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -189,42 +205,38 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
           this.EmployeeActivityForUpdate = [];;
           //console.log("inserting-1",this.EmployeeActivityForUpdate);
-          this.EmployeeActivityForUpdate.push(
-            {
-              EmployeeActivityId: row.EmployeeActivityId,
-              Activity: row.Activity,
-              EmployeeActivityCategoryId: row.EmployeeActivityCategoryId,
-              EmployeeActivitySubCategoryId: row.EmployeeActivitySubCategoryId,
-              ActivityDate: row.ActivityDate,
-              EmployeeId: this.EmployeeId,
-              OrgId: this.LoginUserDetail[0]["orgId"],
-              Active: row.Active
-            });
 
-          if (this.EmployeeActivityForUpdate[0].EmployeeActivityId == 0) {
-            this.EmployeeActivityForUpdate[0]["CreatedDate"] = new Date();
-            this.EmployeeActivityForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.EmployeeActivityForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.EmployeeActivityForUpdate[0]["UpdatedBy"];
-            //delete this.EmployeeActivityForUpdate[0]["SubCategories"];
-            //console.log("inserting2",this.EmployeeActivityForUpdate);
-            this.insert(row, this.EmployeeActivityForUpdate[0]);
+          this.EmployeeActivityData.EmployeeActivityId = row.EmployeeActivityId;
+          this.EmployeeActivityData.ActivityNameId = row.ActivityNameId;
+          this.EmployeeActivityData.CategoryId = row.CategoryId;
+          this.EmployeeActivityData.SubCategoryId = row.SubCategoryId;
+          this.EmployeeActivityData.AchievementDate = row.AchievementDate;
+          this.EmployeeActivityData.EmployeeId = this.EmployeeId;
+          this.EmployeeActivityData.OrgId = this.LoginUserDetail[0]["orgId"],
+            this.EmployeeActivityData.Achievement = row.Achievement;
+          this.EmployeeActivityData.SessionId = row.SessionId;
+          this.EmployeeActivityData.BatchId = row.BatchId;
+          this.EmployeeActivityData.Active = row.Active;
+
+          if (this.EmployeeActivityData.EmployeeActivityId == 0) {
+            this.EmployeeActivityData["CreatedDate"] = new Date();
+            this.EmployeeActivityData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.EmployeeActivityData["UpdatedDate"] = new Date();
+            delete this.EmployeeActivityData["UpdatedBy"];
+            this.insert(row, this.EmployeeActivityData);
           }
           else {
-            this.EmployeeActivityForUpdate[0]["CreatedDate"] = new Date(row.CreatedDate);
-            this.EmployeeActivityForUpdate[0]["CreatedBy"] = row.CreatedBy;
-            this.EmployeeActivityForUpdate[0]["UpdatedDate"] = new Date();
-            //delete this.EmployeeActivityForUpdate[0]["EmployeeSubCategories"];
-            delete this.EmployeeActivityForUpdate[0]["UpdatedBy"];
-            //this.EmployeeActivityForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.EmployeeActivityData["CreatedDate"] = new Date(row.CreatedDate);
+            this.EmployeeActivityData["CreatedBy"] = row.CreatedBy;
+            this.EmployeeActivityData["UpdatedDate"] = new Date();
+            this.EmployeeActivityData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
-            //this.update(row);
           }
         }
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row, toinsert) {
     //console.log("inserting",this.EmployeeActivityForUpdate);
@@ -246,27 +258,35 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
   GetEmployeeActivity() {
-    //debugger;
+    debugger;
     this.loading = true;
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+    var _employeeId = this.searchForm.get("searchEmployeeName").value.EmployeeId;
+    if (_employeeId == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select employee.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    filterStr += ' and EmployeeId eq ' + this.EmployeeId
+    filterStr += ' and EmployeeId eq ' + _employeeId
     let list: List = new List();
     list.fields = [
       'EmployeeActivityId',
+      'Achievement',
+      'Secured',
+      'ActivityNameId',
+      'GroupId',
+      'CategoryId',
+      'SubCategoryId',
       'EmployeeId',
-      'EmployeeActivityCategoryId',
-      'EmployeeActivitySubCategoryId',
-      'Activity',
-      'ActivityDate',
-      'Remarks',
-      'Active'
+      'AchievementDate',
+      'SessionId',
+      'BatchId'
     ];
 
     list.PageName = "EmployeeActivities";
@@ -279,39 +299,31 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.EmployeeActivityList = data.value.map(item => {
-            return {
-              EmployeeActivityId: item.EmployeeActivityId,
-              EmployeeId: item.EmployeeId,
-              Activity: item.Activity,
-              EmployeeActivityCategoryId: item.EmployeeActivityCategoryId,
-              ActivitySubCategory: this.allMasterData.filter(f => f.ParentId == item.EmployeeActivityCategoryId),
-              EmployeeActivitySubCategoryId: item.EmployeeActivitySubCategoryId,
-              ActivityDate: item.ActivityDate,
-              Remark: item.Remarks,
-              Active: item.Active,
-              Action: false
-            }
+            item.Action = false;
+            return item;
           })
         }
-
+        if (this.EmployeeActivityList.length > 0) {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+        }
         //console.log('EmployeeActivity', this.EmployeeActivityList)
         this.dataSource = new MatTableDataSource<IEmployeeActivity>(this.EmployeeActivityList);
         this.loadingFalse();
       });
 
   }
-
+  
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Batches = this.tokenstorage.getBatches()
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.EmployeeActivityCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEPROFILECATEGORY);
-        //this.EmployeeActivitySubCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSUBCATEGORY);
+        this.EmployeeActivity=this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITY);
+        this.EmployeeActivityCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYCATEGORY);
+        this.EmployeeActivitySession = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSESSION);
         this.GetEmployees();
-        this.GetEmployeeActivity();
+        //this.GetEmployeeActivity();
       });
   }
   onBlur(row) {
@@ -362,7 +374,7 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
-            var _lastname = Employee.LastName == null? '' : " " + Employee.LastName;
+            var _lastname = Employee.LastName == null ? '' : " " + Employee.LastName;
             var _name = Employee.FirstName + _lastname;
             var _fullDescription = _name + "-" + Employee.ContactNo;
             return {
@@ -372,18 +384,22 @@ export class EmployeeactivityComponent implements OnInit { PageLoading=true;
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false;
+        this.PageLoading = false;
       })
   }
 }
 export interface IEmployeeActivity {
   EmployeeActivityId: number;
-  Activity: string;
-  EmployeeActivityCategoryId: number;
-  EmployeeActivitySubCategoryId: number;
-  ActivityDate: Date;
+  Achievement: string;
+  RankId: number;
+  ActivityNameId: number;
+  GroupId: number;
+  CategoryId: number;
+  SubCategoryId: number;
   EmployeeId: number;
-  Active: number;
+  AchievementDate: Date;
+  SessionId: number;
   Action: boolean;
 }
 export interface IEmployee {
