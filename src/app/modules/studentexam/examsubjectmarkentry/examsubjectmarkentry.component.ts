@@ -13,11 +13,11 @@ import alasql from 'alasql';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
-  selector: 'app-examstudentsubjectresult',
-  templateUrl: './examstudentsubjectresult.component.html',
-  styleUrls: ['./examstudentsubjectresult.component.scss']
+  selector: 'app-examsubjectmarkentry',
+  templateUrl: './examsubjectmarkentry.component.html',
+  styleUrls: ['./examsubjectmarkentry.component.scss']
 })
-export class ExamstudentsubjectresultComponent implements OnInit {
+export class ExamSubjectMarkEntryComponent implements OnInit {
 @ViewChild(MatPaginator) paginator:MatPaginator;
 
   PageLoading = true;
@@ -338,7 +338,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
               StudentClassSubjectId: s.StudentClassSubjectId,
               ClassSubjectId: s.ClassSubjectId,
               StudentClassId: s.StudentClassId,
-              StudentClassSubject: s.StudentClass.RollNo + ' - ' + _studname + ' - ' + _class + ' - ' + _section + ' - ' + _subject,
+              RollNo:s.StudentClass.RollNo,
+              StudentClassSubject: s.StudentClass.RollNo + '-' + _studname + '-' + _class + '-' + _section + ' - ' + _subject,
               SubjectId: s.ClassSubject.SubjectId,
               ClassId: s.ClassSubject.ClassId,
               StudentId: s.StudentClass.StudentId,
@@ -544,6 +545,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         }
         filteredStudentSubjects.forEach(ss => {
           forDisplay = {
+            RollNo:ss.RollNo,
             StudentClassSubject: ss.StudentClassSubject,
             StudentClassSubjectId: ss.StudentClassSubjectId
           }
@@ -574,7 +576,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 Grade: existing[0].Grade,
                 ExamStatus: existing[0].ExamStatus,
                 Active: existing[0].Active,
-                Action: true
+                Action: false
               }
               _toPush[_ComponentName] = existing[0].Marks;
               forDisplay[_ComponentName] = existing[0].Marks;
@@ -614,7 +616,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 Grade: '',
                 ExamStatus: 0,
                 Active: 0,
-                Action: true
+                Action: false
               }
               _toPush[_componentName] = _mark;
               forDisplay[_componentName] = _mark;
@@ -622,11 +624,11 @@ export class ExamstudentsubjectresultComponent implements OnInit {
               this.StoredForUpdate.push(_toPush);
             }
           })
-          forDisplay["Action"] = true;
+          //forDisplay["Action"] = true;
           this.ExamStudentSubjectResult.push(forDisplay);
 
         })
-        this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.sort((a, b) => a.StudentClassSubject.localeCompare(b.StudentClassSubject));
+        this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.sort((a, b) => a.RollNo -b.RollNo);
         //console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
@@ -910,6 +912,7 @@ export interface IExamStudentSubjectResult {
   ExamStudentSubjectResultId: number;
   ExamId: number;
   StudentClassSubjectId: number;
+  RollNo:number;
   StudentClassSubject: string;
   ClassSubjectMarkComponentId: number;
   SubjectMarkComponent: string;

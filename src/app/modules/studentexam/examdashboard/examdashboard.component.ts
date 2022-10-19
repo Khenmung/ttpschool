@@ -6,7 +6,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ExamsComponent } from '../exams/exams.component';
 import { ExamslotComponent } from '../examslot/examslot.component';
-import { ExamstudentsubjectresultComponent } from '../examstudentsubjectresult/examstudentsubjectresult.component';
+import { ExamSubjectMarkEntryComponent } from '../examsubjectmarkentry/examsubjectmarkentry.component';
 import { VerifyResultsComponent } from '../verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubject.component';
 import { StudentgradeComponent } from '../studentgrade/studentgrade.component';
@@ -28,7 +28,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     ExamncalculateComponent,
     ExamslotComponent,
     SlotnclasssubjectComponent,
-    ExamstudentsubjectresultComponent,
+    ExamSubjectMarkEntryComponent,
     VerifyResultsComponent,
     VerifyresultstatusComponent
   ];
@@ -114,7 +114,7 @@ export class ExamdashboardComponent implements AfterViewInit {
         comindx = this.components.indexOf(ExamslotComponent);
         break;
       case globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT:
-        comindx = this.components.indexOf(ExamstudentsubjectresultComponent);
+        comindx = this.components.indexOf(ExamSubjectMarkEntryComponent);
         break;
       case globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT:
         comindx = this.components.indexOf(SlotnclasssubjectComponent);

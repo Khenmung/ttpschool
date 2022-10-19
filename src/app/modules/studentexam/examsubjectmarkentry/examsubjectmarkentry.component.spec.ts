@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExamstudentsubjectresultComponent } from './examstudentsubjectresult.component';
+import { ExamSubjectMarkEntryComponent } from './examsubjectmarkentry.component';
 
-describe('ExamstudentsubjectresultComponent', () => {
-  let component: ExamstudentsubjectresultComponent;
-  let fixture: ComponentFixture<ExamstudentsubjectresultComponent>;
+describe('ExamSubjectMarkEntryComponent', () => {
+  let component: ExamSubjectMarkEntryComponent;
+  let fixture: ComponentFixture<ExamSubjectMarkEntryComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [ExamstudentsubjectresultComponent],
+    declarations: [ExamSubjectMarkEntryComponent],
     teardown: { destroyAfterEach: false }
 })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExamstudentsubjectresultComponent);
+    fixture = TestBed.createComponent(ExamSubjectMarkEntryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

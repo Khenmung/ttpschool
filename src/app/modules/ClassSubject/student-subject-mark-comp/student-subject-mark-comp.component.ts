@@ -49,7 +49,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     ExamId: 0,
     FullMark: 0,
     PassMark: 0,
-    OverallPassMark:0,
+    OverallPassMark: 0,
     BatchId: 0,
     OrgId: 0,
     Active: 0
@@ -86,7 +86,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.searchForm = this.fb.group({
           searchExamId: [0],
           searchSubjectId: [0],
-          searchClassId: [0]
+          searchClassId: [0],
+          searchCopyExamId: [0]
         });
         //debugger;
         //this.GetClassFee();
@@ -102,7 +103,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.GetMasterData();
     this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
       .subscribe((data: any) => {
-        this.ClassGroupMappings = data.value.map(m=>{
+        this.ClassGroupMappings = data.value.map(m => {
           m.ClassName = m.Class.ClassName;
           m.ClassId = m.Class.ClassId;
           return m;
@@ -112,7 +113,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   ClassGroupMappings = [];
-  displayedColumns = ['ClassSubject', 'SubjectComponent', 'FullMark', 'PassMark','OverallPassMark', 'Active', 'Action'];
+  displayedColumns = ['ClassSubjectMarkComponentId', 'ClassSubject', 'SubjectComponent', 'FullMark', 'PassMark', 'OverallPassMark', 'Active', 'Action'];
   cleardata() {
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>([]);
@@ -329,13 +330,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   CopyFromPreviousBatch() {
     //console.log("here ", this.PreviousBatchId)
     this.PreviousBatchId = +this.token.getPreviousBatchId();
-    if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+    if (this.ELEMENT_DATA.length == 0)
+      this.contentservice.openSnackBar("First search data to update.", globalconstants.ActionText, globalconstants.RedBackground);
     else
       this.GetClassSubjectComponent(1)
   }
   DisableSaveButton = false;
-  SelectedClasses =[];
+  SelectedClasses = [];
   DisableSave() {
     var examobj = this.Exams.filter(f => f.ExamId == this.searchForm.get("searchExamId").value);
     if (examobj.length > 0) {
@@ -349,25 +350,37 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>([]);
     var _selectedClassGroupId = examobj[0].ClassGroupId;
-    this.SelectedClasses = this.ClassGroupMappings.filter(g=>g.ClassGroupId ==_selectedClassGroupId);
+    this.SelectedClasses = this.ClassGroupMappings.filter(g => g.ClassGroupId == _selectedClassGroupId);
 
   }
-  GetClassSubjectComponent(previousbatch) {
+  datafromotherexam = '';
+  GetClassSubjectComponent(otherExam) {
+    debugger;
+    var _copyExamId = this.searchForm.get("searchCopyExamId").value;
+    var _examId = this.searchForm.get("searchExamId").value;
 
-    if (this.searchForm.get("searchExamId").value == 0) {
-      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
+    var filterstr = "";
+    if (otherExam == 1) {
+      this.datafromotherexam = 'Data from ' + this.Exams.filter(e => e.ExamId == _copyExamId)[0].ExamName;
+      if (_copyExamId == 0) {
+        this.contentservice.openSnackBar("Please select exam to copy from.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+      filterstr += 'ExamId eq ' + _copyExamId + " and " + this.StandardOrgIdWithBatchId;
+    }
+    else {
+      this.datafromotherexam = '';
+      if (_examId == 0) {
+        this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+      filterstr += "ExamId eq " + _examId + " and " + this.StandardOrgIdWithBatchId;
     }
     if (this.searchForm.get("searchClassId").value == 0) {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    var _examId = this.searchForm.get("searchExamId").value;
-    var filterstr = 'ExamId eq ' + _examId;
-    if (previousbatch == 1)
-      filterstr += " and " + this.StandardOrgIdWithPreviousBatchId;
-    else
-      filterstr += " and " + this.StandardOrgIdWithBatchId;
+
 
     this.loading = true;
     let list: List = new List();
@@ -387,7 +400,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)"];
     list.filter = ["Active eq 1 and " + filterstr];
     //list.orderBy = "ParentId";
-    this.ELEMENT_DATA = [];
+    //this.ELEMENT_DATA = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -400,19 +413,19 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           clsSubjFiltered = clsSubjFiltered.filter(item => item.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value);
           filteredClassSubjectnComponents = filteredClassSubjectnComponents.filter(clssubjcomponent => clssubjcomponent.SubjectId == this.searchForm.get("searchSubjectId").value);
         }
-
+        var result = [];
         filteredClassSubjectnComponents.forEach((subj, indx) => {
           subj.Components.forEach(component => {
 
             let existing = clsSubjFiltered.filter(fromdb => fromdb.ClassSubject.SubjectId == subj.SubjectId
               && fromdb.SubjectComponentId == component.MasterDataId)
             if (existing.length > 0) {
-              existing[0].ClassSubjectMarkComponentId = previousbatch == 1 ? 0 : existing[0].ClassSubjectMarkComponentId;
-              existing[0].Active = previousbatch == 1 ? 0 : existing[0].Active;
+              existing[0].ClassSubjectMarkComponentId = otherExam == 1 ? 0 : existing[0].ClassSubjectMarkComponentId;
+              existing[0].Active = otherExam == 1 ? 0 : existing[0].Active;
               existing[0].ClassSubject = subj.ClassSubject;
               existing[0].SubjectComponent = this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName;
               existing[0].Action = false;
-              this.ELEMENT_DATA.push(existing[0]);
+              result.push(existing[0]);
             }
             else {
               let item = {
@@ -424,20 +437,44 @@ export class StudentSubjectMarkCompComponent implements OnInit {
                 SubjectComponent: this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName,
                 FullMark: 0,
                 PassMark: 0,
-                OverallPassMark:0,
+                OverallPassMark: 0,
                 BatchId: 0,
                 Active: 0,
                 Action: false
               }
-              this.ELEMENT_DATA.push(item);
+              result.push(item);
             }
           });
 
         })
+        if (otherExam > 0) {
+          this.ELEMENT_DATA.forEach(existing => {
+            var fromotherexamdata = result.filter(r => r.ClassSubjectId == existing.ClassSubjectId
+              && r.SubjectComponentId == existing["SubjectComponentId"])
+            if (fromotherexamdata.length > 0) {
+              //existing.ClassSubjectMarkComponentId=fromotherexamdata[0].ClassSubjectMarkComponentId;
+              existing.ClassSubjectId = fromotherexamdata[0].ClassSubjectId;
+              existing["ClassSubject"] = fromotherexamdata[0].ClassSubject;
+              existing["ExamId"] = _examId;
+              //existing.SubjectComponentId=fromotherexamdata[0].MasterDataId;
+              existing["SubjectComponent"] = fromotherexamdata[0].SubjectComponent;
+              existing.FullMark = fromotherexamdata[0].FullMark;
+              existing.PassMark = fromotherexamdata[0].PassMark;
+              existing.OverallPassMark = fromotherexamdata[0].OverallPassMark;
+              existing.BatchId = fromotherexamdata[0].BatchId;
+              existing.Active = fromotherexamdata[0].Active;
+              existing.Action = true;
+            }
 
+          })
+        }
+        else {
+          this.ELEMENT_DATA = [...result];
+        }
+        //console.log("his.ELEMENT_DATA",this.ELEMENT_DATA);
         if (this.ELEMENT_DATA.length == 0)
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
-        //console.log("this.ELEMENT_DATA",this.ELEMENT_DATA)
+        this.ELEMENT_DATA = this.ELEMENT_DATA.sort((a, b) => b.Active - a.Active);
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
@@ -473,7 +510,7 @@ export interface ISubjectMarkComponent {
   BatchId: number;
   FullMark: number,
   PassMark: number,
-  OverallPassMark:number,
+  OverallPassMark: number,
   Active: number;
   Action: boolean;
 }

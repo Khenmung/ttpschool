@@ -4,45 +4,64 @@
     </div>
     <!-- <alert></alert> -->
     <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Exam</mat-label>
-            <mat-select formControlName="searchExamId" (selectionChange)="DisableSave()">
-                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
-                    {{item.ExamName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Class/Course</mat-label>
-            <mat-select formControlName="searchClassId" (selectionChange)="SelectClassSubject()">
-                <mat-option *ngFor="let p of SelectedClasses" [value]="p.ClassId">
-                    {{p.ClassName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Subject</mat-label>
-            <mat-select formControlName="searchSubjectId" #SubjectId (selectionChange)="cleardata()">
-                <mat-option value="0">All</mat-option>
-                <mat-option *ngFor="let p of SelectedClassSubjects" [value]="p.SubjectId">
-                    {{p.SubjectName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassSubjectComponent(0)">
-            <mat-icon>search</mat-icon>
-            <mat-icon *ngIf="loading">
-                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-            </mat-icon>
-        </button>
-        <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button"
-            (click)="CopyFromPreviousBatch()">
-            <mat-icon>copy_all</mat-icon>
-        </button>
+        <div>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Exam</mat-label>
+                <mat-select formControlName="searchExamId" (selectionChange)="DisableSave()">
+                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                        {{item.ExamName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Class/Course</mat-label>
+                <mat-select formControlName="searchClassId" (selectionChange)="SelectClassSubject()">
+                    <mat-option *ngFor="let p of SelectedClasses" [value]="p.ClassId">
+                        {{p.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Subject</mat-label>
+                <mat-select formControlName="searchSubjectId" #SubjectId (selectionChange)="cleardata()">
+                    <mat-option value="0">All</mat-option>
+                    <mat-option *ngFor="let p of SelectedClassSubjects" [value]="p.SubjectId">
+                        {{p.SubjectName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassSubjectComponent(0)">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </div>
+        <mat-divider></mat-divider>
+        <div style="margin-top:15px">           
+            <mat-form-field appearance="outline" [style.width.px]="250">
+                <mat-label>Copy from other exam</mat-label>
+                <mat-select formControlName="searchCopyExamId">
+                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                        {{item.ExamName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button"
+                (click)="CopyFromPreviousBatch()">
+                <mat-icon>copy_all</mat-icon>
+            </button>
+        </div>
     </form>
-
+    <div style="font-weight: bold;font-style: italic;">{{datafromotherexam}}</div>
     <mat-table #table [dataSource]="dataSource" matSort>
-
+        
+        <ng-container matColumnDef="ClassSubjectMarkComponentId">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.ClassSubjectMarkComponentId}}
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="ClassSubject">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Class Subject </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -59,10 +78,8 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field>
-                    <input #fullMark="ngModel" matInput
-                    style="text-align: right;"
-                    (blur)="onBlur(element)" type="number" max="1000"
-                        [value]="element.FullMark" [(ngModel)]="element.FullMark" />
+                    <input #fullMark="ngModel" matInput style="text-align: right;" (blur)="onBlur(element)"
+                        type="number" max="1000" [value]="element.FullMark" [(ngModel)]="element.FullMark" />
                     <mat-error *ngIf="fullMark?.invalid">
                         <div *ngIf="fullMark.errors.max">Max is 1000</div>
                     </mat-error>
@@ -74,10 +91,8 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> Component Pass Mark </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field>
-                    <input (blur)="onBlur(element)"
-                    style="text-align: right;"
-                    #PassMark="ngModel" matInput type="number" [max]="1000"
-                        [value]="element.PassMark" [(ngModel)]="element.PassMark" />
+                    <input (blur)="onBlur(element)" style="text-align: right;" #PassMark="ngModel" matInput
+                        type="number" [max]="1000" [value]="element.PassMark" [(ngModel)]="element.PassMark" />
                     <mat-error *ngIf="PassMark?.invalid">
                         <div *ngIf="PassMark.errors.max">Max is 1000</div>
                     </mat-error>
@@ -88,10 +103,9 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> Subject Pass Mark </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field>
-                    <input (blur)="onBlur(element)" 
-                    style="text-align: right;"
-                    #OverallPassMark="ngModel" autocomplete="Off" matInput type="number"
-                        [max]="1000" [value]="element.OverallPassMark" [(ngModel)]="element.OverallPassMark" />
+                    <input (blur)="onBlur(element)" style="text-align: right;" #OverallPassMark="ngModel"
+                        autocomplete="Off" matInput type="number" [max]="1000" [value]="element.OverallPassMark"
+                        [(ngModel)]="element.OverallPassMark" />
                     <mat-error *ngIf="OverallPassMark?.invalid">
                         <div *ngIf="OverallPassMark.errors.max">Max is 1000</div>
                     </mat-error>

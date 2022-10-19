@@ -81,7 +81,7 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
         <div>
-            <mat-paginator *ngIf="ExamStudentSubjectResult.length>0" style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,50,100]">
+            <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,50,100]">
             </mat-paginator>
         </div>
     </div>
@@ -90,7 +90,7 @@
             <mat-icon>info</mat-icon>
             Guides...</span>
         <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
-            <ol>Settings required before mark entry.
+            <ol><b>Settings required before mark entry.</b>
                 <li>Subject Category for each class subjects.</li>
                 <li>Subject Components.</li>
                 <li>Student Subjects.</li>

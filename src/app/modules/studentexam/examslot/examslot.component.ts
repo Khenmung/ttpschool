@@ -330,7 +330,7 @@ export class ExamslotComponent implements OnInit {
       "BatchId",
       "Active"];
     list.PageName = "ExamSlots";
-    list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId + filterstr];
+    list.filter = [this.StandardFilterWithBatchId + filterstr];
     //list.orderBy = "ParentId";
     this.ExamSlots = [];
     this.dataservice.get(list)
@@ -349,12 +349,12 @@ export class ExamslotComponent implements OnInit {
             return db.SlotNameId == e.MasterDataId
           });
           if (existing.length > 0) {
-            existing.forEach(e => {
-              e.SlotName = e.MasterDataName;
-              e.WeekDay = day;
-              e.Action = false;
-              e.ExamDate = existing[0].ExamDate
-              this.ExamSlots.push(e);
+            existing.forEach(ex => {
+              ex.SlotName = e.MasterDataName;
+              ex.WeekDay = day;
+              ex.Action = false;
+              ex.ExamDate = existing[0].ExamDate
+              this.ExamSlots.push(ex);
             })
           }
           else {

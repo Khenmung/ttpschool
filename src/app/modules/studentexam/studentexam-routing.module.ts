@@ -5,7 +5,7 @@ import { ExamdashboardComponent } from './examdashboard/examdashboard.component'
 import { ExamhomeComponent } from './examhome/examhome.component';
 import { ExamsComponent } from './exams/exams.component';
 import { ExamslotComponent } from './examslot/examslot.component';
-import { ExamstudentsubjectresultComponent } from './examstudentsubjectresult/examstudentsubjectresult.component';
+import { ExamSubjectMarkEntryComponent } from './examsubjectmarkentry/examsubjectmarkentry.component';
 import { VerifyResultsComponent } from './verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubject.component';
 import { StudentgradeComponent } from './studentgrade/studentgrade.component';
@@ -18,7 +18,7 @@ const routes: Routes = [
       { path: '', component: ExamdashboardComponent },
       { path: 'slot', component: ExamslotComponent },
       { path: 'slotsubject', component: SlotnclasssubjectComponent },
-      { path: 'subjectresult', component: ExamstudentsubjectresultComponent },
+      { path: 'subjectresult', component: ExamSubjectMarkEntryComponent },
 
     ]
   }
@@ -33,7 +33,7 @@ export const studentexamComponents = [
   ExamsComponent,
   ExamslotComponent,
   ExamdashboardComponent,
-  ExamstudentsubjectresultComponent,
+  ExamSubjectMarkEntryComponent,
   SlotnclasssubjectComponent,
   ExamhomeComponent,
   VerifyResultsComponent,

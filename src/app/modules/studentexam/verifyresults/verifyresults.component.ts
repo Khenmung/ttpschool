@@ -13,6 +13,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-verifyresults',
@@ -238,7 +239,7 @@ export class VerifyResultsComponent implements OnInit {
             this.Students.push(f);
           }
         })
-        //this.GetStudentSubjects();
+        this.loading = false;
       })
 
   }
@@ -257,22 +258,29 @@ export class VerifyResultsComponent implements OnInit {
     }
     else {
       this.loading = true;
-      this.GetStudentAttendance()
-        .subscribe((attendance: any) => {
-          this.StudentAttendanceList = [];
-          attendance.value.forEach(att => {
-            if (att.StudentClass.ClassId == _classId) {
-              this.StudentAttendanceList.push({
-                AttendanceId: att.AttendanceId,
-                StudentClassId: att.StudentClassId,
-                AttendanceStatus: att.AttendanceStatus,
-                AttendanceDate: att.AttendanceDate,
-                ClassId: att.StudentClass.ClassId
-              });
-            }
+      var _examId = this.searchForm.get("searchExamId").value;
+      var _ExamResultProperties = this.ExamNCalculate.filter(e => e.ExamId == _examId)
+      if (_ExamResultProperties.filter(f => f.PropertyName.toLowerCase().includes('attendance')).length > 0) {
+        this.GetStudentAttendance()
+          .subscribe((attendance: any) => {
+            this.StudentAttendanceList = [];
+            attendance.value.forEach(att => {
+              if (att.StudentClass.ClassId == _classId) {
+                this.StudentAttendanceList.push({
+                  AttendanceId: att.AttendanceId,
+                  StudentClassId: att.StudentClassId,
+                  AttendanceStatus: att.AttendanceStatus,
+                  AttendanceDate: att.AttendanceDate,
+                  ClassId: att.StudentClass.ClassId
+                });
+              }
+            });
+            this.ProcessVerify();
           });
-          this.ProcessVerify();
-        });
+      }
+      else {
+        this.ProcessVerify();
+      }
     }
   }
   ProcessVerify() {
@@ -539,7 +547,7 @@ export class VerifyResultsComponent implements OnInit {
         var filteredIndividualStud = alasql("select distinct Student,StudentClassId,FullMark from ? ", [StudentOwnSubjects]);
         var _subjectCategoryName = '';
         this.VerifiedResult.ExamResultSubjectMark = [];
-
+        var errormessageforEachSubject = [];
         //for each student
         filteredIndividualStud.forEach(ss => {
 
@@ -580,7 +588,7 @@ export class VerifyResultsComponent implements OnInit {
               }
             })
           }
-          var errormessageforEachSubject = '';
+
           forEachSubjectOfStud.forEach(eachsubj => {
 
             var _objSubjectCategory = this.SubjectCategory.filter(f => f.MasterDataId == eachsubj.SubjectCategoryId)
@@ -592,7 +600,8 @@ export class VerifyResultsComponent implements OnInit {
             var _subjectPassMarkFullMark = alasql("select ClassSubjectId,SUM(PassMark) as PassMark,SUM(FullMark) as FullMark,SUM(OverallPassMark) as OverallPassMark FROM ? where ClassSubjectId = ? GROUP BY ClassSubjectId",
               [_examSubjectMarkComponentDefn, eachsubj.ClassSubjectId]);
             if (_subjectPassMarkFullMark.length == 0) {
-              errormessageforEachSubject += "\nComponent not defined for the subject: " + eachsubj.Subject;
+              if (!errormessageforEachSubject.includes(eachsubj.Subject))
+                errormessageforEachSubject.push(eachsubj.Subject) //+= "\nComponent not defined for the subject: " + eachsubj.Subject;
               //this.contentservice.openSnackBar("Component not defined for the subject: " + eachsubj.Subject, globalconstants.ActionText, globalconstants.RedBackground);
               return;
             }
@@ -653,9 +662,9 @@ export class VerifyResultsComponent implements OnInit {
                 }
                 else if (_subjectCategoryName == 'marking') {
 
-                  if (!failedInComponent)
-                  _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].OverallPassMark;
-                  
+                  if (!failedInComponent)//if passed in all components;
+                    _statusFail = markObtained[0].Marks < _subjectPassMarkFullMark[0].OverallPassMark;
+
                   //_statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].OverallPassMark
 
                   ForNonGrading["FullMark"] = this.ClassFullMark;
@@ -680,18 +689,23 @@ export class VerifyResultsComponent implements OnInit {
               if (ExamResultSubjectMarkData != undefined)
                 this.VerifiedResult.ExamResultSubjectMark.push(JSON.parse(JSON.stringify(ExamResultSubjectMarkData)))
             }
-          })
+          })//for each subject of student.
 
-          if (errormessageforEachSubject.length > 0) {
-            this.contentservice.openSnackBar(errormessageforEachSubject, globalconstants.ActionText, globalconstants.RedBackground);
-          }
-          else {
+          if (errormessageforEachSubject.length == 0) {
+            //   this.contentservice.openSnackBar(errormessageforEachSubject, globalconstants.ActionText, globalconstants.RedBackground);
+            // }
+            // else {
             //for each subject display 
             this.ExamStudentSubjectResult.push(ForNonGrading);
             this.ExamStudentSubjectGrading.push(ForGrading);
           }
-        })
-
+        })//for each student;
+        if (errormessageforEachSubject.length > 0) {
+          //var distinctsubjecterror = alasql("select ")
+          this.loading = false;
+          this.contentservice.openSnackBar("Subject component not defined for "+ errormessageforEachSubject.join(', '), globalconstants.ActionText, globalconstants.RedBackground);
+          return;
+        }
         //for each student
         if (this.ExamStudentSubjectResult.length > 0) {
           //if (_subjectCategoryName == 'marking') {
@@ -820,6 +834,7 @@ export class VerifyResultsComponent implements OnInit {
 
         this.GetStudentGradeDefn();
         this.loading = false;
+        this.PageLoading = false;
       });
   }
   GetClassGroup() {
@@ -991,26 +1006,32 @@ export class VerifyResultsComponent implements OnInit {
     let examObj = this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value);
     var _filter = '';
     var _startDate, _endDate;
-    if (examObj.length > 0) {
+    if (examObj.length > 0 && examObj[0].AttendanceStartDate != null) {
+      //console.log("examObj[0].AttendanceStartDate",examObj[0].AttendanceStartDate)
       _startDate = moment(examObj[0].AttendanceStartDate).format('YYYY-MM-DD');
       _endDate = moment(examObj[0].EndDate).format('YYYY-MM-DD');
       _filter = ' and AttendanceDate ge ' + _startDate + ' and AttendanceDate le ' + _endDate;
+
+
+      let list: List = new List();
+      list.fields = [
+        "AttendanceId",
+        "StudentClassId",
+        "AttendanceDate",
+        "AttendanceStatus",
+      ];
+      list.PageName = "Attendances";
+      list.lookupFields = ["StudentClass($filter=ClassId eq " + _classId + ";$select=ClassId,RollNo,SectionId)"];
+      list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+        " and StudentClassId ne null" + _filter +
+        " and BatchId eq " + this.SelectedBatchId];
+
+      return this.dataservice.get(list)
     }
-    let list: List = new List();
-    list.fields = [
-      "AttendanceId",
-      "StudentClassId",
-      "AttendanceDate",
-      "AttendanceStatus",
-    ];
-    list.PageName = "Attendances";
-    list.lookupFields = ["StudentClass($filter=ClassId eq " + _classId + ";$select=ClassId,RollNo,SectionId)"];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and StudentClassId ne null" + _filter +
-      " and BatchId eq " + this.SelectedBatchId];
-
-    return this.dataservice.get(list)
-
+    else {
+      this.contentservice.openSnackBar("Invalid attendance start date.", globalconstants.ActionText, globalconstants.RedBackground);
+      return EMPTY;
+    }
   }
   SubjectTypes = [];
   GetSubjectTypes() {
@@ -1036,7 +1057,7 @@ export class VerifyResultsComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
 
-    list.fields = ["ClassSubjectMarkComponentId", "ExamId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark","OverallPassMark"];
+    list.fields = ["ClassSubjectMarkComponentId", "ExamId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark", "OverallPassMark"];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=SubjectTypeId,ClassId,Active)"];
     list.filter = ["ExamId ne null and Active eq 1 " + orgIdSearchstr];

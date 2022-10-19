@@ -17,13 +17,13 @@
                     </mat-autocomplete>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
-                    <mat-select (selectionChange)="CategoryChanged(element)" formControlName="searchActivity">
+                    <mat-select formControlName="searchActivity">
                         <mat-option *ngFor="let item of EmployeeActivity" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
-                    <mat-select (selectionChange)="CategoryChanged(element)" formControlName="searchSession">
+                    <mat-select formControlName="searchSession">
                         <mat-option *ngFor="let item of EmployeeActivitySession" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
                     </mat-select>
