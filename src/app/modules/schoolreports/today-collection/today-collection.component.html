@@ -101,7 +101,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: DisplayColumns;" matRipple class="element-row"
+        <mat-row *matRowDef="let row; columns: DisplayColumns;" matRipple class="pagebreak"
             [class.expanded]="expandedElement == row" (click)="expandedElement = row"></mat-row>
         <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" style="overflow: hidden"
             [@detailExpand]="(row.element == expandedElement || allRowsExpanded) ? 'expanded' : 'collapsed'">

@@ -131,7 +131,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       searchFeeTypeId: [0],
       searchSectionId: [0],
       searchClassId: [0],
-      searchRemarkId: [0]
+      searchRemarkId: [0],
+      searchGenderAscDesc:[''],
+      searchNameAscDesc:['']
     });
     this.nameFilter.valueChanges
       .subscribe(
@@ -251,12 +253,28 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   GenerateRollNoOnList() {
     debugger;
+    var _gendersort = this.searchForm.get("searchGenderAscDesc").value;
+    var _namesort = this.searchForm.get("searchNameAscDesc").value;
+    if(_gendersort==0)
+    {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select gender sort.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if(_namesort==0)
+    {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select name sort.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (this.StudentClassList.length > 0) {
-      this.StudentClassList.sort((a, b) => {
-        const compareGender = a.GenderName.localeCompare(b.GenderName);
-        const compareName = a.StudentName.localeCompare(b.StudentName);
-        return compareGender || compareName;
-      })
+      
+      // this.StudentClassList.sort((a, b) => {
+      //   const compareGender = a.GenderName.localeCompare(b.GenderName);
+      //   const compareName = a.StudentName.localeCompare(b.StudentName);
+      //   return compareGender || compareName;
+      // })
+      this.StudentClassList = alasql("select * from ? order by GenderName "+_gendersort +",StudentName "+_namesort,[this.StudentClassList])
       this.StudentClassList.forEach((studcls, indx) => {
         studcls.RollNo = indx + 1 + "";
         studcls.Action = true;
@@ -275,7 +293,20 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   GenerateRollNo() {
 
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
+    var _gendersort = this.searchForm.get("searchGenderAscDesc").value;
+    var _namesort = this.searchForm.get("searchNameAscDesc").value;
+    if(_gendersort==0)
+    {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select gender sort.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if(_namesort==0)
+    {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select name sort.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     this.loading = true;
     if (this.searchForm.get("searchClassId").value > 0)
       filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
@@ -383,7 +414,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         if (StudentClassRollNoGenList.length == 0)
           this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
         else {
-          this.RollNoGenerationSortBy = 'Gender,StudentName';
+          
+          this.RollNoGenerationSortBy = 'Gender '+ _gendersort  +',StudentName ' + _namesort;
           var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " +
             this.RollNoGenerationSortBy;
 

@@ -624,7 +624,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
               this.StoredForUpdate.push(_toPush);
             }
           })
-          //forDisplay["Action"] = true;
+            forDisplay["Action"] = true;
           this.ExamStudentSubjectResult.push(forDisplay);
 
         })

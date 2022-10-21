@@ -54,7 +54,7 @@ export class globalconstants {
                 'attendance': {
                     'studentattendance': 'studentattendance'
                 },
-                'student/Fee': {
+                'studentdetail': {
                     'detail': 'detail',
                     'feepayment': 'feepayment'
                 },
@@ -155,7 +155,6 @@ export class globalconstants {
                     'SEARCHSTUDENT': 'search student',
                     'STUDENTDETAIL': 'student detail',
                     'STUDENTCLASS': 'student class',
-
                     'ATTENDANCEREPORT': 'student attendance record',
                     'PROGRESSREPORT': 'progress report',
                     'FEEPAYMENT': 'fee payment',

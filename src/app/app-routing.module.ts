@@ -9,7 +9,7 @@ const routes: Routes = [
   },
   {
     path: 'edu/photo',
-    loadChildren: () => import('./modules/photogallery/photogallery.module').then(m => m.PhotogalleryModule)
+    loadChildren: () => import('./modules/collection/photogallery.module').then(m => m.PhotogalleryModule)
   },
   {
     path: 'edu/questionbank',
@@ -17,7 +17,7 @@ const routes: Routes = [
   },
   {
     path: 'web/photo',
-    loadChildren: () => import('./modules/photogallery/photogallery.module').then(m => m.PhotogalleryModule)
+    loadChildren: () => import('./modules/collection/photogallery.module').then(m => m.PhotogalleryModule)
   },
   {
     path: 'web/page',
@@ -37,11 +37,11 @@ const routes: Routes = [
   },
   {
     path: 'edu/reportconfig',
-    loadChildren: () => import('./modules/appconfigdata/appconfigdata.module').then(m => m.AppconfigdataModule)
+    loadChildren: () => import('./modules/fieldconfiguration/appconfigdata.module').then(m => m.AppconfigdataModule)
   },
   {
     path: 'emp/reportconfig',
-    loadChildren: () => import('./modules/appconfigdata/appconfigdata.module').then(m => m.AppconfigdataModule)
+    loadChildren: () => import('./modules/fieldconfiguration/appconfigdata.module').then(m => m.AppconfigdataModule)
   },
   {
     path: 'edu/uploaddownload',

@@ -275,7 +275,8 @@ export class LoginComponent implements OnInit {
     list.fields = [
       'PlanFeatureId',
       'RoleId',
-      'PermissionId'
+      'PermissionId',
+      'Active'
     ];
 
     list.PageName = "ApplicationFeatureRolesPerms";
@@ -285,7 +286,7 @@ export class LoginComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        console.log("all",data.value)
+        //console.log("all",data.value)
         var _allPermission =[]; 
         data.value.forEach(m=>{
             if(m.PlanFeature.Page.Active==1)

@@ -231,7 +231,7 @@ export class FeecollectionreportComponent implements OnInit {
             this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
           }
           
-          this.ELEMENT_DATA =this.ELEMENT_DATA.sort((a,b)=>a.Sequence - b.Sequence || a.Section.localeCompare(b.Section));
+          this.ELEMENT_DATA =this.ELEMENT_DATA.sort((a,b)=>a.Sequence - b.Sequence || a.Section.localeCompare(b.Section) || a.RollNo - b.RollNo);
 
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;

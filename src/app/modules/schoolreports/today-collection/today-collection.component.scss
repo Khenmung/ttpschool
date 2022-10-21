@@ -7,9 +7,9 @@
 //     overflow  : auto;
 //     max-height: 500px;
 // }
-mat-cell:first-of-type {
-    padding-left: 0px;
-}
+// mat-cell:first-of-type {
+//     padding-left: 0px;
+// }
 .element-row {
     position: relative;
 
@@ -27,11 +27,24 @@ mat-cell:first-of-type {
     border-bottom-color: transparent;
 }
 .mat-column-ReceiptNo,.mat-column-Status,.mat-column-TotalAmount{
-    flex:1 0 100px;
+    flex:1 1 100px;
 }
 .mat-column-ReceiptDate,
 .mat-column-Student,
 .mat-column-ClassName,
 .mat-column-PaymentType{
-    flex:1 0 150px;
+    flex:1 1 150px;
 }
+
+@media print {
+    @page {
+        size: A4; /* landscape */
+        /* you can also specify margins here: */
+        margin: 25mm;
+        margin-right: 45mm; /* for compatibility with both A4 and Letter */
+      }
+    
+    mat-row {
+        break-inside: avoid;
+    }
+}    

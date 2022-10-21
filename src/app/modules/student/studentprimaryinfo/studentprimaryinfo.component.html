@@ -411,8 +411,8 @@
                         <input formControlName="IdentificationMark" (blur)="OnBlur()" autocomplete="Off" matInput
                             [maxlength]="50">
                     </mat-form-field>
-                    
-                    
+
+
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active
                     <mat-form-field *ngIf="StudentLeaving" appearance="outline">
@@ -446,3 +446,24 @@
 
     </mat-tab-group>
 </form>
+<div style="margin-top:30px;" data-expand="false" #expandWrap>
+    <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+        <mat-icon>info</mat-icon>
+        Guides..
+    </span>
+    <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+        <b>Settings required before student can be added.</b>
+        <ol>
+            <li>
+                Define the following in initial setting.
+                <ul>
+                    <li>Blood group,Gender, Religion, Student Category, Admission Status, House, Club, Remarks.</li>
+                </ul>
+            </li>
+            <li>
+                Define Class-course -> Detail, Fee definition, class fee, fee type.
+            </li>
+            
+        </ol>
+    </span>
+</div>

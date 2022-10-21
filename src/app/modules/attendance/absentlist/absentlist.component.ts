@@ -252,13 +252,13 @@ export class AbsentListComponent implements OnInit {
 
             this.StudentClassList.forEach(sc => {
               let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
-              
+
               if (existing.length > 0) {
-                var _subjName ='';
+                var _subjName = '';
                 if (existing[0].ClassSubjectId > 0) {
                   var obj = this.ClassSubjects.filter(s => s.ClassSubjectId == existing[0].ClassSubjectId);
                   if (obj.length > 0)
-                  _subjName=obj[0].ClassSubject;
+                    _subjName = obj[0].ClassSubject;
                 }
 
                 this.StudentAttendanceList.push({
@@ -267,27 +267,21 @@ export class AbsentListComponent implements OnInit {
                   AttendanceStatus: existing[0].AttendanceStatus,
                   AttendanceDate: existing[0].AttendanceDate,
                   ClassSubjectId: existing[0].ClassSubjectId,
-                  ClassSubject:_subjName,
+                  ClassSubject: _subjName,
                   Remarks: existing[0].Remarks,
+                  RollNo: sc.RollNo,
                   StudentRollNo: sc.StudentRollNo,
                   ClassName: sc.ClassName,
                   ContactNo: sc.ContactNo,
 
                 });
               }
-              // else
-              //   this.StudentAttendanceList.push({
-              //     AttendanceId: 0,
-              //     StudentClassId: sc.StudentClassId,
-              //     AttendanceStatus: 0,
-              //     AttendanceDate: new Date(),
-              //     ClassSubjectId: 0,
-              //     Remarks: '',
-              //     StudentRollNo: sc.StudentRollNo,
-              //     ContactNo:sc.ContactNo,
-              //     ClassName:sc.ClassName
-              //   });
             })
+            if (this.StudentAttendanceList.length == 0) 
+              this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+            else
+              this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => a.RollNo - b.RollNo);
+              
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -479,6 +473,7 @@ export class AbsentListComponent implements OnInit {
 }
 export interface IStudentAttendance {
   AttendanceId: number;
+  RollNo: number;
   StudentClassId: number;
   AttendanceStatus: number;
   ClassSubjectId: number;

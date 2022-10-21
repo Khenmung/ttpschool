@@ -1,5 +1,5 @@
 <mat-card>
-    <mat-card-title style="margin:20px">Student/Fee</mat-card-title>
+    <mat-card-title style="margin:20px">Student Info</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content style="margin:20px">
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
@@ -99,7 +99,7 @@
                             <mat-icon>pageview</mat-icon>
                         </button>
                         &nbsp;
-                        <button [disabled]="loading || element.ClassName=='' || FeePaymentPermission=='deny'"
+                        <button [disabled]="loading || element.ClassName==''" *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'"
                             matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
                             <mat-icon>payments</mat-icon>
                         </button>

@@ -1,3 +1,9 @@
+:host{
+    width:100%;
+}
+mat-card{
+    width:99%;
+}
 mat-cell,mat-footer-cell{
     border-right: 1px solid lightgray;
 }
@@ -58,4 +64,10 @@ svg {
 .mat-column-PaymentAmt {
     display        : flex;
     justify-content: flex-end;
+}
+@media print {
+    .pagebreak {
+        clear: both;
+        page-break-after: always;
+    }
 }

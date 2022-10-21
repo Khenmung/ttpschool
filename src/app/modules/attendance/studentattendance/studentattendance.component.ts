@@ -259,6 +259,7 @@ export class StudentAttendanceComponent implements OnInit {
               if (existing.length > 0) {
                 this.StudentAttendanceList.push({
                   AttendanceId: existing[0].AttendanceId,
+                  RollNo:sc.RollNo,
                   StudentClassId: existing[0].StudentClassId,
                   AttendanceStatus: existing[0].AttendanceStatus,
                   AttendanceDate: existing[0].AttendanceDate,
@@ -271,6 +272,7 @@ export class StudentAttendanceComponent implements OnInit {
               else
                 this.StudentAttendanceList.push({
                   AttendanceId: 0,
+                  RollNo:sc.RollNo,
                   StudentClassId: sc.StudentClassId,
                   AttendanceStatus: 0,
                   AttendanceDate: new Date(),
@@ -280,6 +282,7 @@ export class StudentAttendanceComponent implements OnInit {
                   Action: false
                 });
             })
+            this.StudentAttendanceList = this.StudentAttendanceList.sort((a,b)=>a.RollNo-b.RollNo)
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -318,15 +321,15 @@ export class StudentAttendanceComponent implements OnInit {
   }
   saveall() {
     debugger;
-    var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
-    console.log("toUpdateAttendance",toUpdateAttendance);
-    this.NoOfRecordToUpdate = toUpdateAttendance.length;
+    //var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
+    //console.log("toUpdateAttendance",toUpdateAttendance);
+    this.NoOfRecordToUpdate = this.StudentAttendanceList.length;
     this.loading=true;
-    toUpdateAttendance.forEach((record) => {
+    this.StudentAttendanceList.forEach((record) => {
       this.NoOfRecordToUpdate--;
       this.UpdateOrSave(record);
     })
-    if(toUpdateAttendance.length==0)
+    if(this.StudentAttendanceList.length==0)
     {
       this.loading=false;
     }
@@ -380,7 +383,7 @@ export class StudentAttendanceComponent implements OnInit {
             this.StudentAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentAttendanceData["UpdatedDate"];
             delete this.StudentAttendanceData["UpdatedBy"];
-            console.log("StudentAttendanceData",this.StudentAttendanceData);
+            //console.log("StudentAttendanceData",this.StudentAttendanceData);
             this.insert(row);
           }
           else {
@@ -498,6 +501,7 @@ export class StudentAttendanceComponent implements OnInit {
 }
 export interface IStudentAttendance {
   AttendanceId: number;
+  RollNo:number;
   StudentClassId: number;
   AttendanceStatus: number;
   ClassSubjectId: number;

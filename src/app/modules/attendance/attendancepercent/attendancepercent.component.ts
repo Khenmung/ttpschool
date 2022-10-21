@@ -257,32 +257,33 @@ export class AttendancepercentComponent implements OnInit {
             this.StudentClassList.forEach(sc => {
               let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
 
-              if (existing.length > 0) {
+              existing.forEach(item => {
                 var _subjName = '';
-                if (existing[0].ClassSubjectId > 0) {
-                  var obj = this.ClassSubjects.filter(s => s.ClassSubjectId == existing[0].ClassSubjectId);
+                if (item.ClassSubjectId > 0) {
+                  var obj = this.ClassSubjects.filter(s => s.ClassSubjectId == item.ClassSubjectId);
                   if (obj.length > 0)
                     _subjName = obj[0].ClassSubject;
                 }
 
                 this.StudentAttendanceList.push({
-                  AttendanceId: existing[0].AttendanceId,
-                  StudentClassId: existing[0].StudentClassId,
-                  AttendanceStatus: existing[0].AttendanceStatus,
-                  AttendanceDate: existing[0].AttendanceDate,
-                  ClassSubjectId: existing[0].ClassSubjectId,
+                  RollNo: sc.RollNo,
+                  AttendanceId: item.AttendanceId,
+                  StudentClassId: item.StudentClassId,
+                  AttendanceStatus: item.AttendanceStatus,
+                  AttendanceDate: item.AttendanceDate,
+                  ClassSubjectId: item.ClassSubjectId,
                   ClassSubject: _subjName,
                   StudentRollNo: sc.StudentRollNo,
                   ClassName: sc.ClassName,
 
                 });
-              }
+              })
 
             })
 
             var PresentAttendance = alasql('select sum(1) PresentAbsentCount,StudentRollNo,ClassName from ? where AttendanceStatus=1 group by StudentRollNo,ClassName', [this.StudentAttendanceList])
             var AbsentAttendance = alasql('select sum(1) PresentAbsentCount,StudentRollNo,ClassName from ? where AttendanceStatus=0 group by StudentRollNo,ClassName', [this.StudentAttendanceList])
-            var distinctStudent = alasql('select distinct StudentRollNo,ClassName from ? ', [this.StudentAttendanceList])
+            var distinctStudent = alasql('select distinct StudentRollNo,RollNo,ClassName from ? ', [this.StudentAttendanceList])
 
             distinctStudent.forEach(p => {
               var absent = AbsentAttendance.filter(a => a.StudentRollNo == p.StudentRollNo)
@@ -297,10 +298,10 @@ export class AttendancepercentComponent implements OnInit {
                 p.PresentCount = 0;
 
               //p.PresentCount = p.PresentAbsentCount;
-              p.Percent = ((p.PresentCount/(p.PresentCount + p.AbsentCount))*100).toFixed(2);
+              p.Percent = ((p.PresentCount / (p.PresentCount + p.AbsentCount)) * 100).toFixed(2);
             })
 
-
+            distinctStudent = distinctStudent.sort((a, b) => a.RollNo - b.RollNo);
             this.dataSource = new MatTableDataSource<IStudentAttendance>(distinctStudent);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -481,7 +482,8 @@ export class AttendancepercentComponent implements OnInit {
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.GetClassSubject();
-        this.loading = false; this.PageLoading = false;
+        this.loading = false;
+        this.PageLoading = false;
 
       });
   }
@@ -491,6 +493,7 @@ export class AttendancepercentComponent implements OnInit {
 
 }
 export interface IStudentAttendance {
+  RollNo: number;
   AttendanceId: number;
   StudentClassId: number;
   AttendanceStatus: number;
