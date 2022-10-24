@@ -2,21 +2,21 @@
 <!-- <alert></alert> -->
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="searchForm">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Class</mat-label>
         <mat-select formControlName="searchClassId" (selectionChange)="bindClassSubject()">
             <mat-option *ngFor="let item of Classes" [value]="item.ClassId">{{item.ClassName}}
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Section</mat-label>
         <mat-select formControlName="searchSectionId">
             <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">{{item.MasterDataName}}
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Subject</mat-label>
         <mat-select formControlName="searchClassSubjectId">
             <mat-option>--select--</mat-option>
@@ -24,7 +24,7 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Attendance Date</mat-label>
         <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
         <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>

@@ -227,7 +227,7 @@ export class StudentAttendanceComponent implements OnInit {
             ClassId: item.ClassId,
             RollNo: item.RollNo,
             Student: item.Student.FirstName + _lastname,
-            StudentRollNo: item.Student.FirstName + _lastname + "-" + item.RollNo
+            StudentRollNo: item.Student.FirstName + _lastname.trim() + "-" + item.RollNo
           }
         })
         //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');

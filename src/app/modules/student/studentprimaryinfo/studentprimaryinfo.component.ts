@@ -15,7 +15,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { environment } from 'src/environments/environment';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-studentprimaryinfo',
   templateUrl: './studentprimaryinfo.component.html',
@@ -57,13 +57,13 @@ export class studentprimaryinfoComponent implements OnInit {
   ReasonForLeaving = [];
   studentData = [];
   AdmissionStatuses = [];
-  ColumnsOfSelectedReports =[];
+  ColumnsOfSelectedReports = [];
   CountryId = 0;
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
-  Houses=[];
-  Remarks=[];
+  Houses = [];
+  Remarks = [];
   studentForm: UntypedFormGroup;
   Edited = false;
   public files: NgxFileDropEntry[] = [];
@@ -115,7 +115,7 @@ export class studentprimaryinfoComponent implements OnInit {
     if (this.StudentId != null && this.StudentId != 0)
       this.formdata.append("studentId", this.StudentId + "");
     this.formdata.append("studentClassId", this.StudentClassId.toString());
-    this.formdata.append("questionId","0");
+    this.formdata.append("questionId", "0");
     this.formdata.append("docTypeId", "0");
 
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
@@ -149,7 +149,7 @@ export class studentprimaryinfoComponent implements OnInit {
     //if (this.Genders.length == 0)
     //  this.route.navigate(["/edu"]);
     //else {
-    
+
     this.studentForm = this.fb.group({
       ReasonForLeaving: [0],
       StudentId: [0],
@@ -207,7 +207,7 @@ export class studentprimaryinfoComponent implements OnInit {
         }
       })
     })
-    this.imgURL ='';
+    this.imgURL = '';
     this.loginUserDetail = this.tokenService.getUserDetail();
     if (this.loginUserDetail.length == 0)
       this.route.navigate(['/auth/login'])
@@ -222,14 +222,16 @@ export class studentprimaryinfoComponent implements OnInit {
         this.getFields('Student Module');
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
         this.GetMasterData();
-        if (this.StudentId > 0)
-          this.GetStudent();
-        
         this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
+          if (this.StudentId > 0)
+          this.GetStudent();
           this.loading = false;
           this.PageLoading = false;
         });
+        
+
+        
 
       }
     }
@@ -280,6 +282,7 @@ export class studentprimaryinfoComponent implements OnInit {
     }
     this.OnBlur();
   }
+  Sections = [];
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
@@ -293,6 +296,7 @@ export class studentprimaryinfoComponent implements OnInit {
         this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
         this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
         this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.AdmissionStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.ADMISSIONSTATUS);
 
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
@@ -301,11 +305,12 @@ export class studentprimaryinfoComponent implements OnInit {
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
         this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
+
       });
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype,this.tokenService,this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenService, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;
@@ -325,19 +330,19 @@ export class studentprimaryinfoComponent implements OnInit {
   OnBlur() {
     this.Edited = true;
   }
-  ErrorMessage='';
+  ErrorMessage = '';
   SaveOrUpdate() {
-    
+
     var _MandatoryColumns = this.ColumnsOfSelectedReports.filter(f => f.Active == 1);
-    this.ErrorMessage ='';
-      _MandatoryColumns.forEach(b => {
-        if (this.studentForm.get(b.ReportName).value == undefined 
-        || this.studentForm.get(b.ReportName).value == null 
+    this.ErrorMessage = '';
+    _MandatoryColumns.forEach(b => {
+      if (this.studentForm.get(b.ReportName).value == undefined
+        || this.studentForm.get(b.ReportName).value == null
         || this.studentForm.get(b.ReportName).value.length == 0
-        || this.studentForm.get(b.ReportName).value==0) {
-          this.ErrorMessage += b.ReportName + " is required.\n";
-        }
-      })
+        || this.studentForm.get(b.ReportName).value == 0) {
+        this.ErrorMessage += b.ReportName + " is required.\n";
+      }
+    })
 
     // if (this.studentForm.get("FirstName").value == 0) {
     //   errorMessage += "First Name is required.\n";
@@ -381,7 +386,7 @@ export class studentprimaryinfoComponent implements OnInit {
     }
     this.loading = true;
     var _email = this.studentForm.get("EmailAddress").value;
-    if (_email !=null && _email.length > 0) {
+    if (_email != null && _email.length > 0) {
       var checkduppayload = { 'Id': this.StudentId, 'Email': _email }
       this.contentservice.CheckEmailDuplicate(checkduppayload)
         .subscribe((data: any) => {
@@ -488,9 +493,9 @@ export class studentprimaryinfoComponent implements OnInit {
           }
 
         }, error => {
-          console.log("student insert",error)
+          console.log("student insert", error)
           var errormsg = globalconstants.formatError(error);
-          this.loading=false;
+          this.loading = false;
           this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);
         })
     })
@@ -507,9 +512,9 @@ export class studentprimaryinfoComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
         else
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-      },error=>{
-        this.loading=false;
-        console.log("student update",error);
+      }, error => {
+        this.loading = false;
+        console.log("student update", error);
       })
   }
   CreateInvoice() {
@@ -522,12 +527,12 @@ export class studentprimaryinfoComponent implements OnInit {
             //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           },
             error => {
-              this.loading = false; 
+              this.loading = false;
               console.log("error in createInvoice", error);
             })
       },
         error => {
-          this.loading = false; 
+          this.loading = false;
           console.log("error in getinvoice", error);
         })
   }
@@ -536,33 +541,30 @@ export class studentprimaryinfoComponent implements OnInit {
     var offsetMs = dateToAdjust.getTimezoneOffset() * 60000;
     return new Date(dateToAdjust.getTime() - offsetMs);
   }
-  getFields(pModuleName){
-    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"],this.SelectedApplicationId)
-    .subscribe((data: any) => {
-      var _baseReportId = 0;
-      if(data.value.length>0)
-      {
-        _baseReportId = data.value.filter(f=>f.ReportName =='Reports' && f.ParentId ==0)[0].ReportConfigItemId;
-        var _studentModuleObj = data.value.filter(f=>f.ReportName ==pModuleName && f.ParentId ==_baseReportId)
-        var _studentModuleId=0;
-        if(_studentModuleObj.length>0)
-        {
-          _studentModuleId = _studentModuleObj[0].ReportConfigItemId; 
+  getFields(pModuleName) {
+    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
+      .subscribe((data: any) => {
+        var _baseReportId = 0;
+        if (data.value.length > 0) {
+          _baseReportId = data.value.filter(f => f.ReportName == 'Reports' && f.ParentId == 0)[0].ReportConfigItemId;
+          var _studentModuleObj = data.value.filter(f => f.ReportName == pModuleName && f.ParentId == _baseReportId)
+          var _studentModuleId = 0;
+          if (_studentModuleObj.length > 0) {
+            _studentModuleId = _studentModuleObj[0].ReportConfigItemId;
+          }
+
+          var _orgStudentModuleObj = data.value.filter(f => f.ParentId == _studentModuleId
+            && f.OrgId == this.loginUserDetail[0]["orgId"] && f.Active == 1);
+          var _orgStudentModuleId = 0;
+          if (_orgStudentModuleObj.length > 0) {
+            _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId;
+          }
+
+          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId)
+
         }
 
-        var _orgStudentModuleObj = data.value.filter(f=>f.ParentId ==_studentModuleId 
-          && f.OrgId== this.loginUserDetail[0]["orgId"] && f.Active==1);
-        var _orgStudentModuleId=0;
-        if(_orgStudentModuleObj.length>0)
-        {
-          _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId; 
-        }
-
-        this.ColumnsOfSelectedReports = data.value.filter(f=>f.ParentId == _orgStudentModuleId)
-
-      }
-      
-    })
+      })
   }
   GetStudent() {
     //debugger;
@@ -570,7 +572,7 @@ export class studentprimaryinfoComponent implements OnInit {
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId),StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=ClassId,RollNo,SectionId,StudentClassId,StudentId),StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
     list.filter = ["StudentId eq " + this.StudentId];
 
     debugger;
@@ -578,13 +580,20 @@ export class studentprimaryinfoComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           data.value.forEach(stud => {
+            var _lastname = stud.LastName == null || stud.LastName == '' ? '' : " " + stud.LastName;
+            let StudentName = stud.PID + ' ' + stud.FirstName + _lastname + ' ' + stud.FatherName +
+              ' ' + stud.MotherName +", ";
             if (stud.StudentClasses.length > 0) {
+              var _sectionName = '', _className = '';
+              if (stud.StudentClasses[0].SectionId > 0)
+                _sectionName = this.Sections.filter(s => s.MasterDataId == stud.StudentClasses[0].SectionId)[0].MasterDataName;
+              _className = this.Classes.filter(c => c.ClassId == stud.StudentClasses[0].ClassId)[0].ClassName;
+              StudentName += _className + "-" + _sectionName + "-" + stud.StudentClasses[0].RollNo
               this.StudentClassId = stud.StudentClasses[0].StudentClassId;
               this.tokenService.saveStudentClassId(this.StudentClassId + "");
             }
-            var _lastname = stud.LastName == null || stud.LastName == '' ? '' : " " + stud.LastName;
-            let StudentName = stud.PID + ' ' + stud.FirstName + _lastname + ' ' + stud.FatherName +
-              ' ' + stud.MotherName + ',';
+            
+
             this.shareddata.ChangeStudentName(StudentName);
             this.studentForm.patchValue({
               StudentId: stud.StudentId,

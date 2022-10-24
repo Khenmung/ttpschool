@@ -8,7 +8,7 @@
                     <mat-icon>arrow_back</mat-icon>
                 </button>
             </span>
-            <span *ngIf="StudentId>0">
+            <span *ngIf="StudentId>0 && FeePaymentPermission!='deny' && FeePaymentPermission!=''">
                 <button (click)="fee()" matTooltip="fee" mat-raised-button>
                     <mat-icon>payments</mat-icon>
                 </button>

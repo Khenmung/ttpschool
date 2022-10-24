@@ -53,17 +53,19 @@
                 <mat-table #table [dataSource]="dataSource" style="min-width: 600px;">
                     <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
                         matColumnDef="{{disCol}}">
-                        <mat-header-cell [attr.rowspan]="NoOfColumn" *matHeaderCellDef style="justify-content: center;">
-                            <div *ngIf="SlotNClassSubjects.length>0 && colIndex==0" style="width:100%;margin:15px; display: flex;flex-direction: column;justify-content: center;">
-                                <div style="font-size: large;">{{SelectedExamName}} Time Table</div>
-                                <div>{{SelectedClasses}}</div>
+                        <mat-header-cell [attr.rowspan]="NoOfColumn" *matHeaderCellDef style="display:flex;justify-content: center;">
+                            <div *ngIf="SlotNClassSubjects.length>0 && colIndex==0" 
+                                style="width:100%;margin:15px; display: flex;flex-direction: column;justify-content: center;">
+                                <div style="justify-content:center; font-size: 20pt;font-weight: bold;">{{SelectedExamName}} Exam Time Table</div>
+                                <div style="justify-content:center;">{{SelectedClasses}}</div>
                             </div>
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element" [innerHTML]="element[disCol]">
                         </mat-cell>
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'backgroundcolorgray': row.daterow }">
+                    </mat-row>
                 </mat-table>
             </span>
             <div style="display: flex;flex-direction: row;justify-content: center;">

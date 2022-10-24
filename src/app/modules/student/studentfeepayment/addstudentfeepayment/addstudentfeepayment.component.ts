@@ -15,7 +15,7 @@ import { evaluate } from 'mathjs';
 import { FeereceiptComponent } from '../feereceipt/feereceipt.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { map, startWith } from 'rxjs/operators';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-addstudentfeepayment',
   templateUrl: './addstudentfeepayment.component.html',
@@ -61,7 +61,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   studentInfoTodisplay = {
     StudentFeeReceiptId: 0,
     BatchId: 0,
-    AdmissionNo:0,
+    AdmissionNo: 0,
     RollNo: 0,
     StudentFeeType: '',
     StudentName: '',
@@ -514,12 +514,17 @@ export class AddstudentfeepaymentComponent implements OnInit {
             //f.FeeName = this.FeeDefinitions.filter(n => n.FeeDefinitionId == f.FeeDefinitionId)[0].FeeName;
             var catObj = this.FeeCategories.filter(cat => cat.MasterDataId == studclsfee.FeeDefinition.FeeCategoryId);
             var subcatObj = this.allMasterData.filter(cat => cat.MasterDataId == studclsfee.FeeDefinition.FeeSubCategoryId);
+            var _className = ''
+            var clsobj = this.Classes.filter(c => c.ClassId == studclsfee.ClassId);
+            if (clsobj.length > 0)
+              _className = clsobj[0].ClassName;
             var catName = '';
             if (catObj.length > 0)
               catName = catObj[0].MasterDataName
             var subcatName = '';
             if (subcatObj.length > 0)
               subcatName = subcatObj[0].MasterDataName
+            studclsfee.ClassName = _className;
             studclsfee.FeeCategoryId = studclsfee.FeeDefinition.FeeCategoryId;
             studclsfee.FeeCategory = catName;
             studclsfee.FeeSubCategory = subcatName;

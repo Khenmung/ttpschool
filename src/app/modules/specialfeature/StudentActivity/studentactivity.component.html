@@ -89,6 +89,19 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="SportsNameId">
+            <mat-header-cell *matHeaderCellDef>Activity
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.SportsNameId" (selectionChange)="onBlur(element)"
+                        [value]="element.SportsNameId">
+                        <mat-option *ngFor="let item of ActivityNames" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="CategoryId">
             <mat-header-cell *matHeaderCellDef>Category
             </mat-header-cell>
@@ -110,6 +123,19 @@
                     <mat-select [(ngModel)]="element.SubCategoryId" (selectionChange)="onBlur(element)"
                         [value]="element.SubCategoryId">
                         <mat-option *ngFor="let item of element.SubCategories" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="SessionId">
+            <mat-header-cell *matHeaderCellDef>Session
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.SessionId" (selectionChange)="onBlur(element)"
+                        [value]="element.SessionId">
+                        <mat-option *ngFor="let item of ActivitySessions" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -154,5 +180,5 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
             style="align-items: center;"></mat-row>
     </mat-table>
-    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[3,5,10,20,50]"></mat-paginator>
+    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
 </div>

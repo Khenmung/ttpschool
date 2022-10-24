@@ -63,9 +63,11 @@ export class StudentActivityComponent implements OnInit {
   displayedColumns = [
     "SportResultId",
     "RankId",
+    "SportsNameId",
     "Achievement",
     "CategoryId",
     "SubCategoryId",
+    "SessionId",
     "AchievementDate",
     "Active",
     "Action"
@@ -221,7 +223,7 @@ export class StudentActivityComponent implements OnInit {
               SportResultId: row.SportResultId,
               RankId: row.RankId,
               Achievement: globalconstants.encodeSpecialChars(row.Achievement),
-              SportsNameId: this.searchForm.get("searchActivityId").value,
+              SportsNameId: row.SportsNameId,
               GroupId: _groupId,
               CategoryId: row.CategoryId,
               SubCategoryId: row.SubCategoryId,

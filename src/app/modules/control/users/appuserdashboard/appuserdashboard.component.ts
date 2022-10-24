@@ -59,9 +59,9 @@ export class AppuserdashboardComponent implements OnInit {
   displayedColumns = [
     'UserName',
     'EmailAddress',
-    'PhoneNumber',
+    //'PhoneNumber',
     'ValidFrom',
-    'ValidTo',
+    //'ValidTo',
     'Active',
     'Action'
   ]
@@ -99,13 +99,13 @@ export class AppuserdashboardComponent implements OnInit {
   ngOnInit() {
     this.searchForm = this.fb.group({
       searchUserName: [''],
-      searchClassId:[0]
+      searchClassId: [0]
     })
     this.filteredOptions = this.searchForm.get("searchUserName").valueChanges
       .pipe(
         startWith(''),
-        map(value => typeof value === 'string' ? value : value.Email),
-        map(email => email ? this._filter(email) : this.Users.slice())
+        map(value => typeof value === 'string' ? value : value.UserName),
+        map(username => username ? this._filter(username) : this.Users.slice())
       );
     this.OrgIdAndBatchIdFilter = globalconstants.getStandardFilterWithBatchId(this.tokenStorage);
     this.PageLoad();
@@ -113,11 +113,11 @@ export class AppuserdashboardComponent implements OnInit {
   private _filter(name: string): IUser[] {
 
     const filterValue = name.toLowerCase();
-    return this.Users.filter(option => option.Email.toLowerCase().includes(filterValue));
+    return this.Users.filter(option => option.UserName.toLowerCase().includes(filterValue));
 
   }
   displayFn(user: IUser): string {
-    return user && user.Email ? user.Email : '';
+    return user && user.UserName ? user.UserName : '';
   }
   PageLoad() {
     debugger;
@@ -162,21 +162,22 @@ export class AppuserdashboardComponent implements OnInit {
             this.RoleName = 'Student';
             this.Password = 'Student@1234';
             //this.GetStudents();
+            this.GetEmployees();
           }
           else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement) {
             this.RoleName = 'Employee'
             this.Password = 'Employee@1234';
             this.GetEmployees();
           }
-          this.loading=false;
-          this.PageLoading=false;
+          this.loading = false;
+          this.PageLoading = false;
         })
 
         //this.GetRoleUser();
       });
   }
   OnClassSelected() {
-  
+
     if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement) {
       var _classId = this.searchForm.get("searchClassId").value;
       if (_classId == 0) {
@@ -405,19 +406,23 @@ export class AppuserdashboardComponent implements OnInit {
         this.AppUsers = [];
         //var _UserName ='';
         if (data.length > 0) {
-          data.forEach(u => {
-            this.AppUsers.push({
-              "Id": u.Id,
-              "UserName": u.UserName,
-              "EmailAddress": u.Email,
-              "PhoneNumber": u.PhoneNumber,
-              "OrgId": u.OrgId,
-              "ValidFrom": u.ValidFrom,
-              "ValidTo": u.ValidTo,
-              "Active": u.Active,
-              "Action": false
-            });
-          });
+          this.UserDetail.forEach(filteredstudent=>{
+            var exist = data.filter(d=>d.UserName == filteredstudent.Student.FirstName);
+              if(exist.length>0)
+              {
+                this.AppUsers.push({
+                  "Id": exist[0].Id,
+                  "UserName": exist[0].UserName,
+                  "EmailAddress": exist[0].Email,
+                  "PhoneNumber": exist[0].PhoneNumber,
+                  "OrgId": exist[0].OrgId,
+                  "ValidFrom": exist[0].ValidFrom,
+                  "ValidTo": exist[0].ValidTo,
+                  "Active": exist[0].Active,
+                  "Action": false
+                }); 
+              }
+          })
         }
         else {
           var newlogin = this.UserDetail.filter(f => f.EmailAddress == searchObj.Email);

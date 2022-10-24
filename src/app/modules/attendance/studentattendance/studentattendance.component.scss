@@ -11,8 +11,12 @@ mat-cell:first-of-type{
 }
 .mat-column-AttendanceStatus,.mat-column-Action{
     justify-content: center;
-    flex:1 0 100px;
+    flex:1 1 100px;
 }
-.mat-column-StudentRollNo,.mat-column-Remarks{
-    flex:1 0 150px;
+.mat-column-StudentRollNo{
+    flex:1 1 150px;
+}
+.mat-column-Remarks{
+    justify-content: center;
+    flex:1 1 150px;
 }

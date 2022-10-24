@@ -339,7 +339,7 @@ export class searchstudentComponent implements OnInit {
       if (sectionObj.length > 0)
         _sectionName = sectionObj[0].MasterDataName;
       this.StudentClassId = studentclass[0].StudentClassId
-      StudentName += "\n " + _clsName + "-" + _sectionName;
+      StudentName += "-" +_clsName + "-" + _sectionName + "-" +studentclass[0].RollNo;
     }
 
     this.shareddata.ChangeStudentName(StudentName);

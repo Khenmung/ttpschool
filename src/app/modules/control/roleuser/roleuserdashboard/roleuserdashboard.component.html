@@ -14,7 +14,7 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
-        <mat-form-field  appearance="outline">
+        <mat-form-field appearance="outline">
             <mat-label>role</mat-label>
             <mat-select formControlName="searchRoleId">
                 <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">
@@ -22,10 +22,10 @@
             </mat-select>
         </mat-form-field>
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetRoleUser()">
-             <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+            <mat-icon>search</mat-icon>
+            <mat-icon *ngIf="loading">
+                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+            </mat-icon>
         </button>
     </form>
 </div>
@@ -43,11 +43,8 @@
             <mat-cell *matCellDef="let element">
                 <mat-form-field>
                     <mat-label>role</mat-label>
-                    <mat-select 
-                        [disabled]="element.Role=='Admin'"
-                        [value]="element.RoleId"                        
-                        (selectionChange)="onBlur(element)"
-                        [(ngModel)]="element.RoleId">
+                    <mat-select [disabled]="element.Role=='Admin'" [value]="element.RoleId"
+                        (selectionChange)="onBlur(element)" [(ngModel)]="element.RoleId">
                         <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
                     </mat-select>

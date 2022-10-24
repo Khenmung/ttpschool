@@ -42,7 +42,7 @@ export class HomeDashboardComponent implements OnInit {
     private contentservice: ContentService
 
   ) { }
-
+  Role = '';
   ngOnInit(): void {
     this.servicework.activateUpdate().then(() => {
       this.servicework.checkForUpdate().then((value) => {
@@ -56,6 +56,8 @@ export class HomeDashboardComponent implements OnInit {
       searchBatchId: [0]
     })
     this.loginUserDetail = this.tokenStorage.getUserDetail();
+    this.Role = this.loginUserDetail[0]['RoleUsers'][0]['role'];
+    //console.log('role',this.Role);
     if (this.loginUserDetail.length == 0) {
       this.tokenStorage.signOut();
       this.route.navigate(['/auth/login']);
@@ -72,7 +74,7 @@ export class HomeDashboardComponent implements OnInit {
               this.tokenStorage.signOut();
               this.contentservice.openSnackBar("Login expired! Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
               //setTimeout(() => {
-                this.route.navigate(['/auth/login'])
+              this.route.navigate(['/auth/login'])
               //}, 3000);
             }
             else {
@@ -181,8 +183,8 @@ export class HomeDashboardComponent implements OnInit {
       else
         this.tokenStorage.saveSelectedBatchName('');
 
-        
-       //console.log("this.loginUserDetail[0]['applicationRolePermission']",this.loginUserDetail[0]['applicationRolePermission'])
+
+      //console.log("this.loginUserDetail[0]['applicationRolePermission']",this.loginUserDetail[0]['applicationRolePermission'])
       this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
       this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
         .subscribe((data: any) => {
@@ -257,16 +259,20 @@ export class HomeDashboardComponent implements OnInit {
     this.tokenStorage.saveNextBatchId(_nextBatchId.toString());
   }
   getBatches() {
+    var currentbatchfilter = '';
+    if (this.Role != 'Admin')
+      currentbatchfilter = ' and CurrentBatch eq 1';
+
     var list = new List();
     list.fields = [
       "BatchId",
       "BatchName",
       "StartDate",
       "EndDate",
-      //"CurrentBatch",
+      "CurrentBatch",
       "Active"];
     list.PageName = "Batches";
-    list.filter = ["Active eq 1 and OrgId eq " + this.loginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.loginUserDetail[0]["orgId"] + currentbatchfilter];
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
       this.tokenStorage.saveBatches(this.Batches)

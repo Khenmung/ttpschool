@@ -175,8 +175,7 @@ export class StudentviewComponent implements OnInit {
         //this.GetEvaluationNames();
         this.GetMasterData();
         this.GetFeeTypes();
-        this.GetStudentAttendance();
-        this.GetSportsResult();
+        this.GetStudentAttendance();        
         this.GetAchievementAndPoint();
         this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -434,7 +433,8 @@ export class StudentviewComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AchievementAndPoints = [...data.value];
-      })
+        this.GetSportsResult();
+      })      
   }
   StudentFamilyNFriendList = [];
   StudentFamilyNFriendListName = 'StudentFamilyNFriends';
@@ -509,11 +509,12 @@ export class StudentviewComponent implements OnInit {
         this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
         this.AdmissionStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.ADMISSIONSTATUS);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-
+        this.ActivityNames= this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
         this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "other")[0].MasterDataId;
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
+        //this.GetAchievementAndPoint();
         //this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
         //this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
         if (this.StudentId > 0)

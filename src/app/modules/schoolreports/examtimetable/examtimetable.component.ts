@@ -12,14 +12,14 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-examtimetable',
   templateUrl: './examtimetable.component.html',
   styleUrls: ['./examtimetable.component.scss']
 })
 export class ExamtimetableComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild('allSelected') private allSelected: MatOption;
 
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -255,6 +255,7 @@ export class ExamtimetableComponent implements OnInit {
       this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    this.SelectedClasses = '';
     this.SelectedExamName = this.Exams.filter(f => f.ExamId == this.searchForm.get("searchExamId").value)[0].ExamName;
     var classesobj = this.Classes.filter(f => this.searchForm.get("searchClassId").value.includes(f.ClassId));
     classesobj.forEach((m, indx) => {
@@ -311,7 +312,7 @@ export class ExamtimetableComponent implements OnInit {
           var _examDate = edate.ExamDate;
           var daynumber = moment(_examDate, 'DD/MM/YYYY').day()
           var day = this.weekday[daynumber]
-          var _dateHeader = "<b>" + _examDate + " - " + day + "</b>";
+          var _dateHeader = '<b>' + _examDate + " - " + day + "</b>";
           var timeTableRow = [];
 
           var examDateSlot = this.ExamSlots.filter(f => {
@@ -321,10 +322,14 @@ export class ExamtimetableComponent implements OnInit {
           SubjectRow = {};
           examDateSlot.forEach((slot, index) => {
             var oneSlotClasslist = [];
-            if (index == 0)
+            if (index == 0) {
               header["Slot0"] = _dateHeader;
-            else
+              header["daterow"] = true;
+            }
+            else {
+              header["daterow"] = true;
               header["Slot" + index] = '';
+            }
             SlotRow["Slot" + index] = "<b>" + slot.SlotName + "</b>";
 
             if (this.displayedColumns.indexOf("Slot" + index) == -1)
@@ -372,11 +377,13 @@ export class ExamtimetableComponent implements OnInit {
                   timeTableRow.push({ ["Slot" + index]: r.Subjects })
                 else
                   timeTableRow[inx]["Slot" + index] = r.Subjects;
+                  timeTableRow[inx]["daterow"]=false;
               })
             }
             //console.log("timeTableRow", timeTableRow)
           })
 
+          //this.SlotNClassSubjects.push("<div style='background-color:lightgray'>"+header+"</div>");
           this.SlotNClassSubjects.push(header);
           this.SlotNClassSubjects.push(SlotRow);
           RowsForOneExamDate.push(...timeTableRow);
