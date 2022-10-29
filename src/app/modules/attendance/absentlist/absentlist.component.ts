@@ -56,22 +56,22 @@ export class AbsentListComponent implements OnInit {
   StudentClassSubjectId = 0;
   StudentAttendanceData = {
     AttendanceId: 0,
-    StudentClassId: 0,
-    AttendanceStatus: 0,
-    AttendanceDate: new Date(),
-    ClassSubjectId: 0,
-    TeacherId: 0,
-    Remarks: '',
-    BatchId: 0,
-    OrgId: 0
+    ReportedTo:0,
+    Approved:false,    
+    ApprovedBy:'',
+    OrgId:0,
+    BatchId:0
   };
   displayedColumns = [
     'ClassName',
     'StudentRollNo',
     'ContactNo',
     'ClassSubject',
-    'AttendanceStatus',
-    'Remarks'
+    'Remarks',
+    'ReportedTo',
+    'Approved',   
+    'ApprovedByName', 
+    'Action'
   ];
   SelectedApplicationId = 0;
 
@@ -111,6 +111,7 @@ export class AbsentListComponent implements OnInit {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
+        this.GetTeachers();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
@@ -127,6 +128,50 @@ export class AbsentListComponent implements OnInit {
     var classId = this.searchForm.get("searchClassId").value;
     this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
 
+  }
+  saveall() {
+    debugger;
+    //var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
+    //console.log("toUpdateAttendance",toUpdateAttendance);
+    this.NoOfRecordToUpdate = this.StudentAttendanceList.length;
+    this.loading=true;
+    this.StudentAttendanceList.forEach((record) => {
+      this.NoOfRecordToUpdate--;
+      this.UpdateOrSave(record);
+    })
+    if(this.StudentAttendanceList.length==0)
+    {
+      this.loading=false;
+    }
+  }
+  Teachers=[];
+  GetTeachers() {
+
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
+    // var _workAccountId = 0;
+    // if (_WorkAccount.length > 0)
+    //   _workAccountId = _WorkAccount[0].MasterDataId;
+
+    let list: List = new List();
+
+    list.fields = ["WorkAccountId"];
+    list.PageName = "EmpEmployeeGradeSalHistories";
+    list.lookupFields = ["Employee($select=UserId,EmpEmployeeId,FirstName,LastName)"]
+    list.filter = [orgIdSearchstr + " and Active eq 1"]; // and WorkAccountId eq " + _workAccountId
+    //list.orderBy = "ParentId";
+    this.Teachers = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.filter(f => {
+          this.Teachers.push({
+            UserId:f.Employee.UserId,
+            TeacherId: f.Employee.EmpEmployeeId,
+            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+          })
+        })
+        console.log("this.Teacher",this.Teachers)
+      })
   }
 
   GetStudentAttendance() {
@@ -201,28 +246,30 @@ export class AbsentListComponent implements OnInit {
           return;
         }
 
-        this.StudentClassList = studentclass.value.map(item => {
-          var _lastname = item.Student.LastName == null ? '' : " " + item.Student.LastName;
+        studentclass.value.forEach(item => {
+          var _lastname = item.Student.LastName == null || item.Student.LastName =='' ? '' : " " + item.Student.LastName;
           var _Classobj = this.Classes.filter(s => s.ClassId == item.ClassId);
           var _Class = '';
           if (_Classobj.length > 0) {
             _Class = _Classobj[0].ClassName;
-          }
-          var _sectionobj = this.Sections.filter(s => s.MasterDataId == item.SectionId);
-          var _section = '';
-          if (_sectionobj.length > 0) {
-            _section = "-" + _sectionobj[0].MasterDataName;
-          }
-          return {
-            StudentClassId: item.StudentClassId,
-            Active: item.Active,
-            ClassId: item.ClassId,
-            ClassName: _Class,
-            RollNo: item.RollNo,
-            Student: item.Student.FirstName + _lastname,
-            StudentRollNo: item.Student.FirstName + _lastname + "-" + item.RollNo + _section,
-            ContactNo: item.Student.ContactNo
 
+            var _sectionobj = this.Sections.filter(s => s.MasterDataId == item.SectionId);
+            var _section = '';
+            if (_sectionobj.length > 0) {
+              _section = "-" + _sectionobj[0].MasterDataName;
+            }
+
+            this.StudentClassList.push({
+              StudentClassId: item.StudentClassId,
+              Active: item.Active,
+              ClassId: item.ClassId,
+              ClassName: _Class,
+              RollNo: item.RollNo,
+              ClassSequence: _Classobj[0].Sequence,
+              Student: item.Student.FirstName + _lastname,
+              StudentRollNo: item.Student.FirstName + _lastname + _section+ "-" + item.RollNo,
+              ContactNo: item.Student.ContactNo
+            });
           }
         })
         //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
@@ -239,6 +286,9 @@ export class AbsentListComponent implements OnInit {
           "AttendanceStatus",
           "ClassSubjectId",
           "Remarks",
+          "Approved",
+          "ReportedTo",
+          "ApprovedBy",
           "OrgId",
           "BatchId"
         ];
@@ -260,28 +310,37 @@ export class AbsentListComponent implements OnInit {
                   if (obj.length > 0)
                     _subjName = obj[0].ClassSubject;
                 }
-
+                var _approvedByName = ''
+                var objApproved =this.Teachers.filter(t=>t.UserId == existing[0].ApprovedBy)
+                if(objApproved.length>0)
+                _approvedByName = objApproved[0].TeacherName;
                 this.StudentAttendanceList.push({
                   AttendanceId: existing[0].AttendanceId,
                   StudentClassId: existing[0].StudentClassId,
                   AttendanceStatus: existing[0].AttendanceStatus,
                   AttendanceDate: existing[0].AttendanceDate,
                   ClassSubjectId: existing[0].ClassSubjectId,
+                  Approved: existing[0].Approved,
+                  ReportedTo: existing[0].ReportedTo,
+                  ApprovedBy: existing[0].ApprovedBy,
+                  ApprovedByName:_approvedByName,
                   ClassSubject: _subjName,
                   Remarks: existing[0].Remarks,
                   RollNo: sc.RollNo,
                   StudentRollNo: sc.StudentRollNo,
                   ClassName: sc.ClassName,
                   ContactNo: sc.ContactNo,
-
+                  ClassSequence: sc.ClassSequence
                 });
               }
             })
-            if (this.StudentAttendanceList.length == 0) 
+            if (this.StudentAttendanceList.length == 0)
               this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
             else
-              this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => a.RollNo - b.RollNo);
-              
+              this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => {
+                return a.ClassSequence - b.ClassSequence || a.RollNo - b.RollNo
+              });
+            //  console.log("this.StudentAttendanceList",this.StudentAttendanceList);
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -296,10 +355,10 @@ export class AbsentListComponent implements OnInit {
       searchSection: ''
     });
   }
-  UpdateActive(element, event) {
+  UpdateApproved(element, event) {
+    debugger;
     element.Action = true;
-    //this.AnyEnableSave=true;
-    element.AttendanceStatus = event.checked == true ? 1 : 0;
+    element.Approved = event.checked;
   }
   onChangeEvent(row, value) {
     //debugger;
@@ -324,7 +383,7 @@ export class AbsentListComponent implements OnInit {
     this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
-
+    debugger;
     //this.NoOfRecordToUpdate = 0;
     var _AttendanceDate = this.searchForm.get("searchAttendanceDate").value;
 
@@ -355,27 +414,29 @@ export class AbsentListComponent implements OnInit {
         }
         else {
 
-          this.StudentAttendanceData.StudentClassId = row.StudentClassId;
-          this.StudentAttendanceData.AttendanceDate = new Date(_AttendanceDate);
+          //this.StudentAttendanceData.StudentClassId = row.StudentClassId;
+          //this.StudentAttendanceData.AttendanceDate = new Date(_AttendanceDate);
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
-          this.StudentAttendanceData.AttendanceStatus = row.AttendanceStatus;
-          this.StudentAttendanceData.ClassSubjectId = clssubjectid;
-          this.StudentAttendanceData.Remarks = row.Remarks;
+          this.StudentAttendanceData.Approved = row.Approved;
+          this.StudentAttendanceData.ReportedTo = row.ReportedTo;
+          this.StudentAttendanceData.ApprovedBy = this.LoginUserDetail[0]["userId"];
           if (this.StudentAttendanceData.AttendanceId == 0) {
             this.StudentAttendanceData["CreatedDate"] = new Date();
             this.StudentAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentAttendanceData["UpdatedDate"];
             delete this.StudentAttendanceData["UpdatedBy"];
-            console.log("StudentAttendanceData", this.StudentAttendanceData);
+            
             this.insert(row);
           }
           else {
+            
             delete this.StudentAttendanceData["CreatedDate"];
             delete this.StudentAttendanceData["CreatedBy"];
             this.StudentAttendanceData["UpdatedDate"] = new Date();
             this.StudentAttendanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            console.log("StudentAttendanceData", this.StudentAttendanceData);
             this.update(row);
           }
           row.Action = false;
@@ -457,6 +518,7 @@ export class AbsentListComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
+        //this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
@@ -482,6 +544,11 @@ export interface IStudentAttendance {
   StudentRollNo: string;
   ContactNo: string;
   ClassName: string;
+  Approved: boolean;
+  ReportedTo: number;
+  ApprovedBy: string;
+  ApprovedByName:string;
+  ClassSequence: number;
   Remarks: string;
 }
 

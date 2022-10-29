@@ -7,6 +7,7 @@ import { AttendancepercentComponent } from '../attendancepercent/attendanceperce
 import { AttendanceCountComponent } from '../attendancecount/attendancecount.component';
 import { StudentAttendanceComponent } from '../studentattendance/studentattendance.component';
 import { TeacherAttendanceComponent } from '../teacherattendance/teacherattendance.component';
+import { DefaulterComponent } from '../defaulter/defaulter.component';
 
 @Component({
   selector: 'app-attendanceboard',
@@ -20,10 +21,12 @@ export class AttendanceboardComponent implements AfterViewInit {
     TeacherAttendanceComponent,
     AttendanceCountComponent,
     AbsentListComponent,
+    DefaulterComponent,
     AttendancepercentComponent
   ];
   SelectedAppName = '';
   tabNames = [
+    { label: 'Attendance', faIcon: '' },
     { label: 'Attendance', faIcon: '' },
     { label: 'Attendance', faIcon: '' },
     { label: 'Attendance', faIcon: '' },
@@ -82,6 +85,10 @@ export class AttendanceboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCEREPORT)
       var comindx = this.components.indexOf(AttendanceCountComponent);
       this.AddRemoveComponent(perObj, comindx);
+      
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.DEFAULTER)
+      var comindx = this.components.indexOf(DefaulterComponent);
+      this.AddRemoveComponent(perObj, comindx);
 
     }
     else if (this.SelectedAppName.toLowerCase() == 'employee management') {
@@ -101,6 +108,11 @@ export class AttendanceboardComponent implements AfterViewInit {
         this.tabNames.splice(comindx, 1);
       }
       var comindx = this.components.indexOf(AttendanceCountComponent);
+      if (comindx > -1) {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      var comindx = this.components.indexOf(DefaulterComponent);
       if (comindx > -1) {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);

@@ -1,37 +1,83 @@
-:host{
-    display: grid;
-    place-items: center;
-    min-height: 91vh;
-    background-color:white;    
+:host {
+    //display         : grid;
+    //place-items     : center;
+    min-height      : 91vh;
+    background-color: white;
+    width           : 100%;
+    align-items: flex-start;
+    //margin-top: 50px;
 }
-.container{
-    display:flex;
+
+
+.container {
+    display          : flex;
     //justify-content: center;
     //margin-top: 150px;
 }
-button{
+
+button {
     margin-right: 15px;
 }
-.column{
+
+.column {
     margin-right: 15px;
 }
-.mat-card{
-    justify-content: center;
-    position: relative;
-    height: max-content;
-    //margin-top:100px; 
-    //margin: 60px;
-    width: 500px;
-}
-.width100{
+
+.width100 {
     width: 100%;
 }
-.width80{
+
+.width80 {
     width: 40%;
 }
-@media only screen and (max-width: 500px) {
-    mat-card{
+
+@media only screen and (max-width: 768px) {
+    .mat-card {
         width: 100%;
     }
+
+    .description {
+        display: none;
+    }
+
+    .loginbox {
+        margin-top: 0px;
+        width     : 100%;
+    }
+    .overallcontainer {
+        display        : flex;
+        justify-content: space-around;
+        width          : 100%;
+        flex-wrap      : wrap;
+        margin-top     : 0px
+    }
     
+}
+
+@media only screen and (min-width: 769px) {
+    .mat-card {
+        justify-content: center;
+        position       : relative;
+        height         : max-content;
+        //margin-top:100px; 
+        //margin: 60px;
+        width          : 500px;
+    }
+
+    .description {
+        width    : 50%;
+        font-size: 14px;
+        margin   : 30px
+    }
+
+    .loginbox {
+        margin-top: 150px;
+    }
+    .overallcontainer {
+        display        : flex;
+        justify-content: space-around;
+        width          : 100%;
+        flex-wrap      : wrap;
+        margin-top     : 100px
+    }
 }

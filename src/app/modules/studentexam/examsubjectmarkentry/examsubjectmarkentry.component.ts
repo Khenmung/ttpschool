@@ -421,7 +421,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
             SubjectCategoryId: cs.SubjectCategoryId
           }
         })
-        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage, this.ClassSubjects);
+        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage, this.ClassSubjects,"ClassSubject");
         this.loading = false;
       })
   }

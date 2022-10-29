@@ -275,7 +275,7 @@ export class TeachersubjectComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
         this.TeacherSubjectList.sort((a, b) => b.Active - a.Active);
-        console.log("TeacherSubjectList", this.TeacherSubjectList);
+        //console.log("TeacherSubjectList", this.TeacherSubjectList);
         //console.log("TeacherSubjectList", this.TeacherSubjectList);
         this.dataSource = new MatTableDataSource<ITeacherSubject>(this.TeacherSubjectList);
         this.dataSource.paginator = this.paginator;

@@ -435,6 +435,7 @@ export class EvaluationresultComponent implements OnInit {
       'ProvideCertificate',
       'FullMark',
       'PassMark',
+      'Confidential',
       'Active'
     ];
 
@@ -444,10 +445,8 @@ export class EvaluationresultComponent implements OnInit {
     this.EvaluationMaster = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        if (data.value.length > 0) {
-          this.EvaluationMaster = data.value.map(item => {
-            return item;
-          })
+        if (data.value.length > 0) {          
+          this.EvaluationMaster = this.contentservice.getConfidentialData(this.tokenstorage,data.value,"EvaluationName")
         }
         this.GetMasterData();
       });

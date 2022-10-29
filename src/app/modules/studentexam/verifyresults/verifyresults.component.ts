@@ -177,6 +177,7 @@ export class VerifyResultsComponent implements OnInit {
       "SubjectId",
       "ClassId",
       "SubjectCategoryId",
+      "SubjectTypeId",
       "Confidential"
     ];
     list.PageName = "ClassSubjects";
@@ -195,6 +196,14 @@ export class VerifyResultsComponent implements OnInit {
           var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)
           if (objsubject.length > 0)
             _subject = objsubject[0].MasterDataName;
+          var _subjectType = '',_selectHowMany=0;
+          var objsubjectType = this.SubjectTypes.filter(c => c.SubjectTypeId == cs.SubjectTypeId)
+          if (objsubjectType.length > 0)
+          {
+            _subjectType = objsubjectType[0].SubjectTypeName;
+            _selectHowMany = objsubjectType[0].SelectHowMany;
+          }
+            
           return {
             ClassSubjectId: cs.ClassSubjectId,
             Active: cs.Active,
@@ -203,10 +212,12 @@ export class VerifyResultsComponent implements OnInit {
             Confidential: cs.Confidential,
             ClassSubject: _class + '-' + _subject,
             SubjectName: _subject,
+            SubjectType:_subjectType,
+            SelectHowMany:_selectHowMany,
             SubjectCategoryId: cs.SubjectCategoryId
           }
         })
-        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage, this.ClassSubjects);
+        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage, this.ClassSubjects,"ClassSubject");
         this.loading = false;
       })
   }
@@ -425,7 +436,7 @@ export class VerifyResultsComponent implements OnInit {
     ];
 
     list.PageName = "StudentClasses"
-    list.lookupFields = ["StudentClassSubjects($select=StudentClassSubjectId,ClassSubjectId,StudentClassId,Active)"];
+    list.lookupFields = ["StudentClassSubjects($filter=Active eq 1;$select=StudentClassSubjectId,ClassSubjectId,StudentClassId,Active)"];
     //list.lookupFields = ["ClassSubject($select=Active,SubjectId,SubjectTypeId,ClassId,SubjectCategoryId)",
     //"StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
@@ -456,6 +467,7 @@ export class VerifyResultsComponent implements OnInit {
                 let _stdSection = this.Sections.filter(c => c.MasterDataId == s.SectionId);
                 if (_stdSection.length > 0)
                   _section = _stdSection[0].MasterDataName;
+                  
                 this.StudentSubjects.push({
                   StudentClassSubjectId: studsubj.StudentClassSubjectId,
                   ClassSubjectId: _subjectIdObj[0].ClassSubjectId,
@@ -468,7 +480,10 @@ export class VerifyResultsComponent implements OnInit {
                   StudentId: s.StudentId,
                   SectionId: s.SectionId,
                   SubjectTypeId: _subjectIdObj[0].SubjectTypeId,
-                  SubjectCategoryId: _subjectIdObj[0].SubjectCategoryId
+                  SubjectType:_subjectIdObj[0].SubjectType,
+                  SelectHowMany:_subjectIdObj[0].SelectHowMany,
+                  SubjectCategoryId: _subjectIdObj[0].SubjectCategoryId,
+                  Active:studsubj.Active
                 });
               }
             }
@@ -535,11 +550,12 @@ export class VerifyResultsComponent implements OnInit {
         this.ClassFullMark = 0;
 
         var ForGrading, ForNonGrading;
+
         StudentOwnSubjects.forEach(f => {
           var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
           var _lastname = stud[0].LastName == null ? '' : " " + stud[0].LastName;
           if (stud.length > 0) {
-            f.Student = stud[0].RollNo + "-" + stud[0].FirstName + _lastname + "- " + f.Section;
+            f.Student = stud[0].RollNo + "-" + stud[0].FirstName + _lastname + "-" + f.Section;
           }
 
         })
@@ -572,21 +588,49 @@ export class VerifyResultsComponent implements OnInit {
           var forEachSubjectOfStud = this.StudentSubjects.filter(s => s.Student == ss.Student)
           //var _subjectDetailToInsert ={}
           this.ClassFullMark = 0;
+          var subjectCount = 0;
           var _subjectCategoryMarkingId = 0;
           var _objSubjectCat = this.SubjectCategory.filter(f => f.MasterDataName.toLowerCase() == 'marking')
           if (_objSubjectCat.length > 0) {
             _subjectCategoryMarkingId = _objSubjectCat[0].MasterDataId;
-
+            debugger;
             //preparing fullmark for all subjects
             forEachSubjectOfStud.forEach(eachsubj => {
 
               //this.ClassFullMark is included only if subject category is marking.
               if (_subjectCategoryMarkingId == eachsubj.SubjectCategoryId) {
+
                 var objFullMark = _examSubjectMarkComponentDefn.filter(c => c.ClassSubjectId == eachsubj.ClassSubjectId);
                 if (objFullMark.length > 0)
                   this.ClassFullMark += objFullMark.reduce((acc, current) => acc + current.FullMark, 0);
               }
             })
+
+              // var _noOfSubjectForAStudent = alasql("select distinct ClassSubjectId,Subject,SubjectType,SelectHowMany,Active FROM ? where SubjectCategoryId =?  GROUP BY ClassSubjectId",
+              // [StudentOwnSubjects,_subjectCategoryMarkingId]);
+
+              // var _GroupBySubjectType = alasql("select distinct SubjectType,SelectHowMany FROM ? where SubjectCategoryId =? and StudentClassId = ?",
+              // [StudentOwnSubjects,_subjectCategoryMarkingId,ss.StudentClassId]);
+              // var compulsory = alasql("select SubjectType FROM ? where SubjectCategoryId =? and StudentClassId = ? and SubjectType=='Compulsory'",
+              // [StudentOwnSubjects,_subjectCategoryMarkingId,ss.StudentClassId]);
+              // //var compulsory =_GroupBySubjectType.filter(no=>no.SubjectType.toLowerCase()=='compulsory');
+              // //var otherThanCompulsory =_GroupBySubjectType.filter(no=>no.SubjectType.toLowerCase()!='compulsory');
+              // _GroupBySubjectType.forEach(o=>{
+              //   if(o.SubjectType.toLowerCase()=='compulsory')
+              //   {
+              //     subjectCount+=compulsory.length;
+              //   }
+              //   else
+              //   {
+              //     subjectCount +=o.SelectHowMany; 
+              //   }
+              // })
+              // subjectCount =6;
+             subjectCount = forEachSubjectOfStud.length;
+             console.log("_noOfSubjectForAStudent",subjectCount)
+            console.log("this.ClassFullMark",this.ClassFullMark);
+             this.ClassFullMark = (this.ClassFullMark / 100) * (subjectCount * 100)
+
           }
 
           forEachSubjectOfStud.forEach(eachsubj => {
@@ -606,6 +650,7 @@ export class VerifyResultsComponent implements OnInit {
               return;
             }
             else {
+
               var failedInComponent = false;
               var subjectComponent = _examSubjectMarkComponentDefn.filter(comp => comp.PassMark > 0 && comp.ClassSubjectId == eachsubj.ClassSubjectId)
               subjectComponent.forEach(compmarkobtained => {
@@ -678,10 +723,12 @@ export class VerifyResultsComponent implements OnInit {
                   if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
                     this.displayedColumns.push(eachsubj.Subject)
                   if (markObtained.length > 0) {
-                    ForNonGrading[eachsubj.Subject] = (failedInComponent || _statusFail) ? "(" + markObtained[0].Marks + ")" : markObtained[0].Marks;
-                    //console.log("markObtained[0].Marks",markObtained[0].Marks)
-                    //console.log("ForNonGrading[Total]",ForNonGrading["Total"])
-                    ForNonGrading["Total"] = (parseFloat(ForNonGrading["Total"]) + parseFloat(markObtained[0].Marks)).toFixed(2);
+                    var markConvertedto100Percent = '';
+                    if (markObtained[0].Marks > 0)
+                      markConvertedto100Percent = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark).toFixed(2);
+
+                    ForNonGrading[eachsubj.Subject] = (failedInComponent || _statusFail) ? "(" + markConvertedto100Percent + ")" : markConvertedto100Percent;
+                    ForNonGrading["Total"] = parseFloat(ForNonGrading["Total"]) + parseFloat(markConvertedto100Percent);
                   }
                 }
               }
@@ -703,7 +750,7 @@ export class VerifyResultsComponent implements OnInit {
         if (errormessageforEachSubject.length > 0) {
           //var distinctsubjecterror = alasql("select ")
           this.loading = false;
-          this.contentservice.openSnackBar("Subject component not defined for "+ errormessageforEachSubject.join(', '), globalconstants.ActionText, globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Subject component not defined for " + errormessageforEachSubject.join(', '), globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
         //for each student
@@ -712,7 +759,7 @@ export class VerifyResultsComponent implements OnInit {
           var _markingId = this.SubjectCategory.filter(f => f.MasterDataName.toLowerCase() == 'marking')[0].MasterDataId;
           this.displayedColumns.push("Total", "Percentage", "Rank", "Division");
           var _SelectedClassStudentGrades = this.SelectedClassStudentGrades.filter(f => f.SubjectCategoryId == _markingId);
-          this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
+          this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
           if (_SelectedClassStudentGrades.length > 0) {
             _SelectedClassStudentGrades.sort((a, b) => a.Sequence - b.Sequence);
             var rankCount = 0;
@@ -1059,7 +1106,7 @@ export class VerifyResultsComponent implements OnInit {
 
     list.fields = ["ClassSubjectMarkComponentId", "ExamId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark", "OverallPassMark"];
     list.PageName = "ClassSubjectMarkComponents";
-    list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=SubjectTypeId,ClassId,Active)"];
+    list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=SubjectCategoryId,SubjectTypeId,ClassId,Active)"];
     list.filter = ["ExamId ne null and Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
@@ -1075,6 +1122,7 @@ export class VerifyResultsComponent implements OnInit {
           e.ClassId = e.ClassSubject.ClassId;
           e.SubjectTypeId = e.ClassSubject.SubjectTypeId;
           e.SelectHowMany = selectHowMany;
+          e.SubjectCategoryId = e.ClassSubject.SubjectCategoryId;
           if (e.ClassSubject.Active == 1)
             this.ClassSubjectComponents.push(e);
         })

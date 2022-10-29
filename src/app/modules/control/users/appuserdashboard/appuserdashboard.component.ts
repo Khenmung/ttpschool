@@ -162,7 +162,7 @@ export class AppuserdashboardComponent implements OnInit {
             this.RoleName = 'Student';
             this.Password = 'Student@1234';
             //this.GetStudents();
-            this.GetEmployees();
+            //this.GetEmployees();
           }
           else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement) {
             this.RoleName = 'Employee'
@@ -256,7 +256,7 @@ export class AppuserdashboardComponent implements OnInit {
               this.Users.push(
                 {
                   Id: '',
-                  UserName: userdetail.FullName,
+                  UserName: userdetail.FirstName.replaceAll(' ',''),
                   Email: userdetail.EmailAddress,
                   Active: 0
                 }
@@ -357,6 +357,7 @@ export class AppuserdashboardComponent implements OnInit {
             student.ClassName = this.Classes.filter(c => c.ClassId == student.ClassId)[0].ClassName;
             student.EmailAddress = student.Student.EmailAddress;
             student.FullName = student.Student.FirstName + _lastname;
+            student.FirstName = student.Student.FirstName.replaceAll(' ','');
             student.ContactNo = student.Student.ContactNo;
             this.UserDetail.push(student);
           }
@@ -377,13 +378,14 @@ export class AppuserdashboardComponent implements OnInit {
     if (searchObj != "") {
       filterStr += " and Id eq '" + searchObj.Id + "'";
     }
-    var _userTypeId = 0;
-    if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement)
-      _userTypeId = this.UserTypes.filter(f => f.MasterDataName.toLowerCase() == 'student')[0].MasterDataId;
-    else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement)
-      _userTypeId = this.UserTypes.filter(f => f.MasterDataName.toLowerCase() == 'employee')[0].MasterDataId;
 
-    filterStr += " and UserTypeId eq " + _userTypeId;
+    // var _userTypeId = 0;
+    // if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement)
+    //   _userTypeId = this.UserTypes.filter(f => f.MasterDataName.toLowerCase() == 'student')[0].MasterDataId;
+    // else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement)
+    //   _userTypeId = this.UserTypes.filter(f => f.MasterDataName.toLowerCase() == 'employee')[0].MasterDataId;
+
+    // filterStr += " and UserTypeId eq " + _userTypeId;
 
     let list: List = new List();
     list.fields = [
@@ -407,7 +409,7 @@ export class AppuserdashboardComponent implements OnInit {
         //var _UserName ='';
         if (data.length > 0) {
           this.UserDetail.forEach(filteredstudent=>{
-            var exist = data.filter(d=>d.UserName == filteredstudent.Student.FirstName);
+            var exist = data.filter(d=>d.UserName == filteredstudent.FirstName.replaceAll(' ',''));
               if(exist.length>0)
               {
                 this.AppUsers.push({
@@ -431,7 +433,7 @@ export class AppuserdashboardComponent implements OnInit {
 
             this.AppUsers.push({
               "Id": "",
-              "UserName": login.FullName,
+              "UserName": login.FirstName.replaceAll(' ',''),
               "EmailAddress": login.EmailAddress,
               "PhoneNumber": login.ContactNo,
               "OrgId": login.OrgId,
@@ -597,7 +599,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.loading = true;
     this.AppUsersData.Active = row.Active;
     this.AppUsersData.Id = row.Id;
-    this.AppUsersData.UserName = row.UserName;
+    this.AppUsersData.UserName = row.UserName.replaceAll(' ','');
     this.AppUsersData.Email = row.EmailAddress;
     this.AppUsersData.PhoneNumber = row.PhoneNumber;
     this.AppUsersData.OrganizationName = this.LoginDetail[0]['org'];
@@ -605,7 +607,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.AppUsersData.Password = this.Password;
 
     this.AppUsersData.ValidTo = new Date(row.ValidTo);
-    console.log('this.AppUsersData', this.AppUsersData)
+    //console.log('this.AppUsersData', this.AppUsersData)
     if (row.Id == '')
       this.insert(row);
     else {

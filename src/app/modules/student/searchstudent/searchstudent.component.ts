@@ -127,6 +127,8 @@ export class searchstudentComponent implements OnInit {
         searchClassId: [0],
         searchPID: [0],
         searchStudentName: [''],
+        FatherName: [''],
+        MotherName: [''],
         searchAdmissionNo: [0]
       })
       //var searchstudent = this.token.getStudentSearch();
@@ -136,6 +138,18 @@ export class searchstudentComponent implements OnInit {
           startWith(''),
           map(value => typeof value === 'string' ? value : value.Name),
           map(Name => Name ? this._filter(Name) : this.Students.slice())
+        );
+      this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.FatherName),
+          map(Name => Name ? this._filterF(Name) : this.Students.slice())
+        );
+      this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.MotherName),
+          map(Name => Name ? this._filterM(Name) : this.Students.slice())
         );
 
       this.StudentSearch = this.token.getStudentSearch();
@@ -316,6 +330,9 @@ export class searchstudentComponent implements OnInit {
 
     this.route.navigate(['/edu/addstudent/' + element.StudentId]);
   }
+  progressreport(){
+    this.route.navigate(['/edu/progressreport/']);
+  }
   feepayment(element) {
     this.generateDetail(element);
     this.route.navigate(['/edu/feepayment']);
@@ -339,7 +356,7 @@ export class searchstudentComponent implements OnInit {
       if (sectionObj.length > 0)
         _sectionName = sectionObj[0].MasterDataName;
       this.StudentClassId = studentclass[0].StudentClassId
-      StudentName += "-" +_clsName + "-" + _sectionName + "-" +studentclass[0].RollNo;
+      StudentName += "-" + _clsName + "-" + _sectionName + "-" + studentclass[0].RollNo;
     }
 
     this.shareddata.ChangeStudentName(StudentName);
@@ -414,6 +431,8 @@ export class searchstudentComponent implements OnInit {
     var objstudent = this.studentSearchForm.get("searchStudentName").value;
     if (objstudent != "")
       _studentId = objstudent.StudentId;
+    var _fathername = this.studentSearchForm.get("FatherName").value.FatherName;
+    var _mothername = this.studentSearchForm.get("MotherName").value.MotherName;
 
     var _ClassId = this.studentSearchForm.get("searchClassId").value;
     var _sectionId = this.studentSearchForm.get("searchSectionId").value;
@@ -422,13 +441,19 @@ export class searchstudentComponent implements OnInit {
     var _PID = this.studentSearchForm.get("searchPID").value;
     var _searchAdmissionNo = this.studentSearchForm.get("searchAdmissionNo").value;
 
-    if (_sectionId == 0 && _searchAdmissionNo == 0 && _remarkId == 0
+
+    if (_fathername == undefined && _mothername == undefined && _sectionId == 0 && _searchAdmissionNo == 0 && _remarkId == 0
       && _ClassId == 0 && _PID == 0 && (_studentId == 0 || objstudent == undefined)) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
       this.token.saveStudentSearch([]);
       return;
     }
+    if (_fathername != undefined)
+      checkFilterString += " and FatherName eq '" + _fathername + "'"
+    if (_mothername != undefined)
+      checkFilterString += " and MotherName eq '" + _mothername + "'"
+
     this.StudentSearch = [];
     if (_remarkId > 0) {
       var obj = [];

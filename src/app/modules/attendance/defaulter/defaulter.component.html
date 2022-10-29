@@ -1,4 +1,4 @@
-<div style="padding: 15px;"><strong>Absent List</strong></div>
+<div style="padding: 15px;"><strong>Defaulter</strong></div>
 <!-- <alert></alert> -->
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="searchForm">
@@ -16,20 +16,16 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="150">
-        <mat-label>Subject</mat-label>
-        <mat-select formControlName="searchClassSubjectId">
-            <mat-option>--select--</mat-option>
-            <mat-option *ngFor="let item of FilteredClassSubjects" [value]="item.ClassSubjectId">{{item.ClassSubject}}
-            </mat-option>
-        </mat-select>
+    <mat-form-field appearance="outline" [style.width.px]="100">
+        <mat-label>Days more than</mat-label>
+        <input matInput formControlName="searchAbsentCount" autocomplete="Off" type="number">           
     </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="150">
+    <!-- <mat-form-field appearance="outline" [style.width.px]="150">
         <mat-label>Attendance Date</mat-label>
         <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
         <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
         <mat-datepicker #AttendanceDate></mat-datepicker>
-    </mat-form-field>
+    </mat-form-field> -->
     <button [disabled]="loading" (click)="GetStudentAttendance()" mat-raised-button color="accent">
         <mat-icon>search</mat-icon>
         <mat-icon *ngIf="loading">
@@ -52,13 +48,13 @@
             {{element.StudentRollNo}}
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="ClassSubject">
+    <!-- <ng-container matColumnDef="ClassSubject">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Subject
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.ClassSubject}}
         </mat-cell>
-    </ng-container>
+    </ng-container> -->
     <ng-container matColumnDef="ContactNo">
         <mat-header-cell *matHeaderCellDef mat-sort-header>ContactNo
         </mat-header-cell>
@@ -66,7 +62,13 @@
             {{element.ContactNo}}
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="ReportedTo">
+    <ng-container matColumnDef="AbsentCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Absent Count </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.AbsentCount}}
+        </mat-cell>
+    </ng-container>
+    <!-- <ng-container matColumnDef="ReportedTo">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Reported To
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -89,19 +91,12 @@
             </mat-checkbox>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="ApprovedByName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Approved By
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-        {{element.ApprovedByName}}
-        </mat-cell>
-    </ng-container>
     <ng-container matColumnDef="Remarks">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.Remarks}}
         </mat-cell>
-    </ng-container>
+    </ng-container> -->
     <ng-container matColumnDef="Action">
         <mat-header-cell *matHeaderCellDef>
             <button [disabled]="loading || !EnableSave || Permission=='read'"

@@ -36,7 +36,7 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input matInput [maxlength]="10" (blur)="onBlur(element)" [value]="element.Rank"
+                    <input matInput [maxlength]="30" (blur)="onBlur(element)" [value]="element.Rank"
                         [(ngModel)]="element.Rank">
                 </mat-form-field>
             </mat-cell>

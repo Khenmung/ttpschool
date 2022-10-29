@@ -96,6 +96,15 @@
                 </mat-checkbox>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="Confidential">
+            <mat-header-cell *matHeaderCellDef style="display:flex; justify-content: center;"> Confidential
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="updateConfidential(element,$event)"
+                    [checked]="element.Confidential">
+                </mat-checkbox>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="FullMark">
             <mat-header-cell *matHeaderCellDef>Full Mark
             </mat-header-cell>

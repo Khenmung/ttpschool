@@ -46,6 +46,7 @@ export class EvaluationMasterComponent implements OnInit {
     ProvideCertificate: false,
     FullMark: 0,
     PassMark: 0,
+    Confidential:false,
     OrgId: 0,
     Active: 0
   };
@@ -57,7 +58,7 @@ export class EvaluationMasterComponent implements OnInit {
     "FullMark",
     "PassMark",
     "AppendAnswer",
-    //"DisplayResult",
+    "Confidential",
     //"ProvideCertificate",
     "Active",
     "Action"
@@ -129,6 +130,7 @@ export class EvaluationMasterComponent implements OnInit {
       AppendAnswer: false,
       FullMark: 0,
       PassMark: 0,
+      Confidential:false,
       Active: false,
       Action: false
     };
@@ -139,6 +141,11 @@ export class EvaluationMasterComponent implements OnInit {
   }
   onBlur(element) {
     element.Action = true;
+  }
+  
+  updateConfidential(row, value) {
+    row.Action = true;
+    row.Confidential = value.checked;
   }
   updateActive(row, value) {
     row.Action = true;
@@ -210,6 +217,7 @@ export class EvaluationMasterComponent implements OnInit {
           this.EvaluationMasterData.ClassGroupId = row.ClassGroupId;
           this.EvaluationMasterData.FullMark = row.FullMark == null ? 0 : row.FullMark;
           this.EvaluationMasterData.PassMark = row.PassMark == null ? 0 : row.PassMark;
+          this.EvaluationMasterData.Confidential = row.Confidential;
           this.EvaluationMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
 
           if (this.EvaluationMasterData.EvaluationMasterId == 0) {
@@ -320,6 +328,7 @@ export class EvaluationMasterComponent implements OnInit {
       "PassMark",
       "DisplayResult",
       "ProvideCertificate",
+      "Confidential",
       "Active"
     ];
 
@@ -408,6 +417,7 @@ export interface IEvaluationMaster {
   ProvideCertificate
   FullMark: number;
   PassMark: number;
+  Confidential:boolean;
   Active: boolean;
   Action: boolean;
 }

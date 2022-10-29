@@ -305,6 +305,7 @@ export class EvaluationExamMapComponent implements OnInit {
       'DisplayResult',
       'AppendAnswer',
       'ProvideCertificate',
+      'Confidential',
       'FullMark',
       'PassMark',
       'Active'
@@ -317,9 +318,9 @@ export class EvaluationExamMapComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.EvaluationNames = data.value.map(item => {
-            return item;
-          })
+          
+          this.EvaluationNames = this.contentservice.getConfidentialData(this.tokenstorage,data.value,"EvaluationName");
+          
         }
         this.loadingFalse();
       });

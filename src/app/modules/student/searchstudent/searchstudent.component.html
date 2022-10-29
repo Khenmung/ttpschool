@@ -23,6 +23,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+
                 <mat-form-field appearance="outline" style="width: 200px;">
                     <mat-label>search</mat-label>
                     <mat-select formControlName="searchRemarkId">
@@ -39,6 +40,24 @@
                 </mat-form-field>
             </div>
             <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Father</mat-label>
+                    <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">
+                    <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFnF">
+                        <mat-option *ngFor="let option of filteredFathers | async" [value]="option">
+                            {{option.FatherName}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Mother</mat-label>
+                    <input type="text" matInput formControlName="MotherName" [matAutocomplete]="autoM">
+                    <mat-autocomplete #autoM="matAutocomplete" [displayWith]="displayFnM">
+                        <mat-option *ngFor="let option of filteredMothers | async" [value]="option">
+                            {{option.MotherName}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
                 <mat-form-field appearance="outline" style="width: 150px;">
                     <mat-label>Admission No.</mat-label>
                     <input formControlName="searchAdmissionNo" autocomplete="Off" matInput [maxlength]="10">
@@ -47,24 +66,6 @@
                     <mat-label>PID</mat-label>
                     <input formControlName="searchPID" autocomplete="Off" matInput [maxlength]="10">
                 </mat-form-field>
-                <!-- <mat-form-field appearance="outline">
-                <mat-label>Father</mat-label>
-                <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">
-                <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFnF">
-                    <mat-option *ngFor="let option of filteredFathers | async" [value]="option">
-                        {{option.FatherName}}
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Mother</mat-label>
-                <input type="text" matInput formControlName="MotherName" [matAutocomplete]="autoM">
-                <mat-autocomplete #autoM="matAutocomplete" [displayWith]="displayFnM">
-                    <mat-option *ngFor="let option of filteredMothers | async" [value]="option">
-                        {{option.MotherName}}
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field> -->
 
                 <mat-form-field appearance="outline" [style.width.px]="350">
                     <mat-label>Student</mat-label>
@@ -89,83 +90,102 @@
         </form>
         <br>
         <!-- <div *ngIf="ELEMENT_DATA.length>0"> -->
-            <mat-table #table [dataSource]="dataSource" matSort>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        &nbsp;
-                        <button style="margin-left: 15px;" [disabled]="loading" matTooltip="Details" mat-mini-fab
-                            (click)="view(element)">
-                            <mat-icon>pageview</mat-icon>
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button [disabled]="loading" class="rightside" mat-icon-button [matMenuTriggerFor]="menuVertical"
+                        matTooltip="login">
+                        <mat-icon>more_vert</mat-icon>
+                        <!-- <mat-icon>account_circle</mat-icon> -->
+                    </button>
+                    <mat-menu #menuVertical="matMenu">
+                        <button [disabled]="loading" mat-menu-item (click)="view(element)">
+                            <mat-icon>pageview</mat-icon>Detail
                         </button>
-                        &nbsp;
-                        <button [disabled]="loading || element.ClassName==''" *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'"
-                            matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
-                            <mat-icon>payments</mat-icon>
+                        <button [disabled]="loading" mat-menu-item (click)="progressreport()">
+                            <mat-icon>change_circle</mat-icon>Progress Report
                         </button>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="PID" [style.width.px]="30">
-                    <mat-header-cell *matHeaderCellDef>PID</mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.PID}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Name">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.Name}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ClassName">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Class </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.ClassName}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="FeeType">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Fee Type </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.FeeType}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Remarks">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.Remarks}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="FatherName">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Father's Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.FatherName}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="MotherName">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Mother's Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.MotherName}}
-                    </mat-cell>
-                </ng-container>
-                <!-- <ng-container matColumnDef="ReasonForLeaving">
+                        <button [disabled]="loading || element.ClassName==''" mat-menu-item
+                            *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'" matTooltip="Fees"
+                             (click)="feepayment(element)">
+                            <mat-icon>payments</mat-icon> Fees
+                        </button>
+                    </mat-menu>
+                    <!-- &nbsp;
+                    <button style="margin-left: 15px;" [disabled]="loading" matTooltip="Details" mat-mini-fab
+                        (click)="view(element)">
+                        <mat-icon>pageview</mat-icon>
+                    </button>
+                    &nbsp;
+                    <button [disabled]="loading || element.ClassName==''"
+                        *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'" matTooltip="Fees" mat-mini-fab
+                        (click)="feepayment(element)">
+                        <mat-icon>payments</mat-icon>
+                    </button> -->
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PID" [style.width.px]="30">
+                <mat-header-cell *matHeaderCellDef>PID</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.PID}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Name}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ClassName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Class </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ClassName}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="FeeType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Fee Type </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.FeeType}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Remarks">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Remarks}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="FatherName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Father's Name </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.FatherName}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="MotherName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Mother's Name </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.MotherName}}
+                </mat-cell>
+            </ng-container>
+            <!-- <ng-container matColumnDef="ReasonForLeaving">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Reason For Leaving </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.ReasonForLeaving}}
                     </mat-cell>
                 </ng-container> -->
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
-                    <mat-cell style="justify-content: center;" *matCellDef="let element">
-                        {{element.Active==1?'Yes':'No'}}
-                        <!-- <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()">
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <mat-cell style="justify-content: center;" *matCellDef="let element">
+                    {{element.Active==1?'Yes':'No'}}
+                    <!-- <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()">
                         </mat-checkbox> -->
-                    </mat-cell>
-                </ng-container>
+                </mat-cell>
+            </ng-container>
 
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;">
-                </mat-row>
-            </mat-table>
-            <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,50]">
-            </mat-paginator>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;">
+            </mat-row>
+        </mat-table>
+        <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,50]">
+        </mat-paginator>
         <!-- </div> -->
     </mat-card-content>
 </mat-card>

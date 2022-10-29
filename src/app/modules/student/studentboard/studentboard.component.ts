@@ -23,12 +23,11 @@ export class StudentboardComponent implements AfterViewInit {
     studentprimaryinfoComponent,
     AddstudentclassComponent,
     StudentattendancereportComponent,
-    StudentprogressreportComponent,
+    //StudentprogressreportComponent,
     StudentviewComponent
   ];
 
   tabNames = [
-    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -78,7 +77,7 @@ export class StudentboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTDETAIL)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTCLASS)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.PROGRESSREPORT)
+    //this.GenerateComponent(globalconstants.Pages.edu.STUDENT.PROGRESSREPORT)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTVIEW)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

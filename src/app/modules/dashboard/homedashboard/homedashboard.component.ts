@@ -56,13 +56,14 @@ export class HomeDashboardComponent implements OnInit {
       searchBatchId: [0]
     })
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-    this.Role = this.loginUserDetail[0]['RoleUsers'][0]['role'];
+
     //console.log('role',this.Role);
     if (this.loginUserDetail.length == 0) {
       this.tokenStorage.signOut();
       this.route.navigate(['/auth/login']);
     }
     else {
+      this.Role = this.loginUserDetail[0]['RoleUsers'][0]['role'];
       this.CheckLocalStorage();
       this.GetOrganization()
         .subscribe((data: any) => {
@@ -94,21 +95,23 @@ export class HomeDashboardComponent implements OnInit {
                   this.PermittedApplications = [..._UniquePermittedApplications];
 
                 if (this.PermittedApplications.length == 0) {
+                  this.contentservice.openSnackBar("No permitted application found.", globalconstants.ActionText, globalconstants.RedBackground);
                   this.tokenStorage.signOut();
-                  this.route.navigate(['/auth/login']);
+                  //this.route.navigate(['/auth/login']);
                 }
-                this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);
-                if (this.userName === undefined || this.userName === null || this.userName == '')
-                  this.loggedIn = false;
-                else
-                  this.loggedIn = true;
-                //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
-                this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
-                this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-                this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-                this.SelectedAppName = this.tokenStorage.getSelectedAppName();
-                this.getBatches();
-
+                else {
+                  this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);
+                  if (this.userName === undefined || this.userName === null || this.userName == '')
+                    this.loggedIn = false;
+                  else
+                    this.loggedIn = true;
+                  //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
+                  this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
+                  this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+                  this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
+                  this.SelectedAppName = this.tokenStorage.getSelectedAppName();
+                  this.getBatches();
+                }
               }
             }
           }

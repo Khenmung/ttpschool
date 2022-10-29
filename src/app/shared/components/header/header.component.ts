@@ -34,6 +34,7 @@ export class HeaderComponent implements OnInit {
     if (this.LoginUserDetails.length == 0) {
       this.loggedIn = false;
       this.logoPath = "assets/images/ttplogo1.png"
+      //this.route.navigate(["/auth/login"]);
     }
     else {
       this.loggedIn = true;

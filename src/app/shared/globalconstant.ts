@@ -230,7 +230,8 @@ export class globalconstants {
                     'EMPLOYEETOTALATTENDANCE': 'employee total attendance',
                     'ATTENANCEREPORT': 'attendance count',
                     'ATTENANCELIST': 'Absent list',
-                    'ATTENANCEPERCENT': 'attendance percent'
+                    'ATTENANCEPERCENT': 'attendance percent',
+                    'DEFAULTER': 'defaulter'
                 },
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',

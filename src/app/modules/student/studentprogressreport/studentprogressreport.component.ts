@@ -12,6 +12,7 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IStudentEvaluation } from '../../evaluation/evaluationresult/evaluationresult.component';
 import {SwUpdate} from '@angular/service-worker';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 @Component({
   selector: 'app-studentprogressreport',
   templateUrl: './studentprogressreport.component.html',
@@ -92,6 +93,7 @@ export class StudentprogressreportComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private nav: Router,
+    private shareddata:SharedataService
   ) { }
 
   ngOnInit(): void {
@@ -104,7 +106,8 @@ export class StudentprogressreportComponent implements OnInit {
     })
     this.PageLoad();
   }
-
+  StudentName='';
+  FeePaymentPermission='';
   PageLoad() {
     debugger;
     this.loading = true;
@@ -121,6 +124,15 @@ export class StudentprogressreportComponent implements OnInit {
       }
       ////console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
+        this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
+        //console.log("StudentName",this.StudentName);
+        //this.LoginUserDetail = this.tokenStorage.getUserDetail();
+        this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
+        var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+          if (perObj.length > 0) {
+            this.FeePaymentPermission = perObj[0].permission;
+          }
+
         this.StudentClassId = this.tokenstorage.getStudentClassId();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -136,6 +148,9 @@ export class StudentprogressreportComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
     }
+  }
+  back() {
+    this.nav.navigate(['/edu']);
   }
   GetStudentSubject() {
 

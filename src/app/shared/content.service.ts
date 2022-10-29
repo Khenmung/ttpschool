@@ -431,14 +431,14 @@ export class ContentService implements OnInit {
       return [];
 
   }
-  getConfidentialData(token, pClassSubject) {
+  getConfidentialData(token, pClassSubject,pColumnName) {
     //let Id = 0;
     //let  = pClassSubject.filter((item, indx) => item.ClassName.toLowerCase() + "-" + item.SubjectName.toLowerCase()== dropdowntype.toLowerCase());//globalconstants.GENDER
     let Permission = '';
     for (var i = 0; i < pClassSubject.length; i++) {
       if (pClassSubject[i].Confidential !=null && pClassSubject[i].Confidential) {
 
-        var perObj = globalconstants.getPermission(token, pClassSubject[i].ClassSubject);
+        var perObj = globalconstants.getPermission(token, pClassSubject[i][pColumnName])//.ClassSubject);
         if (perObj.length > 0) {
           Permission = perObj[0].permission;
           if (Permission == 'deny') {

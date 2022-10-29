@@ -190,25 +190,28 @@ export class AttendanceCountComponent implements OnInit {
       "BatchId"
     ];
     list.PageName = "Attendances";
-    list.lookupFields = ["StudentClass($select=ClassId,StudentClassId)"];
+    list.lookupFields = ["StudentClass($select=ClassId,StudentClassId,SectionId)"];
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
-
         attendance.value.forEach(sc => {
-          var _className = '';
+          var _className = '', _sectionName = '';
           var clsObj = this.Classes.filter(c => c.ClassId == sc.StudentClass.ClassId);
           if (clsObj.length > 0) {
             _className = clsObj[0].ClassName;
-            this.StudentAttendanceList.push({
-              AttendanceId: sc.AttendanceId,
-              AttendanceStatus: sc.AttendanceStatus,
-              AttendanceDate: sc.AttendanceDate,
-              ClassName: _className,
-              Sequence: clsObj[0].Sequence
-            });
+            var sectionObj = this.Sections.filter(c => c.MasterDataId == sc.StudentClass.SectionId);
+            if (sectionObj.length > 0) {
+              _sectionName = sectionObj[0].MasterDataName;
+              this.StudentAttendanceList.push({
+                AttendanceId: sc.AttendanceId,
+                AttendanceStatus: sc.AttendanceStatus,
+                AttendanceDate: sc.AttendanceDate,
+                ClassName: _className + "-" + _sectionName,
+                Sequence: clsObj[0].Sequence
+              });
+            }
           }
         })
         var _data = [];
@@ -234,7 +237,7 @@ export class AttendanceCountComponent implements OnInit {
         })
         //console.log("_data",_data);
         _data = _data.sort((a, b) => a.Sequence - b.Sequence);
-        this.TotalPresent = _data.reduce((acc, current) => acc + current.Present, 0);
+        this.TotalPresent = _data.reduce((acc, current) => acc + (current.Present==null?0:current.Present), 0);
         this.TotalAbsent = _data.reduce((acc, current) => acc + (current.Absent == null ? 0 : current.Absent), 0);
         this.dataSource = new MatTableDataSource<any>(_data);
         this.dataSource.paginator = this.paginator;

@@ -22,7 +22,8 @@ const routes: Routes = [
       { path: 'addstudent/:id', component: StudentboardComponent },
       { path: 'addstudent', component: StudentboardComponent },
       { path: 'view/:id', component: StudentviewComponent },
-      { path: 'feepayment', component: AddstudentfeepaymentComponent }      
+      { path: 'feepayment', component: AddstudentfeepaymentComponent },      
+      { path: 'progressreport', component: StudentprogressreportComponent },      
     ]
   }
 ];

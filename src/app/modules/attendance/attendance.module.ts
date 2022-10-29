@@ -9,10 +9,11 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { AttendancepercentComponent } from './attendancepercent/attendancepercent.component';
+import { DefaulterComponent } from './defaulter/defaulter.component';
 
 
 @NgModule({
-  declarations: [AttendanceComponents],
+  declarations: [AttendanceComponents, DefaulterComponent],
   imports: [
     CommonModule,
     AttendanceRoutingModule,

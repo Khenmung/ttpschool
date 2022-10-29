@@ -698,6 +698,7 @@ export class StudentEvaluationComponent implements OnInit {
       'DisplayResult',
       'AppendAnswer',
       'ProvideCertificate',
+      'Confidential',
       'FullMark',
       'PassMark',
       'Active'
@@ -709,7 +710,9 @@ export class StudentEvaluationComponent implements OnInit {
     this.EvaluationMaster = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.EvaluationMaster = [...data.value];
+        
+        var result =[...data.value];
+        this.EvaluationMaster = this.contentservice.getConfidentialData(this.tokenstorage,result,"EvaluationName");
         this.loadingFalse();
       });
 

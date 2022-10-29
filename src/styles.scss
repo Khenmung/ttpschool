@@ -65,12 +65,32 @@ mat-card {
 
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 768px) {
     mat-card {
         margin-left : 0px;
         margin-right: 0px;
     }
+    mat-form-field{
+        width:100%;
+    }
+    .matcardmargin{
+        margin-left : 0px;
+        margin-right: 20px;
+    }
 
+}
+@media only screen and (min-width: 769px) {
+    mat-card {
+        margin-left : 0px;
+        margin-right: 0px;
+    }
+    // mat-form-field{
+    //     width:100%;
+    // }
+    .matcardmargin{
+        margin-left : 0px;
+        margin-right: 20px;
+    }
 }
 
 
