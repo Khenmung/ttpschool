@@ -199,7 +199,8 @@ export class globalconstants {
                     'VERIFYRESULT': 'verify result',
                     'STUDENTGRADE': 'student grade',
                     'VERIFYRESULTSTATUS': 'verify result status',
-                    'EXAMNCALCULATE': 'exam n calculate'
+                    'EXAMNCALCULATE': 'exam n calculate',
+                    'EXAMMARKCONFIG': 'exam mark config'
                 },
                 'SUBJECT': {
                     'SUBJECT': 'class subject',

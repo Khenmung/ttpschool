@@ -8,7 +8,6 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { filter } from 'mathjs';
 import alasql from 'alasql';
 import { MatPaginator } from '@angular/material/paginator';
 

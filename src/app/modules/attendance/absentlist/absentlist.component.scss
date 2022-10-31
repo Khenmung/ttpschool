@@ -1,26 +1,37 @@
-:host{
-    width:100%;
-}
-mat-card{
-    margin-left: auto;
+:host {
     width: 100%;
 }
-mat-form-field{
-    margin-right: 15px;
-    width:99%;
+
+mat-card {
+    margin-left: auto;
+    width      : 100%;
 }
+
+mat-form-field {
+    margin-right: 15px;
+    width       : 99%;
+}
+
 // mat-cell,mat-header-cell:first-of-type{
 //     padding-left: 0px;
 // }
-mat-cell,mat-header-cell{
-    padding: 10px;
+mat-cell,
+mat-header-cell {
+    padding     : 10px;
     border-right: 1px solid lightgray;
-    align-self: stretch;
+    align-self  : stretch;
 }
-.mat-column-Approved{
-    flex:1 1 80px;
+
+.mat-column-Approved {
+    flex           : 1 0 80px;
     justify-content: center;
 }
-.mat-column-ReportedTo{
-    flex:1 1 120px;
+.mat-column-ClassName{
+    flex: 1 1 100px;
+}
+.mat-column-StudentRollNo,
+.mat-column-ClassSubject,
+.mat-column-ContactNo,
+.mat-column-ReportedTo {
+    flex: 1 1 120px;
 }

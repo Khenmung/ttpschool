@@ -56,11 +56,11 @@ export class AbsentListComponent implements OnInit {
   StudentClassSubjectId = 0;
   StudentAttendanceData = {
     AttendanceId: 0,
-    ReportedTo:0,
-    Approved:false,    
-    ApprovedBy:'',
-    OrgId:0,
-    BatchId:0
+    ReportedTo: 0,
+    Approved: false,
+    ApprovedBy: '',
+    OrgId: 0,
+    BatchId: 0
   };
   displayedColumns = [
     'ClassName',
@@ -69,8 +69,8 @@ export class AbsentListComponent implements OnInit {
     'ClassSubject',
     'Remarks',
     'ReportedTo',
-    'Approved',   
-    'ApprovedByName', 
+    'Approved',
+    'ApprovedByName',
     'Action'
   ];
   SelectedApplicationId = 0;
@@ -134,17 +134,16 @@ export class AbsentListComponent implements OnInit {
     //var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
     //console.log("toUpdateAttendance",toUpdateAttendance);
     this.NoOfRecordToUpdate = this.StudentAttendanceList.length;
-    this.loading=true;
+    this.loading = true;
     this.StudentAttendanceList.forEach((record) => {
       this.NoOfRecordToUpdate--;
       this.UpdateOrSave(record);
     })
-    if(this.StudentAttendanceList.length==0)
-    {
-      this.loading=false;
+    if (this.StudentAttendanceList.length == 0) {
+      this.loading = false;
     }
   }
-  Teachers=[];
+  Teachers = [];
   GetTeachers() {
 
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -165,12 +164,12 @@ export class AbsentListComponent implements OnInit {
       .subscribe((data: any) => {
         data.value.filter(f => {
           this.Teachers.push({
-            UserId:f.Employee.UserId,
+            UserId: f.Employee.UserId,
             TeacherId: f.Employee.EmpEmployeeId,
             TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
           })
         })
-        console.log("this.Teacher",this.Teachers)
+        console.log("this.Teacher", this.Teachers)
       })
   }
 
@@ -247,7 +246,7 @@ export class AbsentListComponent implements OnInit {
         }
 
         studentclass.value.forEach(item => {
-          var _lastname = item.Student.LastName == null || item.Student.LastName =='' ? '' : " " + item.Student.LastName;
+          var _lastname = item.Student.LastName == null || item.Student.LastName == '' ? '' : " " + item.Student.LastName;
           var _Classobj = this.Classes.filter(s => s.ClassId == item.ClassId);
           var _Class = '';
           if (_Classobj.length > 0) {
@@ -267,7 +266,7 @@ export class AbsentListComponent implements OnInit {
               RollNo: item.RollNo,
               ClassSequence: _Classobj[0].Sequence,
               Student: item.Student.FirstName + _lastname,
-              StudentRollNo: item.Student.FirstName + _lastname + _section+ "-" + item.RollNo,
+              StudentRollNo: item.Student.FirstName + _lastname + _section + "-" + item.RollNo,
               ContactNo: item.Student.ContactNo
             });
           }
@@ -311,9 +310,11 @@ export class AbsentListComponent implements OnInit {
                     _subjName = obj[0].ClassSubject;
                 }
                 var _approvedByName = ''
-                var objApproved =this.Teachers.filter(t=>t.UserId == existing[0].ApprovedBy)
-                if(objApproved.length>0)
-                _approvedByName = objApproved[0].TeacherName;
+                if (existing[0].Approved) {
+                  var objApproved = this.Teachers.filter(t => t.UserId == existing[0].ApprovedBy)
+                  if (objApproved.length > 0)
+                    _approvedByName = objApproved[0].TeacherName;
+                }
                 this.StudentAttendanceList.push({
                   AttendanceId: existing[0].AttendanceId,
                   StudentClassId: existing[0].StudentClassId,
@@ -323,7 +324,7 @@ export class AbsentListComponent implements OnInit {
                   Approved: existing[0].Approved,
                   ReportedTo: existing[0].ReportedTo,
                   ApprovedBy: existing[0].ApprovedBy,
-                  ApprovedByName:_approvedByName,
+                  ApprovedByName: _approvedByName,
                   ClassSubject: _subjName,
                   Remarks: existing[0].Remarks,
                   RollNo: sc.RollNo,
@@ -340,7 +341,7 @@ export class AbsentListComponent implements OnInit {
               this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => {
                 return a.ClassSequence - b.ClassSequence || a.RollNo - b.RollNo
               });
-            //  console.log("this.StudentAttendanceList",this.StudentAttendanceList);
+            //console.log("this.StudentAttendanceList", this.StudentAttendanceList);
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -392,9 +393,10 @@ export class AbsentListComponent implements OnInit {
       clssubjectid = 0;
 
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
-      " and StudentClassId eq " + row.StudentClassId +
       " and AttendanceDate ge " + moment(_AttendanceDate).format('YYYY-MM-DD') +
-      " and AttendanceDate lt " + moment(_AttendanceDate).add(1, 'day').format('YYYY-MM-DD')
+      " and AttendanceDate lt " + moment(_AttendanceDate).add(1, 'day').format('YYYY-MM-DD') +
+      " and StudentClassId eq " + row.StudentClassId
+
     if (clssubjectid > 0)
       checkFilterString += " and ClassSubjectId eq " + clssubjectid
 
@@ -427,11 +429,11 @@ export class AbsentListComponent implements OnInit {
             this.StudentAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentAttendanceData["UpdatedDate"];
             delete this.StudentAttendanceData["UpdatedBy"];
-            
+
             this.insert(row);
           }
           else {
-            
+
             delete this.StudentAttendanceData["CreatedDate"];
             delete this.StudentAttendanceData["CreatedBy"];
             this.StudentAttendanceData["UpdatedDate"] = new Date();
@@ -547,7 +549,7 @@ export interface IStudentAttendance {
   Approved: boolean;
   ReportedTo: number;
   ApprovedBy: string;
-  ApprovedByName:string;
+  ApprovedByName: string;
   ClassSequence: number;
   Remarks: string;
 }

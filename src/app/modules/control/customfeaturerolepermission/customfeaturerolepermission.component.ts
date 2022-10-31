@@ -10,6 +10,8 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 @Component({
   selector: 'app-customfeaturerolepermission',
   templateUrl: './customfeaturerolepermission.component.html',
@@ -32,6 +34,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   FilteredPageFeatures = [];
   oldvalue = '';
   selectedData = '';
+  filteredFeatures: Observable<ICustomFeature[]>;
   nameFilter = new UntypedFormControl('');
   datasource: MatTableDataSource<ICustomFeatureRolePermission>;
   AppRoleData = {
@@ -75,12 +78,12 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       })
     })
     this.nameFilter.valueChanges
-    .subscribe(
-      name => {
-        this.filterValues.FeatureName = name;
-        this.datasource.filter = JSON.stringify(this.filterValues);
-      }
-    )
+      .subscribe(
+        name => {
+          this.filterValues.FeatureName = name;
+          this.datasource.filter = JSON.stringify(this.filterValues);
+        }
+      )
     this.PageLoad();
   }
 
@@ -113,7 +116,12 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        
+        this.filteredFeatures = this.searchForm.get("searchFeatureName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.CustomFeatureName),
+          map(Name => Name ? this._filter(Name) : this.CustomFeatures.slice())
+        );
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.Permissions = globalconstants.PERMISSIONTYPES;
         this.GetCustomFeatures();
@@ -122,11 +130,20 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       }
     }
   }
+  private _filter(name: string): ICustomFeature[] {
+
+    const filterValue = name.toLowerCase();
+    return this.CustomFeatures.filter(option => option.CustomFeatureName.toLowerCase().includes(filterValue));
+
+  }
+  displayFn(customfeature: ICustomFeature): string {
+    return customfeature && customfeature.CustomFeatureName ? customfeature.CustomFeatureName : '';
+  }
   createFilter(): (data: any, filter: string) => boolean {
     let filterFunction = function (data, filter): boolean {
       let searchTerms = JSON.parse(filter);
       return data.FeatureName.toLowerCase().indexOf(searchTerms.FeatureName) !== -1
-        //&& data.StudentId.toString().toLowerCase().indexOf(searchTerms.StudentId) !== -1
+      //&& data.StudentId.toString().toLowerCase().indexOf(searchTerms.StudentId) !== -1
       // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
       // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
     }
@@ -141,7 +158,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "CustomFeatures";
-    list.filter = ["Active eq true and (ApplicationId eq " + globalconstants.CommonPanelID + " or ApplicationId eq " + this.SelectedApplicationId + ")"];
+    list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + " and Active eq true and (ApplicationId eq " + globalconstants.CommonPanelID + " or ApplicationId eq " + this.SelectedApplicationId + ")"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -256,7 +273,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       return;
     }
     var _roleId = this.searchForm.get("searchRoleId").value;
-    var _featureId = this.searchForm.get("searchFeatureName").value;
+    var _featureId = this.searchForm.get("searchFeatureName").value.CustomFeatureId;
     // if(_roleId==0 && )
     // {
     //   this.contentservice.openSnackBar("Please select role.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -321,6 +338,9 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
         if (this.CustomerFeaturePermissionList.length == 0) {
           this.contentservice.openSnackBar("No feature found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
+        else {
+          this.CustomerFeaturePermissionList = this.CustomerFeaturePermissionList.sort((a, b) => b.Active - a.Active)
+        }
         //console.log("this.ApplicationRoleList",this.ApplicationRoleList)
         this.datasource = new MatTableDataSource<ICustomFeatureRolePermission>(this.CustomerFeaturePermissionList);
         this.datasource.sort = this.sort;
@@ -357,7 +377,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       this.contentservice.openSnackBar("Please select role.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    var _featureId = this.searchForm.get("searchFeatureName").value;
+    var _featureId = this.searchForm.get("searchFeatureName").value.CustomFeatureId;
     if (_featureId == 0) {
       this.contentservice.openSnackBar("Please select feature.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -520,9 +540,15 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
 }
 export interface ICustomFeatureRolePermission {
   CustomFeatureRolePermissionId: number;
-  CustomFeatureId: 0;
+  CustomFeatureId: number;
   RoleId: number;
   PermissionId: number;
+  ApplicationId: number;
+  Active: number;
+}
+export interface ICustomFeature {
+  CustomFeatureId: number;
+  CustomFeatureName: string;
   ApplicationId: number;
   Active: number;
 }

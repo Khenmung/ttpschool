@@ -13,7 +13,17 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
+        <mat-form-field appearance="outline">
+            <mat-label>feature</mat-label>
+            <input type="text" matInput formControlName="searchFeatureName" [matAutocomplete]="autoF">
+            <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let option of filteredFeatures | async" [value]="option">
+                    {{option.CustomFeatureName}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <!-- <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>feature</mat-label>
             <mat-select formControlName="searchFeatureName" (selectionChange)="enable($event)">
                 <mat-option value="0">select</mat-option>
@@ -21,7 +31,7 @@
                     {{item.CustomFeatureName}}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
         <button [disabled]="loading" style="margin-right:15px" matTooltip="search" mat-raised-button color="accent"
             (click)="GetCustomerFeatures()">
             <mat-icon>search</mat-icon>

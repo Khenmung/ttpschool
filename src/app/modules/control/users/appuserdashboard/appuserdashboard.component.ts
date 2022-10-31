@@ -409,7 +409,7 @@ export class AppuserdashboardComponent implements OnInit {
         //var _UserName ='';
         if (data.length > 0) {
           this.UserDetail.forEach(filteredstudent=>{
-            var exist = data.filter(d=>d.UserName == filteredstudent.FirstName.replaceAll(' ',''));
+            var exist = data.filter(d=>d.UserName == filteredstudent.FirstName);
               if(exist.length>0)
               {
                 this.AppUsers.push({

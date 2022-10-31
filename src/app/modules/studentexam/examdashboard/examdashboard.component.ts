@@ -13,6 +13,7 @@ import { StudentgradeComponent } from '../studentgrade/studentgrade.component';
 import { VerifyresultstatusComponent } from '../verifyresultstatus/verifyresultstatus.component';
 import { ExamncalculateComponent } from '../examncalculate/examncalculate.component';
 import {SwUpdate} from '@angular/service-worker';
+import { ExammarkconfigComponent } from '../exammarkconfig/exammarkconfig.component';
 
 @Component({
   selector: 'app-examdashboard',
@@ -30,7 +31,8 @@ export class ExamdashboardComponent implements AfterViewInit {
     SlotnclasssubjectComponent,
     ExamSubjectMarkEntryComponent,
     VerifyResultsComponent,
-    VerifyresultstatusComponent
+    VerifyresultstatusComponent,
+    ExammarkconfigComponent
   ];
 
   tabNames = [
@@ -42,6 +44,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
+    { "label": "khat peuhpeuh", "faIcon": '' }
   ];
   //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
   Permissions =
@@ -79,6 +82,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.STUDENTGRADE)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMNCALCULATE)
+    this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMMARKCONFIG)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -130,6 +134,9 @@ export class ExamdashboardComponent implements AfterViewInit {
         break;
       case globalconstants.Pages.edu.EXAM.EXAMNCALCULATE:
         comindx = this.components.indexOf(ExamncalculateComponent);
+        break;
+      case globalconstants.Pages.edu.EXAM.EXAMMARKCONFIG:
+        comindx = this.components.indexOf(ExammarkconfigComponent);
         break;
       default:
         comindx = this.components.indexOf(ExamsComponent);

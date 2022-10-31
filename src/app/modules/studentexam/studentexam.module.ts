@@ -8,6 +8,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
+import { ExammarkconfigComponent } from './exammarkconfig/exammarkconfig.component';
 
 @NgModule({
   declarations: [studentexamComponents],

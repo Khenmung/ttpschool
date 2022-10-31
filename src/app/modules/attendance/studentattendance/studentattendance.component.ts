@@ -64,6 +64,8 @@ export class StudentAttendanceComponent implements OnInit {
     AttendanceDate: new Date(),
     ClassSubjectId: 0,
     TeacherId:0,
+    Approved:false,
+    ApprovedBy:'',
     Remarks: '',
     BatchId: 0,
     OrgId: 0
@@ -377,6 +379,8 @@ export class StudentAttendanceComponent implements OnInit {
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
           this.StudentAttendanceData.AttendanceStatus = row.AttendanceStatus;
           this.StudentAttendanceData.ClassSubjectId = clssubjectid;
+          this.StudentAttendanceData.Approved = false;
+          this.StudentAttendanceData.ApprovedBy = '';
           this.StudentAttendanceData.Remarks = row.Remarks;
           if (this.StudentAttendanceData.AttendanceId == 0) {
             this.StudentAttendanceData["CreatedDate"] = new Date();

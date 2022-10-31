@@ -236,7 +236,7 @@ export class AttendanceCountComponent implements OnInit {
 
         })
         //console.log("_data",_data);
-        _data = _data.sort((a, b) => a.Sequence - b.Sequence);
+        _data = _data.sort((a, b) => a.Sequence - b.Sequence || a.ClassName - b.ClassName);
         this.TotalPresent = _data.reduce((acc, current) => acc + (current.Present==null?0:current.Present), 0);
         this.TotalAbsent = _data.reduce((acc, current) => acc + (current.Absent == null ? 0 : current.Absent), 0);
         this.dataSource = new MatTableDataSource<any>(_data);
