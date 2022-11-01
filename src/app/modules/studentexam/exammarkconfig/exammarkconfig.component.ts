@@ -113,11 +113,18 @@ export class ExammarkconfigComponent implements OnInit {
       }
     }
   }
-  Calculatemark(){
-    debugger;
-  var arr =[1, 2, 3, 4, 5];
-    var a=evaluate("x=sort([11, 23, 34, 45, 5],'desc');b=x[2];c=x[2]*.15")// // returns Array  [1, 2, 3]
-    console.log("three elment of a",a._data)
+  clearData(){
+    this.ExamMarkConfigList=[];
+    this.dataSource = new MatTableDataSource(this.ExamMarkConfigList);
+  }
+  Calculatemark(element){
+  //   debugger;
+  // var arr =[1, 2, 3, 4, 5];
+  
+  //   var a=evaluate(element.Formula)// // returns Array  [1, 2, 3]
+    element.Action=true;
+    // row.Action = true;
+    // console.log("three elment of a",a.entries[0])
   }
   GetExamMarkConfig() {
     var _classId = this.searchForm.get("searchClassId").value;
@@ -150,6 +157,7 @@ export class ExammarkconfigComponent implements OnInit {
     // if (_classSubjectId > 0) {
     //   filterStr += " and ClassSubjectId eq " + _classSubjectId;
     // }
+    this.loading=true;
     let list: List = new List();
     list.fields = [
       'ExamMarkConfigId',
@@ -189,11 +197,18 @@ export class ExammarkconfigComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource(this.ExamMarkConfigList);
+        this.dataSource.paginator=this.paginator;
+
+        this.loading=false;
+      },error=>{
+        this.loading=false;
+        
       })
   }
   GetResultReleased(source) {
     this.ResultReleased = this.Exams.filter(e => e.ExamId == source.value)[0].ReleaseResult;
     this.FilterClass();
+    this.clearData();
   }
   updateActive(row, value) {
     //if(!row.Action)
@@ -337,7 +352,7 @@ export class ExammarkconfigComponent implements OnInit {
   SelectClassSubject() {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
-    //this.GetSpecificStudentGrades();
+    this.clearData();
   }
 
   GetClassSubject() {

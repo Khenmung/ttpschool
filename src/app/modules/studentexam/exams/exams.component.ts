@@ -48,7 +48,6 @@ export class ExamsComponent implements OnInit {
     ExamNameId: 0,
     StartDate: Date,
     EndDate: Date,
-    MarkFormula:'',
     ClassGroupId: 0,
     ReleaseResult: 0,
     ReleaseDate: null,
@@ -62,8 +61,7 @@ export class ExamsComponent implements OnInit {
     'ExamName',
     'StartDate',
     'EndDate',
-    'ClassGroupId',
-    'MarkFormula',
+    'ClassGroupId',    
     'AttendanceStartDate',
     'ReleaseDate',
     'ReleaseResult',
@@ -212,7 +210,7 @@ export class ExamsComponent implements OnInit {
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
           this.ExamsData.ClassGroupId = row.ClassGroupId;
-          this.ExamsData.MarkFormula = row.MarkFormula;
+          //this.ExamsData.MarkFormula = row.MarkFormula;
           this.ExamsData.AttendanceStartDate = row.AttendanceStartDate;
           this.ExamsData.ReleaseResult = row.ReleaseResult;
           this.ExamsData.BatchId = this.SelectedBatchId;
@@ -274,7 +272,7 @@ export class ExamsComponent implements OnInit {
 
     list.fields = [
       "ExamId", "ExamNameId", "StartDate",
-      "EndDate", "ClassGroupId", "AttendanceStartDate","MarkFormula",
+      "EndDate", "ClassGroupId", "AttendanceStartDate",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -301,7 +299,7 @@ export class ExamsComponent implements OnInit {
               ExamName: e.MasterDataName,
               AttendanceStartDate: new Date(),
               Sequence:e.Sequence,
-              MarkFormula:'',
+              //MarkFormula:'',
               StartDate: new Date(),
               EndDate: new Date(),
               ReleaseResult: 0,
@@ -371,122 +369,7 @@ export class ExamsComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
-  GetExamStudentSubjectResults(examId, row) {
-    debugger;
-    //this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.ExamStudentSubjectResult = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = ' ';
-
-    this.loading = true;
-    filterstr = 'Active eq 1 and ExamId eq ' + examId;
-    let list: List = new List();
-    list.fields = [
-      "ExamStudentSubjectResultId",
-      "ExamId",
-      "StudentClassSubjectId",
-      "ClassSubjectMarkComponentId",
-      "Marks",
-      "ExamStatus",
-      "Active"
-    ];
-    list.PageName = "ExamStudentSubjectResults";
-    list.filter = [filterstr + orgIdSearchstr];
-    this.dataservice.get(list)
-      .subscribe((examComponentResult: any) => {
-        debugger;
-        var _ClassFullMark = [];
-        //}
-        this.GetStudents()
-          .subscribe((data: any) => {
-            this.Students = [...data.value];
-
-            var forDisplay;
-
-            var filteredIndividualStud = alasql("select distinct StudentClassId from ? ", [this.StudentSubjects]);
-
-            filteredIndividualStud.forEach(ss => {
-
-              //intial columns
-              forDisplay = {
-                "ExamStudentResultId": 0,
-                "ExamId": examId,
-                "StudentClassId": ss.StudentClassId,
-                "Rank": 0,
-                "TotalMarks": 0,
-                "Grade": 0,
-                "OrgId": this.LoginUserDetail[0]["orgId"],
-                "BatchId": this.SelectedBatchId,
-                "ExamStatusId": 0,
-                "Active": row.ReleaseResult,
-                "FailCount": 0,
-                "PassCount": 0
-              }
-              var forEachSubjectOfStud = this.StudentSubjects.filter(s => s.StudentClassId == ss.StudentClassId)
-              forEachSubjectOfStud.forEach(each => {
-
-                _ClassFullMark = alasql("select ClassId,sum(FullMark) as FullMark from ? where ClassId = ? group by ClassId",
-                  [this.ClassSubjectComponents, each.ClassId]);
-
-                var markObtained = alasql("select StudentClassSubjectId,SUM(Marks) as Marks FROM ? where StudentClassSubjectId = ? GROUP BY StudentClassSubjectId",
-                  [examComponentResult.value, each.StudentClassSubjectId]);
-                var _subjectPassMarkFullMark = alasql("select ClassSubjectId,SUM(PassMark) as PassMark,SUM(FullMark) as FullMark FROM ? where ClassSubjectId = ? GROUP BY ClassSubjectId",
-                  [this.ClassSubjectComponents, each.ClassSubjectId]);
-
-                var _statusFail = true;
-                if (markObtained.length > 0)
-                  _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
-
-                if (_statusFail)
-                  forDisplay["FailCount"]++;
-                else
-                  forDisplay["PassCount"]++;
-
-                forDisplay["TotalMarks"] += +(markObtained.length > 0 ? markObtained[0].Marks : 0);
-
-              })
-
-              this.ExamStudentSubjectResult.push(forDisplay);
-            })
-
-            this.ExamStudentSubjectResult.sort((a: any, b: any) => b.TotalMarks - a.TotalMarks);
-            this.StudentGrades.sort((a, b) => a.Sequence - b.Sequence);
-            var rankCount = 0;
-            this.ExamStudentSubjectResult.forEach((r: any, index) => {
-              for (var i = 0; i < this.StudentGrades.length; i++) {
-                var formula = this.StudentGrades[i].Logic
-                  .replaceAll("[TotalMark]", r.TotalMarks)
-                  .replaceAll("[FullMark]", _ClassFullMark.length > 0 ? _ClassFullMark[0].FullMark : 0)
-                  .replaceAll("[PassCount]", r.PassCount)
-                  .replaceAll("[FailCount]", r.FailCount);
-
-                if (evaluate(formula)) {
-                  r.Grade = this.StudentGrades[i].MasterDataId;
-                  break;
-                }
-              }
-
-              if (r.FailCount == 0) {
-                rankCount++;
-                r.Rank = rankCount;
-              }
-            })
-
-            debugger;
-            this.dataservice.postPatch('ExamStudentResults', this.ExamStudentSubjectResult, 0, 'post')
-              .subscribe(
-                (data: any) => {
-                  this.loading = false; this.PageLoading = false;
-                  row.Action = false;
-                  this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-                }, error => {
-                  this.contentservice.openSnackBar("Something went wrong. Please try again.", globalconstants.ActionText, globalconstants.RedBackground);
-                  this.loading = false; this.PageLoading = false;
-                })
-          })
-      })
-
-  }
+  
   GetStudentSubjects() {
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -547,19 +430,7 @@ export class ExamsComponent implements OnInit {
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    // let Id = 0;
-    // let Ids = this.allMasterData.filter((item, indx) => {
-    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    // })
-    // if (Ids.length > 0) {
-    //   Id = Ids[0].MasterDataId;
-    //   return this.allMasterData.filter((item, index) => {
-    //     return item.ParentId == Id
-    //   })
-    // }
-    // else
-    //   return [];
-
+    
   }
 
 }
@@ -567,7 +438,6 @@ export interface IExams {
   ExamId: number;
   ExamNameId: number;
   ExamName: string;
-  MarkFormula:string;
   StartDate: Date;
   EndDate: Date;
   Sequence:number;

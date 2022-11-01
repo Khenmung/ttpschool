@@ -26,13 +26,13 @@ export class ExamdashboardComponent implements AfterViewInit {
   components:any = [
     ExamsComponent,
     StudentgradeComponent,
+    ExammarkconfigComponent,
     ExamncalculateComponent,
     ExamslotComponent,
     SlotnclasssubjectComponent,
     ExamSubjectMarkEntryComponent,
     VerifyResultsComponent,
-    VerifyresultstatusComponent,
-    ExammarkconfigComponent
+    VerifyresultstatusComponent    
   ];
 
   tabNames = [
