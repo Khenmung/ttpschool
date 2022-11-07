@@ -9,6 +9,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { List } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-homedashboard',
@@ -70,7 +71,18 @@ export class HomeDashboardComponent implements OnInit {
           if (data.value.length > 0) {
             var _validTo = new Date(data.value[0].ValidTo);//.setHours(0,0,0,0);
             var _today = new Date();//.setHours(0,0,0,0);
-            console.log("_validTo", _validTo)
+            var _roleName = this.loginUserDetail[0]['RoleUsers'][0].role;
+            const diffTime = Math.abs(_validTo.getTime() - _today.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            console.log("diffDays", diffDays)
+            var alertDate = localStorage.getItem("alertdate");
+            var todaystring = moment(new Date()).format('DD-MM-YYYY')
+            if (diffDays < 6 && alertDate != todaystring && _roleName.toLowerCase()=='admin') 
+            {
+              localStorage.setItem("alertdate", todaystring);
+              this.contentservice.openSnackBar("Your plan is expiring within " + diffDays +" days. i.e on " + moment(_validTo).format('DD/MM/YYYY'), globalconstants.ActionText, globalconstants.BlueBackground);
+            }
+            // var days = new Date(_validTo) - new Date(_today);
             if (_validTo.getTime() < _today.getTime()) {
               this.tokenStorage.signOut();
               this.contentservice.openSnackBar("Login expired! Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -83,7 +95,7 @@ export class HomeDashboardComponent implements OnInit {
               this.loading = true;
               this.userName = localStorage.getItem('userName');
               var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
-              var _roleName = this.loginUserDetail[0]['RoleUsers'][0].role;
+              
               if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {
                 this.route.navigate(["/auth/selectplan"]);
               }

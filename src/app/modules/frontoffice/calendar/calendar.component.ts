@@ -48,6 +48,7 @@ const colors: any = {
 @Component({
   selector: 'mwl-demo-component',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./calendar.component.scss'],
   styles: [
     `
       h3 {
@@ -60,6 +61,7 @@ const colors: any = {
       }
     `,
   ],
+
   templateUrl: 'calendar.component.html',
 })
 export class DemoComponent implements OnInit { PageLoading=true;
@@ -73,6 +75,7 @@ export class DemoComponent implements OnInit { PageLoading=true;
   view: CalendarView = CalendarView.Month;
 
   CalendarView = CalendarView;
+  //CalendarView.setOption('height', 700);
 
   viewDate: Date = new Date();
 

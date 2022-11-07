@@ -7,10 +7,12 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { NgxPrintModule } from 'ngx-print';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { EvaluationresultlistComponent } from './evaluationresultlist/evaluationresultlist.component';
 
 @NgModule({
   declarations: [
-    EvaluationComponents  
+    EvaluationComponents,
+    EvaluationresultlistComponent  
   ],
   imports: [
     CommonModule,

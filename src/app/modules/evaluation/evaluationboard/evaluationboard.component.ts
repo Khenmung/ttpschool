@@ -7,6 +7,7 @@ import { ClassEvaluationComponent } from '../classevaluation/classevaluation.com
 import { EvaluationExamMapComponent } from '../evaluationexammap/EvaluationExamMap.component';
 import { EvaluationMasterComponent } from '../evaluationmaster/evaluationmaster.component';
 import { EvaluationresultComponent } from '../evaluationresult/evaluationresult.component';
+import { EvaluationresultlistComponent } from '../evaluationresultlist/evaluationresultlist.component';
 import { StudentEvaluationComponent } from '../studentevaluation/studentevaluation.component';
 
 @Component({
@@ -21,7 +22,7 @@ export class EvaluationboardComponent implements AfterViewInit {
     ClassEvaluationComponent,
     EvaluationExamMapComponent,
     StudentEvaluationComponent,
-    EvaluationresultComponent,
+    EvaluationresultlistComponent,
   ];
 
   tabNames = [
@@ -78,7 +79,7 @@ export class EvaluationboardComponent implements AfterViewInit {
     this.AddRemoveComponent(perObj, comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONRESULT)
-    var comindx = this.components.indexOf(EvaluationresultComponent);
+    var comindx = this.components.indexOf(EvaluationresultlistComponent);
     this.AddRemoveComponent(perObj, comindx);
     
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

@@ -21,7 +21,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <span *ngIf="!EvaluationUpdatable && EvaluationUpdatable!=null">
+            <!-- <span *ngIf="!EvaluationUpdatable && EvaluationUpdatable!=null">
                 <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Exam/Test/Session</mat-label>
                     <mat-select formControlName="searchExamId">
@@ -30,8 +30,8 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-            </span>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationExamMap()">
+            </span> -->
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationExamMapList()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>

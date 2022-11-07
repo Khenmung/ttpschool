@@ -831,7 +831,7 @@ GetCommonMasterData(orgId, appIds) {
     "MasterDataName",
     "ParentId",
     "Description",
-    "Logic",
+  //  "Logic",
     "Sequence",
     "Confidential",
     "Active"];

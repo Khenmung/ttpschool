@@ -127,7 +127,7 @@ export class globalconstants {
                     "HOLIDAY": "holiday",
                     "NOOFSTUDENT": "no of students",
                     "CREATEHTMLPAGE": "create page",
-                    "RULESORPOLICYREPORT": "rules or policies report"
+                    "RULESORPOLICYREPORT": "rules or policies"
                 }
             },
             "emp": {
@@ -241,6 +241,7 @@ export class globalconstants {
                     'EXECUTEEVALUATION': 'execute evaluation',
                     'EVALUATIONTYPE': 'evaluation type',
                     'EVALUATIONRESULT': 'evaluation result',
+                    'EVALUATIONRESULTLIST': 'evaluation result list',
                     'CLASSEVALUATIONOPTION': 'answer option',
                     'EVALUATIONANDEXAM': 'evaluation and exam',
 
@@ -301,7 +302,7 @@ export class globalconstants {
                 "ACTIVITYNAME": "activity name",
                 "ACTIVITYCATEGORY": "activity category",
                 "ACTIVITYSESSION": "activity session",
-                "RULEORPOLICYCATEGORY": "rule or policy category",
+                "PAGECATEGORY": "page category",
                 "RULEORPOLICYCATEGORYDISPLAYTYPE": "rules or policy display type"
             },
             "ttpapps": {

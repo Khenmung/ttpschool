@@ -41,7 +41,7 @@ export class CreatehtmlpageComponent implements OnInit {
         '-',
         'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
         'alignment', '|',
-        'link','insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+        'link', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
         'specialCharacters', 'horizontalLine', 'pageBreak', '|',
         'textPartLanguage', '|',
         'sourceEditing'
@@ -198,6 +198,7 @@ export class CreatehtmlpageComponent implements OnInit {
   //     } );
 
   ///////////////////
+  AddNewMode = false;
   RulesOrPolicyTypes = [];
   PageLoading = false;
   LoginUserDetail: any[] = [];
@@ -212,11 +213,12 @@ export class CreatehtmlpageComponent implements OnInit {
   filteredOptions: Observable<IRulesOrPolicy[]>;
   dataSource: MatTableDataSource<IRulesOrPolicy>;
   allMasterData = [];
-  RulesOrPolicyCategory = [];
+  PageCategory = [];
   RulesOrPolicySubCategory = [];
   Permission = 'deny';
   RulesOrPolicyData = {
     RulesOrPolicyId: 0,
+    CategoryId: 0,
     Title: '',
     Description: '',
     OrgId: 0,
@@ -255,6 +257,7 @@ export class CreatehtmlpageComponent implements OnInit {
       Description: [''],
       Title: [''],
       RulesOrPolicyId: [0],
+      searchCategoryId: [0],
       Active: [true]
       // searchSubCategoryId: [0]
     });
@@ -293,8 +296,8 @@ export class CreatehtmlpageComponent implements OnInit {
           autoGrow_onStartup: true,
           //autoGrow_minHeight: 500,
           autoGrow_maxHeight: 600,
-          font_names:"Arial;Times New Roman;Verdana;'Kalam', cursive;",          
-          contentsCss:'https://fonts.googleapis.com/css2?family=Kalam:wght@300&display=swap'
+          font_names: "Arial;Times New Roman;Verdana;'Kalam', cursive;",
+          contentsCss: 'https://fonts.googleapis.com/css2?family=Kalam:wght@300&display=swap'
         };
 
         this.GetMasterData();
@@ -302,8 +305,8 @@ export class CreatehtmlpageComponent implements OnInit {
       }
     }
   }
-  formdata:FormData;
-  selectedFile:any;
+  formdata: FormData;
+  selectedFile: any;
 
   uploadFile(loader) {
     debugger;
@@ -327,7 +330,7 @@ export class CreatehtmlpageComponent implements OnInit {
 
     this.formdata.append("studentId", "0");
     this.formdata.append("studentClassId", "0");
-    this.formdata.append("questionId","0");
+    this.formdata.append("questionId", "0");
     this.formdata.append("docTypeId", "0");
 
     this.formdata.append("image", loader.file, loader.file.name);
@@ -347,9 +350,10 @@ export class CreatehtmlpageComponent implements OnInit {
     });
   }
   AddNew() {
-
+    this.AddNewMode = true;
     this.searchForm.patchValue({
       RulesOrPolicyId: 0,
+      CategoryId: 0,
       Title: '',
       Description: '',
       Active: 0,
@@ -381,6 +385,7 @@ export class CreatehtmlpageComponent implements OnInit {
     this.loading = true;
     var _title = this.searchForm.get("Title").value;
     var _description = this.searchForm.get("Description").value;
+    var _categoryId = this.searchForm.get("searchCategoryId").value;
     var _rulesOrPolicyId = this.searchForm.get("RulesOrPolicyId").value;
     var _active = this.searchForm.get("Active").value;
     let checkFilterString = "Title eq '" + globalconstants.encodeSpecialChars(_title) +
@@ -395,6 +400,13 @@ export class CreatehtmlpageComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter page detail.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    if (_categoryId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
+    checkFilterString += " and CategoryId eq " + _categoryId
 
     if (_rulesOrPolicyId > 0)
       checkFilterString += " and RulesOrPolicyId ne " + _rulesOrPolicyId;
@@ -413,6 +425,7 @@ export class CreatehtmlpageComponent implements OnInit {
         else {
           var _desc = _description.replaceAll('"', "'")
           this.RulesOrPolicyData.RulesOrPolicyId = _rulesOrPolicyId;
+          this.RulesOrPolicyData.CategoryId = _categoryId;
           this.RulesOrPolicyData.Active = _active;
           this.RulesOrPolicyData.Description = _desc;
           this.RulesOrPolicyData.Title = _title;
@@ -445,6 +458,7 @@ export class CreatehtmlpageComponent implements OnInit {
     this.dataservice.postPatch(this.RulesOrPolicyListName, this.RulesOrPolicyData, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.AddNewMode =false;
           this.searchForm.patchValue({ "RulesOrPolicyId": data.RulesOrPolicyId });
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
@@ -463,7 +477,7 @@ export class CreatehtmlpageComponent implements OnInit {
   GetRulesOrPolicys() {
     debugger;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    var _fields = ["RulesOrPolicyId", "Title"];
+    var _fields = ["CategoryId","RulesOrPolicyId", "Title"];
 
     this.loading = true;
     let list: List = new List();
@@ -482,12 +496,17 @@ export class CreatehtmlpageComponent implements OnInit {
       });
 
   }
+  FilteredFileNames=[];
+  FilterTitle(){
+    var searchCategoryId = this.searchForm.get("searchCategoryId").value;
+    this.FilteredFileNames = this.FileNames.filter(f=>f.CategoryId == searchCategoryId);
+  }
   GetRulesOrPolicy() {
     debugger;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _searchId = this.searchForm.get("searchId").value;
     //var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
-    var _fields = ["RulesOrPolicyId", "Title", "Description"];
+    var _fields = ["RulesOrPolicyId", "CategoryId", "Title", "Description"];
     if (_searchId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select title.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -523,7 +542,7 @@ export class CreatehtmlpageComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.RulesOrPolicyCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORY)
+        this.PageCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.PAGECATEGORY)
         this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
 
         //this.GetRulesOrPolicy();
@@ -549,6 +568,7 @@ export class CreatehtmlpageComponent implements OnInit {
 }
 export interface IRulesOrPolicy {
   RulesOrPolicyId: number;
+  CategoryId: number;
   Title: string;
   Description: string;
   Action: boolean;
@@ -574,7 +594,7 @@ export class UploadAdapter {
         console.log(image);
         resolve(0);
         return { default: "data:image/png;base64," + image };
-        
+
       }
       myReader.readAsDataURL(file);
     });

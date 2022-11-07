@@ -315,6 +315,7 @@ export class StudentEvaluationComponent implements OnInit {
               StudentEvaluationResultId: row.StudentEvaluationResultId,
               StudentClassId: _studentClassId,
               StudentId: row.StudentId,
+              ClassId:this.ClassId,
               ClassEvaluationId: row.ClassEvaluationId,
               AnswerText: _answerText,
               History: _history,
@@ -409,7 +410,10 @@ export class StudentEvaluationComponent implements OnInit {
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.StudentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    
+    var objstudent =this.searchForm.get("searchStudentName").value;
+    this.ClassId = objstudent.ClassId;
+    this.StudentClassId = objstudent.StudentClassId;
     this.StudentId = this.searchForm.get("searchStudentName").value.StudentId;
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -951,6 +955,7 @@ export interface IStudentEvaluation {
   EvaluationClassSubjectMapId: number;
   ClassEvaluationAnswerOptionParentId: number;
   StudentEvaluationResultId: number;
+  ClassId:number;
   AnswerText: string;
   History: string;
   StudentClassId: number;

@@ -32,7 +32,7 @@ export class RulesnpolicyreportComponent implements OnInit {
   filteredOptions: Observable<IRulesOrPolicy[]>;
   dataSource: MatTableDataSource<IRulesOrPolicy>;
   allMasterData = [];
-  RulesOrPolicyCategory = [];
+  PageCategory = [];
   RulesOrPolicySubCategory = [];
   Permission = 'deny';
   RulesOrPolicyData = {
@@ -298,7 +298,7 @@ export class RulesnpolicyreportComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.RulesOrPolicyCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORY)
+        this.PageCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.PAGECATEGORY)
         this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
 
         //this.GetRulesOrPolicy();
