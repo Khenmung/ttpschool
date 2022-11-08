@@ -606,8 +606,8 @@ export class VerifyResultsComponent implements OnInit {
               }
             })
 
-              // var _noOfSubjectForAStudent = alasql("select distinct ClassSubjectId,Subject,SubjectType,SelectHowMany,Active FROM ? where SubjectCategoryId =?  GROUP BY ClassSubjectId",
-              // [StudentOwnSubjects,_subjectCategoryMarkingId]);
+              var _noOfSubjectForAStudent = alasql("select distinct ClassSubjectId,Active FROM ? where SubjectCategoryId =?  GROUP BY ClassSubjectId",
+              [StudentOwnSubjects,_subjectCategoryMarkingId]);
 
               // var _GroupBySubjectType = alasql("select distinct SubjectType,SelectHowMany FROM ? where SubjectCategoryId =? and StudentClassId = ?",
               // [StudentOwnSubjects,_subjectCategoryMarkingId,ss.StudentClassId]);
@@ -626,10 +626,11 @@ export class VerifyResultsComponent implements OnInit {
               //   }
               // })
               // subjectCount =6;
-             subjectCount = forEachSubjectOfStud.length;
-             console.log("_noOfSubjectForAStudent",subjectCount)
-            console.log("this.ClassFullMark",this.ClassFullMark);
-             this.ClassFullMark = (this.ClassFullMark / 100) * (subjectCount * 100)
+             subjectCount = _noOfSubjectForAStudent.length;
+             //console.log("_noOfSubjectForAStudent",subjectCount)
+            //console.log("this.ClassFullMark",this.ClassFullMark);
+             //this.ClassFullMark = (this.ClassFullMark / 100) * (subjectCount * 100)
+             this.ClassFullMark = subjectCount * 100;
 
           }
 
@@ -728,7 +729,7 @@ export class VerifyResultsComponent implements OnInit {
                       markConvertedto100Percent = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark).toFixed(2);
 
                     ForNonGrading[eachsubj.Subject] = (failedInComponent || _statusFail) ? "(" + markConvertedto100Percent + ")" : markConvertedto100Percent;
-                    ForNonGrading["Total"] = parseFloat(ForNonGrading["Total"]) + parseFloat(markConvertedto100Percent);
+                    ForNonGrading["Total"] = (parseFloat(ForNonGrading["Total"]) +parseFloat(markConvertedto100Percent)).toFixed(2);
                   }
                 }
               }

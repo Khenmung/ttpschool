@@ -534,6 +534,8 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
+        var _examReleased =this.Exams.filter(e=>e.ExamId == _examId)[0].ReleaseResult;
+
         var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
           return studentsubject.ClassId == _classId
             && studentsubject.ClassSubjectId == _classSubjectId
@@ -559,10 +561,10 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
           }
 
           ss.Components.forEach(component => {
-
+            
             let existing = data.value.filter(db => db.StudentClassSubjectId == ss.StudentClassSubjectId
               && db.ClassSubjectMarkComponentId == component.ClassSubjectMarkComponentId);
-            if (existing.length > 0) {
+            if (existing.length > 0 && _examReleased) {
               var _ComponentName = this.MarkComponents.filter(c => c.MasterDataId == existing[0].ClassSubjectMarkComponent.SubjectComponentId)[0].MasterDataName;
               var _toPush;
               if (this.displayedColumns.indexOf(_ComponentName) == -1)

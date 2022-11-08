@@ -59,7 +59,7 @@
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns;sticky:true"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" style="align-items: baseline;"></mat-row>
 
         </mat-table>
         <mat-paginator #nonGradingPaginator="matPaginator" style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator>
@@ -70,7 +70,7 @@
 
             <ng-container *ngFor="let disCol of GradingDisplayedColumns; let colIndex = index"
                 matColumnDef="{{disCol}}">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <mat-header-cell *matHeaderCellDef mat-sort-header style="padding:15px;justify-content: center;">
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="padding:15px">
