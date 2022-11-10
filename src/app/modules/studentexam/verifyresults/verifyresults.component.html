@@ -30,6 +30,9 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
+    <mat-checkbox style="margin-right:15px" formControlName="viewActualMarkCheckBox" (click)="$event.stopPropagation()"
+            [checked]="false"> View in Percent
+        </mat-checkbox>
     <button style="margin-right: 15px;" [disabled]="loading" mat-raised-button color="accent"
         (click)="GetStudentSubjects()">
         <mat-icon>search</mat-icon>
@@ -37,7 +40,7 @@
             <mat-spinner diameter="20" color="Blue"></mat-spinner>
         </mat-icon>
     </button>
-    <button style="margin-right: 400px;" [disabled]="loading" matTooltip="clear all" class="mat-raised-button"
+    <button style="margin-right: 30px;" [disabled]="loading" matTooltip="clear all" class="mat-raised-button"
         (click)="clear()">
         <mat-icon>clear_all</mat-icon>
     </button>

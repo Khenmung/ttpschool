@@ -103,7 +103,7 @@
                         <button [disabled]="loading" mat-menu-item (click)="view(element)">
                             <mat-icon>pageview</mat-icon>Detail
                         </button>
-                        <button [disabled]="loading" mat-menu-item (click)="progressreport()">
+                        <button [disabled]="loading" mat-menu-item (click)="progressreport(element)">
                             <mat-icon>change_circle</mat-icon>Progress Report
                         </button>
                         <button [disabled]="loading || element.ClassName==''" mat-menu-item

@@ -300,19 +300,19 @@ export class DefaulterComponent implements OnInit {
             this.StudentClassList.forEach(sc => {
               let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
 
-              if (existing.length > 0) {
+              existing.forEach(ex=> {
                 var _subjName = '';
                 if (existing[0].ClassSubjectId > 0) {
-                  var obj = this.ClassSubjects.filter(s => s.ClassSubjectId == existing[0].ClassSubjectId);
+                  var obj = this.ClassSubjects.filter(s => s.ClassSubjectId == ex.ClassSubjectId);
                   if (obj.length > 0)
                     _subjName = obj[0].ClassSubject;
                 }
 
                 this.StudentAttendanceList.push({
-                  AttendanceId: existing[0].AttendanceId,
-                  StudentClassId: existing[0].StudentClassId,
-                  ClassSubjectId: existing[0].ClassSubjectId,
-                  Approved: existing[0].Approved,
+                  AttendanceId: ex.AttendanceId,
+                  StudentClassId: ex.StudentClassId,
+                  ClassSubjectId: ex.ClassSubjectId,
+                  Approved: ex.Approved,
                   ClassSubject: _subjName,
                   RollNo: sc.RollNo,
                   StudentRollNo: sc.StudentRollNo,
@@ -320,15 +320,15 @@ export class DefaulterComponent implements OnInit {
                   ContactNo: sc.ContactNo,
                   ClassSequence: sc.ClassSequence
                 });
-              }
+              })
             })
 
             this.StudentAttendanceList = alasql("select sum(1) AbsentCount,StudentRollNo,ClassName,ContactNo,ClassSequence from ? group by StudentRollNo,ClassName,ContactNo,ClassSequence", [this.StudentAttendanceList])
-            this.StudentAttendanceList = this.StudentAttendanceList.filter(d => d["AbsentCount"] > _AbsentDays);
+            this.StudentAttendanceList = this.StudentAttendanceList.filter(d => d["AbsentCount"] >= _AbsentDays);
             if (this.StudentAttendanceList.length == 0)
               this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
             this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => {
-              return a["AbsentCount"] - b["AbsentCount"] || a.ClassSequence - b.ClassSequence || a.RollNo - b.RollNo
+              return b["AbsentCount"] - a["AbsentCount"] || a.ClassSequence - b.ClassSequence || a.RollNo - b.RollNo
             });
             //  console.log("this.StudentAttendanceList",this.StudentAttendanceList);
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);

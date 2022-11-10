@@ -15,6 +15,7 @@ export class globalconstants {
     public static TrialPeriod = 3;
     public static BlueBackground = { duration: 3000, panelClass: 'blue-snackbar' };
     public static RedBackground = { duration: 10000, panelClass: 'red-snackbar' };
+    public static GreenBackground = { duration: 10000, panelClass: 'green-snackbar' };
     public static AddedMessage = 'Data saved sucessfully.';
     public static UpdatedMessage = 'Data updated sucessfully.';
     public static DeletedMessage = 'Data deleted sucessfully.';
@@ -303,7 +304,8 @@ export class globalconstants {
                 "ACTIVITYCATEGORY": "activity category",
                 "ACTIVITYSESSION": "activity session",
                 "PAGECATEGORY": "page category",
-                "RULEORPOLICYCATEGORYDISPLAYTYPE": "rules or policy display type"
+                "RULEORPOLICYCATEGORYDISPLAYTYPE": "rules or policy display type",
+                "COMMONPRINTHEADING": "common print heading"
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",
@@ -369,7 +371,7 @@ export class globalconstants {
                 "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
                 "SUBJECTCATEGORY": "subject category",
                 "BOOKCONTENTUNIT": "book content unit",
-                "ASSESSMENTPRINTHEADING": "Assessment Print Heading",
+                "ASSESSMENTPRINTHEADING": "Evaluation Print Heading",
                 "STUDENTREMARKS": "student remark",
                 "EXAMRESULTPROPERTY": "exam result property",
                 "DIFFICULTYLEVEL": "question difficulty level",

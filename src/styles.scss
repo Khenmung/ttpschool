@@ -134,6 +134,14 @@ body {
         color: white !important;
     }
 }
+.green-snackbar {
+    background: #cddc39;
+    color     : black;
+    white-space: pre-wrap;
+    .mat-simple-snackbar-action {
+        color: white !important;
+    }
+}
 
 a .ng-star-inserted:hover {
     cursor                    : pointer;

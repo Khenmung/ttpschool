@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -11,8 +11,9 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IStudentEvaluation } from '../../evaluation/evaluationresult/evaluationresult.component';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 import { SharedataService } from 'src/app/shared/sharedata.service';
+import * as moment from 'moment';
 @Component({
   selector: 'app-studentprogressreport',
   templateUrl: './studentprogressreport.component.html',
@@ -20,9 +21,10 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 })
 export class StudentprogressreportComponent implements OnInit {
   PageLoading = true;
+  @ViewChild("printSection") printSection: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  OverAllGrade ='Over All Grade';
+  OverAllGrade = 'Over All Grade';
   StudentAttendanceList = [];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -93,7 +95,7 @@ export class StudentprogressreportComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private nav: Router,
-    private shareddata:SharedataService
+    private shareddata: SharedataService
   ) { }
 
   ngOnInit(): void {
@@ -106,8 +108,8 @@ export class StudentprogressreportComponent implements OnInit {
     })
     this.PageLoad();
   }
-  StudentName='';
-  FeePaymentPermission='';
+  StudentName = [];
+  FeePaymentPermission = '';
   PageLoad() {
     debugger;
     this.loading = true;
@@ -124,14 +126,18 @@ export class StudentprogressreportComponent implements OnInit {
       }
       ////console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
-        this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
+         //console.log("localStorage.getItem(StudentDetail)",localStorage.getItem("StudentDetail"))
+        var studentdetail = [JSON.parse("{"+localStorage.getItem("StudentDetail")+"}")];
+        studentdetail.forEach(s=>{
+          this.StudentName.push({"Name":s.StudentName,"Class":s.ClassName,"Section":s.Section,"RollNo":s.RollNo})
+        })
         //console.log("StudentName",this.StudentName);
         //this.LoginUserDetail = this.tokenStorage.getUserDetail();
         this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
         var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
-          if (perObj.length > 0) {
-            this.FeePaymentPermission = perObj[0].permission;
-          }
+        if (perObj.length > 0) {
+          this.FeePaymentPermission = perObj[0].permission;
+        }
 
         this.StudentClassId = this.tokenstorage.getStudentClassId();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -144,10 +150,131 @@ export class StudentprogressreportComponent implements OnInit {
         //this.GetStudentAttendance();
       }
       else {
-        this.loading = false; this.PageLoading = false;
+        this.loading = false; 
+        this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
     }
+  }
+  StyleStr='';
+  print(): void {
+
+    var str = `.container{
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin:0px;
+      padding: 0px;
+
+    }
+    img { border: 0; }
+
+     .container img{
+       width: 100%;
+      
+     }`;
+    this.StyleStr += str;
+
+    let printContents, popupWin;
+    printContents = this.printSection.nativeElement.innerHTML; // document.getElementById('print-section').innerHTML;
+    popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+    popupWin.document.open();
+    popupWin.document.write(`
+      <html>
+        <head>
+          <title>Print tab</title>
+          <style>${this.StyleStr}
+          </style>
+        </head>
+    <body style='margin:0px;padding:0px' onload="window.print();window.close()">${printContents}</body>
+      </html>`
+    );
+    popupWin.document.close();
+  }
+  CommonHeader=[];
+  Organization=[];
+  GetOrganization() {
+
+    let list: List = new List();
+    list.fields = [
+      "OrganizationId",
+      "OrganizationName",
+      "LogoPath",
+      "Address",
+      "CityId",
+      "StateId",
+      "CountryId",
+      "WebSite",
+      "Contact",
+      "RegistrationNo",
+      "ValidFrom",
+      "ValidTo"
+
+    ];
+    list.PageName = "Organizations";
+    list.filter = ["OrganizationId eq " + this.LoginUserDetail[0]["orgId"]];
+
+    this.dataservice.get(list)
+      .subscribe((org: any) => {
+        this.Organization = org.value.map(m => {
+          //m.CountryName = '';
+          var countryObj = this.allMasterData.filter(f => f.MasterDataId == m.CountryId);
+          if (countryObj.length > 0)
+            m.Country = countryObj[0].MasterDataName;
+
+          var stateObj = this.allMasterData.filter(f => f.MasterDataId == m.StateId);
+          if (stateObj.length > 0)
+            m.State = stateObj[0].MasterDataName;
+
+          var cityObj = this.allMasterData.filter(f => f.MasterDataId == m.CityId);
+          if (cityObj.length > 0)
+            m.City = cityObj[0].MasterDataName;
+
+          return [{
+            name: "OrganizationId", val: m.OrganizationId
+          }, {
+            name: "Organization", val: m.OrganizationName
+          }, {
+            name: "LogoPath", val: m.LogoPath
+          }, {
+            name: "Address", val: m.Address
+          }, {
+            name: "City", val: m.City
+          }, {
+            name: "State", val: m.State
+          }, {
+            name: "Country", val: m.Country
+          }, {
+            name: "Contact", val: m.Contact
+          }, {
+            name: "RegistrationNo", val: m.RegistrationNo == null ? '' : m.RegistrationNo
+          }, {
+            name: "ValidFrom", val: m.ValidFrom
+          }, {
+            name: "ValidTo", val: m.ValidTo
+          },
+          {
+            name: "WebSite", val: m.WebSite == null ? '' : m.WebSite
+          },
+          {
+            name: "ToDay", val: moment(new Date()).format("DD/MM/YYYY")
+          }
+          ]
+        })
+        //console.log("this.Organization",this.Organization);
+        //console.log("this.CommonHeader.",this.CommonHeader);
+
+        this.CommonHeader.forEach(header => {
+          this.Organization[0].forEach(orgdet => {
+            header.Description = header.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
+           // header.Description = header.Description.replaceAll("[" + orgdet.OrganizationAddress + "]", orgdet.val);
+          })
+        })
+        
+        this.loading = false; this.PageLoading = false;
+      });
+      //console.log("this.Organization[0]",this.Organization[0])
+      //console.log("this.CommonHeader",this.CommonHeader)
   }
   back() {
     this.nav.navigate(['/edu']);
@@ -177,7 +304,8 @@ export class StudentprogressreportComponent implements OnInit {
           ss.ClassId = ss.ClassSubject.ClassId;
           return ss;
         })
-        this.CurrentStudentClassGroups = this.ClassGroupMappings.filter(f => f.ClassId == this.StudentSubjects[0].ClassId);
+        if (this.StudentSubjects.length > 0)
+          this.CurrentStudentClassGroups = this.ClassGroupMappings.filter(f => f.ClassId == this.StudentSubjects[0].ClassId);
         this.GetEvaluationExamMap();
         this.GetStudentSubjectResults();
       })
@@ -307,9 +435,9 @@ export class StudentprogressreportComponent implements OnInit {
           var objExam = this.GradedMarksResults[0];
           //var obj = this.Exams.filter(ex => ex.ExamId == objExam[0].ExamId);
           //if (obj.length > 0) {
-           var _gradingSubjectCategoryId = this.SubjectCategory.filter(s=>s.MasterDataName.toLowerCase()=='grading')[0].MasterDataId;
-          var OverAllGradeRow = {'Subject':this.OverAllGrade};
-          
+          var _gradingSubjectCategoryId = this.SubjectCategory.filter(s => s.MasterDataName.toLowerCase() == 'grading')[0].MasterDataId;
+          var OverAllGradeRow = { 'Subject': this.OverAllGrade };
+
           Object.keys(objExam).forEach(exam => {
             var totalPoints = 0;
             if (exam != 'Subject') {
@@ -480,6 +608,7 @@ export class StudentprogressreportComponent implements OnInit {
         this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
         this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         this.Batches = this.tokenstorage.getBatches()
+        this.CommonHeader = this.getDropDownData(globalconstants.MasterDefinitions.common.COMMONPRINTHEADING);
         this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
           .subscribe((data: any) => {
             this.ClassGroupMappings = [...data.value];
@@ -490,6 +619,7 @@ export class StudentprogressreportComponent implements OnInit {
             this.ClassGroups = [...data.value];
           });
         this.GetExams();
+        this.GetOrganization();
 
       });
   }

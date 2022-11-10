@@ -91,6 +91,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
       searchClassId: [0],
       searchSectionId: [''],
       searchClassSubjectId: [0],
+      updateCheckBox: [0]
     });
     this.PageLoad();
   }
@@ -533,9 +534,9 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        var _examReleased =this.Exams.filter(e=>e.ExamId == _examId)[0].ReleaseResult;
-
+        debugger;
+        //var _examReleased =this.Exams.filter(e=>e.ExamId == _examId)[0].ReleaseResult;
+        var toUpdate = this.searchForm.get("updateCheckBox").value;
         var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
           return studentsubject.ClassId == _classId
             && studentsubject.ClassSubjectId == _classSubjectId
@@ -561,14 +562,33 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
           }
 
           ss.Components.forEach(component => {
-            
+
             let existing = data.value.filter(db => db.StudentClassSubjectId == ss.StudentClassSubjectId
               && db.ClassSubjectMarkComponentId == component.ClassSubjectMarkComponentId);
-            if (existing.length > 0 && _examReleased) {
+            if (existing.length > 0) {
               var _ComponentName = this.MarkComponents.filter(c => c.MasterDataId == existing[0].ClassSubjectMarkComponent.SubjectComponentId)[0].MasterDataName;
               var _toPush;
               if (this.displayedColumns.indexOf(_ComponentName) == -1)
                 this.displayedColumns.push(_ComponentName)
+              var _mark = 0;
+              if (toUpdate) {
+                var replacedFormula = this.ExamMarkFormula;
+                var _subjectmarkconfig = pExamsSubjectMarks.filter(m => m.StudentClassSubjectId == ss.StudentClassSubjectId)
+                //if exammarkconfig is defined. other wise mark is 0
+                if (_subjectmarkconfig.length > 0) {
+                  _subjectmarkconfig.forEach(sub => {
+                    replacedFormula = replacedFormula.replaceAll("[" + sub.ExamName + "]", sub.Marks);
+                  })
+
+                  var objresult = evaluate(replacedFormula).entries;
+                  if (objresult.length > 0)
+                    _mark = objresult[0].toFixed(2);
+                }
+                else
+                  _mark = existing[0].Marks
+              }
+              else
+                _mark = existing[0].Marks
 
               _toPush = {
                 ExamStudentSubjectResultId: existing[0].ExamStudentSubjectResultId,
@@ -582,7 +602,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
                 SubjectMarkComponent: _ComponentName,
                 FullMark: component.FullMark,
                 PassMark: component.PassMark,
-                Marks: existing[0].Marks,
+                Marks: _mark,
                 Grade: existing[0].Grade,
                 ExamStatus: existing[0].ExamStatus,
                 Active: existing[0].Active,
@@ -599,7 +619,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
                 this.displayedColumns.push(_componentName)
 
               var _mark = 0;
-              var replacedFormula =this.ExamMarkFormula;
+              var replacedFormula = this.ExamMarkFormula;
               var _subjectmarkconfig = pExamsSubjectMarks.filter(m => m.StudentClassSubjectId == ss.StudentClassSubjectId)
               //if exammarkconfig is defined. other wise mark is 0
               if (_subjectmarkconfig.length > 0) {

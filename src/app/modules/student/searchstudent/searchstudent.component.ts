@@ -316,6 +316,51 @@ export class searchstudentComponent implements OnInit {
   view(element) {
     debugger;
     this.generateDetail(element);
+    // var _ClassId = 0;
+    // if (element.StudentClasses.length > 0) {
+    //   this.StudentClassId = element.StudentClasses[0].StudentClassId;
+    //   _ClassId = element.StudentClasses[0].ClassId;
+    // }
+
+    // this.StudentId = element.StudentId;
+
+    // this.token.saveStudentClassId(this.StudentClassId + "");
+    // this.token.saveClassId(_ClassId + "");
+    // this.token.saveStudentId(this.StudentId + "");
+    this.SaveIds(element);
+    this.route.navigate(['/edu/addstudent/' + element.StudentId]);
+  }
+  progressreport(element) {
+    debugger;
+    let StudentName = element.Name;
+
+    let studentclass = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
+    if (studentclass.length > 0) {
+      var _clsName = '';
+      var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
+      if (objcls.length > 0)
+        _clsName = objcls[0].ClassName
+
+      var _sectionName = '';
+      var sectionObj = this.Sections.filter(f => f.MasterDataId == studentclass[0].SectionId)
+      if (sectionObj.length > 0)
+        _sectionName = sectionObj[0].MasterDataName;
+      this.StudentClassId = studentclass[0].StudentClassId
+      //StudentName += "-" + _clsName + "-" + _sectionName + "-" + studentclass[0].RollNo;
+    }
+    var StudentDetail =  '"StudentName":"'+ StudentName + '","ClassName":"' + _clsName +'", "Section":"'+ _sectionName + '","RollNo":"' + element.RollNo +'"';
+    localStorage.setItem("StudentDetail", StudentDetail + "");
+    //this.shareddata.ChangeStudentName(StudentName);
+
+    this.SaveIds(element);
+    this.route.navigate(['/edu/progressreport/']);
+  }
+  feepayment(element) {
+    this.generateDetail(element);
+    this.SaveIds(element);
+    this.route.navigate(['/edu/feepayment']);
+  }
+  SaveIds(element) {
     var _ClassId = 0;
     if (element.StudentClasses.length > 0) {
       this.StudentClassId = element.StudentClasses[0].StudentClassId;
@@ -328,14 +373,6 @@ export class searchstudentComponent implements OnInit {
     this.token.saveClassId(_ClassId + "");
     this.token.saveStudentId(this.StudentId + "");
 
-    this.route.navigate(['/edu/addstudent/' + element.StudentId]);
-  }
-  progressreport(){
-    this.route.navigate(['/edu/progressreport/']);
-  }
-  feepayment(element) {
-    this.generateDetail(element);
-    this.route.navigate(['/edu/feepayment']);
   }
   ClearData() {
     this.ELEMENT_DATA = [];
@@ -544,6 +581,7 @@ export class searchstudentComponent implements OnInit {
               item.ClassName = '';
             }
             else {
+              item.RollNo =item.StudentClasses[0].RollNo;
               var clsobj = this.Classes.filter(cls => {
                 return cls.ClassId == item.StudentClasses[0].ClassId
               });

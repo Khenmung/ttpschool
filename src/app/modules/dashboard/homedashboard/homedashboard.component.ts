@@ -69,33 +69,42 @@ export class HomeDashboardComponent implements OnInit {
       this.GetOrganization()
         .subscribe((data: any) => {
           if (data.value.length > 0) {
-            var _validTo = new Date(data.value[0].ValidTo);//.setHours(0,0,0,0);
-            var _today = new Date();//.setHours(0,0,0,0);
+            var _validTo = new Date(data.value[0].ValidTo);//
+            _validTo.setHours(0, 0, 0, 0);
+            var _today = new Date();//
+            _today.setHours(0, 0, 0, 0);
             var _roleName = this.loginUserDetail[0]['RoleUsers'][0].role;
             const diffTime = Math.abs(_validTo.getTime() - _today.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            console.log("diffDays", diffDays)
+            //console.log("diffDays", diffDays)
             var alertDate = localStorage.getItem("alertdate");
             var todaystring = moment(new Date()).format('DD-MM-YYYY')
-            if (diffDays < 6 && alertDate != todaystring && _roleName.toLowerCase()=='admin') 
-            {
-              localStorage.setItem("alertdate", todaystring);
-              this.contentservice.openSnackBar("Your plan is expiring within " + diffDays +" days. i.e on " + moment(_validTo).format('DD/MM/YYYY'), globalconstants.ActionText, globalconstants.BlueBackground);
-            }
+
             // var days = new Date(_validTo) - new Date(_today);
-            if (_validTo.getTime() < _today.getTime()) {
+            if (diffDays < 0) {
               this.tokenStorage.signOut();
               this.contentservice.openSnackBar("Login expired! Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
               //setTimeout(() => {
               this.route.navigate(['/auth/login'])
               //}, 3000);
             }
+            else if (diffDays < 6 && alertDate != todaystring && _roleName.toLowerCase() == 'admin') {
+              localStorage.setItem("alertdate", todaystring);
+              var msg = '';
+              if (diffDays == 0)
+                msg = "Your plan is expiring today";
+              else if (diffDays == 1)
+                msg = "Your plan is expiring tommorrow.";
+              else
+                msg = "Your plan is expiring within " + diffDays + " days. i.e on " + moment(_validTo).format('DD/MM/YYYY');
+              this.contentservice.openSnackBar(msg, globalconstants.ActionText, globalconstants.GreenBackground);
+            }
             else {
               debugger;
               this.loading = true;
               this.userName = localStorage.getItem('userName');
               var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
-              
+
               if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {
                 this.route.navigate(["/auth/selectplan"]);
               }
