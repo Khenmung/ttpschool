@@ -30,7 +30,7 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-checkbox style="margin-right:15px" formControlName="viewActualMarkCheckBox" (click)="$event.stopPropagation()"
+    <mat-checkbox style="margin-right:15px" formControlName="viewMarkPercentCheckBox" (click)="$event.stopPropagation()"
             [checked]="false"> View in Percent
         </mat-checkbox>
     <button style="margin-right: 15px;" [disabled]="loading" mat-raised-button color="accent"
@@ -44,7 +44,7 @@
         (click)="clear()">
         <mat-icon>clear_all</mat-icon>
     </button>
-    <button [disabled]="loading || ClickedVerified || !EnableVerify" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0"
+    <button [disabled]="loading || ClickedVerified || !EnableVerify || ExamReleased" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0"
         mat-raised-button color="accent" (click)="Verified()">
         <mat-icon>checked</mat-icon>
     </button>
@@ -86,6 +86,14 @@
         <!-- <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator> -->
     </div>
 </div>
-
-<!-- </div>
-</div> -->
+<div style="margin-top:30px;" data-expand="false" #expandWrap>
+    <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+        <mat-icon>info</mat-icon>
+        Guides..</span>
+    <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+        <ul>
+            <li><b>Verify</b> button is disabled if the selected exam has been released.</li>
+            <li><b>Verify</b> button is disabled if section is selected.</li>
+        </ul>
+    </span>
+</div>

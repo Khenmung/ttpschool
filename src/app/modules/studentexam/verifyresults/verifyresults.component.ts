@@ -152,14 +152,17 @@ export class VerifyResultsComponent implements OnInit {
   }
   ClassGroupIdOfExam = 0;
   FilteredClasses = [];
+  ExamReleased = false;
   FilterClass() {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     var obj = this.Exams.filter(f => f.ExamId == _examId);
-    if (obj.length > 0)
+    if (obj.length > 0) {
       this.ClassGroupIdOfExam = obj[0].ClassGroupId;
+      this.ExamReleased = obj[0].ReleaseResult;
+    }
     this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == this.ClassGroupIdOfExam);
-    this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == this.ClassGroupIdOfExam);
+    this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId && f.ClassGroupId == this.ClassGroupIdOfExam);
 
   }
   clear() {

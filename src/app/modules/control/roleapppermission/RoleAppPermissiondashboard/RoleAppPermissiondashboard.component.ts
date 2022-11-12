@@ -118,7 +118,8 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.Permissions = globalconstants.PERMISSIONTYPES;
         this.GetTopMasters();
-        this.GetPageFeatures();
+        
+       
       }
     }
   }
@@ -144,6 +145,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           // this.Applications = data.value.filter(t => t.ParentId == applicationId);
           this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
           //this.GetCustomerApps();
+          this.GetAdminPermissionFeatures();
         }
       });
   }
@@ -208,7 +210,15 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
             d.DisplayOrder = d.Page.DisplayOrder;
             return d;
           });
-          this.TopPageFeatures = this.PageFeatures.filter(f => f.ParentId == 0);
+          this.TopPageFeatures = []
+          this.AllOrgPermittedFeatures.forEach(a=>{
+            var obj =this.PageFeatures.filter(f => f.ParentId == 0 && f.PlanFeatureId == a.PlanFeatureId);
+            if(obj.length>0)
+            {
+              this.TopPageFeatures.push(obj[0])
+            }
+          })
+          
         }
         else
           this.PageFeatures = [];
@@ -220,6 +230,23 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     //debugger;
     this.FilteredPageFeatures = this.PageFeatures.filter(f => f.ApplicationId == this.SelectedApplicationId);
 
+  }
+  AllOrgPermittedFeatures=[];
+  GetAdminPermissionFeatures(){
+    var _adminRoleId =this.Roles.filter(r=>r.MasterDataName.toLowerCase()=='admin')[0].MasterDataId;     
+    var rolefilter = "Active eq 1 and OrgId eq " + this.UserDetails[0]["orgId"] + " and RoleId eq " + _adminRoleId //this.searchForm.get("RoleId").value;
+
+  let list: List = new List();
+  list.fields = [
+    "ApplicationFeatureRoleId",
+    "PlanFeatureId",
+  ];
+  list.PageName = "ApplicationFeatureRolesPerms";
+  list.filter =[rolefilter];
+  this.dataservice.get(list).subscribe((data:any)=>{
+    this.AllOrgPermittedFeatures =[...data.value];
+    this.GetPageFeatures();
+  })
   }
   GetApplicationFeatureRole() {
     //debugger;
@@ -236,14 +263,17 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     if (_planFeatureId > 0) {
       _ParentId = this.PageFeatures.filter(f => f.PlanFeatureId == _planFeatureId)[0].PageId;
     }
-    //rolefilter += " and ParentId eq " + _ParentId;
+    else
+      _ParentId = 0;
 
+    //rolefilter += " and ParentId eq " + _ParentId;
+    var _selectedRoleId = this.searchForm.get("RoleId").value;
     if (this.searchForm.get("RoleId").value == 0) {
       this.contentservice.openSnackBar("Please select role.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
-    else
-      rolefilter += " and RoleId eq " + this.searchForm.get("RoleId").value;
+    var _adminRoleId =this.Roles.filter(r=>r.MasterDataName.toLowerCase()=='admin')[0].MasterDataId;
+      rolefilter += " and (RoleId eq " + _adminRoleId + " or RoleId eq " + _selectedRoleId + ")"; //this.searchForm.get("RoleId").value;
 
     let list: List = new List();
     list.fields = [
@@ -255,30 +285,31 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ApplicationFeatureRolesPerms";
-    list.lookupFields = ["PlanFeature($filter=Active eq 1 and ApplicationId eq "+ this.SelectedApplicationId +";$select=PlanFeatureId,ApplicationId;$expand=Page($select=ParentId))"];
+    list.lookupFields = ["PlanFeature($filter=Active eq 1 and ApplicationId eq "+ this.SelectedApplicationId +";$select=PlanFeatureId,ApplicationId;$expand=Page($select=label,ParentId))"];
 
     list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + rolefilter];
     this.ApplicationRoleList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var ResultedPermittedPageFeatures = [];
-        var _roleId = this.searchForm.get("RoleId").value;
-        var roleFilteredAssigned = data.value.filter(db => db.RoleId == _roleId);
-        var filteredFeature = this.PageFeatures.filter(f => f.ApplicationId == this.SelectedApplicationId && f.ParentId == _ParentId);
+         
+        var objFiltered =data.value.filter(f => f.PlanFeature.ApplicationId == this.SelectedApplicationId && f.PlanFeature.Page.ParentId == _ParentId);
+        var adminFeatures =objFiltered.filter(db => db.RoleId == _adminRoleId);
+        var roleFilteredAssigned =objFiltered.filter(db => db.RoleId == _selectedRoleId);
         debugger;
-        filteredFeature.forEach(p => {
+        adminFeatures.forEach(p => {
           var existing = roleFilteredAssigned.filter(r => r.PlanFeatureId == p.PlanFeatureId);
           if (existing.length > 0)
             ResultedPermittedPageFeatures.push({
               ApplicationFeatureRoleId: existing[0].ApplicationFeatureRoleId,
               PlanFeatureId: existing[0].PlanFeatureId,
               //FeatureId: p.FeatureId,
-              FeatureName: p.label,// this.PageFeatures.filter(t => t.PageId == existing[0].PlanFeatureId)[0].Label,
+              FeatureName: p.PlanFeature.Page.label,// this.PageFeatures.filter(t => t.PageId == existing[0].PlanFeatureId)[0].Label,
               RoleId: existing[0].RoleId,
               Role: this.Roles.filter(r => r.MasterDataId == existing[0].RoleId)[0].MasterDataName,
               PermissionId: existing[0].PermissionId,
               DisplayOrder: p.DisplayOrder,
-              ParentId: p.Page.ParentId,
+              ParentId: p.PlanFeature.Page.ParentId,
               Active: existing[0].Active,
               Action: false
             })
@@ -287,12 +318,12 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
               ApplicationFeatureRoleId: 0,
               PlanFeatureId: p.PlanFeatureId,
               //FeatureId: p.FeatureId,
-              FeatureName: p.label,// this.PageFeatures.filter(t => t.PageId == p.PageId)[0].Label,
-              RoleId: _roleId,
+              FeatureName: p.PlanFeature.Page.label,// this.PageFeatures.filter(t => t.PageId == p.PageId)[0].Label,
+              RoleId: _selectedRoleId,
               DisplayOrder: p.DisplayOrder,
-              Role: this.Roles.filter(ir => ir.MasterDataId == _roleId)[0].MasterDataName,
+              Role: this.Roles.filter(ir => ir.MasterDataId == _selectedRoleId)[0].MasterDataName,
               PermissionId: 0,
-              ParentId: p.Page.ParentId,
+              ParentId: p.PlanFeature.Page.ParentId,
               Active: 0,
               Action: false
             })

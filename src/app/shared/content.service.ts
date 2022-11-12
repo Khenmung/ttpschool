@@ -121,7 +121,7 @@ export class ContentService implements OnInit {
     //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
 
-    list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula,Sequence,Points"];
+    list.fields = ["StudentGradeId,ExamId,GradeName,ClassGroupId,SubjectCategoryId,Formula,Sequence,Points"];
     list.PageName = "StudentGrades";
     list.filter = ["Active eq 1" + orgIdSearchstr];
     return this.dataservice.get(list)
@@ -436,6 +436,7 @@ export class ContentService implements OnInit {
     //let  = pClassSubject.filter((item, indx) => item.ClassName.toLowerCase() + "-" + item.SubjectName.toLowerCase()== dropdowntype.toLowerCase());//globalconstants.GENDER
     let Permission = '';
     for (var i = 0; i < pClassSubject.length; i++) {
+      
       if (pClassSubject[i].Confidential !=null && pClassSubject[i].Confidential) {
 
         var perObj = globalconstants.getPermission(token, pClassSubject[i][pColumnName])//.ClassSubject);
@@ -451,6 +452,7 @@ export class ContentService implements OnInit {
           i--;
         }
       }
+      pClassSubject[i].EvaluationName = globalconstants.decodeSpecialChars(pClassSubject[i].EvaluationName);
     }
     return pClassSubject;
 

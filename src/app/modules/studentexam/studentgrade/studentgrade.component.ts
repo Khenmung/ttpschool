@@ -10,7 +10,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-studentgrade',
   templateUrl: './studentgrade.component.html',
@@ -35,8 +35,10 @@ export class StudentgradeComponent implements OnInit {
   Permission = 'deny';
   Classes = [];
   ExamStatus = [];
+  Exams = [];
   StudentGradeData = {
     StudentGradeId: 0,
+    ExamId: 0,
     GradeName: '',
     Formula: '',
     ClassGroupId: 0,
@@ -52,14 +54,14 @@ export class StudentgradeComponent implements OnInit {
     "StudentGradeId",
     "GradeName",
     "Points",
-    "Formula",    
+    "Formula",
     "ClassGroupId",
     "SubjectCategoryId",
-    "GradeStatusId",
     "Sequence",
     "Active",
     "Action"
   ];
+  ExamNames = [];
   SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
@@ -80,6 +82,8 @@ export class StudentgradeComponent implements OnInit {
     })
     //debugger;
     this.searchForm = this.fb.group({
+      searchCopyExamId: [0],
+      searchExamId: [0],
       searchClassGroupId: [0],
       searchSubjectCategoryId: [0]
     });
@@ -118,10 +122,11 @@ export class StudentgradeComponent implements OnInit {
 
     var newdata = {
       StudentGradeId: 0,
+      ExamId: this.searchForm.get("searchExamId").value,
       GradeName: '',
       Formula: '',
-      ClassGroupId: 0,
-      SubjectCategoryId: 0,
+      ClassGroupId: this.searchForm.get("searchClassGroupId").value,
+      SubjectCategoryId: this.searchForm.get("searchSubjectCategoryId").value,
       GradeStatusId: 0,
       Sequence: 0,
       Points: 0,
@@ -153,12 +158,17 @@ export class StudentgradeComponent implements OnInit {
         });
   }
   UpdateOrSave(row) {
-
+    this.ToUpdateCount = 1;
     //debugger;
     this.loading = true;
     if (row.ClassGroupId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (row.ExamId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select Exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -174,7 +184,9 @@ export class StudentgradeComponent implements OnInit {
       return;
     }
     let checkFilterString = "GradeName eq '" + row.GradeName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and ClassGroupId eq " + row.ClassGroupId
+      " and ClassGroupId eq " + row.ClassGroupId +
+      " and ExamId eq " + row.ExamId;
+
     if (row.SubjectCategoryId == null || row.SubjectCategoryId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select subject category.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -202,6 +214,7 @@ export class StudentgradeComponent implements OnInit {
 
           this.StudentGradeData.StudentGradeId = row.StudentGradeId;
           this.StudentGradeData.Active = row.Active;
+          this.StudentGradeData.ExamId = row.ExamId;
           this.StudentGradeData.GradeName = row.GradeName;
           this.StudentGradeData.ClassGroupId = row.ClassGroupId;
           this.StudentGradeData.SubjectCategoryId = row.SubjectCategoryId;
@@ -241,8 +254,11 @@ export class StudentgradeComponent implements OnInit {
           row.StudentGradeId = data.StudentGradeId;
           row.GradeName = globalconstants.decodeSpecialChars(row.GradeName);
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.loadingFalse()
+          this.ToUpdateCount = -1;
+          if (this.ToUpdateCount == 0) {
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.loadingFalse()
+          }
         });
   }
   update(row) {
@@ -252,8 +268,11 @@ export class StudentgradeComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           row.GradeName = globalconstants.decodeSpecialChars(row.GradeName);
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.loadingFalse();
+          this.ToUpdateCount--;
+          if (this.ToUpdateCount == 0) {
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.loadingFalse();
+          }
         });
   }
   Getclassgroups() {
@@ -267,22 +286,82 @@ export class StudentgradeComponent implements OnInit {
         }
       });
   }
-  GetStudentGrade() {
+  DatafromotherexamMSG = '';
+  CopyFromOtherExam() {
+    debugger;
+    var _copyFromExamId = this.searchForm.get("searchCopyExamId").value;
+    var _examId = this.searchForm.get("searchExamId").value;
+    if (_copyFromExamId == 0) {
+      this.contentservice.openSnackBar("Please select exam to copy from.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_examId == 0) {
+      this.contentservice.openSnackBar("Please select exam for which to define student grade.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    this.GetStudentGrade(_copyFromExamId);
+  }
+  ExamReleased = 0;
+  GetStudentGrade(pCopyFromExamId) {
 
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //" and BatchId eq " + this.SelectedBatchId;
 
+    var _examId = this.searchForm.get("searchExamId").value;
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
     var _SubjectCategoryId = this.searchForm.get("searchSubjectCategoryId").value;
+    if (pCopyFromExamId == 0 && _examId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    else {
+      var examObj = this.Exams.filter(e => e.ExamId == _examId)
+      var _examName = '';
+      if (examObj.length > 0) {
+        _examName = examObj[0].ExamName;
+        this.ExamReleased = examObj[0].ReleaseResult;
+      }
+      else
+        this.ExamReleased = 0;
+        
+      if (pCopyFromExamId > 0) {
+        this.DatafromotherexamMSG = "Data from '" + + "'";
+        filterStr += ' and (ExamId eq ' + pCopyFromExamId + ' or ExamId eq ' + _examId + ')';
+      } else
+        filterStr += ' and ExamId eq ' + _examId;
+    }
+
     if (_ClassGroupId > 0) {
       filterStr += " and ClassGroupId eq " + _ClassGroupId;
+    }
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
     }
     if (_SubjectCategoryId > 0) {
       filterStr += " and SubjectCategoryId eq " + _SubjectCategoryId;
     }
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select subject category.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
     let list: List = new List();
-    list.fields = ["*"];
+    list.fields = [
+      "StudentGradeId",
+      "ExamId",
+      "GradeName",
+      "Formula",
+      "SubjectCategoryId",
+      "GradeStatusId",
+      "ClassGroupId",
+      "Sequence",
+      "Points",
+      "Active"];
 
     list.PageName = this.StudentGradeListName;
     list.filter = [filterStr];
@@ -291,30 +370,94 @@ export class StudentgradeComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.StudentGradeList = data.value.map(f => {
-            f.GradeName = globalconstants.decodeSpecialChars(f.GradeName);
-            return f;
-          });
+          var _CopyFromExam = [];
+          var _SelectedExam = data.value.filter(d => d.ExamId == _examId);
+          if (pCopyFromExamId > 0) {
+            _CopyFromExam = data.value.filter(d => d.ExamId == pCopyFromExamId);
+            this.StudentGradeList = _CopyFromExam.map(f => {
+              f.GradeName = globalconstants.decodeSpecialChars(f.GradeName);
+              //convert all examid to _examId
+              f.ExamId = _examId;
+
+              var existingstudentgrade = _SelectedExam.filter(s => s.ClassGroupId == _ClassGroupId && s.SubjectCategoryId == _SubjectCategoryId);
+              if (existingstudentgrade.length > 0) {
+                f.StudentGradeId = existingstudentgrade[0].StudentGradeId;
+              }
+              else {
+                f.StudentGradeId = 0;
+                f.Active = 0;
+              }
+
+              return f;
+            });
+          }
+          else
+            this.StudentGradeList = data.value.map(d => {
+              d.GradeName = globalconstants.decodeSpecialChars(d.GradeName);
+              return d;
+            });
           this.StudentGradeList = this.StudentGradeList.sort((a, b) => a.Sequence - b.Sequence);
+        }
+
+        if (this.StudentGradeList.length == 0) {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
         this.dataSource = new MatTableDataSource<IStudentGrade>(this.StudentGradeList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
   }
-
+  SelectAll(event) {
+    //var event ={checked:true}
+    this.StudentGradeList.forEach(element => {
+      element.Active = 1;
+      element.Action = true;
+    })
+  }
+  ToUpdateCount = 0;
+  SaveAll() {
+    debugger;
+    var toUpdate = this.StudentGradeList.filter(all => all.Action)
+    this.ToUpdateCount = toUpdate.length;
+    toUpdate.forEach(item => {
+      this.UpdateOrSave(item);
+    })
+  }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY)
-        this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
+        this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
+        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.loading = false; this.PageLoading = false;
         });
+        this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
+          .subscribe((data: any) => {
+            //this.Exams = [...data.value];
+            this.Exams = [];
+            data.value.forEach(e => {
+              //var _examName = '';
+              var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active == 1)
+              if (obj.length > 0) {
+                //_examName = obj[0].MasterDataName
+                this.Exams.push({
+                  ExamId: e.ExamId,
+                  ExamName: obj[0].MasterDataName,
+                  ClassGroupId: e.ClassGroupId,
+                  StartDate: e.StartDate,
+                  EndDate: e.EndDate,
+                  AttendanceStartDate: e.AttendanceStartDate,
+                  Sequence: obj[0].Sequence,
+                  ReleaseResult: e.ReleaseResult
+                })
+              }
+            })
+          })
       });
   }
   getDropDownData(dropdowntype) {

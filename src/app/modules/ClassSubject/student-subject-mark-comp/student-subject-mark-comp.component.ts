@@ -142,7 +142,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   SelectAll(event) {
     //var event ={checked:true}
     this.ELEMENT_DATA.forEach(element => {
-      element.Active = 1;
+      element.Active = event.checked ? 1 : 0;
       element.Action = true;
     })
   }
@@ -213,12 +213,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading = false;
+          // this.loading = false; this.PageLoading = false;
           row.Action = false;
           this.ToUpdateCount--;
           row.ClassSubjectMarkComponentId = data.ClassSubjectMarkComponentId;
           if (this.ToUpdateCount == 0) {
-            this.loading = false; this.PageLoading = false;
+            this.loading = false;
+            this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.router.navigate(['/home/pages']);
@@ -230,11 +231,12 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, this.classSubjectComponentData.ClassSubjectMarkComponentId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading = false;
+          //this.loading = false; this.PageLoading = false;
           row.Action = false;
           this.ToUpdateCount--;
           if (this.ToUpdateCount == 0) {
-            this.loading = false; this.PageLoading = false;
+            this.loading = false;
+            this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -327,13 +329,17 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.MergeSubjectnComponents();
       })
   }
-  CopyFromPreviousBatch() {
+  CopyFromOtherExam() {
     //console.log("here ", this.PreviousBatchId)
+    var _otherExamId = this.searchForm.get("searchCopyExamId").value;
+    var _examId = this.searchForm.get("searchExamId").value;
     this.PreviousBatchId = +this.token.getPreviousBatchId();
-    if (this.ELEMENT_DATA.length == 0)
-      this.contentservice.openSnackBar("First search data to update.", globalconstants.ActionText, globalconstants.RedBackground);
+    if (_examId == 0)
+      this.contentservice.openSnackBar("Please select exam for which formula to define.", globalconstants.ActionText, globalconstants.RedBackground);
+    else if (_otherExamId == 0)
+      this.contentservice.openSnackBar("Please select exam from where formula to copy from.", globalconstants.ActionText, globalconstants.RedBackground);
     else
-      this.GetClassSubjectComponent(1)
+      this.GetClassSubjectComponent(_otherExamId)
   }
   DisableSaveButton = false;
   SelectedClasses = [];
@@ -354,27 +360,25 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
   }
   datafromotherexam = '';
-  GetClassSubjectComponent(otherExam) {
+  GetClassSubjectComponent(otherExamId) {
     debugger;
-    var _copyExamId = this.searchForm.get("searchCopyExamId").value;
+    //var _copyExamId = this.searchForm.get("searchCopyExamId").value;
     var _examId = this.searchForm.get("searchExamId").value;
 
-    var filterstr = "";
-    if (otherExam == 1) {
-      this.datafromotherexam = 'Data from ' + this.Exams.filter(e => e.ExamId == _copyExamId)[0].ExamName;
-      if (_copyExamId == 0) {
-        this.contentservice.openSnackBar("Please select exam to copy from.", globalconstants.ActionText, globalconstants.RedBackground);
-        return;
-      }
-      filterstr += 'ExamId eq ' + _copyExamId + " and " + this.StandardOrgIdWithBatchId;
+    var filterstr = this.StandardOrgIdWithBatchId;
+    if (_examId == 0) {
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
+    if (otherExamId > 0) {
+      this.datafromotherexam = "Data from '" + this.Exams.filter(e => e.ExamId == otherExamId)[0].ExamName + "'";
+      filterstr += " and (ExamId eq " + _examId + " or ExamId eq " + otherExamId + ")";
+      //filterstr += 'ExamId eq ' + otherExamId + " and " + this.StandardOrgIdWithBatchId;
     }
     else {
       this.datafromotherexam = '';
-      if (_examId == 0) {
-        this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
-        return;
-      }
-      filterstr += "ExamId eq " + _examId + " and " + this.StandardOrgIdWithBatchId;
+      filterstr += " and ExamId eq " + _examId;
     }
     if (this.searchForm.get("searchClassId").value == 0) {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -413,64 +417,70 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           clsSubjFiltered = clsSubjFiltered.filter(item => item.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value);
           filteredClassSubjectnComponents = filteredClassSubjectnComponents.filter(clssubjcomponent => clssubjcomponent.SubjectId == this.searchForm.get("searchSubjectId").value);
         }
-        var result = [];
-        filteredClassSubjectnComponents.forEach((subj, indx) => {
-          subj.Components.forEach(component => {
+        this.ELEMENT_DATA=[];
+        ////////////////////
+        var _CopyFromExam = [];
+        var _SelectedExam = clsSubjFiltered.filter(d => d.ExamId == _examId);
+        if (otherExamId > 0) {
+          _CopyFromExam = clsSubjFiltered.filter(d => d.ExamId == otherExamId);
 
-            let existing = clsSubjFiltered.filter(fromdb => fromdb.ClassSubject.SubjectId == subj.SubjectId
-              && fromdb.SubjectComponentId == component.MasterDataId)
+          this.ELEMENT_DATA = _CopyFromExam.map(f => {
+            f.ExamId = _examId;
+
+            let existing = _SelectedExam.filter(fromdb => fromdb.ClassSubject.SubjectId == f.ClassSubject.SubjectId
+              && fromdb.SubjectComponentId == f.SubjectComponentId)
+
             if (existing.length > 0) {
-              existing[0].ClassSubjectMarkComponentId = otherExam == 1 ? 0 : existing[0].ClassSubjectMarkComponentId;
-              existing[0].Active = otherExam == 1 ? 0 : existing[0].Active;
-              existing[0].ClassSubject = subj.ClassSubject;
-              existing[0].SubjectComponent = this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName;
-              existing[0].Action = false;
-              result.push(existing[0]);
+              f.ClassSubjectMarkComponentId = existing[0].ClassSubjectMarkComponentId;
             }
             else {
-              let item = {
-                ClassSubjectMarkComponentId: 0,
-                ClassSubjectId: subj.ClassSubjectId,
-                ClassSubject: subj.ClassSubject,
-                ExamId: _examId,
-                SubjectComponentId: component.MasterDataId,
-                SubjectComponent: this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName,
-                FullMark: 0,
-                PassMark: 0,
-                OverallPassMark: 0,
-                BatchId: 0,
-                Active: 0,
-                Action: false
-              }
-              result.push(item);
+              f.ClassSubjectMarkComponentId = 0;
             }
+            f.ClassSubject = this.ClassSubjects.filter(s => s.ClassSubjectId == f.ClassSubjectId)[0].ClassSubject;
+            f.SubjectComponent = this.MarkComponents.filter(m => m.MasterDataId == f.SubjectComponentId)[0].MasterDataName;
+            f.Action = false;
+            f.Active = 0;
+            return f;
           });
-
-        })
-        if (otherExam > 0) {
-          this.ELEMENT_DATA.forEach(existing => {
-            var fromotherexamdata = result.filter(r => r.ClassSubjectId == existing.ClassSubjectId
-              && r.SubjectComponentId == existing["SubjectComponentId"])
-            if (fromotherexamdata.length > 0) {
-              //existing.ClassSubjectMarkComponentId=fromotherexamdata[0].ClassSubjectMarkComponentId;
-              existing.ClassSubjectId = fromotherexamdata[0].ClassSubjectId;
-              existing["ClassSubject"] = fromotherexamdata[0].ClassSubject;
-              existing["ExamId"] = _examId;
-              //existing.SubjectComponentId=fromotherexamdata[0].MasterDataId;
-              existing["SubjectComponent"] = fromotherexamdata[0].SubjectComponent;
-              existing.FullMark = fromotherexamdata[0].FullMark;
-              existing.PassMark = fromotherexamdata[0].PassMark;
-              existing.OverallPassMark = fromotherexamdata[0].OverallPassMark;
-              existing.BatchId = fromotherexamdata[0].BatchId;
-              existing.Active = fromotherexamdata[0].Active;
-              existing.Action = true;
-            }
-
-          })
         }
         else {
-          this.ELEMENT_DATA = [...result];
+          filteredClassSubjectnComponents.forEach((subj, indx) => {
+            subj.Components.forEach(component => {
+  
+              let existing = clsSubjFiltered.filter(fromdb => fromdb.ClassSubject.SubjectId == subj.SubjectId
+                && fromdb.SubjectComponentId == component.MasterDataId)
+              if (existing.length > 0) {
+                existing[0].ClassSubjectMarkComponentId = existing[0].ClassSubjectMarkComponentId;
+                existing[0].ClassSubject = subj.ClassSubject;
+                existing[0].SubjectComponent = this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName;
+                existing[0].Action = false;
+                this.ELEMENT_DATA.push(existing[0]);
+              }
+              else {
+                let item = {
+                  ClassSubjectMarkComponentId: 0,
+                  ClassSubjectId: subj.ClassSubjectId,
+                  ClassSubject: subj.ClassSubject,
+                  ExamId: _examId,
+                  SubjectComponentId: component.MasterDataId,
+                  SubjectComponent: this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName,
+                  FullMark: 0,
+                  PassMark: 0,
+                  OverallPassMark: 0,
+                  BatchId: 0,
+                  Active: 0,
+                  Action: false
+                }
+                this.ELEMENT_DATA.push(item);
+              }
+            });
+  
+          })
         }
+
+
+        /////////////////////
+        
         //console.log("his.ELEMENT_DATA",this.ELEMENT_DATA);
         if (this.ELEMENT_DATA.length == 0)
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);

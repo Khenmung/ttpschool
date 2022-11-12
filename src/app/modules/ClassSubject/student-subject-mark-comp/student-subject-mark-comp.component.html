@@ -48,14 +48,13 @@
                 </mat-select>
             </mat-form-field>
             <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button"
-                (click)="CopyFromPreviousBatch()">
+                (click)="CopyFromOtherExam()">
                 <mat-icon>copy_all</mat-icon>
             </button>
         </div>
     </form>
     <div style="font-weight: bold;font-style: italic;">{{datafromotherexam}}</div>
-    <mat-table #table [dataSource]="dataSource" matSort>
-        
+    <mat-table #table [dataSource]="dataSource" matSort>        
         <ng-container matColumnDef="ClassSubjectMarkComponentId">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
             <mat-cell *matCellDef="let element">
