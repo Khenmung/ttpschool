@@ -428,7 +428,8 @@ export class ResultComponent implements OnInit {
     this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
         this.Exams = [];
-        data.value.map(e => {
+        var result = data.value.filter(f=>f.ReleaseResult==1);
+        result.map(e => {
           var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
           if (obj.length > 0)
             this.Exams.push({

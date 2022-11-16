@@ -104,7 +104,7 @@
     </ng-container>
     <ng-container matColumnDef="Action">
         <mat-header-cell *matHeaderCellDef>
-            <button [disabled]="loading || !EnableSave || Permission=='read'"
+            <button [disabled]="loading || Permission=='read'"
                 *ngIf="StudentAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
                 <mat-icon>all_out</mat-icon>
                 <mat-icon *ngIf="loading">
@@ -113,7 +113,7 @@
             </button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-            <button [disabled]="loading || !element.Action || Permission=='read' || !EnableSave" matTooltip="view/edit"
+            <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="view/edit"
                 mat-raised-button color="accent" (click)="SaveRow(element)">
                 <mat-icon>save</mat-icon>
                 <mat-icon *ngIf="loading">

@@ -10,6 +10,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-student-subject-mark-comp',
@@ -19,6 +20,7 @@ import { SwUpdate } from '@angular/service-worker';
 export class StudentSubjectMarkCompComponent implements OnInit {
   PageLoading = true;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator:MatPaginator;
 
   loading = false;
   Permission = '';
@@ -486,9 +488,9 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         this.ELEMENT_DATA = this.ELEMENT_DATA.sort((a, b) => b.Active - a.Active);
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
+        this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
-
       });
   }
   updateActive(row) {

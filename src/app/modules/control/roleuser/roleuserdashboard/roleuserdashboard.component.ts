@@ -252,15 +252,17 @@ export class roleuserdashboardComponent implements OnInit {
               _roleName = roleobj[0].MasterDataName;
 
             var validuser = this.Users.filter(u => u.Id == item.UserId)
-            if (validuser.length > 0)
+            //if (validuser.length > 0)
+            validuser.forEach(v => {
               this.RoleUserList.push({
                 RoleUserId: item.RoleUserId,
                 UserId: item.UserId,
-                User: validuser[0].Email,
+                User: v.Email,
                 RoleId: item.RoleId,
                 Role: _roleName,
                 Active: item.Active
               });
+            })
           });
         }
         else if (this.searchForm.get("searchUserName").value.Id != undefined) {
@@ -274,9 +276,8 @@ export class roleuserdashboardComponent implements OnInit {
           })
           //this.contentservice.openSnackBar("No user role has been defined!",globalconstants.ActionText,globalconstants.RedBackground);
         }
-        if(this.RoleUserList.length==0)
-        {
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        if (this.RoleUserList.length == 0) {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
         this.dataSource.paginator = this.paginator;

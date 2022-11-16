@@ -254,7 +254,7 @@ export class StudentgradeComponent implements OnInit {
           row.StudentGradeId = data.StudentGradeId;
           row.GradeName = globalconstants.decodeSpecialChars(row.GradeName);
           row.Action = false;
-          this.ToUpdateCount = -1;
+          this.ToUpdateCount--;
           if (this.ToUpdateCount == 0) {
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.loadingFalse()
@@ -327,7 +327,7 @@ export class StudentgradeComponent implements OnInit {
         this.ExamReleased = 0;
         
       if (pCopyFromExamId > 0) {
-        this.DatafromotherexamMSG = "Data from '" + + "'";
+        this.DatafromotherexamMSG = "Data from '" + _examName + "'";
         filterStr += ' and (ExamId eq ' + pCopyFromExamId + ' or ExamId eq ' + _examId + ')';
       } else
         filterStr += ' and ExamId eq ' + _examId;

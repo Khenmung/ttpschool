@@ -80,22 +80,23 @@ export class ContentService implements OnInit {
   }
   GetClasses(orgId) {
     let list = new List();
-    list.fields = ["*"];
-    list.filter = ["Active eq 1 and OrgId eq " + orgId];
+    list.fields = ["ClassId,ClassName,Sequence,BatchId,OrgId,MinStudent,MaxStudent,StartDate,EndDate"];
+    list.filter = ["OrgId eq " + orgId + " and Active eq 1"];
     list.PageName = "ClassMasters";
     list.orderBy = "Sequence";
     return this.dataservice.get(list);
   }
-  GetStudentClassCount(pOrgId, pClassId, pBatchId) {
+  GetStudentClassCount(pOrgId, pClassId,pSectionId, pBatchId) {
     debugger;
     var _classfilter = '';
     if (pClassId > 0)
       _classfilter = " and ClassId eq " + pClassId;
-
+    if(pSectionId>0)
+    _classfilter += " and SectionId eq " + pSectionId;
     let list: List = new List();
     list.fields = ["StudentClassId"];
     list.PageName = "StudentClasses";
-    list.filter = ["Active eq 1 and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId + _classfilter];
+    list.filter = ["OrgId eq " + pOrgId + " and Active eq 1 and BatchId eq " + pBatchId + _classfilter];
 
     return this.dataservice.get(list);
 
@@ -823,8 +824,8 @@ GetCommonMasterData(orgId, appIds) {
   })
 
   var commonAppId = this.GetPermittedAppId('common');
-  var orgIdSearchstr = ' and (ApplicationId eq ' + commonAppId + applicationparam + ")" +
-    ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
+  var orgIdSearchstr = '(ApplicationId eq ' + commonAppId + applicationparam + ")" +
+    ' and (ParentId eq 0  or OrgId eq ' + orgId + ') and Active eq 1 ';
 
   let list: List = new List();
 
@@ -838,7 +839,7 @@ GetCommonMasterData(orgId, appIds) {
     "Confidential",
     "Active"];
   list.PageName = "MasterItems";
-  list.filter = ["Active eq 1 " + orgIdSearchstr];
+  list.filter = [orgIdSearchstr];
   list.orderBy = "Sequence";
 
   return this.dataservice.get(list);

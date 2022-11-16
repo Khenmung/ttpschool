@@ -23,7 +23,10 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-
+                <mat-form-field appearance="outline" style="width: 100px;">
+                    <mat-label>PID</mat-label>
+                    <input formControlName="searchPID" autocomplete="Off" matInput [maxlength]="10">
+                </mat-form-field>
                 <mat-form-field appearance="outline" style="width: 200px;">
                     <mat-label>search</mat-label>
                     <mat-select formControlName="searchRemarkId">
@@ -58,16 +61,13 @@
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
-                <mat-form-field appearance="outline" style="width: 150px;">
+                <!-- <mat-form-field appearance="outline" style="width: 150px;">
                     <mat-label>Admission No.</mat-label>
                     <input formControlName="searchAdmissionNo" autocomplete="Off" matInput [maxlength]="10">
-                </mat-form-field>
-                <mat-form-field appearance="outline" style="width: 100px;">
-                    <mat-label>PID</mat-label>
-                    <input formControlName="searchPID" autocomplete="Off" matInput [maxlength]="10">
-                </mat-form-field>
+                </mat-form-field> -->
+               
 
-                <mat-form-field appearance="outline" [style.width.px]="350">
+                <mat-form-field appearance="outline" [style.width.px]="300">
                     <mat-label>Student</mat-label>
                     <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">

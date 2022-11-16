@@ -45,7 +45,7 @@ export class NaomitsuService {
       url += "&$expand=" + list.lookupFields.toString();
     }
     if (list.hasOwnProperty('filter') && list.filter && list.filter.toString().length > 0) {
-      url += "&$filter=Deleted eq false and " + list.filter;
+      url += "&$filter=" + list.filter + " and Deleted eq false";
     }
     if (list.hasOwnProperty('groupby') && list.groupby && list.groupby.toString().length > 0) {
       url += "&$groupby=" + list.groupby;

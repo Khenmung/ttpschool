@@ -222,13 +222,7 @@ export class studentprimaryinfoComponent implements OnInit {
         this.getFields('Student Module');
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
         this.GetMasterData();
-        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          if (this.StudentId > 0)
-          this.GetStudent();
-          this.loading = false;
-          this.PageLoading = false;
-        });
+        
         
 
         
@@ -305,7 +299,13 @@ export class studentprimaryinfoComponent implements OnInit {
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
         this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
-
+        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+          if (this.StudentId > 0)
+          this.GetStudent();
+          this.loading = false;
+          this.PageLoading = false;
+        });
       });
 
   }

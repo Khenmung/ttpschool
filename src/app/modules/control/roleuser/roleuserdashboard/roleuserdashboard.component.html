@@ -34,7 +34,7 @@
         <ng-container matColumnDef="User">
             <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Name
             </mat-header-cell>
-            <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+            <mat-cell *matCellDef="let element">
                 {{element.User}}
             </mat-cell>
         </ng-container>

@@ -38,11 +38,16 @@ mat-header-cell{
 }
 .mat-column-PID,.mat-column-Active{
     justify-content: center;
-    flex:1 0 80px;
+    flex:1 0 70px;
 }
-.mat-column-Action,.mat-column-ClassName,.mat-column-Name,
-.mat-column-Remarks,.mat-column-FeeType,
-.mat-column-FatherName,.mat-column-MotherName,.mat-column-ReasonForLeaving{
+.mat-column-FatherName,.mat-column-MotherName,.mat-column-Name,
+.mat-column-Remarks
+{
+    flex: 1 0 120px;
+}
+.mat-column-Action,.mat-column-ClassName,
+.mat-column-FeeType,
+.mat-column-ReasonForLeaving{
     justify-content: center;
     flex: 1 0 120px;
 }

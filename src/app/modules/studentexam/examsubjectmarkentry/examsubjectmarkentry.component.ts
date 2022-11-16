@@ -8,7 +8,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import alasql from 'alasql';
+//import alasql from 'alasql';
 import { MatPaginator } from '@angular/material/paginator';
 import { evaluate } from 'mathjs';
 
@@ -290,11 +290,11 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     }
 
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += " and BatchId eq " + this.SelectedBatchId;
     //var _classSubjectId = this.ClassSubjects.filter(c => c.ClassId == _classId && c.SubjectId == _subjectId)[0].ClassSubjectId;
     filterStr += " and ClassSubjectId eq " + _classSubjectId;
-
+    filterStr += " and Active eq 1"; 
     let list: List = new List();
     list.fields = [
       'StudentClassSubjectId',
@@ -501,8 +501,8 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
       this.GetOneExamResult([]);
   }
   GetOneExamResult(pExamsSubjectMarks) {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var filterstr = '';
 
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     //var filterstr = '';
@@ -511,7 +511,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     var _classSubjectId = this.searchForm.get("searchClassSubjectId").value
     var _examId = this.searchForm.get("searchExamId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
-    filterstr = 'ExamId eq ' + _examId;
+    filterstr = ' and ExamId eq ' + _examId + " and Active eq 1";
 
     let list: List = new List();
     list.fields = [
@@ -527,7 +527,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     ];
     list.PageName = "ExamStudentSubjectResults";
     list.lookupFields = ["ClassSubjectMarkComponent($select=ExamId,ClassSubjectId,SubjectComponentId,FullMark)"];
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [orgIdSearchstr + filterstr];
     //list.orderBy = "ParentId";
     this.displayedColumns = [
       'StudentClassSubject',

@@ -110,7 +110,7 @@ export class globalconstants {
 
                 },
                 "CONTROL": {
-                    'CONTROL': 'control',
+                    'INITIALSETTING': 'initial setting',
                     "BATCHDASHBOARD": 'batch',
                     'APPLICATIONFEATUREPERMISSION': 'Role Feature Permission',
                     'ROLEUSER': 'role user',

@@ -44,7 +44,7 @@
         (click)="clear()">
         <mat-icon>clear_all</mat-icon>
     </button>
-    <button [disabled]="loading || ClickedVerified || !EnableVerify || ExamReleased" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0"
+    <button [disabled]="loading || ClickedVerified || SectionSelected || ExamReleased==1" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0"
         mat-raised-button color="accent" (click)="Verified()">
         <mat-icon>checked</mat-icon>
     </button>
@@ -57,8 +57,8 @@
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="width:100%;align-self: stretch;">
-                    <span style="padding:5px;align-self: stretch;color:red" *ngIf="(element[disCol]+'').includes('(')">{{element[disCol]}}</span> 
-                    <span style="padding:5px;display: flex;align-self: stretch;" *ngIf="!(element[disCol]+'').includes('(')">{{element[disCol]}}</span>
+                    <span style="padding:5px;align-self: stretch;color:red" *ngIf="disCol!='Student' && (element[disCol]+'').includes('(')">{{element[disCol]}}</span> 
+                    <span style="padding:5px;display: flex;align-self: stretch;" *ngIf="disCol=='Student' || !(element[disCol]+'').includes('(')">{{element[disCol]}}</span>
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns;sticky:true"></mat-header-row>

@@ -68,7 +68,7 @@ export class settingboardComponent implements AfterViewInit {
       this.AppName = selectedApp[0].appShortName
     //this.AppName ='common'
 
-    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.CONTROL)
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.INITIALSETTING)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
 

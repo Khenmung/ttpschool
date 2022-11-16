@@ -864,7 +864,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           return;
         }
         else {
-          this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0, this.SelectedBatchId)
+          this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0,0, this.SelectedBatchId)
             .subscribe((data: any) => {
 
               var ClassStrength = data.value.length;

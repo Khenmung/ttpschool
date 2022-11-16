@@ -81,7 +81,7 @@
                         </button> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                        <button [disabled]="loading || !element.Action || Permission=='read' || ResultReleased==1" matTooltip="save"
                             mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
@@ -98,5 +98,16 @@
                 </mat-paginator>
             </div>
         </div>
-        
+        <div style="margin-top:30px;" data-expand="false" #expandWrap>
+            <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+                <mat-icon>info</mat-icon>
+                Guides...
+            </span>
+            <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+                <ul>
+                    <li>If exam has been released, formula cannot be updated.</li>
+                </ul>
+            </span>
+        </div>    
     </div>
+    

@@ -170,19 +170,19 @@ export class AddstudentclassComponent implements OnInit {
     let list: List = new List();
     list.fields = ["StudentId", "FirstName", "LastName", "FatherName", "MotherName"];
     list.PageName = "Students";
-    list.filter = [filterOrgId];
+    list.filter = [filterOrgId + " and StudentId eq " + this.StudentId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.Students = data.value.map(student => {
-            var _lastname = student.LastName == null ? '' : " " + student.LastName;
-            var name = student.FirstName + _lastname;
-            student.studentName = student.StudentId + "-" + name + "-" + student.FatherName + "-" + student.MotherName;
-            return student;
-          })
-          let ValidStudent = this.Students.filter(student => student.StudentId == this.StudentId)
-          if (ValidStudent.length > 0) {
+          // this.Students = data.value.map(student => {
+          //   var _lastname = student.LastName == null ? '' : " " + student.LastName;
+          //   var name = student.FirstName + _lastname;
+          //   student.studentName = student.StudentId + "-" + name + "-" + student.FatherName + "-" + student.MotherName;
+          //   return student;
+          // })
+          // let ValidStudent = this.Students.filter(student => student.StudentId == this.StudentId)
+          // if (ValidStudent.length > 0) {
             this.studentclassForm.patchValue({ StudentId: this.StudentId });
             this.GetStudentClass();
           }
@@ -190,9 +190,9 @@ export class AddstudentclassComponent implements OnInit {
             this.invalidId = true;
             this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
           }
-        }
-        else
-          this.contentservice.openSnackBar("Problem fetching students' data", globalconstants.ActionText, globalconstants.RedBackground);
+        // }
+        // else
+        //   this.contentservice.openSnackBar("Problem fetching students' data", globalconstants.ActionText, globalconstants.RedBackground);
       });
 
   }
@@ -209,7 +209,7 @@ export class AddstudentclassComponent implements OnInit {
         "BatchId", "FeeTypeId",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
-      list.filter = ["StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
+      list.filter = [filterOrgIdNBatchId + " and StudentClassId eq " + this.StudentClassId];
 
       this.dataservice.get(list)
         .subscribe((data: any) => {
@@ -286,7 +286,7 @@ export class AddstudentclassComponent implements OnInit {
       var _classId = this.studentclassForm.get("ClassId").value;
       var ClassStrength = 0;
       if (_classId > 0) {
-        this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0, this.SelectedBatchId)
+        this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0,0, this.SelectedBatchId)
           .subscribe((data: any) => {
             ClassStrength = data.value.length;
             ClassStrength++;
