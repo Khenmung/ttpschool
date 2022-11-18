@@ -61,6 +61,7 @@ export class VerifyResultsComponent implements OnInit {
   ExamNames = [];
   Exams = [];
   Batches = [];
+  ExamClassGroups=[];
   StudentSubjects = [];
   SubjectCategory = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
@@ -68,6 +69,13 @@ export class VerifyResultsComponent implements OnInit {
   allMasterData = [];
   Permission = 'deny';
   ExamId = 0;
+  ClassSubjects = [];
+  SectionSelected = true;
+  ExamResultProperties = [];
+  ExamNCalculate = [];
+  ClassGroupIdOfExam = 0;
+  FilteredClasses = [];
+  ExamReleased = 0;
 
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
@@ -143,35 +151,35 @@ export class VerifyResultsComponent implements OnInit {
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
-
+        this.GetExamClassGroup();
         this.GetSubjectTypes();
         //this.GetStudentAttendance();
 
       }
     }
   }
-  ClassGroupIdOfExam = 0;
-  FilteredClasses = [];
-  ExamReleased = 0;
   FilterClass() {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased =0;
+    var objExamClassGroups= this.ExamClassGroups.filter(g=>g.ExamId ==_examId);
     var obj = this.Exams.filter(f => f.ExamId == _examId);
     if (obj.length > 0) {
-      this.ClassGroupIdOfExam = obj[0].ClassGroupId;
+      //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
+
       this.ExamReleased = obj[0].ReleaseResult;
     }
-    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == this.ClassGroupIdOfExam);
-    this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId && f.ClassGroupId == this.ClassGroupIdOfExam);
-
+    this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi=>fi.ClassGroupId == f.ClassGroupId)>-1);
+    //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
+    //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
+    
   }
   clear() {
     this.searchForm.patchValue({ searchExamId: 0 });
     this.searchForm.patchValue({ searchClassId: 0 });
     this.searchForm.patchValue({ searchSectionId: 0 });
   }
-  ClassSubjects = [];
+
   GetClassSubject() {
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
@@ -226,7 +234,12 @@ export class VerifyResultsComponent implements OnInit {
         this.loading = false;
       })
   }
-
+  GetExamClassGroup() {
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+      .subscribe((data: any) => {
+        this.ExamClassGroups =[...data.value];
+      });
+    }
   GetStudents(classId) {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -376,8 +389,6 @@ export class VerifyResultsComponent implements OnInit {
           this.loading = false; this.PageLoading = false;
         })
   }
-
-  ExamNCalculate = [];
   GetExamNCalculate() {
     this.loading = true;
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
@@ -426,7 +437,7 @@ export class VerifyResultsComponent implements OnInit {
       this.SectionSelected = false;
 
     this.loading = true;
-
+    this.GetSpecificStudentGrades();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
@@ -499,8 +510,6 @@ export class VerifyResultsComponent implements OnInit {
         })
       });
   }
-
-  SectionSelected = true;
 
   GetExamStudentSubjectResults(pExamId, pClassId, pSectionId) {
     this.ClickedVerified = false;
@@ -602,7 +611,7 @@ export class VerifyResultsComponent implements OnInit {
           var _objSubjectCat = this.SubjectCategory.filter(f => f.MasterDataName.toLowerCase() == 'marking')
           if (_objSubjectCat.length > 0) {
             _subjectCategoryMarkingId = _objSubjectCat[0].MasterDataId;
-            debugger;
+            //debugger;
             // //preparing fullmark for all subjects
             // forEachSubjectOfStud.forEach(eachsubj => {
 
@@ -873,12 +882,9 @@ export class VerifyResultsComponent implements OnInit {
       })
     }
     return _StudentGrade;
-    // else {
-    //   this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-
-    // }
   }
-  ExamResultProperties = [];
+
+
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -979,12 +985,14 @@ export class VerifyResultsComponent implements OnInit {
   GetSpecificStudentGrades() {
     debugger;
     var _classId = this.searchForm.get("searchClassId").value;
+    var _examId = this.searchForm.get("searchExamId").value;
     var _classGroupId = 0;
     if (_classId > 0) {
       var obj = this.ClassGroupMapping.filter(f => f.ClassId == _classId)
       if (obj.length > 0) {
-        _classGroupId = obj[0].ClassGroupId;
-        this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
+        //_classGroupId = obj[0].ClassGroupId;
+        var relevantGroupForExam =this.ExamClassGroups.filter(e=> e.ExamId == _examId && obj.findIndex(fi=>fi.ClassGroupId == e.ClassGroupId)>-1)
+        this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == relevantGroupForExam[0].ClassGroupId && f.ExamId ==_examId);
       }
       else {
         this.contentservice.openSnackBar("Class group not found for selected class.", globalconstants.ActionText, globalconstants.RedBackground);

@@ -4,8 +4,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import alasql from 'alasql';
-import { evaluate } from 'mathjs';
 import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -61,7 +59,6 @@ export class ExamsComponent implements OnInit {
     'ExamName',
     'StartDate',
     'EndDate',
-    'ClassGroupId',    
     'AttendanceStartDate',
     'ReleaseDate',
     'ReleaseResult',
@@ -173,11 +170,11 @@ export class ExamsComponent implements OnInit {
       //" and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
       //" and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
 
-    if (row.ClassGroupId == 0 || row.ClassGroupId == null) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // if (row.ClassGroupId == 0 || row.ClassGroupId == null) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     // if (row.AttendanceModeId == 0) {
     //   this.loading = false;
     //   this.contentservice.openSnackBar("Please select attendance mode.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -209,7 +206,7 @@ export class ExamsComponent implements OnInit {
           this.ExamsData.ExamNameId = row.ExamNameId;
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
-          this.ExamsData.ClassGroupId = row.ClassGroupId;
+          this.ExamsData.ClassGroupId = 0//row.ClassGroupId;
           //this.ExamsData.MarkFormula = row.MarkFormula;
           this.ExamsData.AttendanceStartDate = row.AttendanceStartDate;
           this.ExamsData.ReleaseResult = row.ReleaseResult;

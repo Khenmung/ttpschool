@@ -6,51 +6,69 @@
     <div style="padding: 15px;">
         <div style="flex-direction: row;">
             <form [formGroup]="searchForm">
-                <mat-form-field appearance="outline" style="width:250px">
-                    <mat-label>Exam</mat-label>
-                    <mat-select formControlName="searchExamId">
-                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
-                            {{item.ExamName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Class group</mat-label>
-                    <mat-select formControlName="searchClassGroupId">
-                        <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
-                            {{item.GroupName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Subject Category</mat-label>
-                    <mat-select formControlName="searchSubjectCategoryId">
-                        <mat-option value="0">select</mat-option>
-                        <mat-option *ngFor="let item of SubjectCategory" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentGrade(0)">
-                    <mat-icon>search</mat-icon>
-                    <mat-icon *ngIf="loading">
-                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                    </mat-icon>
-                </button>
-                <mat-divider></mat-divider>
-                <div style="margin-top:15px">
-                    <mat-form-field appearance="outline" [style.width.px]="250">
-                        <mat-label>Copy from other exam</mat-label>
-                        <mat-select formControlName="searchCopyExamId">
-                            <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
-                                {{item.ExamName}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <button [disabled]="loading" matTooltip="copy from other exam" class="mat-raised-button"
-                        (click)="CopyFromOtherExam()">
-                        <mat-icon>copy_all</mat-icon>
-                    </button>
+                <div style="display:flex;flex-direction: column;">
+                    <div>
+                        <mat-form-field appearance="outline" style="width:250px">
+                            <mat-label>Exam</mat-label>
+                            <mat-select formControlName="searchExamId" (selectionChange)="SelectClassGroup()">
+                                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                                    {{item.ExamName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" [style.width.px]="200">
+                            <mat-label>Class group</mat-label>
+                            <mat-select formControlName="searchClassGroupId" (selectionChange)="EnableCopyButton()">
+                                <mat-option *ngFor="let item of FilteredClassGroup" [value]="item.ClassGroupId">
+                                    {{item.GroupName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" [style.width.px]="200">
+                            <mat-label>Subject Category</mat-label>
+                            <mat-select formControlName="searchSubjectCategoryId" (selectionChange)="EnableCopyButton()">
+                                <mat-option value="0">select</mat-option>
+                                <mat-option *ngFor="let item of SubjectCategory" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <button style="margin-right:15px" [disabled]="loading" mat-raised-button color="accent"
+                            (click)="GetStudentGrade(0,0)">
+                            <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
+                        </button>
+                        <button *ngIf="EnableCopy" mat-raised-button matTooltip="copy toggle"
+                            (click)="ShowHide()">
+                            <mat-icon>shuffle</mat-icon>
+                        </button>
+                    </div>
+                    <div *ngIf="ShowCopyBlock">
+                        <mat-form-field appearance="outline" [style.width.px]="250">
+                            <mat-label>Copy from other exam</mat-label>
+                            <mat-select formControlName="searchCopyFromExamId"
+                                (selectionChange)="SelectCopyFromClassGroup()">
+                                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                                    {{item.ExamName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" [style.width.px]="200">
+                            <mat-label>Class group</mat-label>
+                            <mat-select formControlName="searchCopyFromClassGroupId">
+                                <mat-option *ngFor="let item of FilteredCopyFromClassGroup" [value]="item.ClassGroupId">
+                                    {{item.GroupName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <button style="margin-right:15px" [disabled]="loading" matTooltip="copy from other exam"
+                            mat-raised-button (click)="CopyFromOtherExam()">
+                            <mat-icon>copy_all</mat-icon>
+                        </button>
+                    </div>
+                    
                 </div>
             </form>
         </div>
@@ -158,12 +176,12 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button style="margin-right:15px" [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
-                            (click)="AddNew()">
+                        <button style="margin-right:15px" [disabled]="loading || Permission=='read'"
+                            matTooltip="add new" mat-mini-fab (click)="AddNew()">
                             <mat-icon>add</mat-icon>
                         </button>
-                        <button [disabled]="loading || Permission=='read' || Permission=='read' || ExamReleased==1" *ngIf="StudentGradeList.length>0"
-                            matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                        <button [disabled]="loading || Permission=='read' || Permission=='read' || ExamReleased==1"
+                            *ngIf="StudentGradeList.length>0" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
                             <mat-icon>all_out</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
@@ -171,8 +189,8 @@
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read' || ExamReleased==1" matTooltip="save"
-                            mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action || Permission=='read' || ExamReleased==1"
+                            matTooltip="save" mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>

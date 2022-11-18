@@ -109,7 +109,10 @@ export class ExammarkconfigComponent implements OnInit {
         this.GetMasterData();
         this.GetClassGroupMapping();
         this.GetStudentGradeDefn();
-
+        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+        .subscribe((data: any) => {
+          this.ExamClassGroups = [...data.value];
+        });
       }
     }
   }
@@ -205,8 +208,9 @@ export class ExammarkconfigComponent implements OnInit {
         
       })
   }
+  
   GetResultReleased(source) {
-    this.ResultReleased = this.Exams.filter(e => e.ExamId == source.value)[0].ReleaseResult;
+    //this.ResultReleased = this.Exams.filter(e => e.ExamId == source.value)[0].ReleaseResult;
     this.FilterClass();
     this.clearData();
   }
@@ -339,16 +343,33 @@ export class ExammarkconfigComponent implements OnInit {
       })
   }
   FilteredClasses = [];
+  // FilterClass() {
+  //   var _examId = this.searchForm.get("searchExamId").value
+  //   var _classGroupId = 0;
+  //   var obj = this.Exams.filter(f => f.ExamId == _examId);
+  //   if (obj.length > 0)
+  //     _classGroupId = obj[0].ClassGroupId;
+  //   this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
+  //   this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
+  // }
+  ExamReleased=0;
+  ExamClassGroups=[];
   FilterClass() {
     var _examId = this.searchForm.get("searchExamId").value
-    var _classGroupId = 0;
+    //var _classGroupId = 0;
+    this.ExamReleased = 0;
+    var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
     var obj = this.Exams.filter(f => f.ExamId == _examId);
-    if (obj.length > 0)
-      _classGroupId = obj[0].ClassGroupId;
-    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
-    this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
-  }
+    if (obj.length > 0) {
+      //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
 
+      this.ExamReleased = obj[0].ReleaseResult;
+    }
+    this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+    //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
+    //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
+
+  }
   SelectClassSubject() {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);

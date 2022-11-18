@@ -14,6 +14,7 @@ import { VerifyresultstatusComponent } from '../verifyresultstatus/verifyresults
 import { ExamncalculateComponent } from '../examncalculate/examncalculate.component';
 import {SwUpdate} from '@angular/service-worker';
 import { ExammarkconfigComponent } from '../exammarkconfig/exammarkconfig.component';
+import { ExamclassgroupComponent } from '../examclassgroup/examclassgroup.component';
 
 @Component({
   selector: 'app-examdashboard',
@@ -25,17 +26,20 @@ export class ExamdashboardComponent implements AfterViewInit {
 
   components:any = [
     ExamsComponent,
+    ExamclassgroupComponent,
     StudentgradeComponent,
     ExammarkconfigComponent,
-    ExamncalculateComponent,
-    ExamslotComponent,
-    SlotnclasssubjectComponent,
+    ExamncalculateComponent,    
     ExamSubjectMarkEntryComponent,
     VerifyResultsComponent,
-    VerifyresultstatusComponent    
+    VerifyresultstatusComponent,
+    ExamslotComponent,
+    SlotnclasssubjectComponent,
+        
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -83,6 +87,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMNCALCULATE)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMMARKCONFIG)
+    this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMCLASSGROUPMAP)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -137,6 +142,9 @@ export class ExamdashboardComponent implements AfterViewInit {
         break;
       case globalconstants.Pages.edu.EXAM.EXAMMARKCONFIG:
         comindx = this.components.indexOf(ExammarkconfigComponent);
+        break;
+      case globalconstants.Pages.edu.EXAM.EXAMCLASSGROUPMAP:
+        comindx = this.components.indexOf(ExamclassgroupComponent);
         break;
       default:
         comindx = this.components.indexOf(ExamsComponent);

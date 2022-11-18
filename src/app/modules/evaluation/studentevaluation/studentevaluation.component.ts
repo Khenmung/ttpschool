@@ -11,7 +11,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-StudentEvaluation',
   templateUrl: './studentevaluation.component.html',
@@ -53,6 +53,7 @@ export class StudentEvaluationComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
   EvaluationMaster = [];
+  StudentList =[];
   Exams = [];
   ExamNames = [];
   SelectedClassSubjects = [];
@@ -111,9 +112,7 @@ export class StudentEvaluationComponent implements OnInit {
     debugger;
     this.searchForm = this.fb.group({
       searchStudentName: [0],
-      // searchEvaluationMasterId: [0],
-      // searchSubjectId: [0],
-      //searchExamId: [0]
+      searchClassId: [0]
     });
     this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
       .pipe(
@@ -153,9 +152,10 @@ export class StudentEvaluationComponent implements OnInit {
           .subscribe((data: any) => {
             this.ClassGroupMappings = [...data.value];
           })
+
         this.GetEvaluationNames();
         this.GetMasterData();
-
+        this.GetStudents();
 
       }
     }
@@ -315,7 +315,7 @@ export class StudentEvaluationComponent implements OnInit {
               StudentEvaluationResultId: row.StudentEvaluationResultId,
               StudentClassId: _studentClassId,
               StudentId: row.StudentId,
-              ClassId:this.ClassId,
+              ClassId: this.ClassId,
               ClassEvaluationId: row.ClassEvaluationId,
               AnswerText: _answerText,
               History: _history,
@@ -410,8 +410,8 @@ export class StudentEvaluationComponent implements OnInit {
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    
-    var objstudent =this.searchForm.get("searchStudentName").value;
+
+    var objstudent = this.searchForm.get("searchStudentName").value;
     this.ClassId = objstudent.ClassId;
     this.StudentClassId = objstudent.StudentClassId;
     this.StudentId = this.searchForm.get("searchStudentName").value.StudentId;
@@ -646,8 +646,21 @@ export class StudentEvaluationComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.GetStudentClasses();
+          var filteredSection = this.Sections.filter(s => s.MasterDataName != 'N/A');
+          this.Classes = [];
+          data.value.forEach(d => {
+            //var _clsName = JSON.parse(JSON.stringify(d.ClassName));
+            filteredSection.forEach(s => {
+              this.Classes.push({
+                ClassSectionId: d.ClassId + '' + s.MasterDataId + '',
+                ClassId: d.ClassId,
+                ClassName: d.ClassName + "-" + s.MasterDataName,
+                SectionId: s.MasterDataId
+              });
+            })
+          })
+          console.log("this.Classes", this.Classes);
+          //this.GetStudentClasses();
         });
 
         this.GetExams();
@@ -714,9 +727,9 @@ export class StudentEvaluationComponent implements OnInit {
     this.EvaluationMaster = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        
-        var result =[...data.value];
-        this.EvaluationMaster = this.contentservice.getConfidentialData(this.tokenstorage,result,"EvaluationName");
+
+        var result = [...data.value];
+        this.EvaluationMaster = this.contentservice.getConfidentialData(this.tokenstorage, result, "EvaluationName");
         this.loadingFalse();
       });
 
@@ -872,10 +885,23 @@ export class StudentEvaluationComponent implements OnInit {
         this.loadingFalse();
       })
   }
+  
   GetStudentClasses() {
     //debugger;
-    var _filter = ' and Active eq 1';
+    var _filter = '';
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var _classSectionId = this.searchForm.get("searchClassId").value;
+
+    if (_classSectionId == 0) {
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    else {
+      var selectedCls = this.Classes.filter(f => f.ClassSectionId == _classSectionId);
+      var _sectionId = selectedCls[0].SectionId;
+      var _classId = selectedCls[0].ClassId;
+      _filter = ' and ClassId eq ' + _classId + ' and SectionId eq ' + _sectionId + ' and Active eq 1';
+    }
 
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       _filter = ' and StudentId eq ' + this.StudentId;
@@ -887,8 +913,41 @@ export class StudentEvaluationComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.StudentClasses = [...data.value];
-        this.GetStudents();
+        //this.StudentClasses = [...data.value];
+        this.Students=[];
+        var filteredStudent = this.StudentList.filter(lst=>data.value.findIndex(d=>d.StudentId == lst.StudentId)>-1);
+        filteredStudent.forEach(student => {
+              var _RollNo = '';
+              var _name = '';
+              var _className = '';
+              var _classId = '';
+              var _section = '';
+              var _studentClassId = 0;
+              var studentclassobj = data.value.filter(f => f.StudentId == student.StudentId);
+              if (studentclassobj.length > 0) {
+                _studentClassId = studentclassobj[0].StudentClassId;
+                var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId 
+                  && c.SectionId ==studentclassobj[0].SectionId);
+                _classId = studentclassobj[0].ClassId;
+                if (_classNameobj.length > 0) {
+                  _className = _classNameobj[0].ClassName;
+                  var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+                  _RollNo = studentclassobj[0].RollNo;
+
+                  if (_SectionObj.length > 0)
+                    _section = _SectionObj[0].MasterDataName;
+                  var _lastname = student.LastName == null ? '' : " " + student.LastName;
+                  _name = student.FirstName + _lastname;
+                  var _fullDescription = _name + "-" + _className + "-" + _RollNo + "-" + student.ContactNo;
+                  this.Students.push({
+                    StudentClassId: _studentClassId,
+                    StudentId: student.StudentId,
+                    ClassId: _classId,
+                    Name: _fullDescription,
+                  });
+                }
+              }
+            })
       })
   }
   GetStudents() {
@@ -901,7 +960,7 @@ export class StudentEvaluationComponent implements OnInit {
       'LastName',
       'ContactNo',
     ];
-    
+
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       _filter = ' and StudentId eq ' + this.StudentId
     }
@@ -911,40 +970,8 @@ export class StudentEvaluationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        this.Students = [];
-        if (data.value.length > 0) {
-          data.value.forEach(student => {
-            var _RollNo = '';
-            var _name = '';
-            var _className = '';
-            var _classId = '';
-            var _section = '';
-            var _studentClassId = 0;
-            var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-            if (studentclassobj.length > 0) {
-              _studentClassId = studentclassobj[0].StudentClassId;
-              var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
-              _classId = studentclassobj[0].ClassId;
-              if (_classNameobj.length > 0) {
-                _className = _classNameobj[0].ClassName;
-                var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
-                _RollNo = studentclassobj[0].RollNo;
+        this.StudentList = [...data.value];
 
-                if (_SectionObj.length > 0)
-                  _section = _SectionObj[0].MasterDataName;
-                var _lastname = student.LastName == null ? '' : " " + student.LastName;
-                _name = student.FirstName + _lastname;
-                var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-                this.Students.push({
-                  StudentClassId: _studentClassId,
-                  StudentId: student.StudentId,
-                  ClassId: _classId,
-                  Name: _fullDescription,
-                });
-              }
-            }
-          })
-        }
         this.loading = false; this.PageLoading = false;
       })
   }
@@ -955,7 +982,7 @@ export interface IStudentEvaluation {
   EvaluationClassSubjectMapId: number;
   ClassEvaluationAnswerOptionParentId: number;
   StudentEvaluationResultId: number;
-  ClassId:number;
+  ClassId: number;
   AnswerText: string;
   History: string;
   StudentClassId: number;

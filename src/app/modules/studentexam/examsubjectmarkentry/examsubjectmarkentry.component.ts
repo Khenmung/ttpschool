@@ -68,6 +68,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     'StudentClassSubject',
   ];
   searchForm: UntypedFormGroup;
+  ExamClassGroups = [];
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -110,6 +111,11 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+          .subscribe((data: any) => {
+            this.ExamClassGroups = [...data.value];
+          });
+
         this.GetStudents();
         this.GetClassGroupMapping();
         this.GetStudentGradeDefn();
@@ -257,14 +263,31 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
       })
   }
   FilteredClasses = [];
+  // FilterClass() {
+  //   var _examId = this.searchForm.get("searchExamId").value
+  //   var _classGroupId = 0;
+  //   var obj = this.Exams.filter(f => f.ExamId == _examId);
+  //   if (obj.length > 0)
+  //     _classGroupId = obj[0].ClassGroupId;
+  //   this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
+  //   this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
+  // }
+  ExamReleased = 0;
   FilterClass() {
     var _examId = this.searchForm.get("searchExamId").value
-    var _classGroupId = 0;
+    //var _classGroupId = 0;
+    this.ExamReleased = 0;
+    var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
     var obj = this.Exams.filter(f => f.ExamId == _examId);
-    if (obj.length > 0)
-      _classGroupId = obj[0].ClassGroupId;
-    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
-    this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
+    if (obj.length > 0) {
+      //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
+
+      this.ExamReleased = obj[0].ReleaseResult;
+    }
+    this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+    //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
+    //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
+
   }
   GetStudentSubjects() {
     debugger;
@@ -294,7 +317,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     filterStr += " and BatchId eq " + this.SelectedBatchId;
     //var _classSubjectId = this.ClassSubjects.filter(c => c.ClassId == _classId && c.SubjectId == _subjectId)[0].ClassSubjectId;
     filterStr += " and ClassSubjectId eq " + _classSubjectId;
-    filterStr += " and Active eq 1"; 
+    filterStr += " and Active eq 1";
     let list: List = new List();
     list.fields = [
       'StudentClassSubjectId',
@@ -386,7 +409,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
   }
   GetClassSubject() {
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
 
     let list: List = new List();
     list.fields = [

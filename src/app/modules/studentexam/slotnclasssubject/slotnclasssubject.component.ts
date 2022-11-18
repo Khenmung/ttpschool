@@ -237,7 +237,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.SlotClassSubjectId = data.SlotClassSubjectId;
-          row.Action =false;
+          row.Action = false;
           this.loadingFalse();
           if (this.DataToUpdateCount == 0) {
             this.DataToUpdateCount = -1;
@@ -245,7 +245,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             this.GetSelectedSubjectsForSelectedExam();
           }
         }, err => {
-          row.Action =false;
+          row.Action = false;
           this.loadingFalse();
           console.log("slot and subject insert", err);
           this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -264,7 +264,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             this.GetSelectedSubjectsForSelectedExam();
           }
         }, err => {
-          row.Action =false;
+          row.Action = false;
           this.loadingFalse();
           console.log("slot and subject update", err);
           this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -274,7 +274,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     element.Action = true;
   }
   GetClassSubject() {
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
     this.loading = true;
     //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
@@ -312,7 +312,7 @@ export class SlotnclasssubjectComponent implements OnInit {
           }
         })
         this.loading = false; this.PageLoading = false;
-        console.log("this.ClassSubjectList", this.ClassSubjectList);
+        //console.log("this.ClassSubjectList", this.ClassSubjectList);
       });
   }
 
@@ -330,12 +330,11 @@ export class SlotnclasssubjectComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value
     var _classGroupId = 0;
     var obj = this.Exams.filter(f => f.ExamId == _examId);
-    if (obj.length > 0)
-    {
+    if (obj.length > 0) {
       _classGroupId = obj[0].ClassGroupId;
-      this.ExamReleased = obj[0].ReleaseResult==1?true:false;
+      this.ExamReleased = obj[0].ReleaseResult == 1 ? true : false;
     }
-      
+
     this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
   }
   GetExams() {
@@ -347,8 +346,8 @@ export class SlotnclasssubjectComponent implements OnInit {
     list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate", "ClassGroupId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and BatchId eq " + this.SelectedBatchId +" and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -378,8 +377,9 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetExamSlots() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = '';
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + 
+    ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
+    //var filterstr = '';
     //filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
     this.loading = true;
     let list: List = new List();
@@ -394,15 +394,15 @@ export class SlotnclasssubjectComponent implements OnInit {
     ];
     list.PageName = "ExamSlots";
     list.lookupFields = ["Exam($select=ExamNameId)"];
-    list.filter = ["Active eq 1 " + orgIdSearchstr + filterstr];
-    list.orderBy = "ExamDate,Sequence";
+    list.filter = [orgIdSearchstr];
+    //list.orderBy = "ExamDate,Sequence";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //this.Exams = [...data.value];
         //this.ExamSlots = 
-        var result = data.value.map(s => {
-
+        var result = data.value.sort((a, b) => a.ExamDate - b.ExamDate || a.Sequence - b.Sequence);
+        result = result.map(s => {
           let exams = this.ExamNames.filter(e => e.MasterDataId == s.Exam.ExamNameId);
           var day = this.weekday[new Date(s.ExamDate).getDay()]
           var _examname = '';
@@ -434,9 +434,9 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetSelectedSubjectsForSelectedExam() {
 
-    var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var filterstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
-    filterstr += ' and ExamId eq ' + this.searchForm.get("searchExamId").value;
+    filterstr += ' and ExamId eq ' + this.searchForm.get("searchExamId").value + ' and Active eq 1';
 
     let list: List = new List();
     list.fields = [
@@ -463,18 +463,19 @@ export class SlotnclasssubjectComponent implements OnInit {
     this.ClassWiseSubjectDisplay = [];
     this.dataSource = new MatTableDataSource<any>(this.ClassWiseSubjectDisplay);
   }
-  ExamReleased =false;
+  ExamReleased = false;
   GetSlotNClassSubjects() {
 
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1';
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + 
+    ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
+    //var filterstr = 'Active eq 1';
     if (this.searchForm.get("searchSlotId").value == 0) {
       this.contentservice.openSnackBar("Please select exam slot", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
-    filterstr += ' and SlotId eq ' + this.searchForm.get("searchSlotId").value;
+    orgIdSearchstr += ' and SlotId eq ' + this.searchForm.get("searchSlotId").value;
 
     let list: List = new List();
     list.fields = [
@@ -485,7 +486,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     ];
     list.PageName = "SlotAndClassSubjects";
     list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)", "Slot($select=SlotNameId)"];
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [orgIdSearchstr];
 
     this.ClassWiseSubjectDisplay = [];
 

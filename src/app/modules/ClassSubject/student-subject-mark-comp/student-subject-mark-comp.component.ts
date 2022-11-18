@@ -20,7 +20,7 @@ import { MatPaginator } from '@angular/material/paginator';
 export class StudentSubjectMarkCompComponent implements OnInit {
   PageLoading = true;
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator:MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   loading = false;
   Permission = '';
@@ -111,7 +111,10 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           return m;
         })
       })
-
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+      .subscribe((data: any) => {
+        this.ExamClassGroups = [...data.value];
+      });
   }
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   ClassGroupMappings = [];
@@ -357,8 +360,10 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       this.DisableSaveButton = false;
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>([]);
-    var _selectedClassGroupId = examobj[0].ClassGroupId;
-    this.SelectedClasses = this.ClassGroupMappings.filter(g => g.ClassGroupId == _selectedClassGroupId);
+    this.FilterClass();
+    //var _selectedClassGroupId = examobj[0].ClassGroupId;
+    
+    //this.SelectedClasses = this.ClassGroupMappings.filter(g => g.ClassGroupId == _selectedClassGroupId);
 
   }
   datafromotherexam = '';
@@ -419,7 +424,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           clsSubjFiltered = clsSubjFiltered.filter(item => item.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value);
           filteredClassSubjectnComponents = filteredClassSubjectnComponents.filter(clssubjcomponent => clssubjcomponent.SubjectId == this.searchForm.get("searchSubjectId").value);
         }
-        this.ELEMENT_DATA=[];
+        this.ELEMENT_DATA = [];
         ////////////////////
         var _CopyFromExam = [];
         var _SelectedExam = clsSubjFiltered.filter(d => d.ExamId == _examId);
@@ -448,7 +453,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         else {
           filteredClassSubjectnComponents.forEach((subj, indx) => {
             subj.Components.forEach(component => {
-  
+
               let existing = clsSubjFiltered.filter(fromdb => fromdb.ClassSubject.SubjectId == subj.SubjectId
                 && fromdb.SubjectComponentId == component.MasterDataId)
               if (existing.length > 0) {
@@ -476,13 +481,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
                 this.ELEMENT_DATA.push(item);
               }
             });
-  
+
           })
         }
 
 
         /////////////////////
-        
+
         //console.log("his.ELEMENT_DATA",this.ELEMENT_DATA);
         if (this.ELEMENT_DATA.length == 0)
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -492,6 +497,25 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
       });
+  }
+  ExamReleased = 0;
+  FilteredClasses = [];
+  ExamClassGroups = [];
+  FilterClass() {
+    var _examId = this.searchForm.get("searchExamId").value
+    //var _classGroupId = 0;
+    this.ExamReleased = 0;
+    var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+    var obj = this.Exams.filter(f => f.ExamId == _examId);
+    if (obj.length > 0) {
+      //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
+
+      this.ExamReleased = obj[0].ReleaseResult;
+    }
+    this.FilteredClasses = this.ClassGroupMappings.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+    //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
+    //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
+
   }
   updateActive(row) {
     row.Action = true;

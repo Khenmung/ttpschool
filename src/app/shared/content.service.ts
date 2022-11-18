@@ -101,6 +101,20 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list);
 
   }
+  GetExamClassGroup(pOrgId) {
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+    var orgIdSearchstr = 'OrgId eq ' + pOrgId + ' and Active eq true';
+
+    let list: List = new List();
+    list.fields = [
+      "ExamClassGroupMapId",
+      "ExamId",
+      "ClassGroupId"
+    ];
+    list.PageName = "ExamClassGroupMaps";
+    list.filter = [orgIdSearchstr];
+    return this.dataservice.get(list)
+  }
   GetClassGroups(pOrgId) {
 
     let filterStr = 'OrgId eq ' + pOrgId; // BatchId eq  + this.SelectedBatchId

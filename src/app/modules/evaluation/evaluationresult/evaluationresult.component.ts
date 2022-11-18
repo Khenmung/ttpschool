@@ -139,6 +139,10 @@ export class EvaluationresultComponent implements OnInit {
             this.Classes = [...data.value];
           });
         }
+        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+        .subscribe((data: any) => {
+          this.ExamClassGroups = [...data.value];
+        });
         this.GetStudentClasses();
 
       }
@@ -392,6 +396,24 @@ export class EvaluationresultComponent implements OnInit {
           })
 
       });
+  }
+  ExamReleased=0;
+  ExamClassGroups=[];
+  FilterClass() {
+    var _examId = this.searchForm.get("searchExamId").value
+    //var _classGroupId = 0;
+    this.ExamReleased = 0;
+    var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+    var obj = this.Exams.filter(f => f.ExamId == _examId);
+    if (obj.length > 0) {
+      //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
+
+      this.ExamReleased = obj[0].ReleaseResult;
+    }
+    this.FilteredClasses = this.ClassGroupMappings.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+    //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
+    //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
+
   }
   onBlur(row) {
     row.Action = true;

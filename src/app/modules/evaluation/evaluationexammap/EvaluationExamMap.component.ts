@@ -102,6 +102,7 @@ export class EvaluationExamMapComponent implements OnInit {
     this.NotifyParent.emit(value);
 
   }
+  ExamClassGroups=[];
   PageLoad() {
     debugger;
     console.log("EvaluationUpdatable", this.EvaluationUpdatable)
@@ -124,6 +125,10 @@ export class EvaluationExamMapComponent implements OnInit {
             this.Classes = [...data.value];
           });
         }
+        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+          .subscribe((data: any) => {
+            this.ExamClassGroups = [...data.value];
+          });
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.ClassGroups = [...data.value];
@@ -334,10 +339,12 @@ export class EvaluationExamMapComponent implements OnInit {
   SelectEvaluation() {
     debugger;
     var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
-    var _classesForSelectedClassGroup = this.ClassGroupMappings.filter(m => m.ClassGroupId == _searchClassGroupId);
-    var allGroupsForAllTheSelectedClasses = this.ClassGroupMappings.filter(g => _classesForSelectedClassGroup.filter(i => i.ClassId == g.ClassId).length > 0)
+    //var _classesForSelectedClassGroup = this.ClassGroupMappings.filter(m => m.ClassGroupId == _searchClassGroupId);
+    //var allGroupsForAllTheSelectedClasses = this.ClassGroupMappings.filter(g => _classesForSelectedClassGroup.filter(i => i.ClassId == g.ClassId).length > 0)
     this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId)
-    this.SelectedClassGroupExam = this.Exams.filter(f => allGroupsForAllTheSelectedClasses.filter(i => i.ClassGroupId == f.ClassGroupId).length > 0);
+    var examIdsforselectedclsgroup=this.ExamClassGroups.filter(examclsgroup=>examclsgroup.ClassGroupId == _searchClassGroupId)
+    this.SelectedClassGroupExam = this.Exams.filter(f => examIdsforselectedclsgroup.findIndex(i => i.ExamId == f.ExamId) > -1);
+    
     this.searchForm.patchValue({ searchEvaluationMasterId: 0 });
     this.EvaluationExamMapList = [];
     this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);

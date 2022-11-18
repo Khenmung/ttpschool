@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -61,6 +60,7 @@ export class StudentgradeComponent implements OnInit {
     "Active",
     "Action"
   ];
+  ExamClassGroups = [];
   ExamNames = [];
   SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
@@ -84,7 +84,9 @@ export class StudentgradeComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchCopyExamId: [0],
       searchExamId: [0],
+      searchCopyFromExamId: [0],
       searchClassGroupId: [0],
+      searchCopyFromClassGroupId: [0],
       searchSubjectCategoryId: [0]
     });
     this.PageLoad();
@@ -280,6 +282,13 @@ export class StudentgradeComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassGroups = [...data.value];
+          this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+            .subscribe((data: any) => {
+              this.ExamClassGroups = data.value.map(e => {
+                e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
+                return e;
+              })
+            })
         }
         else {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -289,20 +298,41 @@ export class StudentgradeComponent implements OnInit {
   DatafromotherexamMSG = '';
   CopyFromOtherExam() {
     debugger;
-    var _copyFromExamId = this.searchForm.get("searchCopyExamId").value;
+    var _copyFromExamId = this.searchForm.get("searchCopyFromExamId").value;
+    var _copyFromClassGroupId = this.searchForm.get("searchCopyFromClassGroupId").value;
     var _examId = this.searchForm.get("searchExamId").value;
     if (_copyFromExamId == 0) {
       this.contentservice.openSnackBar("Please select exam to copy from.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_copyFromClassGroupId == 0) {
+      this.contentservice.openSnackBar("Please select class group to copy from.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam for which to define student grade.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    this.GetStudentGrade(_copyFromExamId);
+    this.GetStudentGrade(_copyFromExamId, _copyFromClassGroupId);
   }
   ExamReleased = 0;
-  GetStudentGrade(pCopyFromExamId) {
+  FilteredClassGroup = [];
+  FilteredCopyFromClassGroup = [];
+  ShowCopyBlock=false;
+  ShowHide(){
+    this.ShowCopyBlock=!this.ShowCopyBlock;
+  }
+  SelectClassGroup() {
+    var _examId = this.searchForm.get("searchExamId").value;
+    this.FilteredClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
+    this.EnableCopyButton();
+  }
+  SelectCopyFromClassGroup() {
+    debugger;
+    var _examId = this.searchForm.get("searchCopyFromExamId").value;
+    this.FilteredCopyFromClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
+  }
+  GetStudentGrade(pCopyFromExamId, pCoyFromClassGroupId) {
 
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
@@ -325,22 +355,29 @@ export class StudentgradeComponent implements OnInit {
       }
       else
         this.ExamReleased = 0;
-        
+
+      if (pCopyFromExamId == 0 && _ClassGroupId == 0) {
+        this.loading = false;
+        this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+      else if (pCopyFromExamId > 0 && pCoyFromClassGroupId == 0) {
+        this.loading = false;
+        this.contentservice.openSnackBar("Please select class group to copy from.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+
       if (pCopyFromExamId > 0) {
         this.DatafromotherexamMSG = "Data from '" + _examName + "'";
         filterStr += ' and (ExamId eq ' + pCopyFromExamId + ' or ExamId eq ' + _examId + ')';
-      } else
+        filterStr += " and ClassGroupId eq " + pCoyFromClassGroupId;
+      } else {
         filterStr += ' and ExamId eq ' + _examId;
+        filterStr += " and ClassGroupId eq " + _ClassGroupId;
+      }
     }
 
-    if (_ClassGroupId > 0) {
-      filterStr += " and ClassGroupId eq " + _ClassGroupId;
-    }
-    else {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+
     if (_SubjectCategoryId > 0) {
       filterStr += " and SubjectCategoryId eq " + _SubjectCategoryId;
     }
@@ -406,6 +443,17 @@ export class StudentgradeComponent implements OnInit {
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
+  }
+  EnableCopy = false;
+  EnableCopyButton() {
+
+    var _examId = this.searchForm.get("searchExamId").value;
+    var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
+    var _SubjectCategoryId = this.searchForm.get("searchSubjectCategoryId").value;
+    if (_examId > 0 && _ClassGroupId > 0 && _SubjectCategoryId > 0)
+      this.EnableCopy = true;
+    else
+      this.EnableCopy = false;
   }
   SelectAll(event) {
     //var event ={checked:true}
