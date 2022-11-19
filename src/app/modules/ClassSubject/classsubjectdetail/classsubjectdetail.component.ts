@@ -10,14 +10,15 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-classsubjectdetail',
   templateUrl: './classsubjectdetail.component.html',
   styleUrls: ['./classsubjectdetail.component.scss']
 })
-export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
+export class ClassSubjectDetailComponent implements OnInit {
+    PageLoading = true;
 
   @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -71,8 +72,8 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     OrgId: 0,
     SubjectId: 0,
     SubjectTypeId: 0,
-    SubjectCategoryId:0,
-    Confidential:0,
+    SubjectCategoryId: 0,
+    Confidential: 0,
     Active: 1
   };
   displayedColumns = [
@@ -132,7 +133,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -240,7 +241,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     if (this.searchForm.get("searchClassId").value != 0)
       filterStr += "ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select class/course", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -252,7 +253,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     //   filterStr += ' and ' + this.StandardFilterWithBatchId;
 
     if (filterStr.length == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -284,7 +285,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
             ClassSubjectId: item.ClassSubjectId,
             SubjectId: item.SubjectId,
             SubjectTypeId: item.SubjectTypeId,
-            Confidential:item.Confidential,
+            Confidential: item.Confidential,
             SubjectCategoryId: item.SubjectCategoryId,
             ClassId: item.ClassId,
             Credits: item.Credits,
@@ -308,9 +309,9 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
               SubjectId: existing[0].SubjectId,
               SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
               SubjectTypeId: existing[0].SubjectTypeId,
-              SubjectCategoryId: existing[0].SubjectCategoryId,              
+              SubjectCategoryId: existing[0].SubjectCategoryId,
               SelectHowMany: existing[0].SelectHowMany,
-              Confidential:existing[0].Confidential,
+              Confidential: existing[0].Confidential,
               TeacherId: existing[0].TeacherId,
               Credits: existing[0].Credits,
               ClassId: existing[0].ClassId,
@@ -324,9 +325,9 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
               ClassSubjectId: 0,
               SubjectId: s.MasterDataId,
               SubjectTypeId: 0,
-              SubjectCategoryId:0,
+              SubjectCategoryId: 0,
               SelectHowMany: 0,
-              Confidential:false,
+              Confidential: false,
               Credits: 0,
               ClassId: this.searchForm.get("searchClassId").value,
               SubjectName: s.MasterDataName,
@@ -343,7 +344,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.dataSource.filterPredicate = this.createFilter();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   clear() {
@@ -406,13 +407,13 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
 
     if (row.SubjectTypeId == 0) {
       this.contentservice.openSnackBar("Please select subject type.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       return;
     }
     if (row.SubjectCategoryId == 0) {
       this.contentservice.openSnackBar("Please select subject category.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; 
-      this.PageLoading=false;
+      this.loading = false;
+      this.PageLoading = false;
       return;
     }
     // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
@@ -423,10 +424,10 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     // }
     if (row.Credits > 100) {
       this.contentservice.openSnackBar("Credits can not be greater than 100.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       return;
     }
-    
+
     let checkFilterString = "ClassId eq " + row.ClassId +
       " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
     // " and Active eq " + row.Active +
@@ -446,7 +447,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
@@ -457,11 +458,11 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
           this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
           this.ClassSubjectData.ClassId = row.ClassId;
           this.ClassSubjectData.Credits = row.Credits;
-          this.ClassSubjectData.Confidential = row.Confidential ==null?false:row.Confidential;
+          this.ClassSubjectData.Confidential = row.Confidential == null ? false : row.Confidential;
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
-          this.ClassSubjectData.SubjectCategoryId = row.SubjectCategoryId;          
-    //      this.ClassSubjectData.TeacherId = row.TeacherId;
+          this.ClassSubjectData.SubjectCategoryId = row.SubjectCategoryId;
+          //      this.ClassSubjectData.TeacherId = row.TeacherId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
           //this.ClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.ClassSubjectData.ClassSubjectId == 0) {
@@ -494,7 +495,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
           row.Action = false;
           row.ClassSubjectId = data.ClassSubjectId;
           if (this.DataCountToSave == 0) {
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.DataCountToSave = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -507,7 +508,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
         (data: any) => {
           row.Action = false;
           if (this.DataCountToSave == 0) {
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.DataCountToSave = -1;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -555,7 +556,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.filter(f => {
-          var _lastname = f.Employee.LastName == null? '' : " " + f.Employee.LastName;
+          var _lastname = f.Employee.LastName == null ? '' : " " + f.Employee.LastName;
           this.Teachers.push({
             TeacherId: f.Employee.EmpEmployeeId,
             TeacherName: f.Employee.FirstName + _lastname
@@ -567,22 +568,19 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.tokenstorage.getBatches()
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.Batches = this.tokenstorage.getBatches()
 
-        this.shareddata.ChangeSubjects(this.Subjects);
-        //this.shareddata.ChangeBatch(this.Batches);
-        this.GetSubjectTypes();
-        this.GetTeachers();
+    this.shareddata.ChangeSubjects(this.Subjects);
+    //this.shareddata.ChangeBatch(this.Batches);
+    this.GetSubjectTypes();
+    this.GetTeachers();
 
-        this.loading = false; this.PageLoading=false;
-      });
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -600,11 +598,10 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     //   return [];
 
   }
-  updateConfidential(row,value)
-  {
+  updateConfidential(row, value) {
     row.Confidential = value.checked;
     row.Action = true;
-    
+
   }
 }
 export interface IClassSubject {
@@ -614,9 +611,9 @@ export interface IClassSubject {
   SubjectId: number;
   SubjectName: string;
   SubjectTypeId: number;
-  SubjectCategoryId:number;
+  SubjectCategoryId: number;
   SelectHowMany: number;
-  Confidential:boolean;
+  Confidential: boolean;
   TeacherId: number,
   Active;
   Action: false;

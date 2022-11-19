@@ -10,7 +10,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-exams',
@@ -18,10 +18,10 @@ import {SwUpdate} from '@angular/service-worker';
   styleUrls: ['./exams.component.scss']
 })
 export class ExamsComponent implements OnInit {
-@ViewChild(MatPaginator) paginator: MatPaginator;
-@ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   PageLoading = true;
-  AttendanceModes =[];
+  AttendanceModes = [];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   Students = [];
@@ -121,12 +121,12 @@ export class ExamsComponent implements OnInit {
       ExamName: '',
       StartDate: new Date(),
       EndDate: new Date(),
-      MarkFormula:'',
-      Sequence:0,
+      MarkFormula: '',
+      Sequence: 0,
       ClassGroupId: 0,
       ReleaseResult: 0,
       ReleaseDate: null,
-      AttendanceStartDate:new Date(),
+      AttendanceStartDate: new Date(),
       //AttendanceModeId: 0,
       BatchId: 0,
       OrgId: 0,
@@ -164,11 +164,11 @@ export class ExamsComponent implements OnInit {
     this.loading = true;
 
     let checkFilterString = "ExamNameId eq " + row.ExamNameId +
-      " and BatchId eq " + this.SelectedBatchId 
-      //" and Active eq 1"
-      
-      //" and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
-      //" and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
+      " and BatchId eq " + this.SelectedBatchId
+    //" and Active eq 1"
+
+    //" and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
+    //" and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
 
     // if (row.ClassGroupId == 0 || row.ClassGroupId == null) {
     //   this.loading = false;
@@ -295,7 +295,7 @@ export class ExamsComponent implements OnInit {
               ExamNameId: e.MasterDataId,
               ExamName: e.MasterDataName,
               AttendanceStartDate: new Date(),
-              Sequence:e.Sequence,
+              Sequence: e.Sequence,
               //MarkFormula:'',
               StartDate: new Date(),
               EndDate: new Date(),
@@ -317,8 +317,8 @@ export class ExamsComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
       },
-      error=>console.log("error in exams fetching",error))
-      
+        error => console.log("error in exams fetching", error))
+
   }
   private getTime(date?: Date) {
     var std = new Date(date);
@@ -326,17 +326,14 @@ export class ExamsComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.StudentGradeFormula = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESMODE);
-        this.GetClassGroup();
-        this.GetExams();
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.StudentGradeFormula = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+    this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+    this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESMODE);
+    this.GetClassGroup();
+    this.GetExams();
 
-      });
   }
   GetClassGroup() {
     this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
@@ -366,7 +363,7 @@ export class ExamsComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
-  
+
   GetStudentSubjects() {
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -405,29 +402,29 @@ export class ExamsComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       });
   }
-  GetStudents() {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1';
+  // GetStudents() {
+  //   var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+  //   var filterstr = 'Active eq 1';
 
-    let list: List = new List();
-    list.fields = [
-      "StudentClassId",
-      "ClassId",
-      "StudentId"
-    ];
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName)"];
-    list.filter = [filterstr + orgIdSearchstr];
+  //   let list: List = new List();
+  //   list.fields = [
+  //     "StudentClassId",
+  //     "ClassId",
+  //     "StudentId"
+  //   ];
+  //   list.PageName = "StudentClasses";
+  //   list.lookupFields = ["Student($select=FirstName,LastName)"];
+  //   list.filter = [filterstr + orgIdSearchstr];
 
-    return this.dataservice.get(list);
+  //   return this.dataservice.get(list);
 
-  }
+  // }
   onBlur(element) {
     element.Action = true;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    
+
   }
 
 }
@@ -437,7 +434,7 @@ export interface IExams {
   ExamName: string;
   StartDate: Date;
   EndDate: Date;
-  Sequence:number;
+  Sequence: number;
   AttendanceStartDate: Date;
   ClassGroupId: number;
   ReleaseResult: number;

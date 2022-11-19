@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./classgroup.component.scss']
 })
 export class ClassgroupComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   IscurrentBatchSelect = 1;
@@ -226,7 +226,7 @@ export class ClassgroupComponent implements OnInit {
     //debugger;
 
     this.loading = true;
-    let filterStr = 'OrgId eq ' +  this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
     // var _searchClassId = this.searchForm.get("searchClassId").value;
     // if (_searchClassId == 0) {
     //   this.loading = false; this.PageLoading=false;
@@ -263,12 +263,9 @@ export class ClassgroupComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ClassGroupType = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUPTYPE)
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ClassGroupType = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUPTYPE)
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

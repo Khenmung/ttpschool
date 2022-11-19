@@ -313,26 +313,23 @@ export class AddstudentfeepaymentComponent implements OnInit {
   //     })
   // }
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
-          this.FeeDefinitions = [...f];
-          if (this.FeeDefinitions.length == 0) {
-            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
-              this.FeeDefinitions = [...d.value];
-            })
-          }
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
+      this.FeeDefinitions = [...f];
+      if (this.FeeDefinitions.length == 0) {
+        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
+          this.FeeDefinitions = [...d.value];
         })
-        this.Batches = this.tokenstorage.getBatches()
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
-        this.AccountNature = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);
-        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-        this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
-        this.PaymentTypeId = this.PaymentTypes.filter(p => p.MasterDataName.toLowerCase() == "cash")[0].MasterDataId;
-      });
+      }
+    })
+    this.Batches = this.tokenstorage.getBatches()
+    this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
+    this.AccountNature = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);
+    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+    this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
+    this.PaymentTypeId = this.PaymentTypes.filter(p => p.MasterDataName.toLowerCase() == "cash")[0].MasterDataId;
 
   }
   getDropDownData(dropdowntype) {

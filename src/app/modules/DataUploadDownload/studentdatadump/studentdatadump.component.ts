@@ -31,7 +31,7 @@ export class StudentDatadumpComponent implements OnInit {
   filterOrgIdNBatchId = '';
   filterOrgIdOnly = '';
   filterBatchIdNOrgId = '';
-  ELEMENT_DATA: IStudent[]=[];
+  ELEMENT_DATA: IStudent[] = [];
   dataSource: MatTableDataSource<IStudent>;
   displayedColumns = [];
   allMasterData = [];
@@ -713,7 +713,7 @@ export class StudentDatadumpComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
-        var nottoinclude = ['StudentId','StudentClassId','StudentClasses','CreatedBy', 'UpdatedBy']
+        var nottoinclude = ['StudentId', 'StudentClassId', 'StudentClasses', 'CreatedBy', 'UpdatedBy']
         Object.keys(this.ELEMENT_DATA[0]).forEach(studproperty => {
           if (!this.displayedColumns.includes(studproperty) && !nottoinclude.includes(studproperty)) {
             this.displayedColumns.push(studproperty);
@@ -771,98 +771,42 @@ export class StudentDatadumpComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    var extrafilter = ''
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'FatherName',
-      'MotherName',
-      'ContactNo',
-      'FatherContactNo',
-      'MotherContactNo'
-    ];
-    list.PageName = "Students";
 
-    var standardfilter = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    //login student
-    if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
-      list.lookupFields = ["StudentFamilyNFriendSiblings($select=StudentId,SiblingId)"]
-      //extrafilter = " and UserId eq '" + this.LoginUserDetail[0]['userId'] + "'";
+    var _students: any = this.token.getStudents();
 
-      var _studentId = localStorage.getItem('studentId');
-      standardfilter += ' and ( StudentId eq ' + _studentId
-      if (this.Siblings.length > 0) {
-        //siblings
-        this.Siblings.forEach(s => {
-          standardfilter += ' or StudentId eq ' + s.SiblingId;
-        })
+    this.Students = _students.map(student => {
+      var _RollNo = '';
+      var _name = '';
+      var _className = '';
+      var _section = '';
+      var _studentClassId = 0;
+      var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+      if (studentclassobj.length > 0) {
+        _studentClassId = studentclassobj[0].StudentClassId;
+        var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
+
+        if (_classNameobj.length > 0)
+          _className = _classNameobj[0].ClassName;
+        var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+
+        if (_SectionObj.length > 0)
+          _section = _SectionObj[0].MasterDataName;
+        _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
       }
-      standardfilter += ')'
-    }
-
-
-    list.filter = [standardfilter];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        //this.Students = [...data.value];
-        //  //console.log('data.value', data.value);
-        if (data.value.length > 0) {
-          if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
-            var _students = [];
-            data.value.forEach(student => {
-              if (student.StudentFamilyNFriendSiblings.length > 0) {
-                var indx = student.StudentFamilyNFriendSiblings.findIndex(sibling => sibling.SiblingId == student.StudentId)
-                if (indx > -1) {
-                  _students.push(student);
-                }
-              }
-              else if (student.StudentId == _studentId) {
-                _students.push(student);
-              }
-            })
-          }
-          else {
-            _students = [...data.value];
-          }
-
-          this.Students = _students.map(student => {
-            var _RollNo = '';
-            var _name = '';
-            var _className = '';
-            var _section = '';
-            var _studentClassId = 0;
-            var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-            if (studentclassobj.length > 0) {
-              _studentClassId = studentclassobj[0].StudentClassId;
-              var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
-
-              if (_classNameobj.length > 0)
-                _className = _classNameobj[0].ClassName;
-              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
-
-              if (_SectionObj.length > 0)
-                _section = _SectionObj[0].MasterDataName;
-              _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
-            }
-            student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-            var _lastname = student.LastName == null ? '' : " " + student.LastName;
-            _name = student.FirstName + _lastname;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-            return {
-              StudentClassId: _studentClassId,
-              StudentId: student.StudentId,
-              Name: _fullDescription,
-              FatherName: student.FatherName,
-              MotherName: student.MotherName
-            }
-          })
-        }
-        this.loading = false; this.PageLoading = false;
-      })
+      student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+      var _lastname = student.LastName == null ? '' : " " + student.LastName;
+      _name = student.FirstName + _lastname;
+      var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+      return {
+        StudentClassId: _studentClassId,
+        StudentId: student.StudentId,
+        Name: _fullDescription,
+        FatherName: student.FatherName,
+        MotherName: student.MotherName
+      }
+    })
+    this.loading = false;
+    this.PageLoading = false;
   }
 
 }

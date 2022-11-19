@@ -28,11 +28,11 @@ export class LedgerBalanceComponent implements OnInit {
   loading = false;
   GeneralLedgerList: IGeneralLedger[] = [];
   SelectedBatchId = 0;
-  TopAccountNatures=[];
+  TopAccountNatures = [];
   AccountNatures = [];
   AccountGroups = [];
   GeneralLedgerAutoComplete = [];
-  AccountNatureList=[];
+  AccountNatureList = [];
   filteredOptions: Observable<IGeneralLedger[]>;
   dataSource: MatTableDataSource<IGeneralLedger>;
   allMasterData = [];
@@ -220,7 +220,7 @@ export class LedgerBalanceComponent implements OnInit {
           this.GeneralLedgerData.ContactName = row.ContactName;
           this.GeneralLedgerData.Email = row.Email;
           this.GeneralLedgerData.Address = row.Address;
-          
+
           this.GeneralLedgerData.Active = row.Active;
           this.GeneralLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
 
@@ -230,7 +230,7 @@ export class LedgerBalanceComponent implements OnInit {
             this.GeneralLedgerData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.GeneralLedgerData["UpdatedDate"] = new Date();
             delete this.GeneralLedgerData["UpdatedBy"];
-            console.log("inserting1",this.GeneralLedgerData);
+            console.log("inserting1", this.GeneralLedgerData);
             this.insert(row);
           }
           else {
@@ -238,7 +238,7 @@ export class LedgerBalanceComponent implements OnInit {
             this.GeneralLedgerData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.GeneralLedgerData["UpdatedDate"] = new Date();
             delete this.GeneralLedgerData["UpdatedBy"];
-            console.log("inserting2",this.GeneralLedgerData);
+            console.log("inserting2", this.GeneralLedgerData);
             this.update(row);
           }
         }
@@ -272,7 +272,7 @@ export class LedgerBalanceComponent implements OnInit {
   GetAccountNature() {
     //debugger;
     this.loading = true;
-    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] +")";
+    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
 
     let list: List = new List();
     list.fields = [
@@ -289,7 +289,7 @@ export class LedgerBalanceComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.AccountNatures = [...data.value];
-          this.TopAccountNatures = this.AccountNatures.filter(f=>f.ParentId==0);
+          this.TopAccountNatures = this.AccountNatures.filter(f => f.ParentId == 0);
         }
         this.loadingFalse();
       });
@@ -368,7 +368,7 @@ export class LedgerBalanceComponent implements OnInit {
           var acgroup = [];
           this.GeneralLedgerList = data.value.map(item => {
             //acgroup = this.allMasterData.filter(f => f.ParentId == item.AccountNatureId);
-            item.AccountGroups = this.AccountNatures.filter(f=>f.ParentId == item.AccountNatureId);
+            item.AccountGroups = this.AccountNatures.filter(f => f.ParentId == item.AccountNatureId);
             item.AccountSubGroups = this.AccountNatures.filter(f => f.ParentId == item.AccountGroupId);
             item.Action = false;
             return item;
@@ -382,12 +382,7 @@ export class LedgerBalanceComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //this.AccountGroups = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
-
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
   }
   onBlur(row) {
     row.Action = true;

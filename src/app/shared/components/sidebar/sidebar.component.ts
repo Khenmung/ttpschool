@@ -29,11 +29,12 @@ export class SidebarComponent implements OnInit { PageLoading=true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     this.loginUserDetail = this.tokenStorage.getUserDetail();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-    this.shareddata.CurrentPagesData.subscribe((data:any)=>{
-      this.MenuData =[...data];
-    })
+    // this.shareddata.CurrentPagesData.subscribe((data:any)=>{
+    //   this.MenuData =[...data];
+    // })
     //if (this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)//this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)
-    if(this.MenuData.length==0)
+    this.sideMenu = this.tokenStorage.getMenuData();
+    if(this.sideMenu.length==0)
     this.GetMenuData();
 
   }
@@ -92,6 +93,7 @@ export class SidebarComponent implements OnInit { PageLoading=true;
 
 
         this.shareddata.ChangePageData(this.sideMenu);
+        this.tokenStorage.saveMenuData(this.sideMenu)
       }
     });
 

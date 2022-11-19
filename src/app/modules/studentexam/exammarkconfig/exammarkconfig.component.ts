@@ -496,9 +496,7 @@ export class ExammarkconfigComponent implements OnInit {
   SubjectCategory = [];
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
+    this.allMasterData = this.tokenstorage.getMasterData();
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
@@ -518,7 +516,6 @@ export class ExammarkconfigComponent implements OnInit {
 
         this.GetExams();
 
-      });
   }
   GetAllowedSubjects() {
     let list: List = new List();

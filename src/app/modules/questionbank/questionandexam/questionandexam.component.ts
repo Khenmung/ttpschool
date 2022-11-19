@@ -99,7 +99,7 @@ export class QuestionandexamComponent implements OnInit {
       searchContentUnitId: [0],
       searchSubContentUnitId: [0],
       searchExamId: [0],
-      searchNoOfRandom:[0]
+      searchNoOfRandom: [0]
     })
     this.PageLoad();
   }
@@ -339,7 +339,7 @@ export class QuestionandexamComponent implements OnInit {
       })
   }
   RandomArr = [];
-  RandomQuestion =[];
+  RandomQuestion = [];
   GetRandomNumber() {
     debugger;
     var noofRandom = this.searchForm.get("searchNoOfRandom").value;
@@ -348,24 +348,23 @@ export class QuestionandexamComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter no. of random number.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(this.QuestionNExams.length<=noofRandom)
-    {
-      this.contentservice.openSnackBar("No of random questions should be less than no. of question available : "+this.QuestionNExams.length + ".", globalconstants.ActionText, globalconstants.RedBackground);
+    if (this.QuestionNExams.length <= noofRandom) {
+      this.contentservice.openSnackBar("No of random questions should be less than no. of question available : " + this.QuestionNExams.length + ".", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.RandomArr = [];
-    
+
 
     while (this.RandomArr.length < noofRandom) {
       const random = Math.floor(Math.random() * this.QuestionNExams.length);
-      if (this.RandomArr.indexOf(random) === -1 && random>0) 
+      if (this.RandomArr.indexOf(random) === -1 && random > 0)
         this.RandomArr.push(random);
     }
-    this.RandomQuestion =[];
-    this.RandomArr.forEach(r=>{
-      var randomItem =this.QuestionNExams.filter(q=>q.Id == r)
-      if(randomItem.length>0)
-      this.RandomQuestion.push(randomItem[0]);
+    this.RandomQuestion = [];
+    this.RandomArr.forEach(r => {
+      var randomItem = this.QuestionNExams.filter(q => q.Id == r)
+      if (randomItem.length > 0)
+        this.RandomQuestion.push(randomItem[0]);
     })
     this.dataSource = new MatTableDataSource(this.RandomQuestion);
   }
@@ -683,27 +682,24 @@ export class QuestionandexamComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //var result = this.allMasterData.filter(f=>f.MasterDataName =='Question Bank ContentUnit')
-        //console.log("result",result)
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.ContentUnit = this.getDropDownData(globalconstants.MasterDefinitions.school.BOOKCONTENTUNIT);
-        this.DifficultyLevels = this.getDropDownData(globalconstants.MasterDefinitions.school.DIFFICULTYLEVEL);
-        this.GetExams();
-        if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.Classes = [...data.value];
-            this.loading = false; this.PageLoading = false;
-            this.GetClassSubjects();
-          });
-          //this.GetQuestionBank();
-        }
-
-        //this.GetQuestionBankOption();
-        this.loading = false
+    this.allMasterData = this.tokenstorage.getMasterData();
+    //var result = this.allMasterData.filter(f=>f.MasterDataName =='Question Bank ContentUnit')
+    //console.log("result",result)
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.ContentUnit = this.getDropDownData(globalconstants.MasterDefinitions.school.BOOKCONTENTUNIT);
+    this.DifficultyLevels = this.getDropDownData(globalconstants.MasterDefinitions.school.DIFFICULTYLEVEL);
+    this.GetExams();
+    if (this.Classes.length == 0) {
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+        this.loading = false; this.PageLoading = false;
+        this.GetClassSubjects();
       });
+      //this.GetQuestionBank();
+    }
+
+    //this.GetQuestionBankOption();
+    this.loading = false
   }
   onBlur(row) {
     row.Action = true;

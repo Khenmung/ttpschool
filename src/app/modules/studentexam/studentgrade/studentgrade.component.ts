@@ -318,9 +318,9 @@ export class StudentgradeComponent implements OnInit {
   ExamReleased = 0;
   FilteredClassGroup = [];
   FilteredCopyFromClassGroup = [];
-  ShowCopyBlock=false;
-  ShowHide(){
-    this.ShowCopyBlock=!this.ShowCopyBlock;
+  ShowCopyBlock = false;
+  ShowHide() {
+    this.ShowCopyBlock = !this.ShowCopyBlock;
   }
   SelectClassGroup() {
     var _examId = this.searchForm.get("searchExamId").value;
@@ -473,40 +473,37 @@ export class StudentgradeComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY)
+    this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.loading = false; this.PageLoading = false;
+    });
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY)
-        this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.loading = false; this.PageLoading = false;
-        });
-        this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
-          .subscribe((data: any) => {
-            //this.Exams = [...data.value];
-            this.Exams = [];
-            data.value.forEach(e => {
-              //var _examName = '';
-              var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active == 1)
-              if (obj.length > 0) {
-                //_examName = obj[0].MasterDataName
-                this.Exams.push({
-                  ExamId: e.ExamId,
-                  ExamName: obj[0].MasterDataName,
-                  ClassGroupId: e.ClassGroupId,
-                  StartDate: e.StartDate,
-                  EndDate: e.EndDate,
-                  AttendanceStartDate: e.AttendanceStartDate,
-                  Sequence: obj[0].Sequence,
-                  ReleaseResult: e.ReleaseResult
-                })
-              }
+        //this.Exams = [...data.value];
+        this.Exams = [];
+        data.value.forEach(e => {
+          //var _examName = '';
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active == 1)
+          if (obj.length > 0) {
+            //_examName = obj[0].MasterDataName
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: e.ClassGroupId,
+              StartDate: e.StartDate,
+              EndDate: e.EndDate,
+              AttendanceStartDate: e.AttendanceStartDate,
+              Sequence: obj[0].Sequence,
+              ReleaseResult: e.ReleaseResult
             })
-          })
-      });
+          }
+        })
+      })
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

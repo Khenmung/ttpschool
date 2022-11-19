@@ -300,7 +300,7 @@ export class DefaulterComponent implements OnInit {
             this.StudentClassList.forEach(sc => {
               let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
 
-              existing.forEach(ex=> {
+              existing.forEach(ex => {
                 var _subjName = '';
                 if (existing[0].ClassSubjectId > 0) {
                   var obj = this.ClassSubjects.filter(s => s.ClassSubjectId == ex.ClassSubjectId);
@@ -499,18 +499,14 @@ export class DefaulterComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
-        this.shareddata.ChangeSubjects(this.Subjects);
-        this.GetClassSubject();
-        this.loading = false; this.PageLoading = false;
-
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    //this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    this.shareddata.ChangeSubjects(this.Subjects);
+    this.GetClassSubject();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

@@ -69,7 +69,7 @@ export class AttendancepercentComponent implements OnInit {
   };
   displayedColumns = [
     'ClassName',
-    'StudentRollNo',    
+    'StudentRollNo',
     'Percent'
   ];
   SelectedApplicationId = 0;
@@ -223,7 +223,7 @@ export class AttendancepercentComponent implements OnInit {
             StudentClassId: item.StudentClassId,
             Active: item.Active,
             ClassId: item.ClassId,
-            ClassName: _Class +"-"+ _section,
+            ClassName: _Class + "-" + _section,
             RollNo: item.RollNo,
             Student: item.Student.FirstName + _lastname,
             StudentRollNo: item.Student.FirstName + _lastname + "-" + item.RollNo,
@@ -301,7 +301,7 @@ export class AttendancepercentComponent implements OnInit {
               p.Percent = ((p.PresentCount / (p.PresentCount + p.AbsentCount)) * 100).toFixed(2);
             })
 
-            distinctStudent = distinctStudent.sort((a, b) =>a.ClassName - b.ClassName);
+            distinctStudent = distinctStudent.sort((a, b) => a.ClassName - b.ClassName);
             this.dataSource = new MatTableDataSource<IStudentAttendance>(distinctStudent);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -474,18 +474,14 @@ export class AttendancepercentComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
-        this.shareddata.ChangeSubjects(this.Subjects);
-        this.GetClassSubject();
-        this.loading = false;
-        this.PageLoading = false;
-
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    this.shareddata.ChangeSubjects(this.Subjects);
+    this.GetClassSubject();
+    this.loading = false;
+    this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

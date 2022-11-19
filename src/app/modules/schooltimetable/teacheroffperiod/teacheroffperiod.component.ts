@@ -11,7 +11,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-teacheroffperiod',
@@ -387,7 +387,7 @@ export class TeacheroffperiodComponent implements OnInit {
 
   }
   GetPeriodStatistic() {
-    this.loading=true;
+    this.loading = true;
     this.PeriodStatistics = [];
     this.WeekDays.forEach(weekday => {
       this.PeriodStatisticDisplay.forEach(period => {
@@ -398,7 +398,7 @@ export class TeacheroffperiodComponent implements OnInit {
             if (row.length == 0) {
               var datarow = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName);
               if (datarow.length > 0)
-                datarow[0][period] = datarow[0][period]!=null?datarow[0][period] + ",<br>" +teacher.TeacherName:teacher.TeacherName;
+                datarow[0][period] = datarow[0][period] != null ? datarow[0][period] + ",<br>" + teacher.TeacherName : teacher.TeacherName;
               else {
                 var _data = { Day: weekday.MasterDataName, [period]: teacher.TeacherName }
                 this.PeriodStatistics.push(_data);
@@ -408,7 +408,7 @@ export class TeacheroffperiodComponent implements OnInit {
         }
       })
     });
-    this.loading=false;
+    this.loading = false;
     //console.log("this.PeriodStatistics", this.PeriodStatistics);
     //console.log("this.PeriodStatistics",this.PeriodStatistics);
 
@@ -542,7 +542,7 @@ export class TeacheroffperiodComponent implements OnInit {
           m.Period = '';
           if (obj.length > 0)
             m.Period = obj[0].MasterDataName// + " - " + m.FromToTime;
-          m.Sequence =m.Sequence ==0?500:m.Sequence;
+          m.Sequence = m.Sequence == 0 ? 500 : m.Sequence;
           m.PeriodType = _PeriodType;
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
@@ -687,27 +687,21 @@ export class TeacheroffperiodComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
-        this.Periods.sort((a, b) => a.Sequence - b.Sequence);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
+    this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
-        this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
-        this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
+    this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
+    this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
 
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.Batches = this.tokenstorage.getBatches();
-        this.GetTeachers();
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.Batches = this.tokenstorage.getBatches();
+    this.GetTeachers();
 
-        this.GetClassSubject();
-        
-        //this.GetTeacherSubject(); -- this.ClassSubjects
-        //--teacherlist
+    this.GetClassSubject();
 
-      });
   }
 
   getDropDownData(dropdowntype) {

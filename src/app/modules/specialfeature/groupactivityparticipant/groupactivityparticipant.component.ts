@@ -38,7 +38,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   Classes = [];
   dataSource: MatTableDataSource<any>;
   GroupActivityParticipantDataSource: MatTableDataSource<any>;
-  HouseFilteredStudent =[];
+  HouseFilteredStudent = [];
   allMasterData = [];
   SelectedClassSubjects = [];
   //StudentClasses = [];
@@ -342,7 +342,7 @@ export class GroupactivityparticipantComponent implements OnInit {
             m.Session = objsession[0].MasterDataName;
           else
             m.Session = '';
-          var objGroup = this.StudentHouses.filter(s=>s.MasterDataId == _GroupId);
+          var objGroup = this.StudentHouses.filter(s => s.MasterDataId == _GroupId);
           // this.Groups.forEach(f => {
           //   f.group.forEach(g => {
           //     if (g.MasterDataId == _GroupId)
@@ -379,8 +379,8 @@ export class GroupactivityparticipantComponent implements OnInit {
     var filterStr = "Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     filterStr += " and SportResultId eq " + row.SportResultId;
     this.loading = true;
-    
-    this.HouseFilteredStudent = this.Students.filter(s=>s.HouseId == row.GroupId);
+
+    this.HouseFilteredStudent = this.Students.filter(s => s.HouseId == row.GroupId);
     this.SelectedActivity = [];
     this.SelectedActivity.push(row);
     this.GroupActivityParticipantList = [];
@@ -420,33 +420,30 @@ export class GroupactivityparticipantComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
-        this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
-        this.StudentHouses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
-        this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
-        this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
-        //this.StudentGroups = [...this.StudentClubs, ...this.StudentHouses, ...this.StudentGroups];
-        // this.Groups.push({
-        //   name: "Club",
-        //   disable: true,
-        //   group: this.StudentClubs
-        // },
-        //   {
-        //     name: "House",
-        //     disable: true,
-        //     group: this.StudentHouses
-        //   },
-        //   {
-        //     name: "Student Group",
-        //     disable: true,
-        //     group: this.StudentGroups
-        //   }
-        // )
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
+    this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+    this.StudentHouses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+    this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
+    this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
+    //this.StudentGroups = [...this.StudentClubs, ...this.StudentHouses, ...this.StudentGroups];
+    // this.Groups.push({
+    //   name: "Club",
+    //   disable: true,
+    //   group: this.StudentClubs
+    // },
+    //   {
+    //     name: "House",
+    //     disable: true,
+    //     group: this.StudentHouses
+    //   },
+    //   {
+    //     name: "Student Group",
+    //     disable: true,
+    //     group: this.StudentGroups
+    //   }
+    // )
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
   }
   GetStudentClasses() {
     //debugger;
@@ -465,70 +462,71 @@ export class GroupactivityparticipantComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    var extrafilter = ''
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'FatherName',
-      'MotherName',
-      'ContactNo',
-      'FatherContactNo',
-      'MotherContactNo',
-      'HouseId'
-    ];
-    list.PageName = "Students";
+    //var extrafilter = ''
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentId',
+    //   'FirstName',
+    //   'LastName',
+    //   'FatherName',
+    //   'MotherName',
+    //   'ContactNo',
+    //   'FatherContactNo',
+    //   'MotherContactNo',
+    //   'HouseId'
+    // ];
+    // list.PageName = "Students";
 
-    var standardfilter = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    // var standardfilter = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    list.filter = [standardfilter];
+    // list.filter = [standardfilter];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        //this.Students = [...data.value];
-        //  //console.log('data.value', data.value);
-        this.Students = [];
-        if (data.value.length > 0) {
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    debugger;
+    //this.Students = [...data.value];
+    //  //console.log('data.value', data.value);
+    this.Students = [];
+    var _students: any = this.tokenstorage.getStudents();
+    if (_students.length > 0) {
 
-          var _students = [...data.value];
+      //var _students = [...data.value];
 
-          _students.map(student => {
-            var _RollNo = '';
-            var _name = '';
-            var _className = '';
-            var _section = '';
-            var _studentClassId = 0;
-            var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-            if (studentclassobj.length > 0) {
-              _studentClassId = studentclassobj[0].StudentClassId;
-              var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
+      _students.forEach(student => {
+        var _RollNo = '';
+        var _name = '';
+        var _className = '';
+        var _section = '';
+        var _studentClassId = 0;
+        var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+        if (studentclassobj.length > 0) {
+          _studentClassId = studentclassobj[0].StudentClassId;
+          var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
 
-              if (_classNameobj.length > 0)
-                _className = _classNameobj[0].ClassName;
-              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+          if (_classNameobj.length > 0)
+            _className = _classNameobj[0].ClassName;
+          var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
 
-              if (_SectionObj.length > 0)
-                _section = _SectionObj[0].MasterDataName;
-              _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
+          if (_SectionObj.length > 0)
+            _section = _SectionObj[0].MasterDataName;
+          _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
 
-              student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-              var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
-              _name = student.FirstName + _lastname;
-              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-              this.Students.push({
-                StudentClassId: _studentClassId,
-                StudentId: student.StudentId,
-                Name: _fullDescription,
-                HouseId:student.HouseId
-              });
-            }
-          })
+          student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+          var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
+          _name = student.FirstName + _lastname;
+          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo //+ "-" + student.ContactNo;
+          this.Students.push({
+            StudentClassId: _studentClassId,
+            StudentId: student.StudentId,
+            Name: _fullDescription,
+            HouseId: student.HouseId
+          });
         }
-        this.loading = false;
-        this.PageLoading = false;
       })
+    }
+    this.loading = false;
+    this.PageLoading = false;
+    // })
   }
   GroupChanged() {
     this.cleardata();

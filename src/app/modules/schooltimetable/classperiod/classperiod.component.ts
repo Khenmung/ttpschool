@@ -124,7 +124,7 @@ export class ClassperiodComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;
-    
+
     if (row.Active == 1) {
       if (row.FromToTime == 0) {
         this.contentservice.openSnackBar("Please enter period time.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -202,12 +202,12 @@ export class ClassperiodComponent implements OnInit {
         (data: any) => {
           row.SchoolClassPeriodId = data.SchoolClassPeriodId;
           row.Action = false;
-          this.loading = false; 
+          this.loading = false;
           this.PageLoading = false;
           //this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
-            this.loading = false; 
+            this.loading = false;
             this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -224,7 +224,7 @@ export class ClassperiodComponent implements OnInit {
           //this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
-            this.loading = false; 
+            this.loading = false;
             this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -413,17 +413,14 @@ export class ClassperiodComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
-        this.Periods.sort((a, b) => a.Sequence - b.Sequence);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
+    this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
-        this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
-        //this.shareddata.ChangeBatch(this.Batches);
-        this.Batches = this.tokenstorage.getBatches()
-        this.loading = false; this.PageLoading = false;
-      });
+    this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
+    //this.shareddata.ChangeBatch(this.Batches);
+    this.Batches = this.tokenstorage.getBatches()
+    this.loading = false; this.PageLoading = false;
   }
 
   getDropDownData(dropdowntype) {

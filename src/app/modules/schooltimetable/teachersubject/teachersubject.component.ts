@@ -10,7 +10,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-teachersubject',
@@ -516,17 +516,14 @@ export class TeachersubjectComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.Batches = this.tokenstorage.getBatches()
-        this.shareddata.ChangeSubjects(this.Subjects);
-        this.GetTeachers();
-        this.GetClassSubject();
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.Batches = this.tokenstorage.getBatches()
+    this.shareddata.ChangeSubjects(this.Subjects);
+    this.GetTeachers();
+    this.GetClassSubject();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

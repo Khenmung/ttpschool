@@ -389,23 +389,23 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     //this.GetSpecificStudentGrades();
   }
   GetStudents() {
-    this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    // this.loading = true;
+    // let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
 
-    let list: List = new List();
-    list.fields = [
-      "StudentId",
-      "FirstName",
-      "LastName"
-    ];
-    list.PageName = "Students";
-    list.filter = [filterStr];
+    // let list: List = new List();
+    // list.fields = [
+    //   "StudentId",
+    //   "FirstName",
+    //   "LastName"
+    // ];
+    // list.PageName = "Students";
+    // list.filter = [filterStr];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.Students = [...data.value];
-        this.GetMasterData();
-      });
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    this.Students = this.tokenstorage.getStudents();
+    this.GetMasterData();
+    // });
   }
   GetClassSubject() {
 
@@ -878,32 +878,29 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
   SubjectCategory = [];
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
+    this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
-        this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          });
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.GetClassSubject();
-        })
-
-        //if role is teacher, only their respective class and subject will be allowed.
-        if (this.LoginUserDetail[0]['RoleUsers'][0].role == 'Teacher') {
-          this.GetAllowedSubjects();
-        }
-
-        this.GetExams();
-
+        this.ClassGroups = [...data.value];
       });
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.GetClassSubject();
+    })
+
+    //if role is teacher, only their respective class and subject will be allowed.
+    if (this.LoginUserDetail[0]['RoleUsers'][0].role == 'Teacher') {
+      this.GetAllowedSubjects();
+    }
+
+    this.GetExams();
+
   }
   GetAllowedSubjects() {
     let list: List = new List();

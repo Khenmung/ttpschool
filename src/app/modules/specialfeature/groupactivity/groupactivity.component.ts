@@ -373,35 +373,32 @@ export class GroupactivityComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
-        this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
-        this.StudentHouses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
-        this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
-        this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
-        this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
-        //this.StudentGroups = [...this.StudentClubs, ...this.StudentHouses, ...this.StudentGroups];
-        // this.Groups.push({
-        //   name: "Club",
-        //   disable: true,
-        //   group: this.StudentClubs
-        // },
-        //   {
-        //     name: "House",
-        //     disable: true,
-        //     group: this.StudentHouses
-        //   },
-        //   {
-        //     name: "Student Group",
-        //     disable: true,
-        //     group: this.StudentGroups
-        //   }
-        // )
-        this.GetPoints();
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
+    this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+    this.StudentHouses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+    this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
+    this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
+    this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
+    //this.StudentGroups = [...this.StudentClubs, ...this.StudentHouses, ...this.StudentGroups];
+    // this.Groups.push({
+    //   name: "Club",
+    //   disable: true,
+    //   group: this.StudentClubs
+    // },
+    //   {
+    //     name: "House",
+    //     disable: true,
+    //     group: this.StudentHouses
+    //   },
+    //   {
+    //     name: "Student Group",
+    //     disable: true,
+    //     group: this.StudentGroups
+    //   }
+    // )
+    this.GetPoints();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
   }
   SetCategory() {
     var _activityId = this.searchForm.get("searchActivityId").value;
@@ -432,7 +429,7 @@ export class GroupactivityComponent implements OnInit {
     //   this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
-    
+
     var _subCategory = [];
     if (_categoryId > 0)
       _subCategory = this.allMasterData.filter(f => f.ParentId == _categoryId)

@@ -18,8 +18,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentattendance.component.html',
   styleUrls: ['./studentattendance.component.scss']
 })
-export class StudentAttendanceComponent implements OnInit { 
-  PageLoading=true;
+export class StudentAttendanceComponent implements OnInit {
+  PageLoading = true;
 
   //@Input() StudentClassId:number;
   @ViewChild("table") mattable;
@@ -63,9 +63,9 @@ export class StudentAttendanceComponent implements OnInit {
     AttendanceStatus: 0,
     AttendanceDate: new Date(),
     ClassSubjectId: 0,
-    TeacherId:0,
-    Approved:false,
-    ApprovedBy:'',
+    TeacherId: 0,
+    Approved: false,
+    ApprovedBy: '',
     Remarks: '',
     BatchId: 0,
     OrgId: 0
@@ -79,7 +79,7 @@ export class StudentAttendanceComponent implements OnInit {
   SelectedApplicationId = 0;
 
   constructor(private servicework: SwUpdate,
-    
+
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -88,7 +88,7 @@ export class StudentAttendanceComponent implements OnInit {
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
-    
+
   ) { }
 
   ngOnInit(): void {
@@ -117,7 +117,7 @@ export class StudentAttendanceComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
-        
+
       }
     }
 
@@ -173,11 +173,11 @@ export class StudentAttendanceComponent implements OnInit {
     var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
     _AttendanceDate.setHours(0, 0, 0, 0);
     if (_AttendanceDate.getTime() > today.getTime()) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (this.LoginUserDetail[0]['RoleUsers'][0]['role'].toLowerCase() !='admin' && _AttendanceDate.getTime() != today.getTime()) {
+    if (this.LoginUserDetail[0]['RoleUsers'][0]['role'].toLowerCase() != 'admin' && _AttendanceDate.getTime() != today.getTime()) {
       this.EnableSave = false;
     }
     else
@@ -216,13 +216,13 @@ export class StudentAttendanceComponent implements OnInit {
       .subscribe((studentclass: any) => {
 
         if (studentclass.value.length == 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar("No student exist in this class/section!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
 
         this.StudentClassList = studentclass.value.map(item => {
-          var _lastname = item.Student.LastName==null?'':" " + item.Student.LastName;
+          var _lastname = item.Student.LastName == null ? '' : " " + item.Student.LastName;
           return {
             StudentClassId: item.StudentClassId,
             Active: item.Active,
@@ -261,7 +261,7 @@ export class StudentAttendanceComponent implements OnInit {
               if (existing.length > 0) {
                 this.StudentAttendanceList.push({
                   AttendanceId: existing[0].AttendanceId,
-                  RollNo:sc.RollNo,
+                  RollNo: sc.RollNo,
                   StudentClassId: existing[0].StudentClassId,
                   AttendanceStatus: existing[0].AttendanceStatus,
                   AttendanceDate: existing[0].AttendanceDate,
@@ -274,7 +274,7 @@ export class StudentAttendanceComponent implements OnInit {
               else
                 this.StudentAttendanceList.push({
                   AttendanceId: 0,
-                  RollNo:sc.RollNo,
+                  RollNo: sc.RollNo,
                   StudentClassId: sc.StudentClassId,
                   AttendanceStatus: 0,
                   AttendanceDate: new Date(),
@@ -284,11 +284,11 @@ export class StudentAttendanceComponent implements OnInit {
                   Action: false
                 });
             })
-            this.StudentAttendanceList = this.StudentAttendanceList.sort((a,b)=>a.RollNo-b.RollNo)
+            this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => a.RollNo - b.RollNo)
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
           });
         //this.changeDetectorRefs.detectChanges();
       });
@@ -326,25 +326,24 @@ export class StudentAttendanceComponent implements OnInit {
     //var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
     //console.log("toUpdateAttendance",toUpdateAttendance);
     this.NoOfRecordToUpdate = this.StudentAttendanceList.length;
-    this.loading=true;
+    this.loading = true;
     this.StudentAttendanceList.forEach((record) => {
       this.NoOfRecordToUpdate--;
       this.UpdateOrSave(record);
     })
-    if(this.StudentAttendanceList.length==0)
-    {
-      this.loading=false;
+    if (this.StudentAttendanceList.length == 0) {
+      this.loading = false;
     }
   }
-  SaveRow(row){
+  SaveRow(row) {
     this.NoOfRecordToUpdate = 0;
-    this.UpdateOrSave(row);  
+    this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
 
     //this.NoOfRecordToUpdate = 0;
     var _AttendanceDate = this.searchForm.get("searchAttendanceDate").value;
-    
+
     var clssubjectid = this.searchForm.get("searchClassSubjectId").value
     if (clssubjectid == undefined)
       clssubjectid = 0;
@@ -352,7 +351,7 @@ export class StudentAttendanceComponent implements OnInit {
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
       " and AttendanceDate ge " + moment(_AttendanceDate).format('YYYY-MM-DD') +
-      " and AttendanceDate lt " + moment(_AttendanceDate).add(1,'day').format('YYYY-MM-DD')
+      " and AttendanceDate lt " + moment(_AttendanceDate).add(1, 'day').format('YYYY-MM-DD')
     if (clssubjectid > 0)
       checkFilterString += " and ClassSubjectId eq " + clssubjectid
 
@@ -412,7 +411,7 @@ export class StudentAttendanceComponent implements OnInit {
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
-            this.loading=false;
+            this.loading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -425,7 +424,7 @@ export class StudentAttendanceComponent implements OnInit {
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
-            this.loading=false;
+            this.loading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -473,17 +472,13 @@ export class StudentAttendanceComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
-        this.shareddata.ChangeSubjects(this.Subjects);
-        this.GetClassSubject();
-        this.loading = false; this.PageLoading=false;
-  
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    this.shareddata.ChangeSubjects(this.Subjects);
+    this.GetClassSubject();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -505,7 +500,7 @@ export class StudentAttendanceComponent implements OnInit {
 }
 export interface IStudentAttendance {
   AttendanceId: number;
-  RollNo:number;
+  RollNo: number;
   StudentClassId: number;
   AttendanceStatus: number;
   ClassSubjectId: number;

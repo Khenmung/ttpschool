@@ -9,14 +9,15 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-ClassEvaluationOption',
   templateUrl: './classevaluationoption.component.html',
   styleUrls: ['./classevaluationoption.component.scss']
 })
-export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true;
+export class ClassEvaluationOptionComponent implements OnInit {
+    PageLoading = true;
   @Input() ClassEvaluationId: number;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -104,7 +105,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
           );
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
 
       }
     }
@@ -174,7 +175,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
     debugger;
     this.loading = true;
     if (row.Title == undefined) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Title is required.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -196,7 +197,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -235,7 +236,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
 
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
     this.dataservice.postPatch('ClassEvaluationOptions', this.ClassEvaluationOptionForUpdate[0], 0, 'post')
@@ -349,13 +350,10 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        //this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
-        this.loading = false; this.PageLoading=false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+    //this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
+    this.loading = false; this.PageLoading = false;
   }
   onBlur(row) {
     row.Action = true;

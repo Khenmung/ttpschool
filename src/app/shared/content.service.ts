@@ -832,6 +832,7 @@ GetPermittedAppId(appShortName) {
 }
 
 GetCommonMasterData(orgId, appIds) {
+  
   var applicationparam = '';
   (appIds + "").split(',').forEach(id => {
     applicationparam += ' or ApplicationId eq ' + id

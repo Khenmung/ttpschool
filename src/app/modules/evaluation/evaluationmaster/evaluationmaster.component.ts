@@ -12,7 +12,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-EvaluationMaster',
@@ -46,7 +46,7 @@ export class EvaluationMasterComponent implements OnInit {
     ProvideCertificate: false,
     FullMark: 0,
     PassMark: 0,
-    Confidential:false,
+    Confidential: false,
     OrgId: 0,
     Active: 0
   };
@@ -130,7 +130,7 @@ export class EvaluationMasterComponent implements OnInit {
       AppendAnswer: false,
       FullMark: 0,
       PassMark: 0,
-      Confidential:false,
+      Confidential: false,
       Active: false,
       Action: false
     };
@@ -142,7 +142,7 @@ export class EvaluationMasterComponent implements OnInit {
   onBlur(element) {
     element.Action = true;
   }
-  
+
   updateConfidential(row, value) {
     row.Action = true;
     row.Confidential = value.checked;
@@ -180,16 +180,16 @@ export class EvaluationMasterComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    
+
     if (row.ClassGroupId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let checkFilterString = "EvaluationName eq '" + globalconstants.encodeSpecialChars(row.EvaluationName) + 
-    " and ClassGroupId eq " + row.ClassGroupId +
-    "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-    
+    let checkFilterString = "EvaluationName eq '" + globalconstants.encodeSpecialChars(row.EvaluationName) +
+      " and ClassGroupId eq " + row.ClassGroupId +
+      "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+
     if (row.EvaluationMasterId > 0)
       checkFilterString += " and EvaluationMasterId ne " + row.EvaluationMasterId;
     let list: List = new List();
@@ -340,7 +340,7 @@ export class EvaluationMasterComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.EvaluationMasterList = data.value.map(d => {
-            
+
             d.EvaluationName = globalconstants.encodeSpecialChars(d.EvaluationName);
             d.Description = globalconstants.encodeSpecialChars(d.Description);
             d.Action = false;
@@ -376,18 +376,15 @@ export class EvaluationMasterComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          });
-
-        //this.GetEvaluationMaster();
-        this.loading = false; this.PageLoading = false;
+        this.ClassGroups = [...data.value];
       });
+
+    //this.GetEvaluationMaster();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -417,7 +414,7 @@ export interface IEvaluationMaster {
   ProvideCertificate
   FullMark: number;
   PassMark: number;
-  Confidential:boolean;
+  Confidential: boolean;
   Active: boolean;
   Action: boolean;
 }

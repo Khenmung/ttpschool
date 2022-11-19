@@ -137,7 +137,7 @@ export class TeacherAttendanceComponent implements OnInit {
       this.contentservice.openSnackBar("Attendance date cannot be greater than today's date", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else if (_attendanceDate.getTime() != today.getTime() && this.LoginUserDetail[0]['RoleUsers'][0]['role'].toLowerCase()!='admin') {
+    else if (_attendanceDate.getTime() != today.getTime() && this.LoginUserDetail[0]['RoleUsers'][0]['role'].toLowerCase() != 'admin') {
       this.EnableSave = false;
     }
     else
@@ -327,13 +327,10 @@ export class TeacherAttendanceComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

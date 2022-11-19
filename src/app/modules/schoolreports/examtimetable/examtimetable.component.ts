@@ -377,7 +377,7 @@ export class ExamtimetableComponent implements OnInit {
                   timeTableRow.push({ ["Slot" + index]: r.Subjects })
                 else
                   timeTableRow[inx]["Slot" + index] = r.Subjects;
-                  timeTableRow[inx]["daterow"]=false;
+                timeTableRow[inx]["daterow"] = false;
               })
             }
             //console.log("timeTableRow", timeTableRow)
@@ -401,20 +401,17 @@ export class ExamtimetableComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.tokenstorage.getBatches()
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.Batches = this.tokenstorage.getBatches()
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
 
-        //this.shareddata.ChangeBatch(this.Batches);
-        this.GetExams();
-        this.GetExamSlots();
-        this.GetClassSubject();
-      });
+    //this.shareddata.ChangeBatch(this.Batches);
+    this.GetExams();
+    this.GetExamSlots();
+    this.GetClassSubject();
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

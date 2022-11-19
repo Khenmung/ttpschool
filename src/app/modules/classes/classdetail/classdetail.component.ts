@@ -12,7 +12,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-classdetail',
@@ -20,7 +20,7 @@ import {SwUpdate} from '@angular/service-worker';
   styleUrls: ['./classdetail.component.scss']
 })
 export class ClassdetailComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   LoginUserDetail: any[] = [];
@@ -50,7 +50,7 @@ export class ClassdetailComponent implements OnInit {
     EndDate: Date,
     StudyAreaId: 0,
     StudyModeId: 0,
-    Confidential:false,
+    Confidential: false,
     Sequence: 0,
     BatchId: 0,
     OrgId: 0,
@@ -148,7 +148,7 @@ export class ClassdetailComponent implements OnInit {
       EndDate: new Date(),
       StudyAreaId: 0,
       StudyModeId: 0,
-      Confidential:false,
+      Confidential: false,
       BatchId: 0,
       Active: 0,
       Action: true
@@ -332,15 +332,12 @@ export class ClassdetailComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-        this.Durations = this.getDropDownData(globalconstants.MasterDefinitions.school.DURATION);
-        this.StudyArea = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYAREA);
-        this.StudyMode = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYMODE);
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+    this.Durations = this.getDropDownData(globalconstants.MasterDefinitions.school.DURATION);
+    this.StudyArea = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYAREA);
+    this.StudyMode = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYMODE);
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -370,7 +367,7 @@ export interface IClassMaster {
   StudyAreaId: number;
   StudyModeId: number;
   Sequence: number;
-  Confidential:boolean;
+  Confidential: boolean;
   BatchId: number;
   Active: number;
   Action: boolean;

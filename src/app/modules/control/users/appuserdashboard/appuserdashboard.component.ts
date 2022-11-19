@@ -256,7 +256,7 @@ export class AppuserdashboardComponent implements OnInit {
               this.Users.push(
                 {
                   Id: '',
-                  UserName: userdetail.FirstName.replaceAll(' ',''),
+                  UserName: userdetail.FirstName.replaceAll(' ', ''),
                   Email: userdetail.EmailAddress,
                   Active: 0
                 }
@@ -345,20 +345,26 @@ export class AppuserdashboardComponent implements OnInit {
       "OrgId"
     ];
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=ContactNo,UserId,StudentId,FirstName,LastName,EmailAddress)"];
-    list.filter = ["Active eq 1 and " + this.OrgIdAndBatchIdFilter + filterStr];
+    //list.lookupFields = ["Student($select=ContactNo,UserId,StudentId,FirstName,LastName,EmailAddress)"];
+    list.filter = [this.OrgIdAndBatchIdFilter + " and Active eq 1" + filterStr];
     this.UserDetail = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        data.value.forEach(student => {
-          var _lastname = student.Student.LastName == null ? '' : " " + student.Student.LastName;
-          if (student.Student.EmailAddress != null && student.Student.EmailAddress.length > 0) {
-            student.ClassName = this.Classes.filter(c => c.ClassId == student.ClassId)[0].ClassName;
-            student.EmailAddress = student.Student.EmailAddress;
-            student.FullName = student.Student.FirstName + _lastname;
-            student.FirstName = student.Student.FirstName.replaceAll(' ','');
-            student.ContactNo = student.Student.ContactNo;
+        var _students: any = this.tokenStorage.getStudents();
+        _students = _students.filter(student => data.value.findIndex(fi => fi.StudentId == student.StudentId) > -1);
+
+        _students.forEach(student => {
+
+          var _lastname = student.LastName == null ? '' : " " + student.LastName;
+          var matchstudcls = data.value.filter(d => d.StudentId == student.StudentId);
+
+          if (student.EmailAddress != null && student.EmailAddress.length > 0) {
+            student.ClassName = this.Classes.filter(c => c.ClassId == matchstudcls[0].ClassId)[0].ClassName;
+            student.EmailAddress = student.EmailAddress;
+            student.FullName = student.FirstName + _lastname;
+            student.FirstName = student.FirstName.replaceAll(' ', '');
+            student.ContactNo = student.ContactNo;
             this.UserDetail.push(student);
           }
         })
@@ -408,22 +414,21 @@ export class AppuserdashboardComponent implements OnInit {
         this.AppUsers = [];
         //var _UserName ='';
         if (data.length > 0) {
-          this.UserDetail.forEach(filteredstudent=>{
-            var exist = data.filter(d=>d.UserName == filteredstudent.FirstName);
-              if(exist.length>0)
-              {
-                this.AppUsers.push({
-                  "Id": exist[0].Id,
-                  "UserName": exist[0].UserName,
-                  "EmailAddress": exist[0].Email,
-                  "PhoneNumber": exist[0].PhoneNumber,
-                  "OrgId": exist[0].OrgId,
-                  "ValidFrom": exist[0].ValidFrom,
-                  "ValidTo": exist[0].ValidTo,
-                  "Active": exist[0].Active,
-                  "Action": false
-                }); 
-              }
+          this.UserDetail.forEach(filteredstudent => {
+            var exist = data.filter(d => d.UserName == filteredstudent.FirstName);
+            if (exist.length > 0) {
+              this.AppUsers.push({
+                "Id": exist[0].Id,
+                "UserName": exist[0].UserName,
+                "EmailAddress": exist[0].Email,
+                "PhoneNumber": exist[0].PhoneNumber,
+                "OrgId": exist[0].OrgId,
+                "ValidFrom": exist[0].ValidFrom,
+                "ValidTo": exist[0].ValidTo,
+                "Active": exist[0].Active,
+                "Action": false
+              });
+            }
           })
         }
         else {
@@ -433,7 +438,7 @@ export class AppuserdashboardComponent implements OnInit {
 
             this.AppUsers.push({
               "Id": "",
-              "UserName": login.FirstName.replaceAll(' ',''),
+              "UserName": login.FirstName.replaceAll(' ', ''),
               "EmailAddress": login.EmailAddress,
               "PhoneNumber": login.ContactNo,
               "OrgId": login.OrgId,
@@ -599,7 +604,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.loading = true;
     this.AppUsersData.Active = row.Active;
     this.AppUsersData.Id = row.Id;
-    this.AppUsersData.UserName = row.UserName.replaceAll(' ','');
+    this.AppUsersData.UserName = row.UserName.replaceAll(' ', '');
     this.AppUsersData.Email = row.EmailAddress;
     this.AppUsersData.PhoneNumber = row.PhoneNumber;
     this.AppUsersData.OrganizationName = this.LoginDetail[0]['org'];

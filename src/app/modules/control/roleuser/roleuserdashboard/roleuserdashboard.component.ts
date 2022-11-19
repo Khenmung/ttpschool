@@ -162,21 +162,18 @@ export class roleuserdashboardComponent implements OnInit {
   // }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
-        this.RolesTemp = [...this.Roles];
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
+    this.RolesTemp = [...this.Roles];
+    this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
+    this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
 
-        this.shareddata.ChangeRoles(this.Roles);
-        this.Applications = this.tokenstorage.getPermittedApplications();
-        this.shareddata.ChangeDepartment(this.Departments);
-        this.shareddata.ChangeLocation(this.Locations);
-        this.GetUsers();
-        this.loading = false; this.PageLoading = false;
-      });
+    this.shareddata.ChangeRoles(this.Roles);
+    this.Applications = this.tokenstorage.getPermittedApplications();
+    this.shareddata.ChangeDepartment(this.Departments);
+    this.shareddata.ChangeLocation(this.Locations);
+    this.GetUsers();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

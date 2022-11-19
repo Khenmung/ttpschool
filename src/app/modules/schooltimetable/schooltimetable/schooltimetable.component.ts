@@ -12,7 +12,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-schooltimetable',
@@ -323,10 +323,10 @@ export class SchooltimetableComponent implements OnInit {
         //iterrate through weekdays
         // iterate through class periods
         var filterPeriods = [];
-        filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == distinctcls.ClassId).sort((a,b)=>a.Sequence - b.Sequence);
+        filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == distinctcls.ClassId).sort((a, b) => a.Sequence - b.Sequence);
 
         if (filterPeriods.length == 0) {
-          this.contentservice.openSnackBar("Period not yet defined for this class.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Period not yet defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
           console.log("Period not yet defined for this class : " + distinctcls.ClassId);
         }
         else {
@@ -702,7 +702,7 @@ export class SchooltimetableComponent implements OnInit {
       this.contentservice.openSnackBar("Subject must be selected for periods", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-debugger;
+    debugger;
     this.rowCount = _toUpdate.length;
     for (var i = 0; i < _toUpdate.length; i++) {
       this.rowCount--;
@@ -766,23 +766,20 @@ debugger;
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
-        this.Periods.sort((a, b) => a.Sequence - b.Sequence);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
+    this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
-        this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
-        this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
+    this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
+    this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
 
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Batches = this.tokenstorage.getBatches()
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Batches = this.tokenstorage.getBatches()
 
-        this.GetAllClassPeriods();
-        this.GetClassSubject();
+    this.GetAllClassPeriods();
+    this.GetClassSubject();
 
-      });
   }
 
   getDropDownData(dropdowntype) {

@@ -10,7 +10,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-classgroupmapping',
@@ -18,7 +18,7 @@ import {SwUpdate} from '@angular/service-worker';
   styleUrls: ['./classgroupmapping.component.scss']
 })
 export class ClassgroupmappingComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paging: MatPaginator;
   ClassGroupTypes = [];
   ClassGroups = [];
@@ -213,12 +213,12 @@ export class ClassgroupmappingComponent implements OnInit {
   }
   classgroupList = [];
   Getclassgroups() {
-    this.loading=true;
+    this.loading = true;
     this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
-    .subscribe((data:any)=>{
-      this.ClassGroups = [...data.value];
-      this.loading=false;
-    })
+      .subscribe((data: any) => {
+        this.ClassGroups = [...data.value];
+        this.loading = false;
+      })
     // this.loading = true;
     // let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
     // let list: List = new List();
@@ -285,17 +285,13 @@ export class ClassgroupmappingComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ClassGroupTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUPTYPE)
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.loading = false; this.PageLoading = false;
-        });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ClassGroupTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUPTYPE)
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.loading = false; this.PageLoading = false;
+    });
 
-
-      });
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

@@ -387,22 +387,23 @@ export class NoOfStudentComponent implements OnInit {
   Students = [];
   GetStudents() {
 
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'GenderId',
-      'PID'
-    ];
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentId',
+    //   'GenderId',
+    //   'PID'
+    // ];
 
-    list.PageName = "Students";
-    list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    // list.PageName = "Students";
+    // list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
-        if (data.value.length > 0) {
-          data.value.forEach(student => {
+        var _students:any = this.tokenstorage.getStudents();
+        if (_students.length > 0) {
+          _students.forEach(student => {
             var obj = this.Genders.filter(g => g.MasterDataId == student.GenderId);
             if (obj.length > 0)
               this.Students.push({
@@ -414,7 +415,7 @@ export class NoOfStudentComponent implements OnInit {
           })
         }
         this.loading = false; this.PageLoading = false;
-      })
+     // })
   }
   GetMasterData() {
 

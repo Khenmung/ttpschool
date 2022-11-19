@@ -15,7 +15,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './family.component.html',
   styleUrls: ['./family.component.scss']
 })
-export class FamilyComponent implements OnInit { PageLoading=true;
+export class FamilyComponent implements OnInit {
+    PageLoading = true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -65,7 +66,7 @@ export class FamilyComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -141,7 +142,7 @@ export class FamilyComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -162,7 +163,7 @@ export class FamilyComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -195,7 +196,7 @@ export class FamilyComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -215,7 +216,7 @@ export class FamilyComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
@@ -244,15 +245,12 @@ export class FamilyComponent implements OnInit { PageLoading=true;
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
-        if (this.EmployeeId > 0)
-          this.GetEmployeeFamilys();
-        this.loading = false; this.PageLoading=false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
+    this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
+    if (this.EmployeeId > 0)
+      this.GetEmployeeFamilys();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

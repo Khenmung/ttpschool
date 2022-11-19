@@ -10,7 +10,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-employee',
@@ -295,26 +295,23 @@ export class EmployeeComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGENDER);
-        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
-        this.WorkNature = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
-        this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);
-        this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
-        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.loading = false;
-        this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenService.getMasterData();
+    this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGENDER);
+    this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
+    this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
+    this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
+    this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+    this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
+    this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
+    this.WorkNature = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
+    this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);
+    this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
+    this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
+    this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
+    this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.loading = false;
+    this.PageLoading = false;
 
   }
   getDropDownData(dropdowntype) {
@@ -364,7 +361,7 @@ export class EmployeeComponent implements OnInit {
       }
     }
     else {
-      this.loading=false;
+      this.loading = false;
       this.contentservice.openSnackBar("Mandatory fields not defined.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -651,7 +648,7 @@ export class EmployeeComponent implements OnInit {
 
             this.EmployeeId = stud.EmpEmployeeId;
             stud.EmployeeCode = stud.EmployeeCode == null ? '' : stud.EmployeeCode;
-            var _lastname = stud.LastName == null? '' : " " + stud.LastName;
+            var _lastname = stud.LastName == null ? '' : " " + stud.LastName;
             let EmployeeName = stud.EmployeeCode + ' ' + stud.FirstName + _lastname;
             this.shareddata.ChangeEmployeeName(EmployeeName);
             this.tokenService.saveEmployeeId(stud.EmpEmployeeId);

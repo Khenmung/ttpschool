@@ -347,7 +347,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId +" and Active eq 1"];
+      " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -377,8 +377,8 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetExamSlots() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + 
-    ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+      ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
     //var filterstr = '';
     //filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
     this.loading = true;
@@ -467,8 +467,8 @@ export class SlotnclasssubjectComponent implements OnInit {
   GetSlotNClassSubjects() {
 
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + 
-    ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+      ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
     //var filterstr = 'Active eq 1';
     if (this.searchForm.get("searchSlotId").value == 0) {
       this.contentservice.openSnackBar("Please select exam slot", globalconstants.ActionText, globalconstants.RedBackground);
@@ -636,22 +636,20 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.GetExams();
-          this.GetExamSlots();
-          this.GetClassSubject();
-        })
-        //this.shareddata.ChangeBatch(this.Batches);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.GetExams();
+      this.GetExamSlots();
+      this.GetClassSubject();
+    })
+    //this.shareddata.ChangeBatch(this.Batches);
 
-      });
+
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

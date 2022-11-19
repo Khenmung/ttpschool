@@ -139,9 +139,9 @@ export class ResultComponent implements OnInit {
           this.Classes = [...data.value];
         });
         this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
-        .subscribe((data: any) => {
-          this.ExamClassGroups = [...data.value];
-        });
+          .subscribe((data: any) => {
+            this.ExamClassGroups = [...data.value];
+          });
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
         this.GetSubjectComponents();
@@ -204,26 +204,27 @@ export class ResultComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       });
   }
-  GetStudents(classId) {
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1';
-    if (classId != undefined)
-      filterstr += ' and ClassId eq ' + classId
+  // GetStudents(classId) {
+  //   //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+  //   var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + 
+  //   ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
+  //   //var filterstr = 'Active eq 1';
+  //   if (classId != undefined)
+  //   orgIdSearchstr += ' and ClassId eq ' + classId
 
-    let list: List = new List();
-    list.fields = [
-      "StudentClassId",
-      "ClassId",
-      "StudentId"
-    ];
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName)"];
-    list.filter = [filterstr + orgIdSearchstr];
+  //   let list: List = new List();
+  //   list.fields = [
+  //     "StudentClassId",
+  //     "ClassId",
+  //     "StudentId"
+  //   ];
+  //   list.PageName = "StudentClasses";
+  //   list.lookupFields = ["Student($select=FirstName,LastName)"];
+  //   list.filter = [orgIdSearchstr];
 
-    return this.dataservice.get(list);
+  //   return this.dataservice.get(list);
 
-  }
+  // }
   ResultAtAGlance = [];
   GetExamStudentResults() {
 
@@ -304,8 +305,8 @@ export class ResultComponent implements OnInit {
         var PromotedStudent = this.ExamStudentResult.filter(p => p.Division.toLowerCase() == 'promoted');
         var FailStudent = this.ExamStudentResult.filter(p => p.Division.toLowerCase() == 'fail');
         var NOOFSTUDENT = this.ExamStudentResult.length;
-        var passPercentWSP = parseFloat(""+((PassStudent.length + PromotedStudent.length) / NOOFSTUDENT) * 100).toFixed(2);
-        var passPercentWithoutSP = parseFloat(""+(PassStudent.length / NOOFSTUDENT) * 100).toFixed(2);
+        var passPercentWSP = parseFloat("" + ((PassStudent.length + PromotedStudent.length) / NOOFSTUDENT) * 100).toFixed(2);
+        var passPercentWithoutSP = parseFloat("" + (PassStudent.length / NOOFSTUDENT) * 100).toFixed(2);
         this.ResultAtAGlance = [];
         this.ResultAtAGlance.push(
           { "Text": "No. Of Student", "Val": NOOFSTUDENT },
@@ -319,7 +320,7 @@ export class ResultComponent implements OnInit {
         this.AtAGlanceDatasource = new MatTableDataSource(this.ResultAtAGlance);
         var _rank = 0;
         var _previouspercent = 0;
-        PassStudent=PassStudent.sort((a, b) => b["Percent"] - a["Percent"])
+        PassStudent = PassStudent.sort((a, b) => b["Percent"] - a["Percent"])
         PassStudent.forEach(p => {
           if (_previouspercent != p["Percent"]) {
             _rank++;
@@ -404,8 +405,8 @@ export class ResultComponent implements OnInit {
   //     _classGroupId = objExam[0].ClassGroupId;
   //   this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
   // }
-  ExamReleased=0;
-  ExamClassGroups=[];
+  ExamReleased = 0;
+  ExamClassGroups = [];
   FilterClass() {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
@@ -424,24 +425,21 @@ export class ResultComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
+    this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
+    this.Batches = this.tokenstorage.getBatches()
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
-        this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
-        this.Batches = this.tokenstorage.getBatches()
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          });
-        this.GetExams();
-        //this.GetStudentSubjects();
-        this.GetClassGroupMapping();
+        this.ClassGroups = [...data.value];
       });
+    this.GetExams();
+    //this.GetStudentSubjects();
+    this.GetClassGroupMapping();
   }
 
   GetExams() {
@@ -449,7 +447,7 @@ export class ResultComponent implements OnInit {
     this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
         this.Exams = [];
-        var result = data.value.filter(f=>f.ReleaseResult==1);
+        var result = data.value.filter(f => f.ReleaseResult == 1);
         result.map(e => {
           var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
           if (obj.length > 0)

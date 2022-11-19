@@ -132,6 +132,15 @@ export class HomeDashboardComponent implements OnInit {
                   this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
                   this.SelectedAppName = this.tokenStorage.getSelectedAppName();
                   this.getBatches();
+                  //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
+                  if (this.SelectedAppName.toLowerCase() == 'education management')
+                    this.GetStudents();
+                  if (this.SelectedAppId > 0) {
+                    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
+                      .subscribe((data: any) => {
+                        this.tokenStorage.saveMasterData([...data.value]);
+                      })
+                  }
                 }
               }
             }
@@ -139,6 +148,7 @@ export class HomeDashboardComponent implements OnInit {
           this.loading = false;
           this.PageLoading = false;
         });
+
     }
 
   }
@@ -169,7 +179,63 @@ export class HomeDashboardComponent implements OnInit {
       console.log('Cookie where used'); // log
     }
   }
+  sideMenu = [];
+  GetMenuData(pSelectedAppId) {
+    debugger;
+    //let containAdmin = window.location.href.toLowerCase().indexOf('admin');
+    let strFilter = '';
 
+    strFilter = "PlanId eq " + this.loginUserDetail[0]["planId"] + " and Active eq 1 and ApplicationId eq " + pSelectedAppId;
+
+    let list: List = new List();
+    list.fields = [
+      "PlanFeatureId",
+      "PlanId",
+      "PageId",
+      "ApplicationId"
+    ];
+
+    list.PageName = "PlanFeatures";
+    list.lookupFields = ["Page($select=PageId,PageTitle,label,faIcon,link,ParentId,HasSubmenu,UpdateDate,DisplayOrder)"];
+    //list.orderBy = "DisplayOrder";
+    list.filter = [strFilter];
+    var permission;
+    this.dataservice.get(list).subscribe((data: any) => {
+      //this.sideMenu = [...data.value];
+      data.value.forEach(m => {
+        permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
+        if (permission.length > 0 && permission[0].permission != 'deny') {
+          m.PageId = m.Page.PageId;
+          m.PageTitle = m.Page.PageTitle;
+          m.label = m.Page.label;
+          m.faIcon = m.Page.faIcon;
+          m.link = m.Page.link;
+          m.ParentId = m.Page.ParentId;
+          m.HasSubmenu = m.Page.HasSubmenu;
+          m.DisplayOrder = m.Page.DisplayOrder;
+          this.sideMenu.push(m);
+        }
+      })
+      this.sideMenu = this.sideMenu.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
+
+      let NewsNEvents = this.sideMenu.filter(item => {
+        return item.label.toUpperCase() == 'NEWS N EVENTS'
+      })
+      if (NewsNEvents.length > 0) {
+        this.shareddata.ChangeNewsNEventId(NewsNEvents[0].PageId);
+      }
+
+      var appName = location.pathname.split('/')[1];
+      if (appName.length > 0) {
+
+
+        //this.shareddata.ChangePageData(this.sideMenu);
+        this.tokenStorage.saveMenuData(this.sideMenu)
+      }
+    });
+
+
+  }
   GetOrganization() {
     this.loading = true;
     let list: List = new List();
@@ -180,9 +246,14 @@ export class HomeDashboardComponent implements OnInit {
     return this.dataservice.get(list)
 
   }
+  ValueChanged = false;
   ChangeApplication() {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     this.SelectedAppName = this.PermittedApplications.filter(f => f.applicationId == SelectedAppId)[0].applicationName
+    this.ValueChanged = true;
+  }
+  changebatch(){
+    this.ValueChanged = true;
   }
   submit() {
     var selectedBatchId = this.searchForm.get("searchBatchId").value;
@@ -207,7 +278,11 @@ export class HomeDashboardComponent implements OnInit {
       else
         this.tokenStorage.saveSelectedBatchName('');
 
-
+      this.GetMenuData(SelectedAppId);
+      this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], SelectedAppId)
+        .subscribe((data: any) => {
+          this.tokenStorage.saveMasterData([...data.value]);
+        })
       //console.log("this.loginUserDetail[0]['applicationRolePermission']",this.loginUserDetail[0]['applicationRolePermission'])
       this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
       this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
@@ -310,6 +385,41 @@ export class HomeDashboardComponent implements OnInit {
         this.generateBatchIds(this.SelectedBatchId);
       this.loading = false; this.PageLoading = false;
     });
+  }
+  GetStudents() {
+    let list: List = new List();
+    list.fields = [
+      'StudentId',
+      'FirstName',
+      'LastName',
+      'FatherName',
+      'MotherName',
+      'ContactNo',
+      'FatherContactNo',
+      'MotherContactNo',
+      "PID",
+      "Active",
+      "RemarkId",
+      "GenderId",
+      "HouseId",
+      "EmailAddress",
+      "UserId",
+      "ReasonForLeavingId"
+    ];
+    list.PageName = "Students";
+
+    var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"];
+
+    list.filter = [standardfilter];
+    this.loading = true;
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.loading = true;
+        //this.Students =[...data.value]
+        this.tokenStorage.saveStudents([...data.value]);
+        this.loading = false;
+        this.PageLoading = false;
+      })
   }
   sendmessage() {
     var api = "https://api.chat-api.com/instance358541/sendMessage?token=sfhfmzsd9temr6ca";

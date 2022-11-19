@@ -9,7 +9,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-examncalculate',
@@ -256,7 +256,7 @@ export class ExamncalculateComponent implements OnInit {
               ExamNCalculateId: objExisting[0].ExamNCalculateId,
               ExamId: objExisting[0].ExamId,
               CalculateResultPropertyId: objExisting[0].CalculateResultPropertyId,
-              PropertyName:f.MasterDataName,
+              PropertyName: f.MasterDataName,
               Action: false,
               Active: objExisting[0].Active
             })
@@ -266,7 +266,7 @@ export class ExamncalculateComponent implements OnInit {
             this.ExamNCalculateList.push({
               ExamNCalculateId: 0,
               ExamId: _examId,
-              PropertyName:f.MasterDataName,
+              PropertyName: f.MasterDataName,
               CalculateResultPropertyId: f.MasterDataId,
               Action: false,
               Active: false
@@ -295,33 +295,30 @@ export class ExamncalculateComponent implements OnInit {
       f.Action = true;
     })
   }
-  ExamResultProperties =[];
+  ExamResultProperties = [];
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME)
+    this.ExamResultProperties = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMRESULTPROPERTY)
+
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.loading = false; this.PageLoading = false;
+    });
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME)
-        this.ExamResultProperties = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMRESULTPROPERTY)
+        this.Exams = [];
+        data.value.forEach(f => {
+          var obj = this.ExamNames.filter(e => e.MasterDataId == f.ExamNameId);
+          if (obj.length > 0) {
+            f.ExamName = obj[0].MasterDataName;
+            this.Exams.push(f);
+          }
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.loading = false; this.PageLoading = false;
-        });
-        this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
-          .subscribe((data: any) => {
-            this.Exams = [];
-            data.value.forEach(f => {
-              var obj = this.ExamNames.filter(e => e.MasterDataId == f.ExamNameId);
-              if (obj.length > 0) {
-                f.ExamName = obj[0].MasterDataName;
-                this.Exams.push(f);
-              }
-
-            })
-          })
-      });
+        })
+      })
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -331,7 +328,7 @@ export interface IExamNCalculate {
   ExamNCalculateId: number;
   ExamId: number;
   CalculateResultPropertyId: number;
-  PropertyName:string;
+  PropertyName: string;
   Active: boolean;
   Action: boolean;
 }

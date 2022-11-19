@@ -361,35 +361,32 @@ export class EvaluationresultlistComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+    //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+    this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.AssessmentPrintHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.ASSESSMENTPRINTHEADING);
+    //console.log("this.AssessmentPrintHeading",this.AssessmentPrintHeading)
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.AssessmentPrintHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.ASSESSMENTPRINTHEADING);
-        //console.log("this.AssessmentPrintHeading",this.AssessmentPrintHeading)
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          });
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-        });
-        this.GetExams();
-        this.GetClassSubjects();
-        this.GetClassEvaluations();
-        this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
-          .subscribe((data: any) => {
-            this.ClassGroupMappings = data.value.map(m => {
-              m.ClassName = m.Class.ClassName;
-              return m;
-            });
-          })
-
+        this.ClassGroups = [...data.value];
       });
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+    });
+    this.GetExams();
+    this.GetClassSubjects();
+    this.GetClassEvaluations();
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        this.ClassGroupMappings = data.value.map(m => {
+          m.ClassName = m.Class.ClassName;
+          return m;
+        });
+      })
+
   }
   onBlur(row) {
     row.Action = true;
@@ -562,7 +559,7 @@ export class EvaluationresultlistComponent implements OnInit {
       .subscribe((data: any) => {
         this.EvaluatedStudent = [];
         var _students = [];
-        var _evaluationName = this.EvaluationMaster.filter(e=>e.EvaluationMasterId ==_evaluationMasterId)[0].EvaluationName;
+        var _evaluationName = this.EvaluationMaster.filter(e => e.EvaluationMasterId == _evaluationMasterId)[0].EvaluationName;
         if (_searchSectionId > 0)
           _students = this.Students.filter(s => s.ClassId == _searchClassId && s.SectionId == _searchSectionId);
         else
@@ -572,7 +569,7 @@ export class EvaluationresultlistComponent implements OnInit {
           if (answeredstudent.length > 0) {
             answeredstudent[0].Name = stud.FullName;
             answeredstudent[0].EvaluationMasterId = _evaluationMasterId;
-            answeredstudent[0].EvaluationName =_evaluationName;
+            answeredstudent[0].EvaluationName = _evaluationName;
             answeredstudent[0].ExamId = _examId;
             answeredstudent[0].StudentId = stud.StudentId;
 
@@ -682,71 +679,74 @@ export class EvaluationresultlistComponent implements OnInit {
   GetStudents() {
     this.loading = true;
     var _filter = ''
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'ContactNo',
-    ];
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentId',
+    //   'FirstName',
+    //   'LastName',
+    //   'ContactNo',
+    // ];
+    var _students: any = this.tokenstorage.getStudents();
+    //var filteredStudents =[];
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       this.StudentId = this.tokenstorage.getStudentId();
-      _filter = ' and StudentId eq ' + this.StudentId;
+      _students = _students.filter(s => s.StudentId == this.StudentId)
+      //_filter = ' and StudentId eq ' + this.StudentId;
     }
-    list.PageName = "Students";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
+    // list.PageName = "Students";
+    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        this.Students = [];
-        //if (data.value.length > 0) {
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    debugger;
+    this.Students = [];
+    //if (data.value.length > 0) {
 
-        data.value.forEach(student => {
-          var _RollNo = '';
-          var _name = '';
-          var _className = '';
-          var _classId = '';
-          var _section = '';
-          var _studentClassId = 0;
-          var _batchName = '';
-          var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-          if (studentclassobj.length > 0) {
-            _studentClassId = studentclassobj[0].StudentClassId;
-            _batchName = this.tokenstorage.getSelectedBatchName();
-            var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
-            _classId = studentclassobj[0].ClassId;
-            if (_classNameobj.length > 0)
-              _className = _classNameobj[0].ClassName;
-            var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+    _students.forEach(student => {
+      var _RollNo = '';
+      var _name = '';
+      var _className = '';
+      var _classId = '';
+      var _section = '';
+      var _studentClassId = 0;
+      var _batchName = '';
+      var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+      if (studentclassobj.length > 0) {
+        _studentClassId = studentclassobj[0].StudentClassId;
+        _batchName = this.tokenstorage.getSelectedBatchName();
+        var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
+        _classId = studentclassobj[0].ClassId;
+        if (_classNameobj.length > 0)
+          _className = _classNameobj[0].ClassName;
+        var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
 
-            if (_SectionObj.length > 0)
-              _section = _SectionObj[0].MasterDataName;
-            _RollNo = studentclassobj[0].RollNo;
+        if (_SectionObj.length > 0)
+          _section = _SectionObj[0].MasterDataName;
+        _RollNo = studentclassobj[0].RollNo;
 
-            var _lastname = student.LastName == null ? '' : " " + student.LastName;
-            _name = student.FirstName + _lastname;
-            var _fullDescription = _RollNo + "-" + _name + "-" + _className + "-" + _section;
-            this.Students.push({
-              StudentClassId: _studentClassId,
-              StudentId: student.StudentId,
-              ClassId: _classId,
-              ClassName: _className,
-              RollNo: _RollNo,
-              Name: _name,
-              SectionId: studentclassobj[0].SectionId,
-              Section: _section,
-              Batch: _batchName,
-              FullName: _fullDescription,
-            });
+        var _lastname = student.LastName == null ? '' : " " + student.LastName;
+        _name = student.FirstName + _lastname;
+        var _fullDescription = _RollNo + "-" + _name + "-" + _className + "-" + _section;
+        this.Students.push({
+          StudentClassId: _studentClassId,
+          StudentId: student.StudentId,
+          ClassId: _classId,
+          ClassName: _className,
+          RollNo: _RollNo,
+          Name: _name,
+          SectionId: studentclassobj[0].SectionId,
+          Section: _section,
+          Batch: _batchName,
+          FullName: _fullDescription,
+        });
 
-          }
-        })
-        //}
-        this.Students = this.Students.sort((a, b) => a.RollNo - b.RollNo)
-        this.loading = false;
-        this.PageLoading = false;
-      })
+      }
+    })
+    //}
+    this.Students = this.Students.sort((a, b) => a.RollNo - b.RollNo)
+    this.loading = false;
+    this.PageLoading = false;
+    //})
   }
 }
 export interface IStudentEvaluation {

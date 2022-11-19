@@ -11,7 +11,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassEvaluationOptionComponent } from '../classevaluationoption/classevaluationoption.component';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-ClassEvaluation',
@@ -469,7 +469,7 @@ export class ClassEvaluationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.EvaluationNames = this.contentservice.getConfidentialData(this.tokenstorage,data.value,"EvaluationName");
+          this.EvaluationNames = this.contentservice.getConfidentialData(this.tokenstorage, data.value, "EvaluationName");
         }
         //this.loadingFalse();
       });
@@ -533,16 +533,13 @@ export class ClassEvaluationComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        this.GetExams();
-        this.GetClassSubjects();
-        this.GetClassEvaluationOption();
-        this.loading = false
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+    this.GetExams();
+    this.GetClassSubjects();
+    this.GetClassEvaluationOption();
+    this.loading = false
   }
   onBlur(row) {
     row.Action = true;

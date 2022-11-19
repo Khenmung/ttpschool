@@ -16,7 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './gradehistory.component.html',
   styleUrls: ['./gradehistory.component.scss']
 })
-export class GradehistoryComponent implements OnInit { PageLoading=true;
+export class GradehistoryComponent implements OnInit {
+    PageLoading = true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -76,7 +77,7 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
     "DepartmentId",
     "WorkAccountId",
     "ManagerName",
-    "ReportingToName",   
+    "ReportingToName",
     "FromDate",
     "ToDate",
     "Remarks",
@@ -87,7 +88,7 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder
@@ -197,7 +198,7 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -209,13 +210,13 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
       " and DesignationId eq " + row.DesignationId +
       " and EmployeeId eq " + this.EmployeeId
     if (row.ManagerId == null || row.ManagerId == 0) {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Please assign manager.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please assign manager.", globalconstants.ActionText, globalconstants.RedBackground);
       return
     }
     if (row.WorkAccountId == null || row.WorkAccountId == 0) {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Please select work account.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select work account.", globalconstants.ActionText, globalconstants.RedBackground);
       return
     }
     if (row.EmployeeGradeHistoryId > 0)
@@ -229,7 +230,7 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -245,7 +246,7 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
           this.EmploymentHistoryData.ReportingTo = +row.ReportingTo;
           this.EmploymentHistoryData.WorkAccountId = +row.WorkAccountId;
           this.EmploymentHistoryData.IsCurrent = +row.IsCurrent;
-          
+
           this.EmploymentHistoryData.CTC = row.CTC;
           this.EmploymentHistoryData.FromDate = row.FromDate;
           this.EmploymentHistoryData.ToDate = row.ToDate;
@@ -272,7 +273,7 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -293,7 +294,7 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
           this.GetEmploymentHistory();
         });
@@ -329,30 +330,26 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
           f.ManagerName = _ManagerName;
           return f;
         }).sort((a, b) => b.EmployeeGradeHistoryId - a.EmployeeGradeHistoryId)
-        console.log("EmploymentHistoryList1",this.EmploymentHistoryList)
+        console.log("EmploymentHistoryList1", this.EmploymentHistoryList)
         this.dataSource = new MatTableDataSource<IEmployeementHistory>(this.EmploymentHistoryList);
         this.loadingFalse();
       });
 
   }
-  updateIsCurrent(row,value)
-  {
-    row.Action =true;
-    row.IsCurrent =value.checked ? 1:0;
+  updateIsCurrent(row, value) {
+    row.Action = true;
+    row.IsCurrent = value.checked ? 1 : 0;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
-        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
-        this.GetEmploymentHistory();
-        this.loading = false; this.PageLoading=false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
+    this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
+    this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
+    this.GetEmploymentHistory();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -383,19 +380,19 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
-            var _lastname = Employee.LastName == null? '' : " " + Employee.LastName;
+            var _lastname = Employee.LastName == null ? '' : " " + Employee.LastName;
             var _name = Employee.FirstName + _lastname;
             var _fullDescription = _name + "-" + Employee.ContactNo;
             return {
               EmployeeId: Employee.EmpEmployeeId,
               EmployeeCode: Employee.EmployeeCode,
               Name: _name,
-              NameNContact:_fullDescription
+              NameNContact: _fullDescription
             }
           })
         }
         this.GetMasterData();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
 }

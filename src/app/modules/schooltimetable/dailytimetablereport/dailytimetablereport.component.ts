@@ -17,7 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./dailytimetablereport.component.scss']
 })
 export class DailytimetablereportComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   SelectedApplicationId = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -455,23 +455,20 @@ export class DailytimetablereportComponent implements OnInit {
 
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
-        this.Periods.sort((a, b) => a.Sequence - b.Sequence);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
+    this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
-        this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
-        this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
+    this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
+    this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
 
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Batches = this.tokenstorage.getBatches()
-        //this.shareddata.ChangeBatch(this.Batches);
-        //this.loading = false; this.PageLoading=false;
-        this.GetClassSubject();
-        this.GetAllClassPeriods();
-      });
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Batches = this.tokenstorage.getBatches()
+    //this.shareddata.ChangeBatch(this.Batches);
+    //this.loading = false; this.PageLoading=false;
+    this.GetClassSubject();
+    this.GetAllClassPeriods();
   }
 
   getDropDownData(dropdowntype) {

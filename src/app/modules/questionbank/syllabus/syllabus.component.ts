@@ -655,18 +655,15 @@ export class SyllabusComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //var result = this.allMasterData.filter(f=>f.MasterDataName =='Question Bank ContentUnit')
-        //console.log("result",result)
-        //this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.ContentUnit = this.getDropDownData(globalconstants.MasterDefinitions.school.BOOKCONTENTUNIT);
-        //this.GetExams();
-        this.GetClassSubjects();
-        //this.GetSyllabusOption();
-        this.loading = false
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    //var result = this.allMasterData.filter(f=>f.MasterDataName =='Question Bank ContentUnit')
+    //console.log("result",result)
+    //this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.ContentUnit = this.getDropDownData(globalconstants.MasterDefinitions.school.BOOKCONTENTUNIT);
+    //this.GetExams();
+    this.GetClassSubjects();
+    //this.GetSyllabusOption();
+    this.loading = false
   }
   onBlur(row) {
     row.Action = true;

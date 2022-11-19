@@ -19,7 +19,7 @@ import { MatPaginator } from '@angular/material/paginator';
   styleUrls: ['./ledgeraccount.component.scss']
 })
 export class LedgerAccountComponent implements OnInit {
-@ViewChild(MatPaginator) paginator:MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -56,7 +56,7 @@ export class LedgerAccountComponent implements OnInit {
   GeneralLedgerForUpdate = [];
   displayedColumns = [
     'Action',
-    'Active',    
+    'Active',
     'GeneralLedgerId',
     'GeneralLedgerName',
     'AccountNatureId',
@@ -65,7 +65,7 @@ export class LedgerAccountComponent implements OnInit {
     'ContactNo',
     'ContactName',
     'Email',
-    'Address'    
+    'Address'
   ];
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
@@ -227,7 +227,7 @@ export class LedgerAccountComponent implements OnInit {
           this.GeneralLedgerData.GeneralLedgerId = row.GeneralLedgerId;
           this.GeneralLedgerData.AccountNatureId = row.AccountNatureId;
           this.GeneralLedgerData.AccountGroupId = row.AccountGroupId;
-          this.GeneralLedgerData.AccountSubGroupId = row.AccountSubGroupId==null?0:row.AccountSubGroupId;          
+          this.GeneralLedgerData.AccountSubGroupId = row.AccountSubGroupId == null ? 0 : row.AccountSubGroupId;
           this.GeneralLedgerData.GeneralLedgerName = row.GeneralLedgerName;
           this.GeneralLedgerData.ContactNo = row.ContactNo;
           this.GeneralLedgerData.ContactName = row.ContactName;
@@ -391,9 +391,8 @@ export class LedgerAccountComponent implements OnInit {
             return item;
           });
         }
-        if(this.GeneralLedgerList.length==0)
-        {
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        if (this.GeneralLedgerList.length == 0) {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource<IGeneralLedger>(this.GeneralLedgerList);
         this.dataSource.paginator = this.paginator;
@@ -404,12 +403,7 @@ export class LedgerAccountComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //this.AccountGroups = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
-
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
   }
   onBlur(row) {
     row.Action = true;
@@ -421,7 +415,7 @@ export class LedgerAccountComponent implements OnInit {
     row.AccountGroups = acgroup;
     this.dataSource = new MatTableDataSource(this.GeneralLedgerList);
   }
-  
+
   SearchAccountNatureChanged() {
     debugger;
     var natureId = this.searchForm.get("searchAccountNatureId").value;
@@ -433,7 +427,7 @@ export class LedgerAccountComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);    
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
 
   }
 

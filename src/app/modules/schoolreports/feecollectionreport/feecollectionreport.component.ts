@@ -170,11 +170,10 @@ export class FeecollectionreportComponent implements OnInit {
       this.contentservice.openSnackBar("Please select paid or not paid option.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    this.loading=true;
+    this.loading = true;
     nestedFilter = "$filter=Balance eq 0 and Month eq " + selectedMonth + ";";
-    
-    if(_selectedClassId>0)
-    {
+
+    if (_selectedClassId > 0) {
       filterstring += ' and ClassId eq ' + _selectedClassId;
     }
 
@@ -212,7 +211,7 @@ export class FeecollectionreportComponent implements OnInit {
                 Name: item.Student.FirstName + _lastname,
                 ClassRollNoSection: _className + ' - ' + _sectionName,
                 RollNo: item.RollNo,
-                Section:_sectionName,
+                Section: _sectionName,
                 Month: item.AccountingLedgerTrialBalances.length > 0 ? item.AccountingLedgerTrialBalances[0].Month : 0,
                 Sequence: clsobj[0].Sequence
               })
@@ -230,8 +229,8 @@ export class FeecollectionreportComponent implements OnInit {
           if (this.ELEMENT_DATA.length == 0) {
             this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
           }
-          
-          this.ELEMENT_DATA =this.ELEMENT_DATA.sort((a,b)=>a.Sequence - b.Sequence || a.Section.localeCompare(b.Section) || a.RollNo - b.RollNo);
+
+          this.ELEMENT_DATA = this.ELEMENT_DATA.sort((a, b) => a.Sequence - b.Sequence || a.Section.localeCompare(b.Section) || a.RollNo - b.RollNo);
 
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
@@ -243,7 +242,7 @@ export class FeecollectionreportComponent implements OnInit {
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
         }
-        this.loading = false; 
+        this.loading = false;
         this.PageLoading = false;
 
       })
@@ -285,12 +284,8 @@ export class FeecollectionreportComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-
-      });
+    this.allMasterData = this.tokenservice.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
   }
   getDropDownData(dropdowntype) {
@@ -316,33 +311,36 @@ export class FeecollectionreportComponent implements OnInit {
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName)"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    //list.lookupFields = ["Student($select=FirstName,LastName)"]
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
-          this.Students = data.value.map(student => {
-            var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);
+          var _students: any = this.tokenservice.getStudents();
+          var _filteredStudents = _students.filter(s => data.value.findIndex(fi => fi.StudentId == s.StudentId) > -1)
+          this.Students = data.value.map(studentcls => {
+            var matchstudent = _filteredStudents.filter(stud => stud.StudentId == studentcls.StudentId)
+            var _classNameobj = this.Classes.filter(c => c.ClassId == studentcls.ClassId);
             var _className = '';
             if (_classNameobj.length > 0)
               _className = _classNameobj[0].ClassName;
 
             var _Section = '';
-            var _sectionobj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
+            var _sectionobj = this.Sections.filter(f => f.MasterDataId == studentcls.SectionId);
             if (_sectionobj.length > 0)
               _Section = _sectionobj[0].MasterDataName;
 
-            var _RollNo = student.RollNo;
+            var _RollNo = studentcls.RollNo;
 
-            var _lastname = student.Student.LastName == null ? '' : " " + student.Student.LastName;
-            var _name = student.Student.FirstName + _lastname;
+            var _lastname = matchstudent[0].LastName == null ? '' : " " + matchstudent[0].LastName;
+            var _name = matchstudent[0].FirstName + _lastname;
             var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
             return {
-              StudentClassId: student.StudentClassId,
-              StudentId: student.StudentId,
+              StudentClassId: studentcls.StudentClassId,
+              StudentId: studentcls.StudentId,
               Name: _fullDescription
             }
           })

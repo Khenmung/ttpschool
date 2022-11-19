@@ -53,7 +53,7 @@ export class StudentEvaluationComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
   EvaluationMaster = [];
-  StudentList =[];
+  StudentList = [];
   Exams = [];
   ExamNames = [];
   SelectedClassSubjects = [];
@@ -632,41 +632,38 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+    //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          })
-        this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.ClassGroups = [...data.value];
+      })
+    this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          var filteredSection = this.Sections.filter(s => s.MasterDataName != 'N/A');
-          this.Classes = [];
-          data.value.forEach(d => {
-            //var _clsName = JSON.parse(JSON.stringify(d.ClassName));
-            filteredSection.forEach(s => {
-              this.Classes.push({
-                ClassSectionId: d.ClassId + '' + s.MasterDataId + '',
-                ClassId: d.ClassId,
-                ClassName: d.ClassName + "-" + s.MasterDataName,
-                SectionId: s.MasterDataId
-              });
-            })
-          })
-          console.log("this.Classes", this.Classes);
-          //this.GetStudentClasses();
-        });
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      var filteredSection = this.Sections.filter(s => s.MasterDataName != 'N/A');
+      this.Classes = [];
+      data.value.forEach(d => {
+        //var _clsName = JSON.parse(JSON.stringify(d.ClassName));
+        filteredSection.forEach(s => {
+          this.Classes.push({
+            ClassSectionId: d.ClassId + '' + s.MasterDataId + '',
+            ClassId: d.ClassId,
+            ClassName: d.ClassName + "-" + s.MasterDataName,
+            SectionId: s.MasterDataId
+          });
+        })
+      })
+      //   console.log("this.Classes", this.Classes);
+      //this.GetStudentClasses();
+    });
 
-        this.GetExams();
-        this.GetEvaluationOption();
+    this.GetExams();
+    this.GetEvaluationOption();
 
-      });
   }
   onBlur(row) {
     row.Action = true;
@@ -885,7 +882,7 @@ export class StudentEvaluationComponent implements OnInit {
         this.loadingFalse();
       })
   }
-  
+
   GetStudentClasses() {
     //debugger;
     var _filter = '';
@@ -914,66 +911,71 @@ export class StudentEvaluationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //this.StudentClasses = [...data.value];
-        this.Students=[];
-        var filteredStudent = this.StudentList.filter(lst=>data.value.findIndex(d=>d.StudentId == lst.StudentId)>-1);
+        this.Students = [];
+        var filteredStudent = this.StudentList.filter(lst => data.value.findIndex(d => d.StudentId == lst.StudentId) > -1);
         filteredStudent.forEach(student => {
-              var _RollNo = '';
-              var _name = '';
-              var _className = '';
-              var _classId = '';
-              var _section = '';
-              var _studentClassId = 0;
-              var studentclassobj = data.value.filter(f => f.StudentId == student.StudentId);
-              if (studentclassobj.length > 0) {
-                _studentClassId = studentclassobj[0].StudentClassId;
-                var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId 
-                  && c.SectionId ==studentclassobj[0].SectionId);
-                _classId = studentclassobj[0].ClassId;
-                if (_classNameobj.length > 0) {
-                  _className = _classNameobj[0].ClassName;
-                  var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
-                  _RollNo = studentclassobj[0].RollNo;
+          var _RollNo = '';
+          var _name = '';
+          var _className = '';
+          var _classId = '';
+          var _section = '';
+          var _studentClassId = 0;
+          var studentclassobj = data.value.filter(f => f.StudentId == student.StudentId);
+          if (studentclassobj.length > 0) {
+            _studentClassId = studentclassobj[0].StudentClassId;
+            var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId
+              && c.SectionId == studentclassobj[0].SectionId);
+            _classId = studentclassobj[0].ClassId;
+            if (_classNameobj.length > 0) {
+              _className = _classNameobj[0].ClassName;
+              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+              _RollNo = studentclassobj[0].RollNo;
 
-                  if (_SectionObj.length > 0)
-                    _section = _SectionObj[0].MasterDataName;
-                  var _lastname = student.LastName == null ? '' : " " + student.LastName;
-                  _name = student.FirstName + _lastname;
-                  var _fullDescription = _name + "-" + _className + "-" + _RollNo + "-" + student.ContactNo;
-                  this.Students.push({
-                    StudentClassId: _studentClassId,
-                    StudentId: student.StudentId,
-                    ClassId: _classId,
-                    Name: _fullDescription,
-                  });
-                }
-              }
-            })
+              if (_SectionObj.length > 0)
+                _section = _SectionObj[0].MasterDataName;
+              var _lastname = student.LastName == null ? '' : " " + student.LastName;
+              _name = student.FirstName + _lastname;
+              var _fullDescription = _name + "-" + _className + "-" + _RollNo + "-" + student.ContactNo;
+              this.Students.push({
+                StudentClassId: _studentClassId,
+                StudentId: student.StudentId,
+                ClassId: _classId,
+                Name: _fullDescription,
+              });
+            }
+          }
+        })
       })
   }
   GetStudents() {
     this.loading = true;
-    var _filter = ' and Active eq 1';
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'ContactNo',
-    ];
-
+    // var _filter = ' and Active eq 1';
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentId',
+    //   'FirstName',
+    //   'LastName',
+    //   'ContactNo',
+    // ];
+    var _students: any = this.tokenstorage.getStudents();
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
-      _filter = ' and StudentId eq ' + this.StudentId
+      this.StudentList = _students.filter(a => a.Active == 1 && a.StudentId == this.StudentId)
+      //_filter = ' and StudentId eq ' + this.StudentId
     }
-    list.PageName = "Students";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
+    else
+      this.StudentList = _students.filter(a => a.Active == 1);
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        this.StudentList = [...data.value];
+    // list.PageName = "Students";
+    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
 
-        this.loading = false; this.PageLoading = false;
-      })
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    //     debugger;
+    //    this.StudentList = [...data.value];
+
+    this.loading = false;
+    this.PageLoading = false;
+    //})
   }
 }
 export interface IStudentEvaluation {

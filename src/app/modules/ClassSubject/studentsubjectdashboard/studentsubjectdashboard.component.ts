@@ -496,15 +496,15 @@ export class studentsubjectdashboardComponent implements OnInit {
           //   matchrow[0].SubjectCount = resultarray[0].SelectHowMany;
           // //resultarray[0].SubjectCount = resultarray[0].SelectHowMany;
           // else
-            resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 1 : resultarray[0].SubjectCount + 1;
+          resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 1 : resultarray[0].SubjectCount + 1;
         }
         else {
           resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 0 : resultarray[0].SubjectCount;
         }
       }
     }
-    var _compulsory =groupbySubjectType.filter(f=>f.SubjectType.toLowerCase()=='compulsory')
-    var _otherThanCompulsory =groupbySubjectType.filter(f=>f.SubjectType.toLowerCase()!='compulsory')
+    var _compulsory = groupbySubjectType.filter(f => f.SubjectType.toLowerCase() == 'compulsory')
+    var _otherThanCompulsory = groupbySubjectType.filter(f => f.SubjectType.toLowerCase() != 'compulsory')
     var subjectCounterr = '';
     _otherThanCompulsory.forEach(noncompulsory => {
       //element.SelectHowMany =0 meeans optional
@@ -512,10 +512,9 @@ export class studentsubjectdashboardComponent implements OnInit {
         subjectCounterr += " Subject type " + noncompulsory.SubjectType + " must have " + noncompulsory.SelectHowMany + " subject(s) selected.";
       }
     });
-    var compulsorysubjectCount =StudentSubjects.filter(c=>c.SubjectType.toLowerCase()=='compulsory')
-    
-    if(compulsorysubjectCount.length>_compulsory[0].SubjectCount)
-    {
+    var compulsorysubjectCount = StudentSubjects.filter(c => c.SubjectType.toLowerCase() == 'compulsory')
+
+    if (compulsorysubjectCount.length > _compulsory[0].SubjectCount) {
       subjectCounterr += " Subject type " + _compulsory[0].SubjectType + " must have " + _compulsory[0].SelectHowMany + " subject(s) selected";
     }
     // _compulsory.forEach(s => {
@@ -655,15 +654,12 @@ export class studentsubjectdashboardComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.shareddata.ChangeSubjects(this.Subjects);
-        this.GetClassSubjects();
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.shareddata.ChangeSubjects(this.Subjects);
+    this.GetClassSubjects();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

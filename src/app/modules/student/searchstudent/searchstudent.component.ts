@@ -78,6 +78,7 @@ export class searchstudentComponent implements OnInit {
   filteredMothers: Observable<IStudent[]>;
   LoginUserDetail;
   FeePaymentPermission = '';
+  StudentList = [];
   StudentSearch: any[] = [{
     StudentId: 0,
     ClassId: 0,
@@ -103,7 +104,7 @@ export class searchstudentComponent implements OnInit {
         }
       })
     })
-
+debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
     if (this.LoginUserDetail == "") {
@@ -177,6 +178,8 @@ export class searchstudentComponent implements OnInit {
         this.GetSibling();
       }
     }
+
+    this.StudentList = this.token.getStudents();
     //this.GetStudents();
   }
   private _filter(name: string): IStudent[] {
@@ -304,7 +307,8 @@ export class searchstudentComponent implements OnInit {
           var searchRemarkIdObj = this.StudentSearch.filter(f => f.Text == 'RemarkId');
           if (searchRemarkIdObj.length > 0 && searchRemarkIdObj[0].Value > 0)
             this.studentSearchForm.patchValue({ searchRemarkId: searchRemarkIdObj[0].Value })
-          this.GetStudent();
+          if (this.Students.length == 0)
+            this.GetStudent();
         }
       });
 
@@ -690,25 +694,26 @@ export class searchstudentComponent implements OnInit {
       });
   }
   GetStudents() {
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'FatherName',
-      'MotherName',
-      'ContactNo',
-      'FatherContactNo',
-      'MotherContactNo',
-      "PID",
-      "Active", "RemarkId",
-      "ReasonForLeavingId"
-    ];
-    list.PageName = "Students";
-
-    var standardfilter = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //   let list: List = new List();
+    //   list.fields = [
+    //     'StudentId',
+    //     'FirstName',
+    //     'LastName',
+    //     'FatherName',
+    //     'MotherName',
+    //     'ContactNo',
+    //     'FatherContactNo',
+    //     'MotherContactNo',
+    //     "PID",
+    //     "Active", "RemarkId",
+    //     "ReasonForLeavingId"
+    //   ];
+    //   list.PageName = "Students";
+    //var _localStudents=[]; 
+    //var standardfilter = ''//'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    debugger;
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
-      list.lookupFields = ["StudentFamilyNFriends($select=StudentId,ParentStudentId)"]
+      //list.lookupFields = ["StudentFamilyNFriends($select=StudentId,ParentStudentId)"]
       this.studentSearchForm.get("searchClassId").disable()
       this.studentSearchForm.get("searchSectionId").disable();
       this.studentSearchForm.get("searchRemarkId").disable();
@@ -716,69 +721,72 @@ export class searchstudentComponent implements OnInit {
       this.studentSearchForm.get("searchPID").disable();
 
       var _studentId = localStorage.getItem('studentId');
-      if (this.Siblings.length > 0)
-        standardfilter += ' and (StudentId eq ' + _studentId + ' or ParentStudentId eq ' + this.Siblings[0].ParentStudentId + ")";
+      if (this.Siblings.length > 0) {
+        this.Students = this.StudentList.filter(s => s.StudentId == _studentId || s.ParentStudentId == this.Siblings[0].ParentStudentId)
+        //standardfilter += ' and (StudentId eq ' + _studentId + ' or ParentStudentId eq ' + this.Siblings[0].ParentStudentId + ")";
+      }
       else
-        standardfilter += ' and StudentId eq ' + _studentId
+      this.Students = this.StudentList.filter(s =>s.StudentId == _studentId);
+        //standardfilter += ' and StudentId eq ' + _studentId
     }
 
 
-    list.filter = [standardfilter];
+    //   list.filter = [standardfilter];
+    //   this.loading = true;
+    //   this.dataservice.get(list)
+    //     .subscribe((data: any) => {
     this.loading = true;
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.loading = true;
-        if (data.value.length > 0) {
-          if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
-            var _students = [];
-            data.value.forEach(student => {
-              if (student.StudentFamilyNFriends.length > 0) {
-                var indx = student.StudentFamilyNFriends.findIndex(sibling => sibling.StudentId == student.StudentId)
-                if (indx > -1) {
-                  _students.push(student);
-                }
-              }
-              else if (student.StudentId == _studentId) {
-                _students.push(student);
-              }
-            })
-          }
-          else {
-            _students = [...data.value];
-          }
-          this.Students = [];
-          _students.forEach(student => {
-            var _RollNo = '';
-            var _name = '';
-            var _className = '';
-            var _section = '';
-            var _studentClassId = 0;
-            var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-            if (studentclassobj.length > 0) {
-              _studentClassId = studentclassobj[0].StudentClassId;
-              var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
-
-              if (_classNameobj.length > 0)
-                _className = _classNameobj[0].ClassName;
-              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
-
-              if (_SectionObj.length > 0)
-                _section = _SectionObj[0].MasterDataName;
-              _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
+    if (this.StudentList.length > 0) {
+      if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
+        var _students = [];
+        this.StudentList.forEach(student => {
+          if (student.StudentFamilyNFriends.length > 0) {
+            var indx = student.StudentFamilyNFriends.findIndex(sibling => sibling.StudentId == student.StudentId)
+            if (indx > -1) {
+              _students.push(student);
             }
-            student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-            var _lastname = student.LastName == null ? '' : " " + student.LastName;
-            _name = student.FirstName + _lastname;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-            student.StudentClassId = _studentClassId;
-            student.Name = _fullDescription;
-            this.Students.push(student);
-          })
-        }
+          }
+          else if (student.StudentId == _studentId) {
+            _students.push(student);
+          }
+        })
+      }
+      else {
+        _students = [...this.StudentList];
+      }
+      this.Students = [];
+      _students.forEach(student => {
+        var _RollNo = '';
+        var _name = '';
+        var _className = '';
+        var _section = '';
+        var _studentClassId = 0;
+        var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+        if (studentclassobj.length > 0) {
+          _studentClassId = studentclassobj[0].StudentClassId;
+          var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
 
-        this.loading = false; 
-        this.PageLoading = false;
+          if (_classNameobj.length > 0)
+            _className = _classNameobj[0].ClassName;
+          var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+
+          if (_SectionObj.length > 0)
+            _section = _SectionObj[0].MasterDataName;
+          _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
+        }
+        student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+        var _lastname = student.LastName == null ? '' : " " + student.LastName;
+        _name = student.FirstName + _lastname;
+        var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo;
+        student.StudentClassId = _studentClassId;
+        student.Name = _fullDescription;
+        this.Students.push(student);
       })
+    }
+    //this.token.saveStudents(this.Students);
+    this.loading = false;
+    this.PageLoading = false;
+    //})
   }
 
 }

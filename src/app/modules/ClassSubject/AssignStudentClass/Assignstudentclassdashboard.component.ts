@@ -80,7 +80,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     RollNo: 0,
     SectionId: 0,
     FeeTypeId: 0,
-    AdmissionNo:'',
+    AdmissionNo: '',
     Remarks: '',
     Active: 1
   };
@@ -132,8 +132,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       searchSectionId: [0],
       searchClassId: [0],
       searchRemarkId: [0],
-      searchGenderAscDesc:[''],
-      searchNameAscDesc:['']
+      searchGenderAscDesc: [''],
+      searchNameAscDesc: ['']
     });
     this.nameFilter.valueChanges
       .subscribe(
@@ -255,26 +255,24 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     debugger;
     var _gendersort = this.searchForm.get("searchGenderAscDesc").value;
     var _namesort = this.searchForm.get("searchNameAscDesc").value;
-    if(_gendersort==0)
-    {
+    if (_gendersort == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select gender sort.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(_namesort==0)
-    {
+    if (_namesort == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select name sort.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (this.StudentClassList.length > 0) {
-      
+
       // this.StudentClassList.sort((a, b) => {
       //   const compareGender = a.GenderName.localeCompare(b.GenderName);
       //   const compareName = a.StudentName.localeCompare(b.StudentName);
       //   return compareGender || compareName;
       // })
-      this.StudentClassList = alasql("select * from ? order by GenderName "+_gendersort +",StudentName "+_namesort,[this.StudentClassList])
+      this.StudentClassList = alasql("select * from ? order by GenderName " + _gendersort + ",StudentName " + _namesort, [this.StudentClassList])
       this.StudentClassList.forEach((studcls, indx) => {
         studcls.RollNo = indx + 1 + "";
         studcls.Action = true;
@@ -295,14 +293,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _gendersort = this.searchForm.get("searchGenderAscDesc").value;
     var _namesort = this.searchForm.get("searchNameAscDesc").value;
-    if(_gendersort==0)
-    {
+    if (_gendersort == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select gender sort.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(_namesort==0)
-    {
+    if (_namesort == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select name sort.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -414,8 +410,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         if (StudentClassRollNoGenList.length == 0)
           this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
         else {
-          
-          this.RollNoGenerationSortBy = 'Gender '+ _gendersort  +',StudentName ' + _namesort;
+
+          this.RollNoGenerationSortBy = 'Gender ' + _gendersort + ',StudentName ' + _namesort;
           var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " +
             this.RollNoGenerationSortBy;
 
@@ -757,7 +753,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.StudentClassList.push({
             PID: s.Student.PID,
             StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
-            AdmissionNo:s.AdmissionNo,
+            AdmissionNo: s.AdmissionNo,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
             StudentName: s.Student.FirstName + _lastname,
@@ -864,7 +860,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           return;
         }
         else {
-          this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0,0, this.SelectedBatchId)
+          this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0, 0, this.SelectedBatchId)
             .subscribe((data: any) => {
 
               var ClassStrength = data.value.length;
@@ -1010,33 +1006,34 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
   GetStudents() {
 
-    let list: List = new List();
-    list.fields = [
-      'PID',
-      'StudentId',
-      'FirstName',
-      'LastName'
-    ];
+    // let list: List = new List();
+    // list.fields = [
+    //   'PID',
+    //   'StudentId',
+    //   'FirstName',
+    //   'LastName'
+    // ];
 
-    list.PageName = "Students";
-    //list.lookupFields = ["Student"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    // list.PageName = "Students";
+    // //list.lookupFields = ["Student"]
+    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        if (data.value.length > 0) {
-          this.Students = data.value.map(student => {
-            var _lastname = student.LastName == null ? '' : " " + student.LastName;
-            return {
-              StudentId: student.StudentId,
-              Name: student.PID + '-' + student.FirstName + _lastname
-            }
-          })
-        }
-        this.loading = false; this.PageLoading = false;
-      })
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    //debugger;
+    //  //console.log('data.value', data.value);
+    var _students: any = this.tokenstorage.getStudents();
+    _students = _students.filter(a => a.Active == 1);
+    this.Students = _students.map(student => {
+      var _lastname = student.LastName == null ? '' : " " + student.LastName;
+      return {
+        StudentId: student.StudentId,
+        Name: student.PID + '-' + student.FirstName + _lastname
+      }
+    })
+    this.loading = false;
+    this.PageLoading = false;
+    //  })
   }
   GetMasterData() {
 
@@ -1075,7 +1072,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 export interface IStudentClass {
   PID: number;
   StudentClassId: number;
-  AdmissionNo:string;
+  AdmissionNo: string;
   ClassId: number;
   ClassName: string;
   StudentId: number;

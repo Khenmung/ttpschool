@@ -58,7 +58,7 @@ export class StudentfamilynfriendComponent implements OnInit {
   displayedColumns = [
     'SiblingName',
     'ContactNo',
-    'RelationshipId',    
+    'RelationshipId',
     'FeeType',
     'FeeTypeRemarks',
     'Remarks',
@@ -421,26 +421,27 @@ export class StudentfamilynfriendComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
     list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'FatherName',
-      'MotherName',
-      'ContactNo',
-      'FatherContactNo',
-      //'ParentStudentId',
-      'MotherContactNo'
+      // 'StudentId',
+      // 'FirstName',
+      // 'LastName',
+      // 'FatherName',
+      // 'MotherName',
+      // 'ContactNo',
+      // 'FatherContactNo',
+      'ParentStudentId',
+      //'MotherContactNo'
     ];
 
-    list.PageName = "Students";
-    list.lookupFields = ["StudentFamilyNFriends($select=ParentStudentId)"];
+    list.PageName = "StudentFamilyNFriends";
+    //list.lookupFields = ["StudentFamilyNFriends($select=ParentStudentId)"];
 
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          data.value.forEach(student => {
+          var _students: any = this.tokenstorage.getStudents();
+          _students.forEach(student => {
             var _RollNo = '';
             var _name = '';
             var _className = '';
@@ -448,7 +449,7 @@ export class StudentfamilynfriendComponent implements OnInit {
             var _feeType = '';
             var _remarks = '';
             var _studentClassId = 0;
-
+            var siblingnfrients = data.value.filter(d => d.StudentId == student.StudentId)
             var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
             if (studentclassobj.length > 0) {
               _studentClassId = studentclassobj[0].StudentClassId;
@@ -470,8 +471,8 @@ export class StudentfamilynfriendComponent implements OnInit {
               _RollNo = studentclassobj[0].RollNo;
               var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
               _name = student.FirstName + _lastname;
-              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-              var _ParentId = student.StudentFamilyNFriends.length > 0 ? student.StudentFamilyNFriends[0].ParentStudentId : 0;
+              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo// + "-" + student.ContactNo;
+              var _ParentId = siblingnfrients.length > 0 ? siblingnfrients[0].ParentStudentId : 0;
               this.Students.push({
                 StudentClassId: _studentClassId,
                 StudentId: student.StudentId,
@@ -505,19 +506,16 @@ export class StudentfamilynfriendComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.school.SIBLINGSNFRIENDSRELATIONSHIP);
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.GetStudentClasses();
-        });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.school.SIBLINGSNFRIENDSRELATIONSHIP);
+    this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.GetStudentClasses();
+    });
 
-        this.loading = false; this.PageLoading = false;
-      });
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -550,5 +548,13 @@ export interface IStudentFamilyNFriends {
 export interface IApplication {
   ApplicationId: number;
   ApplicationName: string;
+}
+export interface IStudents {
+  StudentId: number;
+  FirstName: string;
+  LastName: string;
+  ContactNo: string;
+  FatherName: string;
+  MotherName: string;
 }
 

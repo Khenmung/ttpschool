@@ -237,7 +237,7 @@ export class AttendanceCountComponent implements OnInit {
         })
         //console.log("_data",_data);
         _data = _data.sort((a, b) => a.Sequence - b.Sequence || a.ClassName - b.ClassName);
-        this.TotalPresent = _data.reduce((acc, current) => acc + (current.Present==null?0:current.Present), 0);
+        this.TotalPresent = _data.reduce((acc, current) => acc + (current.Present == null ? 0 : current.Present), 0);
         this.TotalAbsent = _data.reduce((acc, current) => acc + (current.Absent == null ? 0 : current.Absent), 0);
         this.dataSource = new MatTableDataSource<any>(_data);
         this.dataSource.paginator = this.paginator;
@@ -332,17 +332,14 @@ export class AttendanceCountComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
-        this.shareddata.ChangeSubjects(this.Subjects);
-        this.GetClassSubject();
-        this.loading = false; this.PageLoading = false;
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    this.shareddata.ChangeSubjects(this.Subjects);
+    this.GetClassSubject();
+    this.loading = false; this.PageLoading = false;
 
-      });
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

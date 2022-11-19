@@ -243,27 +243,23 @@ export class TodayCollectionComponent implements OnInit {
       })
   }
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
-          this.FeeDefinitions = [...f];
-          if (this.FeeDefinitions.length == 0) {
-            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
-              this.FeeDefinitions = [...d.value];
-            })
-          }
+    this.allMasterData = this.tokenStorage.getMasterData();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
+      this.FeeDefinitions = [...f];
+      if (this.FeeDefinitions.length == 0) {
+        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
+          this.FeeDefinitions = [...d.value];
         })
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
-        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+      }
+    })
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
+    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.tokenStorage.getBatches()
-        this.GetStudents();
-
-      });
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.Batches = this.tokenStorage.getBatches()
+    this.GetStudents();
 
   }
   GetStudents() {
@@ -278,31 +274,34 @@ export class TodayCollectionComponent implements OnInit {
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName)"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    //list.lookupFields = ["Student($select=FirstName,LastName)"]
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
+        var _students: any = this.tokenStorage.getStudents();
+        var _filteredStudents = _students.filter(s => data.value.findIndex(fi => fi.StudentId == s.StudentId) > -1)
         if (data.value.length > 0) {
-          this.Students = data.value.map(student => {
-            var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);
+          this.Students = data.value.map(studentcls => {
+            var matchstudent = _filteredStudents.filter(stud => stud.StudentId == studentcls.StudentId)
+            var _classNameobj = this.Classes.filter(c => c.ClassId == studentcls.ClassId);
             var _className = '';
             if (_classNameobj.length > 0)
               _className = _classNameobj[0].ClassName;
 
             var _Section = '';
-            var _sectionobj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
+            var _sectionobj = this.Sections.filter(f => f.MasterDataId == studentcls.SectionId);
             if (_sectionobj.length > 0)
               _Section = _sectionobj[0].MasterDataName;
-            var _lastname = student.Student.LastName == null ? '' : " " + student.Student.LastName;
-            var _RollNo = student.RollNo;
-            var _name = student.Student.FirstName + _lastname;
-            var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
+            var _lastname = matchstudent[0].LastName == null ? '' : " " + matchstudent[0].LastName;
+            var _RollNo = studentcls.RollNo;
+            var _name = matchstudent[0].FirstName + _lastname;
+            var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
             return {
-              StudentClassId: student.StudentClassId,
-              StudentId: student.StudentId,
+              StudentClassId: studentcls.StudentClassId,
+              StudentId: studentcls.StudentId,
               Name: _fullDescription
             }
           })

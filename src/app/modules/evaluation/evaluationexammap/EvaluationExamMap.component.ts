@@ -102,7 +102,7 @@ export class EvaluationExamMapComponent implements OnInit {
     this.NotifyParent.emit(value);
 
   }
-  ExamClassGroups=[];
+  ExamClassGroups = [];
   PageLoad() {
     debugger;
     console.log("EvaluationUpdatable", this.EvaluationUpdatable)
@@ -342,9 +342,9 @@ export class EvaluationExamMapComponent implements OnInit {
     //var _classesForSelectedClassGroup = this.ClassGroupMappings.filter(m => m.ClassGroupId == _searchClassGroupId);
     //var allGroupsForAllTheSelectedClasses = this.ClassGroupMappings.filter(g => _classesForSelectedClassGroup.filter(i => i.ClassId == g.ClassId).length > 0)
     this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId)
-    var examIdsforselectedclsgroup=this.ExamClassGroups.filter(examclsgroup=>examclsgroup.ClassGroupId == _searchClassGroupId)
+    var examIdsforselectedclsgroup = this.ExamClassGroups.filter(examclsgroup => examclsgroup.ClassGroupId == _searchClassGroupId)
     this.SelectedClassGroupExam = this.Exams.filter(f => examIdsforselectedclsgroup.findIndex(i => i.ExamId == f.ExamId) > -1);
-    
+
     this.searchForm.patchValue({ searchEvaluationMasterId: 0 });
     this.EvaluationExamMapList = [];
     this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);
@@ -513,14 +513,11 @@ export class EvaluationExamMapComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        //this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
-        this.GetExams();
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    //this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
+    this.GetExams();
+    this.loading = false; this.PageLoading = false;
   }
   onBlur(row) {
     row.Action = true;

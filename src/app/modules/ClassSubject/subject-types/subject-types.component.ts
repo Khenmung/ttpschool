@@ -16,7 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './subject-types.component.html',
   styleUrls: ['./subject-types.component.scss']
 })
-export class SubjectTypesComponent implements OnInit { PageLoading=true;
+export class SubjectTypesComponent implements OnInit {
+    PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   CheckBatchIdForEdit = 1;
@@ -39,7 +40,7 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
     OrgId: 0,
     SelectHowMany: 0,
     Active: 1,
-    Deleted:false,
+    Deleted: false,
   };
   displayedColumns = [
     'SubjectTypeId',
@@ -49,7 +50,7 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
     'Action'
   ];
   Permission = '';
-  IsCurrentBatchSelected=1;
+  IsCurrentBatchSelected = 1;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -116,7 +117,7 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
       OrgId: 0,
       SelectHowMany: 0,
       Active: 1,
-      Deleted:0,
+      Deleted: 0,
       Action: false
     };
     this.SubjectTypes.push(toadd);
@@ -163,7 +164,7 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -201,7 +202,7 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
         (data: any) => {
           row.SubjectTypeId = data.SubjectTypeId;
           row.Action = false;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -210,9 +211,9 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch('SubjectTypes', this.SubjectTypeData, this.SubjectTypeData.SubjectTypeId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   openDialog(row) {
@@ -246,7 +247,7 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch('SubjectTypes', toUpdate, row.SubjectTypeId, 'patch')
       .subscribe(res => {
         row.Action = false;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         var idx = this.SubjectTypes.findIndex(x => x.SubjectTypeId == row.MasterDataId)
         this.SubjectTypes.splice(idx, 1);
         this.dataSource = new MatTableDataSource<any>(this.SubjectTypes);
@@ -256,7 +257,7 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
   }
   GetSubjectTypes() {
 
-    var orgIdSearchstr = 'OrgId eq ' +  this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
@@ -268,28 +269,25 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SubjectTypes = data.value.map(m => {
-          m.SubjectTypeId =m.SubjectTypeId
+          m.SubjectTypeId = m.SubjectTypeId
           m.Action = false;
-          m.Active= m.Active
+          m.Active = m.Active
           return m;
         });
         this.dataSource = new MatTableDataSource<ISubjectType>(this.SubjectTypes);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
+    this.allMasterData = this.tokenstorage.getMasterData();
 
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.tokenstorage.getBatches()
-        
-        //this.shareddata.ChangeBatch(this.Batches);
-        this.loading = false; this.PageLoading=false;
-      });
+    //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.Batches = this.tokenstorage.getBatches()
+
+    //this.shareddata.ChangeBatch(this.Batches);
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

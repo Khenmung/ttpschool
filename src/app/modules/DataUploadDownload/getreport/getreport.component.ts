@@ -12,14 +12,15 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { TableUtil } from '../../../shared/TableUtil';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-getreport',
   templateUrl: './getreport.component.html',
   styleUrls: ['./getreport.component.scss']
 })
-export class GetreportComponent implements OnInit { PageLoading=true;
+export class GetreportComponent implements OnInit {
+  PageLoading = true;
 
   @ViewChild('searchval') selectionList: MatSelectionList;
   @ViewChild("table") tableRef: ElementRef;
@@ -207,7 +208,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -252,7 +253,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
         (data: any) => {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -261,7 +262,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.ReportConfigItemListName, this.ReportConfigItemData, this.ReportConfigItemData.ReportConfigItemId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -273,14 +274,11 @@ export class GetreportComponent implements OnInit { PageLoading=true;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.AllMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.SchoolGenders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        this.loading = false; this.PageLoading=false;
-      });
+    this.AllMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.SchoolGenders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
+    this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+    this.loading = false; this.PageLoading = false;
   }
 
   ReSequence(editedrow) {
@@ -343,7 +341,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
         else {
           this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetReportNames() {
@@ -372,7 +370,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
         });
         //console.log("this.ReportNames", this.ReportNames)
         this.GetMyReportNames();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetMyReportNames() {
@@ -563,7 +561,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
             this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
           })
 
 
@@ -760,7 +758,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.FeeTypes = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   ItemExists(obj, colname) {
@@ -804,46 +802,42 @@ export class GetreportComponent implements OnInit { PageLoading=true;
     this.loading = true;
     let list: List = new List();
     list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'FatherName',
-      'MotherName',
-      'ContactNo',
-      'FatherContactNo',
-      'MotherContactNo'
+      "StudentClassId,StudentId,ClassId,RollNo,SectionId"
     ];
-
-    list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,RollNo,SectionId)"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.PageName = "StudentClasses";
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
-          this.Students = data.value.map(student => {
+          var _students: any = this.tokenstorage.getStudents();
+          _students = _students.filter(stud => data.value.findIndex(fi => fi.StudentId == stud.StudentId) > -1)
+
+          this.Students = _students.map(student => {
             var _RollNo = '';
             var _name = '';
             var _className = '';
             var _section = '';
             var _studentClassId = 0;
-            if (student.StudentClasses.length > 0) {
-              _studentClassId = student.StudentClasses[0].StudentClassId;
-              var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
+            var matchstudentcls = data.value.filter(d => d.StudentId == student.StudentId);
+
+            if (matchstudentcls.length > 0) {
+              _studentClassId = matchstudentcls[0].StudentClassId;
+              var _classNameobj = this.Classes.filter(c => c.ClassId == matchstudentcls[0].ClassId);
 
               if (_classNameobj.length > 0)
                 _className = _classNameobj[0].ClassName;
-              var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.StudentClasses[0].SectionId)
+              var _SectionObj = this.Sections.filter(f => f.MasterDataId == matchstudentcls[0].SectionId)
 
               if (_SectionObj.length > 0)
                 _section = _SectionObj[0].MasterDataName;
-              _RollNo = student.StudentClasses[0].RollNo;
+              _RollNo = matchstudentcls[0].RollNo;
             }
             var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
             _name = student.FirstName + _lastname;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo //+ "-" + student.ContactNo;
             return {
               StudentClassId: _studentClassId,
               StudentId: student.StudentId,
@@ -853,7 +847,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   AddSearchFilter() {

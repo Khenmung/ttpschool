@@ -119,33 +119,18 @@ export class SchoolFeeTypesComponent implements OnInit {
   }
   GetStudents() {
 
-    let list: List = new List();
-    list.fields = [
-      'PID',
-      'StudentId',
-      'FirstName',
-      'LastName'
-    ];
+    var _students: any = this.tokenstorage.getStudents();
+    _students = _students.filter(a => a.Active == 1);
+    this.Students = _students.map(student => {
+      var _lastName = student.LastName == '' ? '' : '-' + student.LastName;
+      return {
+        StudentId: student.StudentId,
+        Name: student.PID + '-' + student.FirstName + _lastName
+      }
+    })
 
-    list.PageName = "Students";
-    //list.lookupFields = ["Student"]
-    list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        if (data.value.length > 0) {
-          this.Students = data.value.map(student => {
-            var _lastName = student.LastName == '' ? '' : '-' + student.LastName;
-            return {
-              StudentId: student.StudentId,
-              Name: student.PID + '-' + student.FirstName + _lastName
-            }
-          })
-        }
-        this.loading = false; this.PageLoading = false;
-      })
+    this.loading = false;
+    this.PageLoading = false;
   }
   onBlur(element) {
     element.Action = true;
@@ -312,7 +297,7 @@ export class SchoolFeeTypesComponent implements OnInit {
                     FeeTypeId: studcls.FeeTypeId,
                     SectionId: studcls.SectionId,
                     RollNo: studcls.RollNo,
-                    ClassName:_className
+                    ClassName: _className
                   });
                 }
 
@@ -335,12 +320,9 @@ export class SchoolFeeTypesComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY)
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY)
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

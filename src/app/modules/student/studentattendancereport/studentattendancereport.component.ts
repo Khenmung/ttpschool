@@ -12,14 +12,15 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-studentattendancereport',
   templateUrl: './studentattendancereport.component.html',
   styleUrls: ['./studentattendancereport.component.scss']
 })
-export class StudentattendancereportComponent implements OnInit { PageLoading=true;
+export class StudentattendancereportComponent implements OnInit {
+    PageLoading = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -118,7 +119,7 @@ export class StudentattendancereportComponent implements OnInit { PageLoading=tr
       if (this.Permission != 'deny') {
         this.StudentClassId = this.tokenstorage.getStudentClassId();
         if (this.StudentClassId == 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar("Student class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -188,15 +189,15 @@ export class StudentattendancereportComponent implements OnInit { PageLoading=tr
             StudentRollNo: att.StudentClass.Student.FirstName + _lastname
           });
         });
-        this.AttendanceStatusSum = alasql("select AttendanceStatus, count(AttendanceStatus) Total from ? group by AttendanceStatus", 
-        [this.StudentAttendanceList])
-        console.log("this.StudentAttendanceList",this.StudentAttendanceList)
+        this.AttendanceStatusSum = alasql("select AttendanceStatus, count(AttendanceStatus) Total from ? group by AttendanceStatus",
+          [this.StudentAttendanceList])
+        console.log("this.StudentAttendanceList", this.StudentAttendanceList)
         //console.log("this.AttendanceStatusSum",this.AttendanceStatusSum)
 
         this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   clear() {
@@ -271,15 +272,12 @@ export class StudentattendancereportComponent implements OnInit { PageLoading=tr
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
-        this.shareddata.ChangeSubjects(this.Subjects);
-        this.loading = false; this.PageLoading=false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    this.shareddata.ChangeSubjects(this.Subjects);
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

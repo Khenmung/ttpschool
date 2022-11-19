@@ -140,9 +140,9 @@ export class EvaluationresultComponent implements OnInit {
           });
         }
         this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
-        .subscribe((data: any) => {
-          this.ExamClassGroups = [...data.value];
-        });
+          .subscribe((data: any) => {
+            this.ExamClassGroups = [...data.value];
+          });
         this.GetStudentClasses();
 
       }
@@ -366,10 +366,8 @@ export class EvaluationresultComponent implements OnInit {
       });
   }
   GetMasterData() {
-
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
+    
+    this.allMasterData = this.tokenstorage.getMasterData();
         this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
@@ -395,10 +393,10 @@ export class EvaluationresultComponent implements OnInit {
             });
           })
 
-      });
+      //});
   }
-  ExamReleased=0;
-  ExamClassGroups=[];
+  ExamReleased = 0;
+  ExamClassGroups = [];
   FilterClass() {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
@@ -689,70 +687,71 @@ export class EvaluationresultComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    var _filter = ''
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'ContactNo',
-    ];
+    //var _filter = ''
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentId',
+    //   'FirstName',
+    //   'LastName',
+    //   'ContactNo',
+    // ];
+    var _students: any = this.tokenstorage.getStudents();
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       this.StudentId = this.tokenstorage.getStudentId();
-      _filter = ' and StudentId eq ' + this.StudentId;
+      _students = _students.filter(s => s.StudentId == this.StudentId);
     }
-    list.PageName = "Students";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
+    // list.PageName = "Students";
+    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        this.Students = [];
-        //if (data.value.length > 0) {
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    debugger;
+    this.Students = [];
+    //if (data.value.length > 0) {
 
-        data.value.forEach(student => {
-          var _RollNo = '';
-          var _name = '';
-          var _className = '';
-          var _classId = '';
-          var _section = '';
-          var _studentClassId = 0;
-          var _batchName = '';
-          var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-          if (studentclassobj.length > 0) {
-            _studentClassId = studentclassobj[0].StudentClassId;
-            _batchName = this.tokenstorage.getSelectedBatchName();
-            var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
-            _classId = studentclassobj[0].ClassId;
-            if (_classNameobj.length > 0)
-              _className = _classNameobj[0].ClassName;
-            var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+    _students.forEach(student => {
+      var _RollNo = '';
+      var _name = '';
+      var _className = '';
+      var _classId = '';
+      var _section = '';
+      var _studentClassId = 0;
+      var _batchName = '';
+      var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+      if (studentclassobj.length > 0) {
+        _studentClassId = studentclassobj[0].StudentClassId;
+        _batchName = this.tokenstorage.getSelectedBatchName();
+        var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
+        _classId = studentclassobj[0].ClassId;
+        if (_classNameobj.length > 0)
+          _className = _classNameobj[0].ClassName;
+        var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
 
-            if (_SectionObj.length > 0)
-              _section = _SectionObj[0].MasterDataName;
-            _RollNo = studentclassobj[0].RollNo;
+        if (_SectionObj.length > 0)
+          _section = _SectionObj[0].MasterDataName;
+        _RollNo = studentclassobj[0].RollNo;
 
-            var _lastname = student.LastName == null ? '' : " " + student.LastName;
-            _name = student.FirstName + _lastname;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-            this.Students.push({
-              StudentClassId: _studentClassId,
-              StudentId: student.StudentId,
-              ClassId: _classId,
-              StudentClass: _className,
-              RollNo: _RollNo,
-              Name: _name,
-              SecionId: studentclassobj[0].SectionId,
-              Section: _section,
-              Batch: _batchName,
-              FullName: _fullDescription,
-            });
-          }
-        })
-        //}
-        this.loading = false;
-        this.PageLoading = false;
-      })
+        var _lastname = student.LastName == null ? '' : " " + student.LastName;
+        _name = student.FirstName + _lastname;
+        var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+        this.Students.push({
+          StudentClassId: _studentClassId,
+          StudentId: student.StudentId,
+          ClassId: _classId,
+          StudentClass: _className,
+          RollNo: _RollNo,
+          Name: _name,
+          SecionId: studentclassobj[0].SectionId,
+          Section: _section,
+          Batch: _batchName,
+          FullName: _fullDescription,
+        });
+      }
+    })
+    //}
+    this.loading = false;
+    this.PageLoading = false;
+    //})
   }
 }
 export interface IStudentEvaluation {

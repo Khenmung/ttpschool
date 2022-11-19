@@ -13,14 +13,15 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-variable-config',
   templateUrl: './variable-config.component.html',
   styleUrls: ['./variable-config.component.scss']
 })
-export class VariableConfigComponent implements OnInit { PageLoading=true;
+export class VariableConfigComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('varPaginator') paginator: MatPaginator;
 
@@ -117,7 +118,7 @@ export class VariableConfigComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -181,7 +182,7 @@ export class VariableConfigComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -222,7 +223,7 @@ export class VariableConfigComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.VariableConfigurationId = data.VariableConfigurationId;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
@@ -231,7 +232,7 @@ export class VariableConfigComponent implements OnInit { PageLoading=true;
           // }
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }),
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
     console.error();
     ;
     ;
@@ -241,7 +242,7 @@ export class VariableConfigComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.ListName, this.VariableConfigData, this.VariableConfigData.VariableConfigurationId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
@@ -312,12 +313,9 @@ export class VariableConfigComponent implements OnInit { PageLoading=true;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
-        this.GetVariables();
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
+    this.GetVariables();
   }
   GetVariableConfigs() {
 
@@ -390,7 +388,7 @@ export class VariableConfigComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         this.VariableConfig = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   getDropDownData(dropdowntype) {

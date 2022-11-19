@@ -25,7 +25,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   ],
 })
 export class StudentprofilereportComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -278,7 +278,7 @@ export class StudentprofilereportComponent implements OnInit {
             var _sectionobj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
             if (_sectionobj.length > 0)
               _Section = _sectionobj[0].MasterDataName;
-              
+
             var _lastname = student.Student.LastName == null ? '' : " " + student.Student.LastName;
             var _RollNo = student.RollNo;
             var _name = student.Student.FirstName + _lastname;
@@ -336,20 +336,17 @@ export class StudentprofilereportComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
-        this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.GetExams();
-        this.GetClassSubjects();
-        this.GetClassEvaluations();
-        this.GetStudents();
-        //this.GetStudentEvaluation();
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+    this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
+    this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.GetExams();
+    this.GetClassSubjects();
+    this.GetClassEvaluations();
+    this.GetStudents();
+    //this.GetStudentEvaluation();
   }
   // SelectSubCategory(pCategoryId) {
   //   this.SubCategories = this.allMasterData.filter(f => f.ParentId == pCategoryId.value);

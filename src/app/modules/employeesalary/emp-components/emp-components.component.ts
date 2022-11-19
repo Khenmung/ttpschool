@@ -15,7 +15,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './emp-components.component.html',
   styleUrls: ['./emp-components.component.scss']
 })
-export class EmpComponentsComponent implements OnInit { PageLoading=true;
+export class EmpComponentsComponent implements OnInit {
+    PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -110,7 +111,7 @@ export class EmpComponentsComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -152,7 +153,7 @@ export class EmpComponentsComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -190,7 +191,7 @@ export class EmpComponentsComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.EmpSalaryComponentId = data.EmpSalaryComponentId;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
@@ -206,7 +207,7 @@ export class EmpComponentsComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
@@ -290,35 +291,32 @@ export class EmpComponentsComponent implements OnInit { PageLoading=true;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
-        //this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
-        //this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
-        this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
-        this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGENDER);
-        this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
-        this.Countries = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
-        this.BloodGroups = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
-        this.Religions = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
-        this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);;
-        this.Natures = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
-        this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
+    //this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+    //this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
+    this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
+    this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
+    this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
+    this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
+    this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGENDER);
+    this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
+    this.Countries = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
+    this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+    this.BloodGroups = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
+    this.Religions = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+    this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
+    this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
+    this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
+    this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);;
+    this.Natures = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
+    this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
 
-        this.GetConfigVariables();
-        this.GetAllComponents();
-        //this.loading = false; this.PageLoading=false;
-      });
+    this.GetConfigVariables();
+    this.GetAllComponents();
+    //this.loading = false; this.PageLoading=false;
   }
   GetEmpComponents() {
 
@@ -350,7 +348,7 @@ export class EmpComponentsComponent implements OnInit { PageLoading=true;
         this.EmpComponentList = [...data.value];
         //console.log('all data',this.EmpComponentList)
         this.dataSource = new MatTableDataSource<IEmpComponent>(this.EmpComponentList);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   getEmployeeVariables() {
@@ -380,7 +378,7 @@ export class EmpComponentsComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SalaryComponents = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   addnew() {

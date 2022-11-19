@@ -126,10 +126,10 @@ export class StudentprogressreportComponent implements OnInit {
       }
       ////console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
-         //console.log("localStorage.getItem(StudentDetail)",localStorage.getItem("StudentDetail"))
-        var studentdetail = [JSON.parse("{"+localStorage.getItem("StudentDetail")+"}")];
-        studentdetail.forEach(s=>{
-          this.StudentName.push({"Name":s.StudentName,"Class":s.ClassName,"Section":s.Section,"RollNo":s.RollNo})
+        //console.log("localStorage.getItem(StudentDetail)",localStorage.getItem("StudentDetail"))
+        var studentdetail = [JSON.parse("{" + localStorage.getItem("StudentDetail") + "}")];
+        studentdetail.forEach(s => {
+          this.StudentName.push({ "Name": s.StudentName, "Class": s.ClassName, "Section": s.Section, "RollNo": s.RollNo })
         })
         //console.log("StudentName",this.StudentName);
         //this.LoginUserDetail = this.tokenStorage.getUserDetail();
@@ -150,13 +150,13 @@ export class StudentprogressreportComponent implements OnInit {
         //this.GetStudentAttendance();
       }
       else {
-        this.loading = false; 
+        this.loading = false;
         this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
     }
   }
-  StyleStr='';
+  StyleStr = '';
   print(): void {
 
     var str = `.container{
@@ -191,8 +191,8 @@ export class StudentprogressreportComponent implements OnInit {
     );
     popupWin.document.close();
   }
-  CommonHeader=[];
-  Organization=[];
+  CommonHeader = [];
+  Organization = [];
   GetOrganization() {
 
     let list: List = new List();
@@ -267,14 +267,14 @@ export class StudentprogressreportComponent implements OnInit {
         this.CommonHeader.forEach(header => {
           this.Organization[0].forEach(orgdet => {
             header.Description = header.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
-           // header.Description = header.Description.replaceAll("[" + orgdet.OrganizationAddress + "]", orgdet.val);
+            // header.Description = header.Description.replaceAll("[" + orgdet.OrganizationAddress + "]", orgdet.val);
           })
         })
-        
+
         this.loading = false; this.PageLoading = false;
       });
-      //console.log("this.Organization[0]",this.Organization[0])
-      //console.log("this.CommonHeader",this.CommonHeader)
+    //console.log("this.Organization[0]",this.Organization[0])
+    //console.log("this.CommonHeader",this.CommonHeader)
   }
   back() {
     this.nav.navigate(['/edu']);
@@ -596,32 +596,29 @@ export class StudentprogressreportComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
+    this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    //this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+    this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
+    this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+    this.Batches = this.tokenstorage.getBatches()
+    this.CommonHeader = this.getDropDownData(globalconstants.MasterDefinitions.common.COMMONPRINTHEADING);
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
-        this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        //this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
-        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        this.Batches = this.tokenstorage.getBatches()
-        this.CommonHeader = this.getDropDownData(globalconstants.MasterDefinitions.common.COMMONPRINTHEADING);
-        this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
-          .subscribe((data: any) => {
-            this.ClassGroupMappings = [...data.value];
-          })
+        this.ClassGroupMappings = [...data.value];
+      })
 
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          });
-        this.GetExams();
-        this.GetOrganization();
-
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+      .subscribe((data: any) => {
+        this.ClassGroups = [...data.value];
       });
+    this.GetExams();
+    this.GetOrganization();
+
   }
   GetExams() {
 

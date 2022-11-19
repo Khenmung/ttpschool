@@ -121,17 +121,13 @@ export class AddstudentclassComponent implements OnInit {
   get f() { return this.studentclassForm.controls }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
-        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-        this.aRoute.paramMap.subscribe(param => {
-          this.GetStudent();
-        })
-      });
-
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+    this.aRoute.paramMap.subscribe(param => {
+      this.GetStudent();
+    })
   }
   StudentChange(event) {
     if (this.StudentId == event.value) {
@@ -183,13 +179,13 @@ export class AddstudentclassComponent implements OnInit {
           // })
           // let ValidStudent = this.Students.filter(student => student.StudentId == this.StudentId)
           // if (ValidStudent.length > 0) {
-            this.studentclassForm.patchValue({ StudentId: this.StudentId });
-            this.GetStudentClass();
-          }
-          else {
-            this.invalidId = true;
-            this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
-          }
+          this.studentclassForm.patchValue({ StudentId: this.StudentId });
+          this.GetStudentClass();
+        }
+        else {
+          this.invalidId = true;
+          this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
+        }
         // }
         // else
         //   this.contentservice.openSnackBar("Problem fetching students' data", globalconstants.ActionText, globalconstants.RedBackground);
@@ -286,14 +282,14 @@ export class AddstudentclassComponent implements OnInit {
       var _classId = this.studentclassForm.get("ClassId").value;
       var ClassStrength = 0;
       if (_classId > 0) {
-        this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0,0, this.SelectedBatchId)
+        this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0, 0, this.SelectedBatchId)
           .subscribe((data: any) => {
             ClassStrength = data.value.length;
             ClassStrength++;
 
             var _year = new Date().getFullYear();
             this.loading = true;
-            this.studentclassData.Active = this.studentclassForm.get("Active").value?1:0;
+            this.studentclassData.Active = this.studentclassForm.get("Active").value ? 1 : 0;
             this.studentclassData.BatchId = this.SelectedBatchId;
             this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
             this.studentclassData.RollNo = this.studentclassForm.value.RollNo;

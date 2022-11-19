@@ -10,7 +10,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List } from '../../../shared/interface';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-dashboardclassfee',
@@ -550,7 +550,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
     }
     //this.ELEMENT_DATA =
-    console.log("this.CurrentMonthYear",this.CurrentMonthYear); 
+    console.log("this.CurrentMonthYear", this.CurrentMonthYear);
     this.ELEMENT_DATA.sort((a, b) => b.Active - a.Active);
     console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
     this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
@@ -558,7 +558,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataSource.sort = this.sort;
     this.loading = false; this.PageLoading = false;
   }
-  
+
   updateEnable(row, value) {
     row.Action = true;
     row.Status = value.checked;
@@ -595,12 +595,9 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+    this.allMasterData = this.token.getMasterData();
+    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
-      });
   }
 
   getDropDownData(dropdowntype) {

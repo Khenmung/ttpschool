@@ -1133,7 +1133,7 @@ export class ExcelDataManagementComponent implements OnInit {
         if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.CLASSROLLNOMAPPING)) {
           this.ELEMENT_DATA.forEach((element, indx) => {
             this.studentData = [];
-            if (element["Active"] == undefined || element["Active"]==null || element["Active"]=='')
+            if (element["Active"] == undefined || element["Active"] == null || element["Active"] == '')
               element["Active"] = 0;
 
             if (element.StudentClassId > 0) {
@@ -1362,19 +1362,21 @@ export class ExcelDataManagementComponent implements OnInit {
   }
   GetStudents() {
 
-    let list: List = new List();
-    list.fields = ["StudentId", "FirstName", "LastName", "Active"];
-    list.PageName = "Students";
-    list.filter = ["Active eq 1 and " + this.filterOrgId];
-    //list.orderBy = "ParentId";
+    // let list: List = new List();
+    // list.fields = ["StudentId", "FirstName", "LastName", "Active"];
+    // list.PageName = "Students";
+    // list.filter = ["Active eq 1 and " + this.filterOrgId];
+    // //list.orderBy = "ParentId";
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.StudentList = [...data.value];
-        this.NoOfStudent = this.StudentList.length;
-        this.GetStudentClasses();
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    var _students: any = this.tokenservice.getStudents();
+    this.StudentList = _students.filter(s => s.Active == 1);
+    this.StudentList = this.StudentList.sort((a,b)=>a.ParentId - b.ParentId);
+    this.NoOfStudent = this.StudentList.length;
+    this.GetStudentClasses();
 
-      })
+    //  })
   }
   SelectedApplicationName = '';
   GetMasterData() {

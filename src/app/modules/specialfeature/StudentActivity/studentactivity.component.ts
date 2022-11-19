@@ -390,16 +390,13 @@ export class StudentActivityComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
-        this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
-        this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
+    this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
+    this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
 
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.GetPoints();
-      });
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.GetPoints();
   }
   SetCategory() {
     var _activityId = this.searchForm.get("searchActivityId").value;
@@ -498,58 +495,59 @@ export class StudentActivityComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'ContactNo',
-      'HouseId'
-    ];
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentId',
+    //   'FirstName',
+    //   'LastName',
+    //   'ContactNo',
+    //   'HouseId'
+    // ];
 
-    list.PageName = "Students";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    // list.PageName = "Students";
+    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        this.Students = [];
-        if (data.value.length > 0) {
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    debugger;
+    this.Students = [];
+    var _students: any = this.tokenstorage.getStudents();
+    if (_students.length > 0) {
 
-          data.value.forEach(student => {
-            var _RollNo = '';
-            var _name = '';
-            var _className = '';
-            var _classId = '';
-            var _section = '';
-            var _studentClassId = 0;
-            var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-            if (studentclassobj.length > 0) {
-              _studentClassId = studentclassobj[0].StudentClassId;
-              var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
-              _classId = studentclassobj[0].ClassId;
-              if (_classNameobj.length > 0)
-                _className = _classNameobj[0].ClassName;
-              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+      _students.forEach(student => {
+        var _RollNo = '';
+        var _name = '';
+        var _className = '';
+        var _classId = '';
+        var _section = '';
+        var _studentClassId = 0;
+        var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+        if (studentclassobj.length > 0) {
+          _studentClassId = studentclassobj[0].StudentClassId;
+          var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
+          _classId = studentclassobj[0].ClassId;
+          if (_classNameobj.length > 0)
+            _className = _classNameobj[0].ClassName;
+          var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
 
-              if (_SectionObj.length > 0)
-                _section = _SectionObj[0].MasterDataName;
-              _RollNo = studentclassobj[0].RollNo;
-              var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
-              _name = student.FirstName + _lastname;
-              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-              this.Students.push({
-                StudentClassId: _studentClassId,
-                StudentId: student.StudentId,
-                HouseId: student.HouseId,
-                ClassId: _classId,
-                Name: _fullDescription,
-              });
-            }
-          })
+          if (_SectionObj.length > 0)
+            _section = _SectionObj[0].MasterDataName;
+          _RollNo = studentclassobj[0].RollNo;
+          var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
+          _name = student.FirstName + _lastname;
+          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+          this.Students.push({
+            StudentClassId: _studentClassId,
+            StudentId: student.StudentId,
+            HouseId: student.HouseId,
+            ClassId: _classId,
+            Name: _fullDescription,
+          });
         }
-        this.loading = false; this.PageLoading = false;
       })
+    }
+    this.loading = false; this.PageLoading = false;
+    //})
   }
   GetPoints() {
     debugger;

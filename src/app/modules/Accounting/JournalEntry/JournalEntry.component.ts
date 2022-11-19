@@ -11,7 +11,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IGeneralLedger } from '../ledgeraccount/ledgeraccount.component';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-JournalEntry',
@@ -19,7 +19,7 @@ import {SwUpdate} from '@angular/service-worker';
   styleUrls: ['./JournalEntry.component.scss']
 })
 export class JournalEntryComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild("table") mattable;
   GeneralLedgers = [];
   AccountingVoucherListName = 'AccountingVouchers';
@@ -31,7 +31,7 @@ export class JournalEntryComponent implements OnInit {
     StartDate: new Date(),
     EndDate: new Date()
   }
-  ParentId =0;
+  ParentId = 0;
   Permission = '';
   StandardFilterWithBatchId = '';
   SelectedApplicationId = 0;
@@ -49,13 +49,13 @@ export class JournalEntryComponent implements OnInit {
     PostingDate: new Date(),
     Reference: '',
     FeeReceiptId: 0,
-    ParentId:0,
+    ParentId: 0,
     ClassFeeId: 0,
     LedgerId: 0,
     GeneralLedgerAccountId: 0,
     Debit: 0,
     BaseAmount: 0,
-    Amount:0,
+    Amount: 0,
     ShortText: '',
     OrgId: 0,
     Active: 0,
@@ -143,18 +143,18 @@ export class JournalEntryComponent implements OnInit {
       PostingDate: new Date(),
       Reference: this.searchForm.get("searchReferenceId").value,
       FeeReceiptId: 0,
-      ParentId:0,
+      ParentId: 0,
       ClassFeeId: 0,
       LedgerId: 0,
       GeneralLedgerAccountId: this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId,
       Debit: false,
       BaseAmount: 0,
-      Amount:0,
+      Amount: 0,
       ShortText: this.searchForm.get("searchShortText").value,
       Active: 0,
       Action: true
     }
-    this.AccountingVoucherList =[];
+    this.AccountingVoucherList = [];
     this.AccountingVoucherList.push(newdata);
     this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
   }
@@ -172,7 +172,7 @@ export class JournalEntryComponent implements OnInit {
       filterStr += " and GeneralLedgerAccountId eq " + AccountId
     }
     var referenceId = this.searchForm.get("searchReferenceId").value;
-    if (referenceId !=null && referenceId != "") {
+    if (referenceId != null && referenceId != "") {
       filterStr += " and Reference eq '" + referenceId + "'"
     }
     var shorttext = this.searchForm.get("searchShortText").value;
@@ -240,7 +240,7 @@ export class JournalEntryComponent implements OnInit {
       row.Debit = true;
     else
       row.Debit = false;
-      this.onBlur(row);
+    this.onBlur(row);
   }
   // delete(element) {
   //   let toupdate = {
@@ -388,11 +388,8 @@ export class JournalEntryComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -419,7 +416,7 @@ export interface IAccountingVoucher {
   Reference: string;
   LedgerId: number;
   GeneralLedgerAccountId: number;
-  ParentId:number;
+  ParentId: number;
   Debit: boolean;
   Amount: number;
   BaseAmount: number;

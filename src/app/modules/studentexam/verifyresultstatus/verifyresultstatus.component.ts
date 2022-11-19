@@ -10,14 +10,14 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-verifyresultstatus',
   templateUrl: './verifyresultstatus.component.html',
   styleUrls: ['./verifyresultstatus.component.scss']
 })
 export class VerifyresultstatusComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -137,7 +137,7 @@ export class VerifyresultstatusComponent implements OnInit {
         // else
         //var alldatafromdb = [...data.value]
         //  console.log("this.ExamStudentResult",this.ExamStudentResult)
-        var filteredClassGroupMapping =this.ClassGroupMapping.filter(s => s.ClassGroupId == _examClassGroupId);
+        var filteredClassGroupMapping = this.ClassGroupMapping.filter(s => s.ClassGroupId == _examClassGroupId);
         data.value.forEach(d => {
           var _className = '';
           var _classgroupObj = filteredClassGroupMapping.filter(s => s.ClassId == d.StudentClass["ClassId"]);
@@ -183,13 +183,11 @@ export class VerifyresultstatusComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Batches = this.tokenstorage.getBatches()
-        this.GetExams();
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.Batches = this.tokenstorage.getBatches()
+    this.GetExams();
+
   }
 
   GetExams() {
@@ -198,7 +196,7 @@ export class VerifyresultstatusComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId","ClassGroupId"];
+    list.fields = ["ExamId", "ExamNameId", "ClassGroupId"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and ReleaseResult eq 0 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -234,7 +232,7 @@ export class VerifyresultstatusComponent implements OnInit {
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    
+
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

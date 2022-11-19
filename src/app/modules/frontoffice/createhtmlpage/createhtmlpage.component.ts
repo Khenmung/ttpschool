@@ -458,7 +458,7 @@ export class CreatehtmlpageComponent implements OnInit {
     this.dataservice.postPatch(this.RulesOrPolicyListName, this.RulesOrPolicyData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.AddNewMode =false;
+          this.AddNewMode = false;
           this.searchForm.patchValue({ "RulesOrPolicyId": data.RulesOrPolicyId });
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
@@ -477,7 +477,7 @@ export class CreatehtmlpageComponent implements OnInit {
   GetRulesOrPolicys() {
     debugger;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    var _fields = ["CategoryId","RulesOrPolicyId", "Title"];
+    var _fields = ["CategoryId", "RulesOrPolicyId", "Title"];
 
     this.loading = true;
     let list: List = new List();
@@ -496,10 +496,10 @@ export class CreatehtmlpageComponent implements OnInit {
       });
 
   }
-  FilteredFileNames=[];
-  FilterTitle(){
+  FilteredFileNames = [];
+  FilterTitle() {
     var searchCategoryId = this.searchForm.get("searchCategoryId").value;
-    this.FilteredFileNames = this.FileNames.filter(f=>f.CategoryId == searchCategoryId);
+    this.FilteredFileNames = this.FileNames.filter(f => f.CategoryId == searchCategoryId);
   }
   GetRulesOrPolicy() {
     debugger;
@@ -539,15 +539,12 @@ export class CreatehtmlpageComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.PageCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.PAGECATEGORY)
-        this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.PageCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.PAGECATEGORY)
+    this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
 
-        //this.GetRulesOrPolicy();
-        this.loading = false; this.PageLoading = false;
-      });
+    //this.GetRulesOrPolicy();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

@@ -11,7 +11,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-teacherperiod',
@@ -134,7 +134,7 @@ export class TeacherperiodComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.filter(f => {
-          var _lastname = f.Employee.LastName == null? '' : " " + f.Employee.LastName;
+          var _lastname = f.Employee.LastName == null ? '' : " " + f.Employee.LastName;
           this.Teachers.push({
             TeacherId: f.Employee.EmpEmployeeId,
             TeacherName: f.Employee.FirstName + _lastname
@@ -256,7 +256,7 @@ export class TeacherperiodComponent implements OnInit {
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
-  TeacherName='';
+  TeacherName = '';
   DayStatisticDisplay = ["TeacherName"];
   PeriodStatisticDisplay = ["Day"];
   DayStatistics = [];
@@ -314,7 +314,7 @@ export class TeacherperiodComponent implements OnInit {
 
           var forSelectedClsPeriods;
           forSelectedClsPeriods = filterPeriods.sort((a, b) => a.Sequence - b.Sequence);
-          console.log("forSelectedClsPeriods",forSelectedClsPeriods);
+          console.log("forSelectedClsPeriods", forSelectedClsPeriods);
           debugger;
           this.WeekDays.sort((a, b) => a.Sequence - b.Sequence).forEach(p => {
             if (!this.DayStatisticDisplay.includes(p.MasterDataName))
@@ -388,15 +388,15 @@ export class TeacherperiodComponent implements OnInit {
     })//foreach distinct class
 
   }
-  
+
   GetPeriodStatistic() {
     debugger;
     var _teacherId = this.searchForm.get("searchEmployeeId").value;
     this.TeacherName = '';
     var obj = this.Teachers.filter(f => f.TeacherId == _teacherId);
     if (obj.length > 0)
-    this.TeacherName = obj[0].TeacherName.trim();
-      this.PeriodStatistics =[];
+      this.TeacherName = obj[0].TeacherName.trim();
+    this.PeriodStatistics = [];
     //var _DistinctTeacher = alasql("select distinct EmployeeId,TeacherName from ?", [this.TeacherSubjectList]);
     //_DistinctTeacher.forEach(teacher => {
     var _forCurrentTeacher = this.DataForAllClasses.filter(assigned => assigned.TeacherId == _teacherId);
@@ -418,9 +418,8 @@ export class TeacherperiodComponent implements OnInit {
     //});
     //console.log("PeriodStatisticDisplay", this.PeriodStatisticDisplay);
     //console.log("this.PeriodStatistics", this.PeriodStatistics);
-    if(this.PeriodStatistics.length==0)
-    {
-      this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+    if (this.PeriodStatistics.length == 0) {
+      this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
     }
     this.dataSourcePeriodStatistic = new MatTableDataSource<any>(this.PeriodStatistics);
   }
@@ -455,12 +454,12 @@ export class TeacherperiodComponent implements OnInit {
           var _teacherId = 0;
           if (f.TeacherSubject != null)
             _teacherId = f.TeacherSubject.EmployeeId;
-        
-            var _section = ''
+
+          var _section = ''
           var objsection = this.Sections.filter(s => s.MasterDataId == f.SectionId);
-          var objTeachersubj =this.TeacherSubjectList.filter(t => t.TeacherSubjectId == f.TeacherSubjectId);
-          
-          if (objsection.length > 0 && objTeachersubj.length>0) {
+          var objTeachersubj = this.TeacherSubjectList.filter(t => t.TeacherSubjectId == f.TeacherSubjectId);
+
+          if (objsection.length > 0 && objTeachersubj.length > 0) {
             _section = objsection[0].MasterDataName;
             f.Section = _section;
             f.PeriodId = f.SchoolClassPeriod.PeriodId;
@@ -512,8 +511,8 @@ export class TeacherperiodComponent implements OnInit {
           });
         })
         this.GetAllClassPeriods();
-          //GetAllSchoolTimeTable(); --teacherlist,alltimeperiods
-          //format();
+        //GetAllSchoolTimeTable(); --teacherlist,alltimeperiods
+        //format();
         this.loading = false;
         this.PageLoading = false;
       });
@@ -548,11 +547,11 @@ export class TeacherperiodComponent implements OnInit {
           m.Period = '';
           if (obj.length > 0)
             m.Period = obj[0].MasterDataName// + " - " + m.FromToTime;
-          m.Sequence = m.Sequence ==0?500:m.Sequence;
+          m.Sequence = m.Sequence == 0 ? 500 : m.Sequence;
           m.PeriodType = _PeriodType;
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
-        
+
         if (this.AllClassPeriods.length == 0) {
           this.contentservice.openSnackBar("Class periods not defined.", globalconstants.ActionText, globalconstants.RedBackground);
         }
@@ -694,26 +693,22 @@ export class TeacherperiodComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
-        this.Periods.sort((a, b) => a.Sequence - b.Sequence);
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
+    this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
-        this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
-        this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
+    this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
+    this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
 
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.Batches = this.tokenstorage.getBatches();
-        this.GetTeachers();
-        
-        this.GetClassSubject(); 
-          //this.GetTeacherSubject(); -- this.ClassSubjects
-                //--teacherlist
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    this.Batches = this.tokenstorage.getBatches();
+    this.GetTeachers();
 
-      });
+    this.GetClassSubject();
+    //this.GetTeacherSubject(); -- this.ClassSubjects
+    //--teacherlist
   }
 
   getDropDownData(dropdowntype) {

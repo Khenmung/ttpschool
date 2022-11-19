@@ -12,7 +12,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 //import { ClasssubjectComponent } from '../classsubject/classsubject.component';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-classmasterdashboard',
@@ -404,7 +404,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.filter(f => {
-          var _lastname = f.Employee.LastName==null?'':" " + f.Employee.LastName;
+          var _lastname = f.Employee.LastName == null ? '' : " " + f.Employee.LastName;
           var _type = '';
           var obj = this.WorkAccounts.filter(g => g.MasterDataId == f.WorkAccountId);
           if (obj.length > 0) {
@@ -453,23 +453,20 @@ export class ClassmasterdashboardComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.tokenstorage.getBatches()
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.Batches = this.tokenstorage.getBatches()
 
-        //this.shareddata.ChangeClasses(this.Classes);
-        this.shareddata.ChangeSubjects(this.Subjects);
-        //this.shareddata.ChangeBatch(this.Batches);
-        this.GetTeachers();
-        //this.GetClassSubject();
-        this.loading = false; this.PageLoading = false;
-      });
+    //this.shareddata.ChangeClasses(this.Classes);
+    this.shareddata.ChangeSubjects(this.Subjects);
+    //this.shareddata.ChangeBatch(this.Batches);
+    this.GetTeachers();
+    //this.GetClassSubject();
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

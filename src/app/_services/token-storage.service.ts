@@ -24,6 +24,9 @@ const SELECTEDAPPNAME ='selectedappname';
 const BATCHES ='batches';
 const CUSTOM_FEATURE ='customfeatures';
 const STUDENTSEARCH ='studentsearch';
+const STUDENTS ='students';
+const MENUDATA ='menudata';
+const MASTERDATA ='masterdata';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +52,18 @@ export class TokenStorageService {
     }
     return "";    
   }
+  public saveMenuData(token: any): void {
+    localStorage.removeItem(MENUDATA);
+    localStorage.setItem(MENUDATA, JSON.stringify(token));
+  }
+  public getMenuData(): object[]|null {
+    var batch=localStorage.getItem(MENUDATA);
+    if (batch) {
+      return JSON.parse(MENUDATA);
+    }
+    return [{}];
+    
+  }
   public saveBatches(token: any): void {
     localStorage.removeItem(BATCHES);
     localStorage.setItem(BATCHES, JSON.stringify(token));
@@ -57,6 +72,30 @@ export class TokenStorageService {
     var batch=localStorage.getItem(BATCHES);
     if (batch) {
       return JSON.parse(batch);
+    }
+    return [{}];
+    
+  }
+  public saveMasterData(token: any): void {
+    localStorage.removeItem(MASTERDATA);
+    localStorage.setItem(MASTERDATA, JSON.stringify(token));
+  }
+  public getMasterData(): object[]|null {
+    var master=localStorage.getItem(MASTERDATA);
+    if (master) {
+      return JSON.parse(master);
+    }
+    return [{}];
+    
+  }
+  public saveStudents(token: any): void {
+    localStorage.removeItem(STUDENTS);
+    localStorage.setItem(STUDENTS, JSON.stringify(token));
+  }
+  public getStudents(): object[]|null {
+    var students=localStorage.getItem(STUDENTS);
+    if (students) {
+      return JSON.parse(students);
     }
     return [{}];
     

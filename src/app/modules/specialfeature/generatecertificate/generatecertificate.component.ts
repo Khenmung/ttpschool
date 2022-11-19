@@ -840,62 +840,59 @@ export class GenerateCertificateComponent implements OnInit {
   Groups = [];
   GetMasterData() {
     debugger;
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+    this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+    this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
+
+    this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+    this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
+    //this.StudentGroups = [...this.StudentClubs, ...this.Houses, ...this.StudentGroups];
+
+    // this.Groups.push({
+    //   name: "Club",
+    //   disable: true,
+    //   group: this.StudentClubs
+    // },
+    //   {
+    //     name: "House",
+    //     disable: true,
+    //     group: this.Houses
+    //   },
+    //   {
+    //     name: "Student Group",
+    //     disable: true,
+    //     group: this.StudentGroups
+    //   }
+    // )
+    this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
+    this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
+    this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
+    this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
+    this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+
+    //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+    this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+
+
+    this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
+    this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
+    this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
+    this.GetPoints();
+    //this.shareddata.ChangeBatch(this.Batches);
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
-        this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
-
-        this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
-        this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
-        //this.StudentGroups = [...this.StudentClubs, ...this.Houses, ...this.StudentGroups];
-
-        // this.Groups.push({
-        //   name: "Club",
-        //   disable: true,
-        //   group: this.StudentClubs
-        // },
-        //   {
-        //     name: "House",
-        //     disable: true,
-        //     group: this.Houses
-        //   },
-        //   {
-        //     name: "Student Group",
-        //     disable: true,
-        //     group: this.StudentGroups
-        //   }
-        // )
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
-        this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
-        this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
-        this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-
-
-        this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
-        this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
-        this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
-        this.GetPoints();
-        //this.shareddata.ChangeBatch(this.Batches);
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          });
-        this.Batches = this.tokenstorage.getBatches()
-        //this.GetStudentClasses();
-        this.GetOrganization();
-        //this.GetTotalAttendance();
-        this.GetExams();
+        this.ClassGroups = [...data.value];
       });
+    this.Batches = this.tokenstorage.getBatches()
+    //this.GetStudentClasses();
+    this.GetOrganization();
+    //this.GetTotalAttendance();
+    this.GetExams();
   }
   clear() {
     this.SportsResultList = [];
@@ -962,70 +959,71 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    var extrafilter = ''
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName',
-      'FatherName',
-      'MotherName',
-      'ContactNo',
-      'FatherContactNo',
-      'MotherContactNo'
-    ];
-    list.PageName = "Students";
+    // var extrafilter = ''
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentId',
+    //   'FirstName',
+    //   'LastName',
+    //   'FatherName',
+    //   'MotherName',
+    //   'ContactNo',
+    //   'FatherContactNo',
+    //   'MotherContactNo'
+    // ];
+    // list.PageName = "Students";
 
-    var standardfilter = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    // var standardfilter = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    list.filter = [standardfilter];
+    // list.filter = [standardfilter];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        //this.Students = [...data.value];
-        //  //console.log('data.value', data.value);
-        this.Students = [];
-        if (data.value.length > 0) {
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    debugger;
+    //this.Students = [...data.value];
+    //  //console.log('data.value', data.value);
+    this.Students = [];
+    var _students: any = this.tokenstorage.getStudents();
+    if (_students.length > 0) {
 
-          //var _students = [...data.value];
+      //var _students = [...data.value];
 
-          data.value.forEach(student => {
-            var _RollNo = '';
-            var _name = '';
-            var _className = '';
-            var _section = '';
-            var _studentClassId = 0;
-            var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-            if (studentclassobj.length > 0) {
-              _studentClassId = studentclassobj[0].StudentClassId;
-              var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
+      _students.forEach(student => {
+        var _RollNo = '';
+        var _name = '';
+        var _className = '';
+        var _section = '';
+        var _studentClassId = 0;
+        var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+        if (studentclassobj.length > 0) {
+          _studentClassId = studentclassobj[0].StudentClassId;
+          var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
 
-              if (_classNameobj.length > 0)
-                _className = _classNameobj[0].ClassName;
-              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+          if (_classNameobj.length > 0)
+            _className = _classNameobj[0].ClassName;
+          var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
 
-              if (_SectionObj.length > 0)
-                _section = _SectionObj[0].MasterDataName;
-              _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
+          if (_SectionObj.length > 0)
+            _section = _SectionObj[0].MasterDataName;
+          _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
 
-              student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-              var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
-              _name = student.FirstName + _lastname;
-              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-              this.Students.push({
-                StudentClassId: _studentClassId,
-                StudentId: student.StudentId,
-                Name: _fullDescription,
-                FatherName: student.FatherName,
-                MotherName: student.MotherName
-              });
-            }
-          })
+          student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+          var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
+          _name = student.FirstName + _lastname;
+          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+          this.Students.push({
+            StudentClassId: _studentClassId,
+            StudentId: student.StudentId,
+            Name: _fullDescription,
+            FatherName: student.FatherName,
+            MotherName: student.MotherName
+          });
         }
-        this.loading = false;
-        this.PageLoading = false;
       })
+    }
+    this.loading = false;
+    this.PageLoading = false;
+    //})
   }
   SportsResultList = [];
   ActivityDisplayColumn = ["GroupName", "SportsName", "Category", "SubCategory", "Session", "Action"];
@@ -1202,7 +1200,7 @@ export class GenerateCertificateComponent implements OnInit {
       this.contentservice.openSnackBar("Please select student!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
+
     if (this.SelectedCertificateType.toLowerCase() == 'provisional certificate' || this.SelectedCertificateType.toLowerCase() == 'transfer certificate') {
       var _examId = this.searchForm.get("searchExamId").value;
       if (_examId == 0) {

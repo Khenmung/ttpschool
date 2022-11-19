@@ -248,42 +248,39 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.token.getMasterData();
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+
+    this.Batches = this.token.getBatches()
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+        this.ClassGroups = [...data.value];
+      })
+    //this.shareddata.ChangeBatch(this.Batches);
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
+      .subscribe((data: any) => {
+        this.Exams = [];
+        data.value.forEach(f => {
+          var obj = this.ExamNames.filter(e => e.MasterDataId == f.ExamNameId);
+          if (obj.length > 0) {
+            f.ExamName = obj[0].MasterDataName;
+            this.Exams.push(f);
+          }
 
-        this.Batches = this.token.getBatches()
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          })
-        //this.shareddata.ChangeBatch(this.Batches);
-        this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
-          .subscribe((data: any) => {
-            this.Exams = [];
-            data.value.forEach(f => {
-              var obj = this.ExamNames.filter(e => e.MasterDataId == f.ExamNameId);
-              if (obj.length > 0) {
-                f.ExamName = obj[0].MasterDataName;
-                this.Exams.push(f);
-              }
-
-            })
-          });
-
-        if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.Classes = [...data.value];
-            this.GetClassSubject();
-          });
-        }
-
-        this.loading = false;
-        this.PageLoading = false;
+        })
       });
+
+    if (this.Classes.length == 0) {
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+        this.GetClassSubject();
+      });
+    }
+
+    this.loading = false;
+    this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.token, this.allMasterData);
@@ -362,7 +359,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>([]);
     this.FilterClass();
     //var _selectedClassGroupId = examobj[0].ClassGroupId;
-    
+
     //this.SelectedClasses = this.ClassGroupMappings.filter(g => g.ClassGroupId == _selectedClassGroupId);
 
   }

@@ -29,7 +29,7 @@ export class EmployeeactivityComponent implements OnInit {
   loading = false;
   EmployeeActivityList: IEmployeeActivity[] = [];
   SelectedBatchId = 0;
-  EmployeeActivity=[];
+  EmployeeActivity = [];
   EmployeeActivitySession = [];
   EmployeeActivityCategories = [];
   EmployeeActivitySubCategories = [];
@@ -88,8 +88,8 @@ export class EmployeeactivityComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchEmployeeName: [0],
-      searchActivity:[0],
-      searchSession:[0]
+      searchActivity: [0],
+      searchSession: [0]
     });
     this.filteredOptions = this.searchForm.get("searchEmployeeName").valueChanges
       .pipe(
@@ -312,19 +312,16 @@ export class EmployeeactivityComponent implements OnInit {
       });
 
   }
-  
+
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Batches = this.tokenstorage.getBatches()
-        this.EmployeeActivity=this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITY);
-        this.EmployeeActivityCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYCATEGORY);
-        this.EmployeeActivitySession = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSESSION);
-        this.GetEmployees();
-        //this.GetEmployeeActivity();
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.Batches = this.tokenstorage.getBatches()
+    this.EmployeeActivity = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITY);
+    this.EmployeeActivityCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYCATEGORY);
+    this.EmployeeActivitySession = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSESSION);
+    this.GetEmployees();
+    //this.GetEmployeeActivity();
   }
   onBlur(row) {
     row.Action = true;

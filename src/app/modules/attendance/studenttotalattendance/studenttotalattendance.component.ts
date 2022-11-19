@@ -9,7 +9,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-studenttotalattendance',
@@ -252,7 +252,7 @@ export class StudenttotalattendanceComponent implements OnInit {
         }
       });
   }
-  ExamReleaseResult=true;
+  ExamReleaseResult = true;
   GetTotalAttendance() {
     debugger;
     this.loading = true;
@@ -264,17 +264,15 @@ export class StudenttotalattendanceComponent implements OnInit {
     if (_examId > 0) {
       filterStr += " and ExamId eq " + _examId;
     }
-    else
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select exam.",globalconstants.ActionText,globalconstants.RedBackground);
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     //var ExamReleaseResult =true; 
-    var examObj =this.Exams.filter(f=>f.ExamId == _examId);
-    if(examObj.length>0)
-    {
-      this.ExamReleaseResult = examObj[0].ReleaseResult==1?true:false;
+    var examObj = this.Exams.filter(f => f.ExamId == _examId);
+    if (examObj.length > 0) {
+      this.ExamReleaseResult = examObj[0].ReleaseResult == 1 ? true : false;
     }
     let list: List = new List();
     list.fields = ["*"];
@@ -286,7 +284,7 @@ export class StudenttotalattendanceComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         this.TotalAttendanceList = [];
-        var _classes = this.ClassGroupMapping.filter(g=>g.ClassGroupId == examObj[0].ClassGroupId);
+        var _classes = this.ClassGroupMapping.filter(g => g.ClassGroupId == examObj[0].ClassGroupId);
         _classes.forEach(f => {
 
           var objExisting = data.value.filter(c => c.ClassId == f.ClassId);
@@ -336,34 +334,31 @@ export class StudenttotalattendanceComponent implements OnInit {
     debugger;
     this.TotalAttendanceList.forEach(f => {
       f.Active = event.checked;
-      f.Action=true;
+      f.Action = true;
     })
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME)
+
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.loading = false; this.PageLoading = false;
+    });
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME)
+        this.Exams = [];
+        data.value.forEach(f => {
+          var obj = this.ExamNames.filter(e => e.MasterDataId == f.ExamNameId);
+          if (obj.length > 0) {
+            f.ExamName = obj[0].MasterDataName;
+            this.Exams.push(f);
+          }
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.loading = false; this.PageLoading = false;
-        });
-        this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
-          .subscribe((data: any) => {
-            this.Exams = [];
-            data.value.forEach(f => {
-              var obj = this.ExamNames.filter(e => e.MasterDataId == f.ExamNameId);
-              if (obj.length > 0) {
-                f.ExamName = obj[0].MasterDataName;
-                this.Exams.push(f);
-              }
-
-            })
-          })
-      });
+        })
+      })
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

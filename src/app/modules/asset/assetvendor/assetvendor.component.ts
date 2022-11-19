@@ -277,9 +277,7 @@ export class AssetVendorComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
+    this.allMasterData = this.tokenstorage.getMasterData();
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);       
       this.PageLoading=false;
       this.loading=false;

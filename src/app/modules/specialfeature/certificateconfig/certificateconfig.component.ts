@@ -4,7 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { startWith,map } from 'rxjs/operators';
+import { startWith, map } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -39,14 +39,14 @@ export class CertificateconfigComponent implements OnInit {
     Title: '',
     Description: '',
     ParentId: 0,
-    Sequence:0,
+    Sequence: 0,
     Confidential: false,
     Active: false,
     OrgId: 0
   };
-  filteredMaster:any=[];
+  filteredMaster: any = [];
   CertificateConfigForUpdate = [];
-  StudentVariableNames =[];
+  StudentVariableNames = [];
   displayedColumns = [
     "CertificateConfigId",
     "Title",
@@ -80,11 +80,11 @@ export class CertificateconfigComponent implements OnInit {
       searchTitleId: [0]
     });
     this.filteredMaster = this.searchForm.get("searchTitleId").valueChanges
-    .pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value.MasterDataName),
-      map(Name => Name ? this._filter(Name) : this.AllCertificateConfig.slice())
-    );
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.MasterDataName),
+        map(Name => Name ? this._filter(Name) : this.AllCertificateConfig.slice())
+      );
     this.ClassId = this.tokenstorage.getClassId();
     this.PageLoad();
 
@@ -181,9 +181,9 @@ export class CertificateconfigComponent implements OnInit {
               CertificateConfigId: row.CertificateConfigId,
               Title: row.Title,
               ParentId: row.ParentId,
-              Sequence:row.Sequence,
+              Sequence: row.Sequence,
               Description: row.Description,
-              Confidential:row.Confidential,
+              Confidential: row.Confidential,
               OrgId: this.LoginUserDetail[0]['orgId'],
               Active: row.Active
             });
@@ -242,10 +242,10 @@ export class CertificateconfigComponent implements OnInit {
         });
   }
   AllCertificateConfig = [];
-  TopCertificateConfig =[];
+  TopCertificateConfig = [];
   GetAllCertificateConfig() {
     debugger;
-    var filterStr = "Active eq true and (OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"]+")";
+    var filterStr = "Active eq true and (OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")";
     this.loading = true;
     this.CertificateConfigList = [];
 
@@ -265,13 +265,13 @@ export class CertificateconfigComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllCertificateConfig = [...data.value];
-        var _certificatetypeId = this.AllCertificateConfig.filter(f=>f.Title.toLowerCase() =='certificate type')[0].CertificateConfigId;
-        this.TopCertificateConfig = this.AllCertificateConfig.filter(a=>a.ParentId ==_certificatetypeId);
+        var _certificatetypeId = this.AllCertificateConfig.filter(f => f.Title.toLowerCase() == 'certificate type')[0].CertificateConfigId;
+        this.TopCertificateConfig = this.AllCertificateConfig.filter(a => a.ParentId == _certificatetypeId);
         this.loadingFalse();
       });
   }
-  cleardata(){
-    this.CertificateConfigList =[];
+  cleardata() {
+    this.CertificateConfigList = [];
     this.dataSource = new MatTableDataSource(this.CertificateConfigList);
   }
   GetCertificateConfig() {
@@ -281,10 +281,9 @@ export class CertificateconfigComponent implements OnInit {
     if (_searchCertificateConfigId > 0) {
       filterStr += " and ParentId eq " + _searchCertificateConfigId;
     }
-    else
-    {
-      this.loading=false;      
-      this.contentservice.openSnackBar("Please select title",globalconstants.ActionText,globalconstants.RedBackground);
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select title", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -315,7 +314,7 @@ export class CertificateconfigComponent implements OnInit {
         if (this.CertificateConfigList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
-        this.CertificateConfigList = this.CertificateConfigList.sort((a,b)=>a.Sequence - b.Sequence);
+        this.CertificateConfigList = this.CertificateConfigList.sort((a, b) => a.Sequence - b.Sequence);
         this.dataSource = new MatTableDataSource<ICertificateConfig>(this.CertificateConfigList);
         this.dataSource.paginator = this.paginator;
         this.loadingFalse();
@@ -331,13 +330,10 @@ export class CertificateconfigComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
-        this.PageLoading = false;
-        this.loading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    //this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
+    this.PageLoading = false;
+    this.loading = false;
   }
 
   AddNew() {
@@ -347,8 +343,8 @@ export class CertificateconfigComponent implements OnInit {
       Title: '',
       ParentId: 0,
       Description: '',
-      Sequence:0,
-      Confidential:false,
+      Sequence: 0,
+      Confidential: false,
       Active: false,
       Action: false
     };
@@ -379,7 +375,7 @@ export interface ICertificateConfig {
   Title: string;
   Description: string;
   ParentId: number;
-  Sequence:number;
+  Sequence: number;
   Confidential: boolean;
   Active: boolean;
   Action: boolean;

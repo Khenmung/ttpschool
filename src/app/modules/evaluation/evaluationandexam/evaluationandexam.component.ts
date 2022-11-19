@@ -10,7 +10,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-evaluationandexam',
@@ -18,7 +18,7 @@ import {SwUpdate} from '@angular/service-worker';
   styleUrls: ['./evaluationandexam.component.scss']
 })
 export class EvaluationandExamComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   LoginUserDetail: any[] = [];
@@ -126,7 +126,7 @@ export class EvaluationandExamComponent implements OnInit {
               ExamId: e.ExamId,
               ExamName: obj[0].MasterDataName,
               ClassGroupId: e.ClassGroupId,
-              AttendanceStartDate:e.AttendanceStartDate
+              AttendanceStartDate: e.AttendanceStartDate
             })
         });
         this.loading = false; this.PageLoading = false;
@@ -349,15 +349,12 @@ export class EvaluationandExamComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.GetExams();
-        this.loading = false; this.PageLoading = false;
-        this.GetEvaluationMasters();
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.GetExams();
+    this.loading = false; this.PageLoading = false;
+    this.GetEvaluationMasters();
   }
   onBlur(row) {
     row.Action = true;

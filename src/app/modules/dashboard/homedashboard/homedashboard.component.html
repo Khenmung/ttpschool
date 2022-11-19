@@ -15,12 +15,12 @@
             <span>
                 <mat-form-field [style.width.px]="130" appearance="outline">
                     <mat-label>Batch</mat-label>
-                    <mat-select formControlName="searchBatchId">
+                    <mat-select formControlName="searchBatchId" (selectionChange)="changebatch()">
                         <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </span>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="submit()">
+            <button [disabled]="loading || !ValueChanged" mat-raised-button color="accent" (click)="submit()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>

@@ -151,11 +151,11 @@ export class ExamclassgroupComponent implements OnInit {
       return;
     }
 
-    
+
     let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ClassGroupId eq " + row.ClassGroupId +
       " and ExamId eq " + row.ExamId;
-    
+
     if (row.ExamClassGroupMapId > 0)
       checkFilterString += " and ExamClassGroupMapId ne " + row.ExamClassGroupMapId;
     let list: List = new List();
@@ -277,8 +277,8 @@ export class ExamclassgroupComponent implements OnInit {
       else
         this.ExamReleased = 0;
 
-      
-        filterStr += ' and ExamId eq ' + _examId;
+
+      filterStr += ' and ExamId eq ' + _examId;
     }
 
     let list: List = new List();
@@ -294,23 +294,23 @@ export class ExamclassgroupComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.ExamClassGroupMapList=[];
+        this.ExamClassGroupMapList = [];
         this.ClassGroups.forEach(c => {
           var existing = data.value.filter(d => d.ClassGroupId == c.ClassGroupId)
           if (existing.length > 0) {
             existing[0].GroupName = c.GroupName;
             existing[0].Action = false;
-            existing[0].Sort= existing[0].Active?1:0;
+            existing[0].Sort = existing[0].Active ? 1 : 0;
             this.ExamClassGroupMapList.push(existing[0]);
           }
           else {
             this.ExamClassGroupMapList.push({
               ExamClassGroupMapId: 0,
               ExamId: _examId,
-              GroupName:c.GroupName,
+              GroupName: c.GroupName,
               ClassGroupId: c.ClassGroupId,
               Active: false,
-              Sort:0,
+              Sort: 0,
               Action: false
             })
           }
@@ -319,7 +319,7 @@ export class ExamclassgroupComponent implements OnInit {
         if (this.ExamClassGroupMapList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
-          this.ExamClassGroupMapList = this.ExamClassGroupMapList.sort((a,b)=>b.Sort - a.Sort || b.ExamClassGroupMapId - a.ExamClassGroupMapId)
+        this.ExamClassGroupMapList = this.ExamClassGroupMapList.sort((a, b) => b.Sort - a.Sort || b.ExamClassGroupMapId - a.ExamClassGroupMapId)
         this.dataSource = new MatTableDataSource<IExamClassGroupMap>(this.ExamClassGroupMapList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
@@ -343,37 +343,34 @@ export class ExamclassgroupComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.loading = false; this.PageLoading = false;
+    });
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.loading = false; this.PageLoading = false;
-        });
-        this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
-          .subscribe((data: any) => {
-            //this.Exams = [...data.value];
-            this.Exams = [];
-            data.value.forEach(e => {
-              //var _examName = '';
-              var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active == 1)
-              if (obj.length > 0) {
-                //_examName = obj[0].MasterDataName
-                this.Exams.push({
-                  ExamId: e.ExamId,
-                  ExamName: obj[0].MasterDataName,
-                  ClassGroupId: e.ClassGroupId,
-                  StartDate: e.StartDate,
-                  EndDate: e.EndDate,
-                  AttendanceStartDate: e.AttendanceStartDate,
-                  Sequence: obj[0].Sequence,
-                  ReleaseResult: e.ReleaseResult
-                })
-              }
+        //this.Exams = [...data.value];
+        this.Exams = [];
+        data.value.forEach(e => {
+          //var _examName = '';
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active == 1)
+          if (obj.length > 0) {
+            //_examName = obj[0].MasterDataName
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: e.ClassGroupId,
+              StartDate: e.StartDate,
+              EndDate: e.EndDate,
+              AttendanceStartDate: e.AttendanceStartDate,
+              Sequence: obj[0].Sequence,
+              ReleaseResult: e.ReleaseResult
             })
-          })
-      });
+          }
+        })
+      })
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -382,10 +379,10 @@ export class ExamclassgroupComponent implements OnInit {
 export interface IExamClassGroupMap {
   ExamClassGroupMapId: number;
   ExamId: number;
-  GroupName:string;
+  GroupName: string;
   ClassGroupId: number;
   Active: boolean;
-  Sort:number;
+  Sort: number;
   Action: boolean;
 }
 
