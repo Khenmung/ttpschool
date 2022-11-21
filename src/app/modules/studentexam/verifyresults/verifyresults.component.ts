@@ -152,7 +152,7 @@ export class VerifyResultsComponent implements OnInit {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
         this.GetExamClassGroup();
-        this.GetSubjectTypes();
+
         //this.GetStudentAttendance();
 
       }
@@ -170,8 +170,7 @@ export class VerifyResultsComponent implements OnInit {
       this.ExamReleased = obj[0].ReleaseResult;
     }
     this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
-    //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
-    //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
+    //this.GetSelectedSubjectsForSelectedExam();
 
   }
   clear() {
@@ -225,6 +224,7 @@ export class VerifyResultsComponent implements OnInit {
             Confidential: cs.Confidential,
             ClassSubject: _class + '-' + _subject,
             SubjectName: _subject,
+            SubjectTypeId: cs.SubjectTypeId,
             SubjectType: _subjectType,
             SelectHowMany: _selectHowMany,
             SubjectCategoryId: cs.SubjectCategoryId
@@ -566,7 +566,6 @@ export class VerifyResultsComponent implements OnInit {
             filteredExistingComponentMarks.push(d);
         })
         this.ClassFullMark = 0;
-
         var ForGrading, ForNonGrading;
 
         StudentOwnSubjects.forEach(f => {
@@ -583,6 +582,29 @@ export class VerifyResultsComponent implements OnInit {
         this.VerifiedResult.ExamResultSubjectMark = [];
         var errormessageforEachSubject = [];
         var viewMarkPercent = this.searchForm.get("viewMarkPercentCheckBox").value;
+
+        /////////
+        var subjectCount = 0;
+        var _subjectCategoryMarkingId = 0;
+        var _objSubjectCat = this.SubjectCategory.filter(f => f.MasterDataName.toLowerCase() == 'marking')
+        if (_objSubjectCat.length > 0)
+          _subjectCategoryMarkingId = _objSubjectCat[0].MasterDataId;
+        var _noOfSubjectForAStudent = this.ClassSubjects.filter(allsubj => allsubj.SubjectCategoryId == _subjectCategoryMarkingId
+          && allsubj.ClassId == pClassId)
+        var SubjectCounts = alasql("select SubjectTypeId,SubjectType,SelectHowMany from ? ", [_noOfSubjectForAStudent])
+        subjectCount = SubjectCounts.filter(com => com.SubjectType.toLowerCase() == 'compulsory').length;
+        //var OtherthanCompulsory= SubjectCounts.filter(com=>com.SubjectType.toLowerCase() !='compulsory');
+        var withoutCompulsory = this.SubjectTypes.filter(s => s.SubjectTypeName.toLowerCase() != 'compulsory');
+        var subjectsWithNotCompulsory = SubjectCounts.filter(com => com.SubjectType.toLowerCase() != 'compulsory');
+        var uniqueTypes = alasql("select distinct SubjectTypeId,SubjectType,SelectHowMany from ?", [subjectsWithNotCompulsory]);
+
+        subjectsWithNotCompulsory = uniqueTypes.filter(sub => withoutCompulsory.findIndex(fi => fi.SubjectTypeId == sub.SubjectTypeId) > -1);
+        subjectCount += subjectsWithNotCompulsory.reduce((acc, current) => acc + current.SelectHowMany, 0);
+
+        console.log("_noOfSubjectForAStudent", subjectCount)
+        this.ClassFullMark = subjectCount * 100;
+        ////////  
+
         //for each student
         filteredIndividualStud.forEach(ss => {
 
@@ -607,52 +629,24 @@ export class VerifyResultsComponent implements OnInit {
 
           var forEachSubjectOfStud = this.StudentSubjects.filter(s => s.Student == ss.Student)
           //var _subjectDetailToInsert ={}
-          this.ClassFullMark = 0;
-          var subjectCount = 0;
-          var _subjectCategoryMarkingId = 0;
-          var _objSubjectCat = this.SubjectCategory.filter(f => f.MasterDataName.toLowerCase() == 'marking')
-          if (_objSubjectCat.length > 0) {
-            _subjectCategoryMarkingId = _objSubjectCat[0].MasterDataId;
-            //debugger;
-            // //preparing fullmark for all subjects
-            // forEachSubjectOfStud.forEach(eachsubj => {
+          //this.ClassFullMark = 0;
 
-            //   //this.ClassFullMark is included only if subject category is marking.
-            //   if (_subjectCategoryMarkingId == eachsubj.SubjectCategoryId) {
+          //console.log("forEachSubjectOfStud",forEachSubjectOfStud)
+          //debugger;
+          // //preparing fullmark for all subjects
+          // forEachSubjectOfStud.forEach(eachsubj => {
 
-            //     var objFullMark = _examSubjectMarkComponentDefn.filter(c => c.ClassSubjectId == eachsubj.ClassSubjectId);
-            //     if (objFullMark.length > 0)
-            //       this.ClassFullMark += objFullMark.reduce((acc, current) => acc + current.FullMark, 0);
-            //   }
-            // })
+          //   //this.ClassFullMark is included only if subject category is marking.
+          //   if (_subjectCategoryMarkingId == eachsubj.SubjectCategoryId) {
 
-            var _noOfSubjectForAStudent = alasql("select distinct ClassSubjectId,Active FROM ? where SubjectCategoryId =?  GROUP BY ClassSubjectId",
-              [StudentOwnSubjects, _subjectCategoryMarkingId]);
+          //     var objFullMark = _examSubjectMarkComponentDefn.filter(c => c.ClassSubjectId == eachsubj.ClassSubjectId);
+          //     if (objFullMark.length > 0)
+          //       this.ClassFullMark += objFullMark.reduce((acc, current) => acc + current.FullMark, 0);
+          //   }
+          // })
 
-            // var _GroupBySubjectType = alasql("select distinct SubjectType,SelectHowMany FROM ? where SubjectCategoryId =? and StudentClassId = ?",
-            // [StudentOwnSubjects,_subjectCategoryMarkingId,ss.StudentClassId]);
-            // var compulsory = alasql("select SubjectType FROM ? where SubjectCategoryId =? and StudentClassId = ? and SubjectType=='Compulsory'",
-            // [StudentOwnSubjects,_subjectCategoryMarkingId,ss.StudentClassId]);
-            // //var compulsory =_GroupBySubjectType.filter(no=>no.SubjectType.toLowerCase()=='compulsory');
-            // //var otherThanCompulsory =_GroupBySubjectType.filter(no=>no.SubjectType.toLowerCase()!='compulsory');
-            // _GroupBySubjectType.forEach(o=>{
-            //   if(o.SubjectType.toLowerCase()=='compulsory')
-            //   {
-            //     subjectCount+=compulsory.length;
-            //   }
-            //   else
-            //   {
-            //     subjectCount +=o.SelectHowMany; 
-            //   }
-            // })
-            // subjectCount =6;
-            subjectCount = _noOfSubjectForAStudent.length;
-            //console.log("_noOfSubjectForAStudent",subjectCount)
-            //console.log("this.ClassFullMark",this.ClassFullMark);
-            //this.ClassFullMark = (this.ClassFullMark / 100) * (subjectCount * 100)
-            this.ClassFullMark = subjectCount * 100;
 
-          }
+
 
           forEachSubjectOfStud.forEach(eachsubj => {
 
@@ -686,20 +680,20 @@ export class VerifyResultsComponent implements OnInit {
                   failedInComponent = true;
               })
               var _statusFail = true;
-
+              var ExamResultSubjectMarkData = {
+                ExamResultSubjectMarkId: 0,
+                StudentClassId: 0,
+                ExamId: 0,
+                StudentClassSubjectId: 0,
+                Marks: 0,
+                ActualMarks: 0,
+                Grade: '',
+                OrgId: 0,
+                Active: 0,
+                BatchId: 0
+              }
               if (markObtained.length > 0) {
-                var ExamResultSubjectMarkData = {
-                  ExamResultSubjectMarkId: 0,
-                  StudentClassId: 0,
-                  ExamId: 0,
-                  StudentClassSubjectId: 0,
-                  Marks: 0,
-                  ActualMarks: 0,
-                  Grade: '',
-                  OrgId: 0,
-                  Active: 0,
-                  BatchId: 0
-                }
+
                 ExamResultSubjectMarkData.Active = 1;
                 ExamResultSubjectMarkData.BatchId = this.SelectedBatchId;
                 ExamResultSubjectMarkData.ExamId = markObtained[0].ExamId;
@@ -760,6 +754,19 @@ export class VerifyResultsComponent implements OnInit {
                     ForNonGrading["Total Percent"] = (parseFloat(ForNonGrading["Total Percent"]) + parseFloat(markConvertedto100Percent)).toFixed(2);
                   }
                 }
+              }
+              else {
+                ExamResultSubjectMarkData.Active = 1;
+                ExamResultSubjectMarkData.BatchId = this.SelectedBatchId;
+                ExamResultSubjectMarkData.ExamId = pExamId;
+                ExamResultSubjectMarkData.ExamResultSubjectMarkId = 0;
+                ExamResultSubjectMarkData.Marks = 0;
+                ExamResultSubjectMarkData.ActualMarks = 0;
+                ExamResultSubjectMarkData.OrgId = this.LoginUserDetail[0]['orgId'];
+                ExamResultSubjectMarkData.StudentClassId = ss.StudentClassId;
+                ExamResultSubjectMarkData.StudentClassSubjectId = eachsubj.StudentClassSubjectId;
+                ExamResultSubjectMarkData.Grade = '';
+                ForNonGrading[eachsubj.Subject] = 0;
               }
               //preparing each subject for insert.
               if (ExamResultSubjectMarkData != undefined)
@@ -898,7 +905,8 @@ export class VerifyResultsComponent implements OnInit {
     this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESMODE);
     this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
     this.ExamResultProperties = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMRESULTPROPERTY);
-    this.GetClassSubject();
+    this.GetSubjectTypes();
+
     this.GetClassGroup();
     this.GetClassGroupMapping();
     this.GetExams();
@@ -1106,19 +1114,20 @@ export class VerifyResultsComponent implements OnInit {
   }
   SubjectTypes = [];
   GetSubjectTypes() {
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
     this.loading = true;
     let list: List = new List();
 
     list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
     list.PageName = "SubjectTypes";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         this.SubjectTypes = [...data.value];
+        this.GetClassSubject();
         this.GetSubjectComponents();
       })
   }

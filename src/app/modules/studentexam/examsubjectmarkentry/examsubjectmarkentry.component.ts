@@ -199,7 +199,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
           this.ExamStudentSubjectResultData.BatchId = this.SelectedBatchId;
           this.ExamStudentSubjectResultData.ExamStatus = _examstatus;
           this.ExamStudentSubjectResultData.Marks = parseFloat(row.Marks);
-          console.log("this.ExamStudentSubjectResultData", this.ExamStudentSubjectResultData)
+          //console.log("this.ExamStudentSubjectResultData", this.ExamStudentSubjectResultData)
           if (this.ExamStudentSubjectResultData.ExamStudentSubjectResultId == 0) {
             this.ExamStudentSubjectResultData["CreatedDate"] = new Date();
             this.ExamStudentSubjectResultData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -339,7 +339,6 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
 
         this.StudentSubjects = [];
         var dbdata = data.value.filter(x => x.ClassSubject.Active == 1)
-        //console.log("this.StudentSubjects", this.StudentSubjects);
         dbdata.forEach(s => {
           _class = '';
           _subject = '';
@@ -583,12 +582,11 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
             StudentClassSubject: ss.StudentClassSubject,
             StudentClassSubjectId: ss.StudentClassSubjectId
           }
-
+          
           ss.Components.forEach(component => {
-
             let existing = data.value.filter(db => db.StudentClassSubjectId == ss.StudentClassSubjectId
               && db.ClassSubjectMarkComponentId == component.ClassSubjectMarkComponentId);
-            if (existing.length > 0) {
+              if (existing.length > 0) {
               var _ComponentName = this.MarkComponents.filter(c => c.MasterDataId == existing[0].ClassSubjectMarkComponent.SubjectComponentId)[0].MasterDataName;
               var _toPush;
               if (this.displayedColumns.indexOf(_ComponentName) == -1)

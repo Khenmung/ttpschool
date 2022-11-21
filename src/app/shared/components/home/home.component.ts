@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
   ngAfterViewInit(): void {
     this.sidenavService.setSidenav(this.sidenav);
   }
-  
+
   ngOnInit(): void {
     this.servicework.activateUpdate().then(() => {
       this.servicework.checkForUpdate().then((value) => {
@@ -74,30 +74,19 @@ export class HomeComponent implements OnInit {
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
       this.loginUserDetail = this.tokenStorage.getUserDetail();
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-      this.shareddata.CurrentPagesData.subscribe((data: any) => {
-        this.MenuData = [...data];
-        /////////////////////
-      })
-      debugger;
-      if (this.MenuData.length == 0 && this.loginUserDetail.length!=0)
-        this.GetMenuData();
+      // if (this.SelectedApplicationId > 1)
+      this.sideMenu = this.tokenStorage.getMenuData();
+      //console.log("home init this.sideMenu", this.sideMenu)
     })
-    //this.GetMenuData();
 
+    
   }
-  // lastScrollTop = 0
-  // scrollHandler(event) {
-  //   let currentScrollTop = event.currentTarget.scrollTop
-  //   if (currentScrollTop > this.lastScrollTop) 
-  //   console.log("down")
-  //   else  console.log("up")
-  //   this.lastScrollTop = currentScrollTop
-  // }
+
   ngOnDestroy() {
     this.mediaSub.unsubscribe();
   }
-  busy(event){
-    
+  busy(event) {
+
     event.stopPropagation()
   }
   toggleSidebar() {
@@ -124,6 +113,7 @@ export class HomeComponent implements OnInit {
   GetMenuData() {
     debugger;
     //let containAdmin = window.location.href.toLowerCase().indexOf('admin');
+    console.log("in home")
     let strFilter = '';
     strFilter = "PlanId eq " + this.loginUserDetail[0]["planId"] + " and Active eq 1 and ApplicationId eq " + this.SelectedApplicationId;
 

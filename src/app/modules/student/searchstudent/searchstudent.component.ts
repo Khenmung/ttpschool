@@ -104,7 +104,7 @@ export class searchstudentComponent implements OnInit {
         }
       })
     })
-debugger;
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
     if (this.LoginUserDetail == "") {
@@ -152,7 +152,7 @@ debugger;
           map(value => typeof value === 'string' ? value : value.MotherName),
           map(Name => Name ? this._filterM(Name) : this.Students.slice())
         );
-
+      this.allMasterData = this.token.getMasterData();
       this.StudentSearch = this.token.getStudentSearch();
       // if (this.StudentSearch.length > 0) {
       //   if (this.StudentSearch[0].SectionId > 0)
@@ -211,106 +211,101 @@ debugger;
   }
   Groups = [];
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
 
-        this.shareddata.ChangeMasterData(data.value);
-        this.allMasterData = [...data.value];
 
-        this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
-        this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
+    this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
+    this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.token.getBatches()
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
-        this.shareddata.ChangeCategory(this.Category);
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.Batches = this.token.getBatches()
+    this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
+    this.shareddata.ChangeCategory(this.Category);
 
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        this.shareddata.ChangeReligion(this.Religion);
+    this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+    this.shareddata.ChangeReligion(this.Religion);
 
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
-        this.shareddata.ChangeStates(this.States);
+    this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+    this.shareddata.ChangeStates(this.States);
 
-        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
-        this.shareddata.ChangePrimaryContact(this.PrimaryContact);
+    this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
+    this.shareddata.ChangePrimaryContact(this.PrimaryContact);
 
-        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        this.shareddata.ChangeLocation(this.Location);
+    this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
+    this.shareddata.ChangeLocation(this.Location);
 
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.shareddata.ChangeGenders(this.Genders);
+    this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
+    this.shareddata.ChangeGenders(this.Genders);
 
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
-        this.shareddata.ChangeBloodgroup(this.Bloodgroup);
+    this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
+    this.shareddata.ChangeBloodgroup(this.Bloodgroup);
 
-        this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTUPPERCLS);
-        this.shareddata.ChangeLanguageSubjectUpper(this.LanguageSubjUpper);
+    this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTUPPERCLS);
+    this.shareddata.ChangeLanguageSubjectUpper(this.LanguageSubjUpper);
 
-        this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
-        this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
-        this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
-        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((f: any) => {
-          this.FeeDefinitions = [...f.value];
-          this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
-        });
+    this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
+    this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
+    this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
+    this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((f: any) => {
+      this.FeeDefinitions = [...f.value];
+      this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
+    });
 
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.shareddata.ChangeSection(this.Sections);
-        this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
-        this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
-        this.shareddata.ChangeHouse(this.Houses);
-        this.Clubs.forEach(c => {
-          c.type = 'ClubId'
-        })
-        this.Houses.forEach(h => {
-          h.type = 'HouseId'
-        })
-        this.Remarks.forEach(h => {
-          h.type = 'RemarkId'
-        })
-        this.Groups.push({
-          name: "Club",
-          disable: true,
-          group: this.Clubs
-        },
-          {
-            name: "House",
-            disable: true,
-            group: this.Houses
-          },
-          {
-            name: "Remarks",
-            disable: true,
-            group: this.Remarks
-          }
-        )
-        //console.log("Groups", this.Groups)
-        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
-        this.shareddata.ChangeUploadType(this.UploadTypes);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.shareddata.ChangeSection(this.Sections);
+    this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+    this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+    this.shareddata.ChangeHouse(this.Houses);
+    this.Clubs.forEach(c => {
+      c.type = 'ClubId'
+    })
+    this.Houses.forEach(h => {
+      h.type = 'HouseId'
+    })
+    this.Remarks.forEach(h => {
+      h.type = 'RemarkId'
+    })
+    this.Groups.push({
+      name: "Club",
+      disable: true,
+      group: this.Clubs
+    },
+      {
+        name: "House",
+        disable: true,
+        group: this.Houses
+      },
+      {
+        name: "Remarks",
+        disable: true,
+        group: this.Remarks
+      }
+    )
+    //console.log("Groups", this.Groups)
+    this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
+    this.shareddata.ChangeUploadType(this.UploadTypes);
 
-        this.loading = false; this.PageLoading = false;
-        this.getSelectedBatchStudentIDRollNo();
-        this.GetStudentClasses();
-        var searchObj = this.StudentSearch.filter(f => f.Text == 'ClassId');
-        if (searchObj.length > 0 && searchObj[0].Value > 0
-          && this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() != 'student') {
-          this.studentSearchForm.patchValue({ searchClassId: searchObj[0].Value })
-          var searchSectionIdObj = this.StudentSearch.filter(f => f.Text == 'SectionId');
-          if (searchSectionIdObj.length > 0 && searchSectionIdObj[0].Value > 0)
-            this.studentSearchForm.patchValue({ searchSectionId: searchSectionIdObj[0].Value })
-          var searchFatherObj = this.StudentSearch.filter(f => f.Text == 'FatherName');
-          if (searchFatherObj.length > 0 && searchFatherObj[0].Value > 0)
-            this.studentSearchForm.patchValue({ FatherName: searchFatherObj[0].Value })
-          var searchMotherObj = this.StudentSearch.filter(f => f.Text == 'MotherName');
-          if (searchMotherObj.length > 0 && searchMotherObj[0].Value > 0)
-            this.studentSearchForm.patchValue({ MotherName: searchMotherObj[0].Value })
-          var searchRemarkIdObj = this.StudentSearch.filter(f => f.Text == 'RemarkId');
-          if (searchRemarkIdObj.length > 0 && searchRemarkIdObj[0].Value > 0)
-            this.studentSearchForm.patchValue({ searchRemarkId: searchRemarkIdObj[0].Value })
-          if (this.Students.length == 0)
-            this.GetStudent();
-        }
-      });
+    this.loading = false; this.PageLoading = false;
+    this.getSelectedBatchStudentIDRollNo();
+    this.GetStudentClasses();
+    var searchObj = this.StudentSearch.filter(f => f.Text == 'ClassId');
+    if (searchObj.length > 0 && searchObj[0].Value > 0
+      && this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() != 'student') {
+      this.studentSearchForm.patchValue({ searchClassId: searchObj[0].Value })
+      var searchSectionIdObj = this.StudentSearch.filter(f => f.Text == 'SectionId');
+      if (searchSectionIdObj.length > 0 && searchSectionIdObj[0].Value > 0)
+        this.studentSearchForm.patchValue({ searchSectionId: searchSectionIdObj[0].Value })
+      var searchFatherObj = this.StudentSearch.filter(f => f.Text == 'FatherName');
+      if (searchFatherObj.length > 0 && searchFatherObj[0].Value > 0)
+        this.studentSearchForm.patchValue({ FatherName: searchFatherObj[0].Value })
+      var searchMotherObj = this.StudentSearch.filter(f => f.Text == 'MotherName');
+      if (searchMotherObj.length > 0 && searchMotherObj[0].Value > 0)
+        this.studentSearchForm.patchValue({ MotherName: searchMotherObj[0].Value })
+      var searchRemarkIdObj = this.StudentSearch.filter(f => f.Text == 'RemarkId');
+      if (searchRemarkIdObj.length > 0 && searchRemarkIdObj[0].Value > 0)
+        this.studentSearchForm.patchValue({ searchRemarkId: searchRemarkIdObj[0].Value })
+      if (this.Students.length == 0)
+        this.GetStudent();
+    }
 
   }
   getDropDownData(dropdowntype) {
@@ -726,8 +721,8 @@ debugger;
         //standardfilter += ' and (StudentId eq ' + _studentId + ' or ParentStudentId eq ' + this.Siblings[0].ParentStudentId + ")";
       }
       else
-      this.Students = this.StudentList.filter(s =>s.StudentId == _studentId);
-        //standardfilter += ' and StudentId eq ' + _studentId
+        this.Students = this.StudentList.filter(s => s.StudentId == _studentId);
+      //standardfilter += ' and StudentId eq ' + _studentId
     }
 
 

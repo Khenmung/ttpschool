@@ -163,8 +163,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       " and BatchId eq " + this.SelectedBatchId +
       " and ClassSubjectId eq " + row.ClassSubjectId +
       " and SubjectComponentId eq " + row.SubjectComponentId +
-      " and ExamId eq " + _examId +
-      " and Active eq 1";
+      " and ExamId eq " + _examId;
 
     if (row.ClassSubjectMarkComponentId > 0)
       checkFilterString += " and ClassSubjectMarkComponentId ne " + row.ClassSubjectMarkComponentId;
@@ -406,7 +405,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     ];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)"];
-    list.filter = ["Active eq 1 and " + filterstr];
+    list.filter = [filterstr];
     //list.orderBy = "ParentId";
     //this.ELEMENT_DATA = [];
     this.dataservice.get(list)
@@ -454,11 +453,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
               let existing = clsSubjFiltered.filter(fromdb => fromdb.ClassSubject.SubjectId == subj.SubjectId
                 && fromdb.SubjectComponentId == component.MasterDataId)
               if (existing.length > 0) {
-                existing[0].ClassSubjectMarkComponentId = existing[0].ClassSubjectMarkComponentId;
-                existing[0].ClassSubject = subj.ClassSubject;
-                existing[0].SubjectComponent = this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName;
-                existing[0].Action = false;
-                this.ELEMENT_DATA.push(existing[0]);
+                existing.forEach(e => {
+                  //e.ClassSubjectMarkComponentId = existing[0].ClassSubjectMarkComponentId;
+                  e.ClassSubject = subj.ClassSubject;
+                  e.SubjectComponent = this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName;
+                  e.Action = false;
+                  this.ELEMENT_DATA.push(e);
+                })
               }
               else {
                 let item = {

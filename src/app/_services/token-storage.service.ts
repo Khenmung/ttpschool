@@ -7,26 +7,26 @@ const USER_DETAIL = 'userdetail';
 const REDIRECT_URL = 'redirecturl';
 const SELECTEDBATCHID = 'selectedbatchid';
 const SELECTEDAPPID = 'selectedappid';
-const CHECKBATCHID='checkbatchid'
-const NEXTBATCHID ='nextbatchid';
-const PREVIOUSBATCHID='previousbatchid';
-const PERMITTED_APPS='Permitted_Apps';
-const CURRENTBATCHSTARTEND='CurrentBatchStartEnd';
-const SELECTEDBATCHSTARTEND='SelectedBatchStartEnd';
-const STUDENTID='StudentId';
-const CLASSID='ClassId';
-const STUDENTCLASSID='StudentClassId';
-const EMPLOYEEID ='employeeId';
-const ROLEFILTER ='rolefilter';
-const SELECTEDBATCHNAME ='selectedbatchname';
-const CURRENTBATCHID ='currentbatchid';
-const SELECTEDAPPNAME ='selectedappname';
-const BATCHES ='batches';
-const CUSTOM_FEATURE ='customfeatures';
-const STUDENTSEARCH ='studentsearch';
-const STUDENTS ='students';
-const MENUDATA ='menudata';
-const MASTERDATA ='masterdata';
+const CHECKBATCHID = 'checkbatchid'
+const NEXTBATCHID = 'nextbatchid';
+const PREVIOUSBATCHID = 'previousbatchid';
+const PERMITTED_APPS = 'Permitted_Apps';
+const CURRENTBATCHSTARTEND = 'CurrentBatchStartEnd';
+const SELECTEDBATCHSTARTEND = 'SelectedBatchStartEnd';
+const STUDENTID = 'StudentId';
+const CLASSID = 'ClassId';
+const STUDENTCLASSID = 'StudentClassId';
+const EMPLOYEEID = 'employeeId';
+const ROLEFILTER = 'rolefilter';
+const SELECTEDBATCHNAME = 'selectedbatchname';
+const CURRENTBATCHID = 'currentbatchid';
+const SELECTEDAPPNAME = 'selectedappname';
+const BATCHES = 'batches';
+const CUSTOM_FEATURE = 'customfeatures';
+const STUDENTSEARCH = 'studentsearch';
+const STUDENTS = 'students';
+const MENUDATA = 'menudata';
+const MASTERDATA = 'masterdata';
 
 @Injectable({
   providedIn: 'root'
@@ -37,11 +37,11 @@ export class TokenStorageService {
   signOut(): void {
     var username = localStorage.getItem("username");
     localStorage.clear();
-    localStorage.setItem("username",username);
+    localStorage.setItem("username", username);
   }
 
-  
-  public saveRandomImages(images:any): void {
+
+  public saveRandomImages(images: any): void {
     localStorage.removeItem(RANDOMIMAGE_KEY);
     localStorage.setItem(RANDOMIMAGE_KEY, JSON.stringify(images));
   }
@@ -50,67 +50,65 @@ export class TokenStorageService {
     if (images) {
       return JSON.parse(JSON.stringify(images));
     }
-    return "";    
+    return "";
   }
   public saveMenuData(token: any): void {
     localStorage.removeItem(MENUDATA);
     localStorage.setItem(MENUDATA, JSON.stringify(token));
   }
-  public getMenuData(): object[]|null {
-    var batch=localStorage.getItem(MENUDATA);
-    if (batch) {
-      return JSON.parse(MENUDATA);
-    }
-    return [{}];
+  public getMenuData(): object[] | null {
+    // var batch = localStorage.getItem(MENUDATA);
+    // console.log("tokenstorgage", batch)
     
+    return JSON.parse(localStorage.getItem(MENUDATA) || "[]");
   }
   public saveBatches(token: any): void {
     localStorage.removeItem(BATCHES);
     localStorage.setItem(BATCHES, JSON.stringify(token));
   }
-  public getBatches(): object[]|null {
-    var batch=localStorage.getItem(BATCHES);
+  public getBatches(): object[] | null {
+    var batch = localStorage.getItem(BATCHES);
     if (batch) {
       return JSON.parse(batch);
     }
     return [{}];
-    
+
   }
   public saveMasterData(token: any): void {
     localStorage.removeItem(MASTERDATA);
     localStorage.setItem(MASTERDATA, JSON.stringify(token));
   }
-  public getMasterData(): object[]|null {
-    var master=localStorage.getItem(MASTERDATA);
+  public getMasterData(): object[] | null {
+    var master = localStorage.getItem(MASTERDATA);
     if (master) {
       return JSON.parse(master);
     }
     return [{}];
-    
+
   }
   public saveStudents(token: any): void {
     localStorage.removeItem(STUDENTS);
     localStorage.setItem(STUDENTS, JSON.stringify(token));
   }
-  public getStudents(): object[]|null {
-    var students=localStorage.getItem(STUDENTS);
+  public getStudents(): object[] | null {
+    var students = localStorage.getItem(STUDENTS);
     if (students) {
       return JSON.parse(students);
     }
     return [{}];
-    
+
   }
   public saveStudentSearch(token: any): void {
     localStorage.removeItem(STUDENTSEARCH);
     localStorage.setItem(STUDENTSEARCH, JSON.stringify(token));
   }
-  public getStudentSearch(): object[]|null {
-    var batch=localStorage.getItem(STUDENTSEARCH);
+  public getStudentSearch(): object[] | null {
+    var batch = localStorage.getItem(STUDENTSEARCH);
     if (batch) {
       return JSON.parse(batch);
     }
     return [{}];
-    
+
   }
   public saveCurrentBatchStartEnd(token: any): void {
     localStorage.removeItem(CURRENTBATCHSTARTEND);
@@ -144,7 +142,7 @@ export class TokenStorageService {
   public getPreviousBatchId(): string | null {
     return localStorage.getItem(PREVIOUSBATCHID);
   }
-  
+
   public saveRefreshToken(RefreshToken: string): void {
     localStorage.removeItem(REFRESHTOKEN_KEY);
     localStorage.setItem(REFRESHTOKEN_KEY, RefreshToken);
@@ -186,24 +184,24 @@ export class TokenStorageService {
   public getEmployeeId(): number | null {
     return +localStorage.getItem(EMPLOYEEID);
   }
-  public getCurrentBatchStartEnd(): string|null {
-    var batch=localStorage.getItem(CURRENTBATCHSTARTEND);
+  public getCurrentBatchStartEnd(): string | null {
+    var batch = localStorage.getItem(CURRENTBATCHSTARTEND);
     if (batch) {
       return JSON.parse(JSON.stringify(batch));
     }
     return "";
-    
+
   }
-  public getRoleFilter(): string|null {
-    var _rolefilter=localStorage.getItem(ROLEFILTER);
+  public getRoleFilter(): string | null {
+    var _rolefilter = localStorage.getItem(ROLEFILTER);
     if (_rolefilter) {
       return JSON.parse(JSON.stringify(_rolefilter));
     }
-    return "";    
+    return "";
   }
-  
-  public getSelectedBatchStartEnd(): string|null {
-    var batch=localStorage.getItem(SELECTEDBATCHSTARTEND);
+
+  public getSelectedBatchStartEnd(): string | null {
+    var batch = localStorage.getItem(SELECTEDBATCHSTARTEND);
     if (batch) {
       return JSON.parse(JSON.stringify(batch));
     }

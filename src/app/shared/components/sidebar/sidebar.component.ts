@@ -93,6 +93,7 @@ export class SidebarComponent implements OnInit { PageLoading=true;
 
 
         this.shareddata.ChangePageData(this.sideMenu);
+        console.log("inside sidebar")
         this.tokenStorage.saveMenuData(this.sideMenu)
       }
     });

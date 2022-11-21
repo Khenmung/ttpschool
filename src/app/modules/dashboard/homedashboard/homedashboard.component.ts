@@ -57,7 +57,7 @@ export class HomeDashboardComponent implements OnInit {
       searchBatchId: [0]
     })
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-
+    console.log("HOme dashboard init")
     //console.log('role',this.Role);
     if (this.loginUserDetail.length == 0) {
       this.tokenStorage.signOut();
@@ -133,13 +133,14 @@ export class HomeDashboardComponent implements OnInit {
                   this.SelectedAppName = this.tokenStorage.getSelectedAppName();
                   this.getBatches();
                   //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-                  if (this.SelectedAppName.toLowerCase() == 'education management')
+                  if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management')
                     this.GetStudents();
                   if (this.SelectedAppId > 0) {
                     this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
                       .subscribe((data: any) => {
-                        this.tokenStorage.saveMasterData([...data.value]);
+                        this.tokenStorage.saveMasterData(data.value);
                       })
+                    this.GetMenuData(this.SelectedAppId);
                   }
                 }
               }
@@ -184,7 +185,7 @@ export class HomeDashboardComponent implements OnInit {
     debugger;
     //let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
-
+    //console.log("in dashboard")
     strFilter = "PlanId eq " + this.loginUserDetail[0]["planId"] + " and Active eq 1 and ApplicationId eq " + pSelectedAppId;
 
     let list: List = new List();
@@ -201,7 +202,7 @@ export class HomeDashboardComponent implements OnInit {
     list.filter = [strFilter];
     var permission;
     this.dataservice.get(list).subscribe((data: any) => {
-      //this.sideMenu = [...data.value];
+      this.sideMenu = [];
       data.value.forEach(m => {
         permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
         if (permission.length > 0 && permission[0].permission != 'deny') {
@@ -216,7 +217,9 @@ export class HomeDashboardComponent implements OnInit {
           this.sideMenu.push(m);
         }
       })
+
       this.sideMenu = this.sideMenu.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
+      this.tokenStorage.saveMenuData(this.sideMenu);
 
       let NewsNEvents = this.sideMenu.filter(item => {
         return item.label.toUpperCase() == 'NEWS N EVENTS'
@@ -230,8 +233,10 @@ export class HomeDashboardComponent implements OnInit {
 
 
         //this.shareddata.ChangePageData(this.sideMenu);
-        this.tokenStorage.saveMenuData(this.sideMenu)
+        // this.tokenStorage.saveMenuData(this.sideMenu) 
       }
+      // this.tokenStorage.saveMenuData(this.sideMenu) 
+
     });
 
 
@@ -252,7 +257,7 @@ export class HomeDashboardComponent implements OnInit {
     this.SelectedAppName = this.PermittedApplications.filter(f => f.applicationId == SelectedAppId)[0].applicationName
     this.ValueChanged = true;
   }
-  changebatch(){
+  changebatch() {
     this.ValueChanged = true;
   }
   submit() {
@@ -277,39 +282,44 @@ export class HomeDashboardComponent implements OnInit {
       }
       else
         this.tokenStorage.saveSelectedBatchName('');
+      //////for local storage
 
+
+      if (selectedApp[0].applicationName.toLowerCase() == 'education management')
+        this.GetStudents();
+      // if (SelectedAppId > 0) {
       this.GetMenuData(SelectedAppId);
       this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], SelectedAppId)
         .subscribe((data: any) => {
           this.tokenStorage.saveMasterData([...data.value]);
+
+          this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
+          this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
+            .subscribe((data: any) => {
+              data.value.forEach(item => {
+                var feature = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
+                if (feature.length == 0) {
+                  this.loginUserDetail[0]['applicationRolePermission'].push({
+                    'planFeatureId': 0,
+                    'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
+                    'roleId': item.RoleId,
+                    'permissionId': item.PermissionId,
+                    'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
+                    'applicationName': selectedApp[0].applicationName,
+                    'applicationId': item.ApplicationId,
+                    'appShortName': selectedApp[0].appShortName,
+                    'faIcon': '',
+                    'label': '',
+                    'link': ''
+                  })
+                }
+              });
+              this.tokenStorage.saveUserdetail(this.loginUserDetail);
+              this.tokenStorage.saveCustomFeature(data.value);
+              this.SelectedAppName = selectedApp[0].applicationName;
+              this.route.navigate(['/', selectedApp[0].appShortName])
+            });
         })
-      //console.log("this.loginUserDetail[0]['applicationRolePermission']",this.loginUserDetail[0]['applicationRolePermission'])
-      this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
-      this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
-        .subscribe((data: any) => {
-          data.value.forEach(item => {
-            var feature = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
-            if (feature.length == 0) {
-              this.loginUserDetail[0]['applicationRolePermission'].push({
-                'planFeatureId': 0,
-                'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
-                'roleId': item.RoleId,
-                'permissionId': item.PermissionId,
-                'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
-                'applicationName': selectedApp[0].applicationName,
-                'applicationId': item.ApplicationId,
-                'appShortName': selectedApp[0].appShortName,
-                'faIcon': '',
-                'label': '',
-                'link': ''
-              })
-            }
-          });
-          this.tokenStorage.saveUserdetail(this.loginUserDetail);
-          this.tokenStorage.saveCustomFeature(data.value);
-          this.SelectedAppName = selectedApp[0].applicationName;
-          this.route.navigate(['/', selectedApp[0].appShortName])
-        });
     }
     else {
       this.loading = false; this.PageLoading = false;
