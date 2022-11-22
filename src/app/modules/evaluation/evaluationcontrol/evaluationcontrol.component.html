@@ -1,5 +1,5 @@
 <div style="padding:15px 15px 10px 15px;">
-    <div><strong>Evaluation Result</strong></div>
+    <div><strong>Evaluation Control</strong></div>
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
@@ -16,7 +16,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Exam/Test/Session</mat-label>
-                <mat-select formControlName="searchExamId">
+                <mat-select formControlName="searchExamId" (selectionChange)="FilterClass()">
                     <mat-option [value]="0">select</mat-option>
                     <mat-option *ngFor="let item of FilteredExams" [value]="item.ExamId">{{item.ExamName}}
                     </mat-option>
@@ -48,25 +48,7 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <!-- <span *ngIf="!EvaluationUpdatable">
-                <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Exam/Test/Session</mat-label>
-                    <mat-select formControlName="searchExamId">
-                        <mat-option value="0">select</mat-option>
-                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="150">
-                    <mat-label>Subject</mat-label>
-                    <mat-select formControlName="searchSubjectId">
-                        <mat-option value="0">select</mat-option>
-                        <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
-                            {{item.SubjectName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </span> -->
+            
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">

@@ -13,11 +13,11 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
 
 @Component({
-  selector: 'app-evaluationresult',
-  templateUrl: './evaluationresult.component.html',
-  styleUrls: ['./evaluationresult.component.scss']
+  selector: 'app-evaluationcontrol',
+  templateUrl: './evaluationcontrol.component.html',
+  styleUrls: ['./evaluationcontrol.component.scss']
 })
-export class EvaluationresultComponent implements OnInit {
+export class EvaluationControlComponent implements OnInit {
   PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   EvaluationUpdatable = false;
@@ -139,10 +139,10 @@ export class EvaluationresultComponent implements OnInit {
             this.Classes = [...data.value];
           });
         }
-        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
-          .subscribe((data: any) => {
-            this.ExamClassGroups = [...data.value];
-          });
+        // this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+        //   .subscribe((data: any) => {
+        //     this.ExamClassGroups = [...data.value];
+        //   });
         this.GetStudentClasses();
 
       }
@@ -366,52 +366,55 @@ export class EvaluationresultComponent implements OnInit {
       });
   }
   GetMasterData() {
-    
-    this.allMasterData = this.tokenstorage.getMasterData();
-        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.AssessmentPrintHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.ASSESSMENTPRINTHEADING);
-        //console.log("this.AssessmentPrintHeading",this.AssessmentPrintHeading)
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          });
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-        });
-        this.GetExams();
-        this.GetClassSubjects();
-        this.GetClassEvaluations();
-        this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
-          .subscribe((data: any) => {
-            this.ClassGroupMappings = data.value.map(m => {
-              m.ClassName = m.Class.ClassName;
-              return m;
-            });
-          })
 
-      //});
+    this.allMasterData = this.tokenstorage.getMasterData();
+    this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+    //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+    this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.AssessmentPrintHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.ASSESSMENTPRINTHEADING);
+    //console.log("this.AssessmentPrintHeading",this.AssessmentPrintHeading)
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+      .subscribe((data: any) => {
+        this.ClassGroups = [...data.value];
+      });
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+    });
+    this.GetExams();
+    this.GetClassSubjects();
+    this.GetClassEvaluations();
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        this.ClassGroupMappings = data.value.map(m => {
+          m.ClassName = m.Class.ClassName;
+          return m;
+        });
+      })
+
+    //});
   }
   ExamReleased = 0;
   ExamClassGroups = [];
   FilterClass() {
+    debugger;
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased = 0;
-    var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+      .subscribe((data: any) => {
+        this.ExamClassGroups = [...data.value];
+
+        var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+        this.FilteredClasses = this.ClassGroupMappings.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+      });
+
     var obj = this.Exams.filter(f => f.ExamId == _examId);
     if (obj.length > 0) {
-      //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
 
       this.ExamReleased = obj[0].ReleaseResult;
     }
-    this.FilteredClasses = this.ClassGroupMappings.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
-    //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
-    //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
-
   }
   onBlur(row) {
     row.Action = true;
@@ -499,10 +502,10 @@ export class EvaluationresultComponent implements OnInit {
     this.EvaluationExamMap.filter(e => e.ExamId)
     if (_classgroupObj.length > 0) {
       _classGroupId = _classgroupObj[0].ClassGroupId;
-      this.FilteredClasses = this.ClassGroupMappings.filter(g => g.ClassGroupId == _classGroupId)
+      // this.FilteredClasses = this.ClassGroupMappings.filter(g => g.ClassGroupId == _classGroupId)
     }
-    else
-      this.FilteredClasses = [];
+    if (this.FilteredExams.length == 0)
+      this.FilteredClasses = [...this.Classes];
   }
   GetEvaluationMapping() {
     debugger;

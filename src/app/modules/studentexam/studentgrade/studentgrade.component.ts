@@ -282,13 +282,7 @@ export class StudentgradeComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassGroups = [...data.value];
-          this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
-            .subscribe((data: any) => {
-              this.ExamClassGroups = data.value.map(e => {
-                e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
-                return e;
-              })
-            })
+          
         }
         else {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -324,7 +318,15 @@ export class StudentgradeComponent implements OnInit {
   }
   SelectClassGroup() {
     var _examId = this.searchForm.get("searchExamId").value;
-    this.FilteredClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'],_examId)
+    .subscribe((data: any) => {
+      this.ExamClassGroups = data.value.map(e => {
+        e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
+        return e;
+      })
+      this.FilteredClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
+    })
+   
     this.EnableCopyButton();
   }
   SelectCopyFromClassGroup() {

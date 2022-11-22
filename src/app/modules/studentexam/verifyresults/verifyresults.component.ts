@@ -151,7 +151,7 @@ export class VerifyResultsComponent implements OnInit {
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
-        this.GetExamClassGroup();
+        //this.GetExamClassGroup();
 
         //this.GetStudentAttendance();
 
@@ -162,14 +162,20 @@ export class VerifyResultsComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased = 0;
-    var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'],_examId)
+      .subscribe((data: any) => {
+        this.ExamClassGroups = [...data.value];
+        var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+        this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+      });
+    
     var obj = this.Exams.filter(f => f.ExamId == _examId);
     if (obj.length > 0) {
       //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
 
       this.ExamReleased = obj[0].ReleaseResult;
     }
-    this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+    
     //this.GetSelectedSubjectsForSelectedExam();
 
   }
@@ -234,24 +240,28 @@ export class VerifyResultsComponent implements OnInit {
         this.loading = false;
       })
   }
-  GetExamClassGroup() {
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
-      .subscribe((data: any) => {
-        this.ExamClassGroups = [...data.value];
-      });
-  }
-  GetStudents(classId) {
+  // GetExamClassGroup() {
+  //   this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+  //     .subscribe((data: any) => {
+  //       this.ExamClassGroups = [...data.value];
+  //     });
+  // }
+  SelectedStudentClass = [];
+  GetStudents(classId, pSectionId) {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
       ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
     if (classId != undefined && classId > 0)
       orgIdSearchstr += ' and ClassId eq ' + classId
+    if (pSectionId != undefined && pSectionId > 0)
+      orgIdSearchstr += ' and SectionId eq ' + pSectionId
 
     let list: List = new List();
     list.fields = [
       "StudentClassId",
       "ClassId",
       "StudentId",
+      "SectionId",
       "RollNo"
     ];
     list.PageName = "StudentClasses";
@@ -260,6 +270,7 @@ export class VerifyResultsComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        this.SelectedStudentClass = [...data.value];
         this.Students = [];
         var studentList = this.tokenstorage.getStudents();
         var _students = studentList.filter(s => s["Active"] == 1 && data.value.findIndex(fi => fi.StudentId == s["StudentId"]) > -1)
@@ -295,16 +306,18 @@ export class VerifyResultsComponent implements OnInit {
         this.GetStudentAttendance()
           .subscribe((attendance: any) => {
             this.StudentAttendanceList = [];
-            attendance.value.forEach(att => {
-              if (att.StudentClass.ClassId == _classId) {
-                this.StudentAttendanceList.push({
-                  AttendanceId: att.AttendanceId,
-                  StudentClassId: att.StudentClassId,
-                  AttendanceStatus: att.AttendanceStatus,
-                  AttendanceDate: att.AttendanceDate,
-                  ClassId: att.StudentClass.ClassId
-                });
-              }
+            var classfilteredAttendance = attendance.value.filter(fil => this.SelectedStudentClass.findIndex(fdx => fdx.StudentClassId == fil.StudentClassId) > -1)
+            classfilteredAttendance.forEach(att => {
+              var cls = this.SelectedStudentClass.filter(studcls => studcls.StudentClassId == att.StudentClassId)
+              //if (att.StudentClass.ClassId == _classId) {
+              this.StudentAttendanceList.push({
+                AttendanceId: att.AttendanceId,
+                StudentClassId: att.StudentClassId,
+                AttendanceStatus: att.AttendanceStatus,
+                AttendanceDate: att.AttendanceDate,
+                ClassId: cls[0].ClassId
+              });
+              //}
             });
             this.ProcessVerify();
           });
@@ -393,7 +406,7 @@ export class VerifyResultsComponent implements OnInit {
   }
   GetExamNCalculate() {
     this.loading = true;
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq true"
     let list: List = new List();
     list.fields = ["*"];
 
@@ -441,8 +454,9 @@ export class VerifyResultsComponent implements OnInit {
     this.loading = true;
     this.GetSpecificStudentGrades();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
+    if (_sectionId > 0)
+      filterStr += " and SectionId eq " + _sectionId
     filterStr += " and ClassId eq " + _classId + " and BatchId eq " + this.SelectedBatchId;
 
 
@@ -462,7 +476,7 @@ export class VerifyResultsComponent implements OnInit {
         var _subject = '';
         var _section = '';
         this.StudentSubjects = [];
-
+        //console.log("data.value",data.value)
         //var _data = data.value.filter(x => x.ClassSubject.Active == 1);
         data.value.forEach(s => {
           _class = '';
@@ -910,7 +924,7 @@ export class VerifyResultsComponent implements OnInit {
     this.GetClassGroup();
     this.GetClassGroupMapping();
     this.GetExams();
-    this.GetStudents(0);
+    //this.GetStudents(0);
 
     this.GetStudentGradeDefn();
     this.loading = false;
@@ -984,10 +998,10 @@ export class VerifyResultsComponent implements OnInit {
     var _sectionId = this.searchForm.get("searchSectionId").value;
     if (_classId > 0) {
       this.SelectedClassAttendances = this.AttendanceStatusSum.filter(f => f.ClassId == _classId);
-
+      this.GetStudents(_classId, _sectionId)
     }
     this.FilterClass();
-    //this.GetSpecificStudentGrades();
+
   }
   GetSpecificStudentGrades() {
     debugger;
@@ -1048,36 +1062,36 @@ export class VerifyResultsComponent implements OnInit {
       })
   }
   TotalAttendance = [];
-  GetTotalAttendance() {
+  // GetTotalAttendance() {
 
-    let list: List = new List();
-    list.fields = [
-      "TotalAttendanceId",
-      "ClassId",
-      "ExamId",
-      "TotalNoOfAttendance"
-    ];
+  //   let list: List = new List();
+  //   list.fields = [
+  //     "TotalAttendanceId",
+  //     "ClassId",
+  //     "ExamId",
+  //     "TotalNoOfAttendance"
+  //   ];
 
-    list.PageName = "TotalAttendances";
-    //list.lookupFields = ["Exam($select=Sequence,Active)"]
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId];
-    // " and ClassId eq " + this.searchForm.get("searchClassId").value +
-    // " and ExamId eq " + this.searchForm.get("searchExamId").value];
+  //   list.PageName = "TotalAttendances";
+  //   //list.lookupFields = ["Exam($select=Sequence,Active)"]
+  //   list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+  //     " and BatchId eq " + this.SelectedBatchId];
+  //   // " and ClassId eq " + this.searchForm.get("searchClassId").value +
+  //   // " and ExamId eq " + this.searchForm.get("searchExamId").value];
 
-    this.dataservice.get(list)
-      .subscribe((totalAttendance: any) => {
-        this.TotalAttendance = [];
-        totalAttendance.value.forEach(f => {
-          var _exm = this.Exams.filter(e => e.ExamId == f.ExamId);
-          if (_exm.length > 0) {
-            f.Sequence = _exm[0].Sequence;
-            this.TotalAttendance.push(f);
-          }
-        });
-        this.TotalAttendance = this.TotalAttendance.sort((a, b) => a.Sequence - a.Sequence);
-      });
-  }
+  //   this.dataservice.get(list)
+  //     .subscribe((totalAttendance: any) => {
+  //       this.TotalAttendance = [];
+  //       totalAttendance.value.forEach(f => {
+  //         var _exm = this.Exams.filter(e => e.ExamId == f.ExamId);
+  //         if (_exm.length > 0) {
+  //           f.Sequence = _exm[0].Sequence;
+  //           this.TotalAttendance.push(f);
+  //         }
+  //       });
+  //       this.TotalAttendance = this.TotalAttendance.sort((a, b) => a.Sequence - a.Sequence);
+  //     });
+  // }
 
   GetStudentAttendance() {
     debugger;
@@ -1100,7 +1114,7 @@ export class VerifyResultsComponent implements OnInit {
         "AttendanceStatus",
       ];
       list.PageName = "Attendances";
-      list.lookupFields = ["StudentClass($filter=ClassId eq " + _classId + ";$select=ClassId,RollNo,SectionId)"];
+      //list.lookupFields = ["StudentClass($filter=ClassId eq " + _classId + ";$select=ClassId,RollNo,SectionId)"];
       list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
         " and StudentClassId ne null" + _filter +
         " and BatchId eq " + this.SelectedBatchId];

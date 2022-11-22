@@ -7,6 +7,13 @@
 <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
 <form [formGroup]="searchForm">
     <mat-form-field appearance="outline" [style.width.px]="350">
+        <mat-label>Evaluation</mat-label>
+        <mat-select formControlName="searchEvaluationMasterId">
+            <mat-option *ngFor="let item of EvaluationMasterList" [value]="item.EvaluationMasterId">{{item.EvaluationName}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" [style.width.px]="150">
         <mat-label>class group</mat-label>
         <mat-select formControlName="searchClassGroupId">
             <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">{{item.GroupName}}

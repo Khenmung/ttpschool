@@ -10,6 +10,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import { ExammarkconfigComponent } from './exammarkconfig/exammarkconfig.component';
 import { ExamclassgroupComponent } from './examclassgroup/examclassgroup.component';
+import { NgxPrintModule } from 'ngx-print';
 
 @NgModule({
   declarations: [studentexamComponents, ExamclassgroupComponent],
@@ -23,7 +24,8 @@ import { ExamclassgroupComponent } from './examclassgroup/examclassgroup.compone
     StudentSubjectModule,
     SharedhomepageModule,
     FlexLayoutModule,
-    CdkAccordionModule
+    CdkAccordionModule,
+    NgxPrintModule
   ],
   exports:[
     studentexamComponents,

@@ -101,9 +101,9 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list);
 
   }
-  GetExamClassGroup(pOrgId) {
+  GetExamClassGroup(pOrgId,pExamId) {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    var orgIdSearchstr = 'OrgId eq ' + pOrgId + ' and Active eq true';
+    var orgIdSearchstr = 'OrgId eq ' + pOrgId + " and ExamId eq " + pExamId + " and Active eq true";
 
     let list: List = new List();
     list.fields = [

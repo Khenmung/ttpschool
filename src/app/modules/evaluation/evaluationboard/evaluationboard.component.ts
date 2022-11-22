@@ -6,7 +6,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassEvaluationComponent } from '../classevaluation/classevaluation.component';
 import { EvaluationExamMapComponent } from '../evaluationexammap/EvaluationExamMap.component';
 import { EvaluationMasterComponent } from '../evaluationmaster/evaluationmaster.component';
-import { EvaluationresultComponent } from '../evaluationresult/evaluationresult.component';
+import { EvaluationControlComponent } from '../evaluationcontrol/evaluationcontrol.component';
 import { EvaluationresultlistComponent } from '../evaluationresultlist/evaluationresultlist.component';
 import { StudentEvaluationComponent } from '../studentevaluation/studentevaluation.component';
 
@@ -21,11 +21,13 @@ export class EvaluationboardComponent implements AfterViewInit {
     EvaluationMasterComponent,
     ClassEvaluationComponent,
     EvaluationExamMapComponent,
+    EvaluationControlComponent,
     StudentEvaluationComponent,
-    EvaluationresultlistComponent,
+    EvaluationresultlistComponent    
   ];
 
   tabNames = [
+    { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
@@ -80,6 +82,10 @@ export class EvaluationboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONRESULT)
     var comindx = this.components.indexOf(EvaluationresultlistComponent);
+    this.AddRemoveComponent(perObj, comindx);
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONCONTROL)
+    var comindx = this.components.indexOf(EvaluationControlComponent);
     this.AddRemoveComponent(perObj, comindx);
     
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

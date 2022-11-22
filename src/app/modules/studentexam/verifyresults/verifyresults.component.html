@@ -31,8 +31,8 @@
         </mat-select>
     </mat-form-field>
     <mat-checkbox style="margin-right:15px" formControlName="viewMarkPercentCheckBox" (click)="$event.stopPropagation()"
-            [checked]="false"> View in Percent
-        </mat-checkbox>
+        [checked]="false"> View in Percent
+    </mat-checkbox>
     <button style="margin-right: 15px;" [disabled]="loading" mat-raised-button color="accent"
         (click)="GetStudentSubjects()">
         <mat-icon>search</mat-icon>
@@ -44,28 +44,33 @@
         (click)="clear()">
         <mat-icon>clear_all</mat-icon>
     </button>
-    <button [disabled]="loading || ClickedVerified || SectionSelected || ExamReleased==1" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0"
-        mat-raised-button color="accent" (click)="Verified()">
+    <button [disabled]="loading || ClickedVerified || SectionSelected || ExamReleased==1" matTooltip="verified"
+        *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0" mat-raised-button color="accent"
+        (click)="Verified()">
         <mat-icon>checked</mat-icon>
     </button>
 </form>
-<div style="width: 100%;">
+<div style="width: 100%;" id="printSection">
     <div *ngIf="ExamStudentSubjectResult.length>0">
         <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                <mat-header-cell *matHeaderCellDef mat-sort-header style="writing-mode: tb-rl;transform: rotate(-180deg);width:100%;display:flex; justify-content: flex-start;margin-bottom: 10px;">
+                <mat-header-cell *matHeaderCellDef mat-sort-header
+                    style="writing-mode: tb-rl;transform: rotate(-180deg);width:100%;display:flex; justify-content: flex-start;margin-bottom: 10px;">
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="width:100%;align-self: stretch;">
-                    <span style="padding:5px;align-self: stretch;color:red" *ngIf="disCol!='Student' && (element[disCol]+'').includes('(')">{{element[disCol]}}</span> 
-                    <span style="padding:5px;display: flex;align-self: stretch;" *ngIf="disCol=='Student' || !(element[disCol]+'').includes('(')">{{element[disCol]}}</span>
+                    <span style="padding:5px;align-self: stretch;color:red"
+                        *ngIf="disCol!='Student' && (element[disCol]+'').includes('(')">{{element[disCol]}}</span>
+                    <span style="padding:5px;display: flex;align-self: stretch;"
+                        *ngIf="disCol=='Student' || !(element[disCol]+'').includes('(')">{{element[disCol]}}</span>
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns;sticky:true"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" style="align-items: baseline;"></mat-row>
 
         </mat-table>
-        <mat-paginator #nonGradingPaginator="matPaginator" style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator>
+        <mat-paginator #nonGradingPaginator="matPaginator" style="display: flex;justify-content: center;"
+            [pageSizeOptions]="[10,25,100]"></mat-paginator>
     </div>
     <div *ngIf="ExamStudentSubjectGrading.length>0" style="flex-direction: column;">
         <div style="font-weight: bold;">Grading Subject</div>
@@ -77,7 +82,7 @@
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="padding:15px">
-                   {{element[disCol]}}
+                    {{element[disCol]}}
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="GradingDisplayedColumns;sticky:true"></mat-header-row>
@@ -86,10 +91,17 @@
         <!-- <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator> -->
     </div>
 </div>
+<div style="display:flex;justify-content: center;">
+    <button [disabled]="loading || Permission=='read'" *ngIf="ExamStudentSubjectResult.length>0" matTooltip="print"
+        printSectionId="printSection" [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
+        <mat-icon>print</mat-icon>
+    </button>
+</div>
 <div style="margin-top:30px;" data-expand="false" #expandWrap>
     <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
         <mat-icon>info</mat-icon>
-        Guides..</span>
+        Guides..
+    </span>
     <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
         <ul>
             <li><b>Verify</b> button is disabled if the selected exam has been released.</li>

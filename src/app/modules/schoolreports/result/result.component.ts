@@ -138,10 +138,7 @@ export class ResultComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
-          .subscribe((data: any) => {
-            this.ExamClassGroups = [...data.value];
-          });
+
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
         this.GetSubjectComponents();
@@ -411,16 +408,16 @@ export class ResultComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased = 0;
-    var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+      .subscribe((data: any) => {
+        this.ExamClassGroups = [...data.value];
+        this.FilteredClasses = this.ClassGroupMapping.filter(f => this.ExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+      });
+
     var obj = this.Exams.filter(f => f.ExamId == _examId);
     if (obj.length > 0) {
-      //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
-
       this.ExamReleased = obj[0].ReleaseResult;
     }
-    this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
-    //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
-    //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
 
   }
   GetMasterData() {

@@ -935,7 +935,7 @@ export class StudentEvaluationComponent implements OnInit {
                 _section = _SectionObj[0].MasterDataName;
               var _lastname = student.LastName == null ? '' : " " + student.LastName;
               _name = student.FirstName + _lastname;
-              var _fullDescription = _name + "-" + _className + "-" + _RollNo + "-" + student.ContactNo;
+              var _fullDescription = _name + "-" + _className + "-" + _RollNo;
               this.Students.push({
                 StudentClassId: _studentClassId,
                 StudentId: student.StudentId,

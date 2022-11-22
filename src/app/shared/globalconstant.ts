@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiURL
-    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
+    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -246,7 +246,7 @@ export class globalconstants {
                     'EVALUATIONRESULTLIST': 'evaluation result list',
                     'CLASSEVALUATIONOPTION': 'answer option',
                     'EVALUATIONANDEXAM': 'evaluation and exam',
-
+                    'EVALUATIONCONTROL': 'evaluation control'
                 },
                 'QUESTIONBANK': {
                     'QUESTIONBANK': 'question bank',

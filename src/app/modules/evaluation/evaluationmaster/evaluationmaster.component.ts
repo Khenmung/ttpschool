@@ -85,6 +85,7 @@ export class EvaluationMasterComponent implements OnInit {
     })
     //debugger;
     this.searchForm = this.fb.group({
+      searchEvaluationMasterId: [0],
       searchClassGroupId: [0]
     });
     this.PageLoad();
@@ -112,7 +113,7 @@ export class EvaluationMasterComponent implements OnInit {
       else {
 
         this.GetMasterData();
-        //this.GetEvaluationMaster();
+        this.GetEvaluationMaster();
       }
     }
   }
@@ -313,46 +314,64 @@ export class EvaluationMasterComponent implements OnInit {
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _classGroupId = this.searchForm.get("searchClassGroupId").value;
-    if (_classGroupId > 0)
-      filterStr += ' and ClassGroupId eq ' + _classGroupId
+    var _evaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
+    //console.log("classgroup",this.ClassGroups)
+    var result = [];
+    if (this.EvaluationMasterList.length > 0) {
+      if (_classGroupId > 0 && _evaluationMasterId > 0)
+        result = this.EvaluationMasterList.filter(f => f.ClassGroupId == _classGroupId 
+          && f.EvaluationMasterId ==_evaluationMasterId)
+      else if (_evaluationMasterId > 0)
+      {
+        result = this.EvaluationMasterList.filter(f => f.EvaluationMasterId ==_evaluationMasterId)
+      }
+      else if (_classGroupId > 0)
+      {
+        result = this.EvaluationMasterList.filter(f => f.ClassGroupId == _classGroupId )
+      }
+      console.log("result",result)
+      this.dataSource = new MatTableDataSource<IEvaluationMaster>(result);
+      this.dataSource.paginator = this.paging;
+      this.loadingFalse();
+    }
+    else {
+      let list: List = new List();
+      list.fields = [
+        "EvaluationMasterId",
+        "EvaluationName",
+        "Description",
+        "AppendAnswer",
+        "Duration",
+        "ClassGroupId",
+        "FullMark",
+        "PassMark",
+        "DisplayResult",
+        "ProvideCertificate",
+        "Confidential",
+        "Active"
+      ];
 
-    let list: List = new List();
-    list.fields = [
-      "EvaluationMasterId",
-      "EvaluationName",
-      "Description",
-      "AppendAnswer",
-      "Duration",
-      "ClassGroupId",
-      "FullMark",
-      "PassMark",
-      "DisplayResult",
-      "ProvideCertificate",
-      "Confidential",
-      "Active"
-    ];
+      list.PageName = this.EvaluationMasterListName;
+      list.filter = [filterStr];
+      this.EvaluationMasterList = [];
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          //debugger;
+          if (data.value.length > 0) {
+            this.EvaluationMasterList = data.value.map(d => {
 
-    list.PageName = this.EvaluationMasterListName;
-    list.filter = [filterStr];
-    this.EvaluationMasterList = [];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          this.EvaluationMasterList = data.value.map(d => {
-
-            d.EvaluationName = globalconstants.encodeSpecialChars(d.EvaluationName);
-            d.Description = globalconstants.encodeSpecialChars(d.Description);
-            d.Action = false;
-            return d;
-          })
-        }
-        //console.log("this.EvaluationMasterList",this.EvaluationMasterList)
-        this.dataSource = new MatTableDataSource<IEvaluationMaster>(this.EvaluationMasterList);
-        this.dataSource.paginator = this.paging;
-        this.loadingFalse();
-      });
-
+              d.EvaluationName = globalconstants.encodeSpecialChars(d.EvaluationName);
+              d.Description = globalconstants.encodeSpecialChars(d.Description);
+              d.Action = false;
+              return d;
+            })
+          }
+          //console.log("this.EvaluationMasterList",this.EvaluationMasterList)
+          this.dataSource = new MatTableDataSource<IEvaluationMaster>(this.EvaluationMasterList);
+          this.dataSource.paginator = this.paging;
+          this.loadingFalse();
+        });
+    }
   }
   AlreadyUsedEvaluation = [];
   GetUsedEvaluationType(pEvaluationMasterId) {

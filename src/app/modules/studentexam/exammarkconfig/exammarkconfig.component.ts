@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 //import alasql from 'alasql';
-import { evaluate,resize,sort } from 'mathjs';
+import { evaluate, resize, sort } from 'mathjs';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -109,23 +109,20 @@ export class ExammarkconfigComponent implements OnInit {
         this.GetMasterData();
         this.GetClassGroupMapping();
         this.GetStudentGradeDefn();
-        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
-        .subscribe((data: any) => {
-          this.ExamClassGroups = [...data.value];
-        });
+
       }
     }
   }
-  clearData(){
-    this.ExamMarkConfigList=[];
+  clearData() {
+    this.ExamMarkConfigList = [];
     this.dataSource = new MatTableDataSource(this.ExamMarkConfigList);
   }
-  Calculatemark(element){
-  //   debugger;
-  // var arr =[1, 2, 3, 4, 5];
-  
-  //   var a=evaluate(element.Formula)// // returns Array  [1, 2, 3]
-    element.Action=true;
+  Calculatemark(element) {
+    //   debugger;
+    // var arr =[1, 2, 3, 4, 5];
+
+    //   var a=evaluate(element.Formula)// // returns Array  [1, 2, 3]
+    element.Action = true;
     // row.Action = true;
     // console.log("three elment of a",a.entries[0])
   }
@@ -160,7 +157,7 @@ export class ExammarkconfigComponent implements OnInit {
     // if (_classSubjectId > 0) {
     //   filterStr += " and ClassSubjectId eq " + _classSubjectId;
     // }
-    this.loading=true;
+    this.loading = true;
     let list: List = new List();
     list.fields = [
       'ExamMarkConfigId',
@@ -200,15 +197,15 @@ export class ExammarkconfigComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource(this.ExamMarkConfigList);
-        this.dataSource.paginator=this.paginator;
+        this.dataSource.paginator = this.paginator;
 
-        this.loading=false;
-      },error=>{
-        this.loading=false;
-        
+        this.loading = false;
+      }, error => {
+        this.loading = false;
+
       })
   }
-  
+
   GetResultReleased(source) {
     //this.ResultReleased = this.Exams.filter(e => e.ExamId == source.value)[0].ReleaseResult;
     this.FilterClass();
@@ -352,20 +349,26 @@ export class ExammarkconfigComponent implements OnInit {
   //   this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
   //   this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
   // }
-  ExamReleased=0;
-  ExamClassGroups=[];
+  ExamReleased = 0;
+  ExamClassGroups = [];
   FilterClass() {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased = 0;
-    var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+      .subscribe((data: any) => {
+        this.ExamClassGroups = [...data.value];
+        var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+        this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+      });
+
     var obj = this.Exams.filter(f => f.ExamId == _examId);
     if (obj.length > 0) {
       //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
 
       this.ExamReleased = obj[0].ReleaseResult;
     }
-    this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+
     //this.SelectedClassStudentGrades = this.StudentGrades.filter(f =>f.ExamId == _examId 
     //  && this.ExamClassGroups.findIndex(element=> element.ClassGroupId == f.ClassGroupId)>-1);
 
@@ -497,24 +500,24 @@ export class ExammarkconfigComponent implements OnInit {
   GetMasterData() {
 
     this.allMasterData = this.tokenstorage.getMasterData();
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-          .subscribe((data: any) => {
-            this.ClassGroups = [...data.value];
-          });
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.GetClassSubject();
-        })
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+      .subscribe((data: any) => {
+        this.ClassGroups = [...data.value];
+      });
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.GetClassSubject();
+    })
 
-        //if role is teacher, only their respective class and subject will be allowed.
-        if (this.LoginUserDetail[0]['RoleUsers'][0].role == 'Teacher') {
-          this.GetAllowedSubjects();
-        }
+    //if role is teacher, only their respective class and subject will be allowed.
+    if (this.LoginUserDetail[0]['RoleUsers'][0].role == 'Teacher') {
+      this.GetAllowedSubjects();
+    }
 
-        this.GetExams();
+    this.GetExams();
 
   }
   GetAllowedSubjects() {

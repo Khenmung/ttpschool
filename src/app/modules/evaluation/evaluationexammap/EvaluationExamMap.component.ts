@@ -125,10 +125,7 @@ export class EvaluationExamMapComponent implements OnInit {
             this.Classes = [...data.value];
           });
         }
-        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
-          .subscribe((data: any) => {
-            this.ExamClassGroups = [...data.value];
-          });
+
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.ClassGroups = [...data.value];
@@ -342,8 +339,13 @@ export class EvaluationExamMapComponent implements OnInit {
     //var _classesForSelectedClassGroup = this.ClassGroupMappings.filter(m => m.ClassGroupId == _searchClassGroupId);
     //var allGroupsForAllTheSelectedClasses = this.ClassGroupMappings.filter(g => _classesForSelectedClassGroup.filter(i => i.ClassId == g.ClassId).length > 0)
     this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId)
-    var examIdsforselectedclsgroup = this.ExamClassGroups.filter(examclsgroup => examclsgroup.ClassGroupId == _searchClassGroupId)
-    this.SelectedClassGroupExam = this.Exams.filter(f => examIdsforselectedclsgroup.findIndex(i => i.ExamId == f.ExamId) > -1);
+    var _searchExamId = this.searchForm.get("searchExamId").value;
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _searchExamId)
+      .subscribe((data: any) => {
+        this.ExamClassGroups = [...data.value];
+        var examIdsforselectedclsgroup = this.ExamClassGroups.filter(examclsgroup => examclsgroup.ClassGroupId == _searchClassGroupId)
+        this.SelectedClassGroupExam = this.Exams.filter(f => examIdsforselectedclsgroup.findIndex(i => i.ExamId == f.ExamId) > -1);
+      });
 
     this.searchForm.patchValue({ searchEvaluationMasterId: 0 });
     this.EvaluationExamMapList = [];
@@ -382,7 +384,7 @@ export class EvaluationExamMapComponent implements OnInit {
     //var _classGroupId = this.searchForm.get("searchClassGroupId").value;
     //var _subjectId = this.searchForm.get("searchSubjectId").value;
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
-    //var _searchExamId = this.searchForm.get("searchExamId").value;
+
     var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
 
 
