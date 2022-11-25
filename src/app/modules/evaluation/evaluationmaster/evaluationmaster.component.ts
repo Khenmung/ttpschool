@@ -113,6 +113,7 @@ export class EvaluationMasterComponent implements OnInit {
       else {
 
         this.GetMasterData();
+        this.EvaluationMasterList=[];
         this.GetEvaluationMaster();
       }
     }
@@ -360,8 +361,8 @@ export class EvaluationMasterComponent implements OnInit {
           if (data.value.length > 0) {
             this.EvaluationMasterList = data.value.map(d => {
 
-              d.EvaluationName = globalconstants.encodeSpecialChars(d.EvaluationName);
-              d.Description = globalconstants.encodeSpecialChars(d.Description);
+              d.EvaluationName = globalconstants.decodeSpecialChars(d.EvaluationName);
+              d.Description = globalconstants.decodeSpecialChars(d.Description);
               d.Action = false;
               return d;
             })

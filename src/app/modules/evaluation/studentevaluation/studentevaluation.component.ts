@@ -336,7 +336,7 @@ export class StudentEvaluationComponent implements OnInit {
             //this.insert(row);
           }
           else {
-            //console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
+            console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
             this.StudentEvaluationForUpdate[_lastIndex]["UpdatedDate"] = new Date();
             this.StudentEvaluationForUpdate[_lastIndex]["UpdatedBy"];
             delete this.StudentEvaluationForUpdate[_lastIndex]["CreatedDate"];

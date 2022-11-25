@@ -298,10 +298,12 @@ export class ExamclassgroupComponent implements OnInit {
         this.ClassGroups.forEach(c => {
           var existing = data.value.filter(d => d.ClassGroupId == c.ClassGroupId)
           if (existing.length > 0) {
-            existing[0].GroupName = c.GroupName;
-            existing[0].Action = false;
-            existing[0].Sort = existing[0].Active ? 1 : 0;
-            this.ExamClassGroupMapList.push(existing[0]);
+            existing.forEach(ex => {
+              ex.GroupName = c.GroupName;
+              ex.Action = false;
+              ex.Sort = ex.Active ? 1 : 0;
+              this.ExamClassGroupMapList.push(ex);
+            })
           }
           else {
             this.ExamClassGroupMapList.push({
@@ -328,7 +330,7 @@ export class ExamclassgroupComponent implements OnInit {
   SelectAll(event) {
     //var event ={checked:true}
     this.ExamClassGroupMapList.forEach(element => {
-      element.Active = true;
+      element.Active = event.checked;
       element.Action = true;
     })
   }

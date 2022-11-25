@@ -162,20 +162,20 @@ export class VerifyResultsComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased = 0;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'],_examId)
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
       .subscribe((data: any) => {
         this.ExamClassGroups = [...data.value];
         var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
         this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
       });
-    
+
     var obj = this.Exams.filter(f => f.ExamId == _examId);
     if (obj.length > 0) {
       //this.ClassGroupIdOfExam = obj[0].ClassGroupId;     
 
       this.ExamReleased = obj[0].ReleaseResult;
     }
-    
+
     //this.GetSelectedSubjectsForSelectedExam();
 
   }
@@ -679,12 +679,14 @@ export class VerifyResultsComponent implements OnInit {
               return;
             }
             else {
-
+              var markPercent = 0;
               var failedInComponent = false;
-              var subjectComponent = _examSubjectMarkComponentDefn.filter(comp => comp.PassMark > 0 && comp.ClassSubjectId == eachsubj.ClassSubjectId)
-              subjectComponent.forEach(compmarkobtained => {
+              var subjectEachComponent = _examSubjectMarkComponentDefn.filter(comp =>comp.PassMark>0 && comp.ClassSubjectId == eachsubj.ClassSubjectId)
+              subjectEachComponent.forEach(compmarkobtained => {
                 var componentobtainedmark = filteredExistingComponentMarks.filter(eres => eres.StudentClassSubjectId == eachsubj.StudentClassSubjectId
                   && eres.ClassSubjectMarkComponentId == compmarkobtained.ClassSubjectMarkComponentId)
+                //var componentPercent = (compmarkobtained.FullMark / _subjectPassMarkFullMark[0].FullMark) * 100;
+                //markPercent += (componentobtainedmark[0].Marks / compmarkobtained.FullMark) * componentPercent;
                 if (componentobtainedmark.length > 0) {
                   if (!failedInComponent && componentobtainedmark[0].Marks < compmarkobtained.PassMark) {
                     failedInComponent = true;
@@ -692,6 +694,14 @@ export class VerifyResultsComponent implements OnInit {
                 }
                 else
                   failedInComponent = true;
+              })
+              var subjectEachComponentPassmarkZero = _examSubjectMarkComponentDefn.filter(comp => comp.ClassSubjectId == eachsubj.ClassSubjectId)
+              subjectEachComponentPassmarkZero.forEach(compmarkobtained => {
+                var componentobtainedmark = filteredExistingComponentMarks.filter(eres => eres.StudentClassSubjectId == eachsubj.StudentClassSubjectId
+                  && eres.ClassSubjectMarkComponentId == compmarkobtained.ClassSubjectMarkComponentId)
+                var componentPercent = (compmarkobtained.FullMark / _subjectPassMarkFullMark[0].FullMark) * 100;
+                markPercent += (componentobtainedmark[0].Marks / compmarkobtained.FullMark) * componentPercent;
+                
               })
               var _statusFail = true;
               var ExamResultSubjectMarkData = {
@@ -754,18 +764,19 @@ export class VerifyResultsComponent implements OnInit {
                   if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
                     this.displayedColumns.push(eachsubj.Subject)
                   if (markObtained.length > 0) {
-                    var markConvertedto100Percent = '', _processedmark = '';
-                    if (markObtained[0].Marks > 0)
-                      markConvertedto100Percent = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark).toFixed(2);
+                    //var markConvertedto100Percent = '', 
+                    var _processedmark = '';
+                    // if (markObtained[0].Marks > 0)
+                    //   markConvertedto100Percent = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark).toFixed(2);
                     if (viewMarkPercent) {
-                      _processedmark = markConvertedto100Percent;
+                      _processedmark = markPercent+"";
                     }
                     else
                       _processedmark = markObtained[0].Marks;
 
                     ForNonGrading[eachsubj.Subject] = (failedInComponent || _statusFail) ? "(" + _processedmark + ")" : _processedmark;
                     ForNonGrading["Total Marks"] = (parseFloat(ForNonGrading["Total Marks"]) + parseFloat(markObtained[0].Marks)).toFixed(2);
-                    ForNonGrading["Total Percent"] = (parseFloat(ForNonGrading["Total Percent"]) + parseFloat(markConvertedto100Percent)).toFixed(2);
+                    ForNonGrading["Total Percent"] = (parseFloat(ForNonGrading["Total Percent"]) + parseFloat(markPercent+"")).toFixed(2);
                   }
                 }
               }

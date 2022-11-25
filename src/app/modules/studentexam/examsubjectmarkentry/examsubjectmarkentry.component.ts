@@ -536,7 +536,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     var _classSubjectId = this.searchForm.get("searchClassSubjectId").value
     var _examId = this.searchForm.get("searchExamId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
-    filterstr = ' and ExamId eq ' + _examId + " and ClassSubjectId eq " + _classSubjectId + " and Active eq 1";
+    filterstr = ' and ExamId eq ' + _examId + " and ClassSubjectId eq " + _classSubjectId;
 
     let list: List = new List();
     list.fields = [
@@ -557,6 +557,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
         data.value.forEach(db => {
           db.ExamStudentSubjectResults.forEach(mark => {
             result.push({
+              ExamStudentSubjectResultId:mark.ExamStudentSubjectResultId,
               FullMark: db.FullMark,
               SubjectComponentId: db.SubjectComponentId,
               ClassSubjectId: db.ClassSubjectId,

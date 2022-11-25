@@ -499,6 +499,7 @@ export class EvaluationresultlistComponent implements OnInit {
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += ' and ClassId eq ' + pClassId
     filterStr += ' and EvaluationExamMapId eq ' + pEvaluationExamMapId
+    filterStr += ' and Submitted eq true';
     let list: List = new List();
     list.fields = [
       'StudentEvaluationResultId',

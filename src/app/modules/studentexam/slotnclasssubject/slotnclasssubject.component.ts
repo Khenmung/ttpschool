@@ -325,17 +325,30 @@ export class SlotnclasssubjectComponent implements OnInit {
         });
       })
   }
+  ExamClassGroups=[];
+  FilteredClassGroup=[];
   FilterClass() {
     debugger;
     var _examId = this.searchForm.get("searchExamId").value
     var _classGroupId = 0;
     var obj = this.Exams.filter(f => f.ExamId == _examId);
+
     if (obj.length > 0) {
       _classGroupId = obj[0].ClassGroupId;
       this.ExamReleased = obj[0].ReleaseResult == 1 ? true : false;
     }
 
-    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'],_examId)
+    .subscribe((data: any) => {
+      this.ExamClassGroups = data.value.map(e => {
+        e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
+        return e;
+      })
+      this.FilteredClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
+      this.FilteredClasses = this.ClassGroupMapping.filter(f => this.FilteredClassGroup.findIndex(fi=>fi.ClassGroupId == f.ClassGroupId)>-1);
+    })
+
+    
   }
   GetExams() {
 
@@ -646,10 +659,23 @@ export class SlotnclasssubjectComponent implements OnInit {
       this.GetExams();
       this.GetExamSlots();
       this.GetClassSubject();
+      this.Getclassgroups();
     })
     //this.shareddata.ChangeBatch(this.Batches);
 
 
+  }
+  ClassGroups=[];
+  Getclassgroups() {
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.ClassGroups = [...data.value];          
+        }
+        else {
+          this.contentservice.openSnackBar("Class group: " + globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+        }
+      });
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

@@ -414,7 +414,8 @@ export class HomeDashboardComponent implements OnInit {
       "HouseId",
       "EmailAddress",
       "UserId",
-      "ReasonForLeavingId"
+      "ReasonForLeavingId",
+      "AdmissionStatusId"
     ];
     list.PageName = "Students";
 

@@ -332,7 +332,16 @@ export class StudentgradeComponent implements OnInit {
   SelectCopyFromClassGroup() {
     debugger;
     var _examId = this.searchForm.get("searchCopyFromExamId").value;
-    this.FilteredCopyFromClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'],_examId)
+    .subscribe((data: any) => {
+      this.ExamClassGroups = data.value.map(e => {
+        e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
+        return e;
+      })
+      
+      this.FilteredCopyFromClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
+    })
+    
   }
   GetStudentGrade(pCopyFromExamId, pCoyFromClassGroupId) {
 

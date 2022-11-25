@@ -108,7 +108,7 @@ export class ExamdashboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    
+    this.viewContainer.clear();
     this.viewContainer.createComponent(this.components[index]);
   }
   GenerateComponent(featureName) {
