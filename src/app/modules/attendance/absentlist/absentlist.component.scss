@@ -22,16 +22,19 @@ mat-header-cell {
     align-self  : stretch;
 }
 
-.mat-column-Approved {
+.mat-column-Approved,
+.mat-column-Action {
     flex           : 1 0 80px;
     justify-content: center;
 }
+.mat-column-ClassSubject,
 .mat-column-ClassName{
     flex: 1 1 100px;
 }
+.mat-column-ApprovedByName,
 .mat-column-StudentRollNo,
-.mat-column-ClassSubject,
 .mat-column-ContactNo,
+.mat-column-Remarks,
 .mat-column-ReportedTo {
     flex: 1 1 120px;
 }

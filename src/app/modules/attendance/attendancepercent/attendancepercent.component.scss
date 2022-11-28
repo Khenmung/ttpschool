@@ -11,3 +11,13 @@ mat-form-field,button{
 mat-cell:first-of-type{
     padding-left: 0px;
 }
+.mat-column-StudentRollNo{
+    flex:1 0 150px;
+}
+.mat-column-PresentCount,.mat-column-AbsentCount{
+    justify-content: center;
+    flex:1 1 100px;
+}
+.mat-column-ClassName{
+    flex:1 0 120px;
+}

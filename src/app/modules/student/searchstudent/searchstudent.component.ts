@@ -362,10 +362,12 @@ export class searchstudentComponent implements OnInit {
     this.route.navigate(['/edu/feepayment']);
   }
   SaveIds(element) {
+    debugger;
     var _ClassId = 0;
-    if (element.StudentClasses.length > 0) {
-      this.StudentClassId = element.StudentClasses[0].StudentClassId;
-      _ClassId = element.StudentClasses[0].ClassId;
+    //if (element.StudentClasses.length > 0) {
+    if (element.StudentClasses != undefined) {
+      this.StudentClassId = element.StudentClasses.StudentClassId;
+      _ClassId = element.StudentClasses.ClassId;
     }
 
     this.StudentId = element.StudentId;
@@ -485,13 +487,13 @@ export class searchstudentComponent implements OnInit {
     var _PID = this.studentSearchForm.get("searchPID").value;
     var _searchAdmissionNo = this.studentSearchForm.get("searchAdmissionNo").value;
 
-    if (_fathername == undefined && _mothername == undefined && _sectionId == 0 && _searchAdmissionNo == 0 && _remarkId == 0
-      && _ClassId == 0 && _PID == 0 && (_studentId == 0 || objstudent == undefined)) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.token.saveStudentSearch([]);
-      return;
-    }
+    // if (_fathername == undefined && _mothername == undefined && _sectionId == 0 && _searchAdmissionNo == 0 && _remarkId == 0
+    //   && _ClassId == 0 && _PID == 0 && (_studentId == 0 || objstudent == undefined)) {
+    //   this.loading = false; this.PageLoading = false;
+    //   this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   this.token.saveStudentSearch([]);
+    //   return;
+    // }
     this.StudentSearch = [];
     var filteredStudents = JSON.parse(JSON.stringify(this.Students));
     if (_studentId != 0) {
@@ -501,7 +503,7 @@ export class searchstudentComponent implements OnInit {
     }
     if (_PID > 0) {
       filteredStudents = filteredStudents.filter(fromallstud => fromallstud.PID == _PID)
-      //checkFilterString += " and PID eq " + _PID;
+      checkFilterString += " and StudentId eq " + filteredStudents[0].StudentId;
     }
     if (_fathername != undefined) {
       this.StudentSearch.push({ Text: "FatherName", Value: _fathername });
@@ -526,12 +528,12 @@ export class searchstudentComponent implements OnInit {
       filteredStudents = filteredStudents.filter(fromallstud => fromallstud[obj[0].type] == _remarkId)
     }
     var classfilter = '';
-    //if (_ClassId > 0) {
-    this.StudentSearch.push({ Text: "ClassId", Value: _ClassId });
-    classfilter = ' and ClassId eq ' + _ClassId;
-
+    if (_ClassId>0) {
+      this.StudentSearch.push({ Text: "ClassId", Value: _ClassId });
+      classfilter = ' and ClassId eq ' + _ClassId;
+    }
     if (_searchAdmissionNo > 0) {
-      classfilter += ' and StudentClassId eq ' + _searchAdmissionNo
+      classfilter += " and AdmissionNo eq '" + _searchAdmissionNo + "'"
     }
 
     if (_sectionId > 0) {
@@ -546,7 +548,8 @@ export class searchstudentComponent implements OnInit {
       this.token.saveStudentSearch(this.StudentSearch);
     else
       this.token.saveStudentSearch([]);
-    if (_ClassId == 0) {
+    if (_ClassId == 0 && _fathername == undefined && _mothername == undefined 
+      && _PID ==0 && _sectionId==0 && _searchAdmissionNo==0 && _remarkId==0 && _studentId==0) {
       this.ELEMENT_DATA = [];
       var admittedStatusId = this.AdmissionStatus.filter(a => a.MasterDataName.toLowerCase() == 'admitted')[0].MasterDataId;
       var _student = filteredStudents.filter(s => s.AdmissionStatusId != admittedStatusId)
@@ -561,6 +564,7 @@ export class searchstudentComponent implements OnInit {
         }
         else
           item.Remarks = '';
+        //item.StudentClasses = {};
         item.ClassName = '';
         item.Action = "";
         this.ELEMENT_DATA.push(item);
@@ -627,7 +631,8 @@ export class searchstudentComponent implements OnInit {
             }
             else
               item.Remarks = '';
-            if (item.StudentClasses.length == 0) {
+            // if (item.StudentClasses.length == 0) 
+            if (item.StudentClasses == undefined) {
               item.ClassName = '';
             }
             else {

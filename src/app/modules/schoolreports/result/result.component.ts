@@ -248,51 +248,66 @@ export class ResultComponent implements OnInit {
     this.ClassName = this.Classes.filter(c => c.ClassId == _classId)[0].ClassName + _section;
     this.ExamName = "Exam: " + this.Exams.filter(c => c.ExamId == _examId)[0].ExamName;
     this.loading = true;
-    filterstr = 'ExamId eq ' + _examId;
+
+    filterstr = "ClassId eq " + _classId;
+    if (_sectionId > 0) {
+      filterstr += " and SectionId eq " + _sectionId
+    }
 
     let list: List = new List();
     list.fields = [
-      "ExamStudentResultId",
-      "ExamId",
-      "StudentClassId",
-      "TotalMarks",
-      "Division",
-      "MarkPercent",
-      "Rank",
-      "Active"
+      "StudentId,ClassId,SectionId,RollNo"
     ];
-    list.PageName = "ExamStudentResults";
-    list.lookupFields = ["StudentClass($select=ClassId,RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
+    list.PageName = "StudentClasses";
+    list.lookupFields = ["ExamStudentResults($filter=ExamId eq " + _examId + ";$select=ExamStudentResultId,ExamId,StudentClassId,TotalMarks,Division,MarkPercent,Rank,Active)"];
     list.filter = [filterstr + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         //console.log("examresults1",data.value);
+        var _students: any = this.tokenstorage.getStudents();
         var classMarks = this.ClassSubjectComponents.filter(c => c.ClassId == _classId);
         if (classMarks.length > 0)
           this.ClassFullMark = alasql("select ClassId,sum(FullMark) as FullMark from ? group by ClassId", [classMarks]);
         //  console.log("data.value",data.value)
-        if (_sectionId > 0)
-          this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId && f["StudentClass"].SectionId == _sectionId);
-        else
-          this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId);
+        this.ExamStudentResult = [];
+        data.value.forEach(studcls => {
+          var stud = _students.filter(s => s.StudentId == studcls.StudentId)
+          studcls.ExamStudentResults.forEach(res => {
+            this.ExamStudentResult.push({
+              ExamStudentResultId: res.ExamStudentResultId,
+              ExamId: res.ExamId,
+              StudentClassId: studcls.StudentClassId,
+              Student: stud[0].FirstName + " " + (stud[0].LastName == null ? '' : stud[0].LastName),
+              TotalMarks: res.TotalMarks,
+              Division: res.Division,
+              MarkPercent: res.MarkPercent,
+              Rank: res.Rank,
+              Active: res.Active,
+              StudentClass: "",
+              GradeId: 0,
+              GradeType: ''
+            })
+          })
+        })
+
         //console.log("this.ExamStudentResult",this.ExamStudentResult);
-        this.ExamStudentResult = this.ExamStudentResult.map(d => {
+        this.ExamStudentResult = this.ExamStudentResult.map((d:any) => {
           var _section = '';
           //var _gradeObj = this.SelectedClassStudentGrades[0].grades.filter(f => f.StudentGradeId == d.Grade);
-          var _sectionObj = this.Sections.filter(s => s.MasterDataId == d.StudentClass["SectionId"]);
+          var _sectionObj = this.Sections.filter(s => s.MasterDataId == d["SectionId"]);
           if (_sectionObj.length > 0)
             _section = _sectionObj[0].MasterDataName;
           d["Section"] = _section;
           d["Percent"] = d["MarkPercent"];
           var _className = '';
-          var _classObj = this.Classes.filter(s => s.ClassId == d.StudentClass["ClassId"]);
+          var _classObj = this.Classes.filter(s => s.ClassId == d.ClassId);
           if (_classObj.length > 0)
             _className = _classObj[0].ClassName;
           d["ClassName"] = _className;
-          d["RollNo"] = d.StudentClass["RollNo"];
-          var _lastname = d.StudentClass["Student"].LastName == null ? '' : " " + d.StudentClass["Student"].LastName;
-          d["Student"] = d.StudentClass["Student"].FirstName + _lastname;
+          //d["RollNo"] = d.StudentClass["RollNo"];
+          //var _lastname = d.Student.LastN == null ? '' : " " + d["Student"].LastName;
+          //d["Student"] = d["Student"].FirstName + _lastname;
           return d;
 
         })
@@ -424,6 +439,7 @@ export class ResultComponent implements OnInit {
 
     this.allMasterData = this.tokenstorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Sections =this.Sections.filter(s=>s.MasterDataName !='N/A');
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
     this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
@@ -504,14 +520,16 @@ export interface IExamStudentResult {
   StudentClassId: number;
   StudentClass: {},
   TotalMarks: number;
+  MarkPercent: number;
   Division: string;
   GradeId: number;
   GradeType: string;
   Rank: number;
-  OrgId: number;
-  BatchId: number;
+  Student: string;
+  //OrgId: number;
+  //BatchId: number;
   Active: number;
-  Action: boolean
+  //Action: boolean
 
 }
 

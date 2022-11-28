@@ -77,6 +77,20 @@
             {{element.Percent}}
         </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="PresentCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Present
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.PresentCount}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="AbsentCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Absent
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.AbsentCount}}
+        </mat-cell>
+    </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
 </mat-table>

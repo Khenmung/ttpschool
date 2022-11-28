@@ -269,7 +269,7 @@ export class DefaulterComponent implements OnInit {
               RollNo: item.RollNo,
               ClassSequence: _Classobj[0].Sequence,
               Student: item.Student.FirstName + _lastname,
-              StudentRollNo: item.Student.FirstName + _lastname + "-" + item.RollNo,
+              StudentRollNo: item.RollNo + "-" + item.Student.FirstName + _lastname,
               ContactNo: item.Student.ContactNo
             });
           }
