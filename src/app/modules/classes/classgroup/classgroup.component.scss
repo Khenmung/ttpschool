@@ -4,10 +4,17 @@ mat-form-field{
 }
 .mat-column-Active{
     justify-content: center;
+    flex: 1 0 80px;
 }
-.mat-column-PrerequisiteId{
-    flex: 0 0 70px;
+.mat-column-Action,.mat-column-GroupName,
+.mat-column-ClassGroupTypeId{
+    justify-content: center;
+    flex: 1 0 120px;
 }
+.mat-column-ClassGroupId{
+    flex: 1 0 70px;
+}
+
 .mat-column-Description{
     flex:1 1 300px;
 }

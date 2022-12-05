@@ -190,6 +190,7 @@ export class EvaluationExamMapComponent implements OnInit {
     this.EvaluationExamMapList = [];
     this.EvaluationExamMapList.push(newItem);
     this.dataSource = new MatTableDataSource(this.EvaluationExamMapList);
+    this.SelectEvaluation();
   }
   UpdateOrSave(row) {
     debugger;
@@ -347,9 +348,9 @@ export class EvaluationExamMapComponent implements OnInit {
         this.SelectedClassGroupExam = this.Exams.filter(f => examIdsforselectedclsgroup.findIndex(i => i.ExamId == f.ExamId) > -1);
       });
 
-    this.searchForm.patchValue({ searchEvaluationMasterId: 0 });
-    this.EvaluationExamMapList = [];
-    this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);
+    //this.searchForm.patchValue({ searchEvaluationMasterId: 0 });
+    //this.EvaluationExamMapList = [];
+    //this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);
 
   }
   EvaluationExamMap = [];

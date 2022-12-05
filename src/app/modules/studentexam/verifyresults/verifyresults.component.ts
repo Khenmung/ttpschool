@@ -310,7 +310,7 @@ export class VerifyResultsComponent implements OnInit {
             attendance.value.forEach(main => {
               //var cls = this.SelectedStudentClass.filter(studcls => studcls.StudentClassId == att.StudentClassId)
               //if (att.StudentClass.ClassId == _classId) {
-                main.Attendances.forEach(att => {
+              main.Attendances.forEach(att => {
                 this.StudentAttendanceList.push({
                   AttendanceId: att.AttendanceId,
                   AttendanceStatus: att.AttendanceStatus,
@@ -447,11 +447,7 @@ export class VerifyResultsComponent implements OnInit {
       return;
     }
     var _sectionId = this.searchForm.get("searchSectionId").value;
-    this.SectionSelected = false;
-    // if (_sectionId > 0)
-    //   this.SectionSelected = true;
-    // else
-    //   this.SectionSelected = false;
+
 
     this.loading = true;
     this.GetSpecificStudentGrades();
@@ -459,6 +455,11 @@ export class VerifyResultsComponent implements OnInit {
     let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
     if (_sectionId > 0)
       filterStr += " and SectionId eq " + _sectionId
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     filterStr += " and ClassId eq " + _classId + " and BatchId eq " + this.SelectedBatchId;
 
 
@@ -662,11 +663,10 @@ export class VerifyResultsComponent implements OnInit {
           // })
 
           //ss.Student =='44-Niangkhandim -A' ||  || ss.Student =='22-David Khuplianmang -A' 
-          if(ss.Student =='39-K. Niangsuanching -A')
-          {
-            debugger;
-          }
-          
+          // if (ss.Student == '39-K. Niangsuanching -A') {
+          //   debugger;
+          // }
+
           forEachSubjectOfStud.forEach(eachsubj => {
 
             var _objSubjectCategory = this.SubjectCategory.filter(f => f.MasterDataId == eachsubj.SubjectCategoryId)
@@ -706,11 +706,17 @@ export class VerifyResultsComponent implements OnInit {
                 let componentobtainedmark = filteredExistingComponentMarks.filter(eres => eres.StudentClassSubjectId == eachsubj.StudentClassSubjectId
                   && eres.ClassSubjectMarkComponentId == compmarkobtained.ClassSubjectMarkComponentId)
                 if (componentobtainedmark.length > 0) {
-                  let fullmarkpercent =compmarkobtained.FullMark / _subjectPassMarkFullMark[0].FullMark;
-                  let componentPercent = parseFloat((fullmarkpercent).toFixed(5)) * 100;
-                  let dividend = (componentobtainedmark[0].Marks / compmarkobtained.FullMark).toFixed(5);
-                  markPercent = +parseFloat((markPercent + (parseFloat(dividend) * componentPercent))+"").toFixed(2);
+                  let fullmarkpercent = compmarkobtained.FullMark * 100;
+                  let componentPercent = parseFloat((fullmarkpercent / _subjectPassMarkFullMark[0].FullMark).toFixed(5));
+                  let dividend = (componentobtainedmark[0].Marks * componentPercent).toFixed(5);
+                  markPercent = +parseFloat((markPercent + (parseFloat(dividend) / compmarkobtained.FullMark)) + "").toFixed(2);
                 }
+                ////////////////////added for component mark display
+                if (this.displayedColumns.indexOf(compmarkobtained.SubjectComponentName) == -1 &&  compmarkobtained.SubjectComponentName) {
+                  this.displayedColumns.push(compmarkobtained.SubjectComponentName);                  
+                }
+                ForNonGrading[compmarkobtained.SubjectComponentName] = componentobtainedmark[0].Marks;
+                /////////////////////
               })
               //console.log("markPercent",markPercent);
               var _statusFail = true;
@@ -860,13 +866,13 @@ export class VerifyResultsComponent implements OnInit {
               if (!_notToCalculateRankAndPercentage.includes(result.Division.toLowerCase())) {
                 //result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
                 if (previousTotal != result["Total Percent"])
-                  rankCount+=1;
+                  rankCount += 1;
                 result.Rank = rankCount;
                 previousTotal = result["Total Percent"]
               }
               // else
               //   result.Division = '';
-              
+
             })
           }
           else {
@@ -1188,6 +1194,7 @@ export class VerifyResultsComponent implements OnInit {
           var selectHowMany = 0;
           if (selectHowManyObj.length > 0)
             selectHowMany = selectHowManyObj[0].SelectHowMany;
+          e.SubjectComponentName = this.MarkComponents.filter(c => c.MasterDataId == e.SubjectComponentId)[0].MasterDataName;
           e.ClassId = e.ClassSubject.ClassId;
           e.SubjectTypeId = e.ClassSubject.SubjectTypeId;
           e.SelectHowMany = selectHowMany;

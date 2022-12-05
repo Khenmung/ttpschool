@@ -11,6 +11,8 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-classclassgroup',
@@ -55,11 +57,8 @@ export class ClassgroupComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
-    private route: ActivatedRoute,
+    private dialog: MatDialog,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) { }
 
@@ -134,16 +133,54 @@ export class ClassgroupComponent implements OnInit {
     row.Active = value.checked ? 1 : 0;
   }
   delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
+    this.openDialog(element);
+  }
+  openDialog(row) {
+    //debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
     }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+    this.dataservice.postPatch('ClassGroups', toUpdate, row.ClassGroupId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; this.PageLoading = false;
+        var idx = this.classgroupList.findIndex(x => x.ClassGroupId == row.ClassGroupId);
+        this.classgroupList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.classgroupList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
-        });
+      });
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.GroupName.toLowerCase().indexOf(searchTerms.GroupName) !== -1
+    }
+    return filterFunction;
   }
   UpdateOrSave(row) {
 
@@ -227,15 +264,6 @@ export class ClassgroupComponent implements OnInit {
 
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
-    // var _searchClassId = this.searchForm.get("searchClassId").value;
-    // if (_searchClassId == 0) {
-    //   this.loading = false; this.PageLoading=false;
-    //   this.contentservice.openSnackBar("Please select class/course.", globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
-    // else {
-    //   filterStr += ' ClassId eq ' + _searchClassId
-    // }
     let list: List = new List();
     list.fields = [
       "ClassGroupId",
@@ -269,19 +297,7 @@ export class ClassgroupComponent implements OnInit {
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    // let Id = 0;
-    // let Ids = this.allMasterData.filter((item, indx) => {
-    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    // })
-    // if (Ids.length > 0) {
-    //   Id = Ids[0].MasterDataId;
-    //   return this.allMasterData.filter((item, index) => {
-    //     return item.ParentId == Id
-    //   })
-    // }
-    // else
-    //   return [];
-
+   
   }
 }
 export interface IClassgroup {

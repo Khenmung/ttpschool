@@ -153,6 +153,10 @@ export class StudentSubjectReportComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    if (_classSubjectId == 0) {
+      this.contentservice.openSnackBar("Please select subject.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     // if (_sectionId == 0) {
     //   this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
     //   return;
@@ -163,20 +167,30 @@ export class StudentSubjectReportComponent implements OnInit {
     // }
 
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
     //var batchFilter = "BatchId eq " + this.SelectedBatchId;
     //var _classSubjectId = this.ClassSubjects.filter(c=>c.ClassId == _classId && c.SubjectId == _classSubjectId)[0].ClassSubjectId;
-    if (_classSubjectId > 0)
-      filterStr += " and ClassSubjectId eq " + _classSubjectId;
-    filterStr += " and ClassId eq " + _classId;
+    var studclssubjfilter = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    
+    studclssubjfilter += " and ClassId eq " + _classId;
+    studclssubjfilter += " and SectionId eq " + _sectionId;
+    if (_classSubjectId > 0) {
+      //filterStr += " and ClassSubjectId eq " + _classSubjectId;
+      studclssubjfilter += " and ClassSubjectId eq " + _classSubjectId;
+
+    }
+    //filterStr += " and ClassId eq " + _classId;
 
     let list: List = new List();
     list.fields = [
-      'ClassId', 'ClassSubjectId', 'SubjectId'
+      //'ClassId', 'ClassSubjectId', 'SubjectId'
+      "StudentClassSubjectId,ClassSubjectId,ClassId,SectionId,SubjectId,StudentClassId,Active"
     ];
-    list.PageName = "ClassSubjects"
-    list.lookupFields = ["StudentClassSubjects($filter=Active eq 1 and BatchId eq " + this.SelectedBatchId + ";$select=StudentClassSubjectId,ClassSubjectId,StudentClassId,Active;$expand=StudentClass($select=StudentId,StudentClassId,SectionId))"]
-    list.filter = [filterStr];
+    //list.PageName = "ClassSubjects"
+    list.PageName = "StudentClassSubjects";
+    //list.lookupFields = ["StudentClassSubjects($filter=" + studclssubjfilter + ";$select=StudentClassSubjectId,ClassSubjectId,StudentClassId,Active)"]
+    list.filter = [studclssubjfilter];
+    this.loading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var _class = '';
@@ -185,13 +199,15 @@ export class StudentSubjectReportComponent implements OnInit {
         var _studname = '';
 
         this.StudentSubjects = [];
-        var dbdata = [];
+        var filteredStudents = this.Students.filter(f => f.StudentClasses.length > 0 && f.StudentClasses[0].ClassId == _classId && f.Active == 1);
 
         //dbdata = data.value.filter(x =>x.StudentClassSubjects.filter(y=>y.StudentClass.SectionId == _sectionId).length>0)
         //console.log("this.StudentSubjects", this.StudentSubjects);
         data.value.forEach(s => {
-          s.StudentClassSubjects.forEach(inner => {
+          //s.StudentClassSubjects.forEach((inner, index) => {
 
+            //console.log("index",index);
+            var studentcls: any = filteredStudents.filter(f => f.StudentClasses[0].StudentClassId == s.StudentClassId);
             _class = '';
             _subject = '';
             _studname = '';
@@ -199,49 +215,50 @@ export class StudentSubjectReportComponent implements OnInit {
             //if (_studentObj.length > 0) {
             //  var _lastname = _studentObj[0].LastName == null || _studentObj[0].LastName == '' ? '' : " " + _studentObj[0].LastName;
             //  _studname = _studentObj[0].FirstName + _lastname;
+            if (studentcls.length > 0) {
+              let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassId);
+              if (_stdClass.length > 0)
+                _class = _stdClass[0].ClassName;
 
-            let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassId);
-            if (_stdClass.length > 0)
-              _class = _stdClass[0].ClassName;
+              let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.SubjectId);
+              if (_stdSubject.length > 0)
+                _subject = _stdSubject[0].MasterDataName;
 
-            let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.SubjectId);
-            if (_stdSubject.length > 0)
-              _subject = _stdSubject[0].MasterDataName;
-
-            let _stdSection = this.Sections.filter(c => c.MasterDataId == inner.StudentClass.SectionId);
-            if (_stdSection.length > 0)
-              _section = _stdSection[0].MasterDataName;
-            //if section is selected, item is taken only if section object length >0
-            if (_sectionId > 0) {
-              if (_stdSection.length > 0 && inner.StudentClass.SectionId == _sectionId) {
+              let _stdSection = this.Sections.filter(c => c.MasterDataId == studentcls[0].StudentClasses[0].SectionId);
+              if (_stdSection.length > 0)
+                _section = _stdSection[0].MasterDataName;
+              //if section is selected, item is taken only if section object length >0
+              if (_sectionId > 0) {
+                if (_stdSection.length > 0 && studentcls[0].StudentClasses[0].SectionId == _sectionId) {
+                  this.StudentSubjects.push({
+                    SubjectName: _subject,
+                    ClassName: _class,
+                    SectionName: _section,
+                    SubjectId: s.SubjectId,
+                    ClassId: s.ClassId,
+                    StudentId: studentcls[0].StudentClasses[0].StudentId,
+                    SectionId: studentcls[0].StudentClasses[0].SectionId,
+                  })
+                }
+              }
+              else {
                 this.StudentSubjects.push({
                   SubjectName: _subject,
                   ClassName: _class,
                   SectionName: _section,
                   SubjectId: s.SubjectId,
                   ClassId: s.ClassId,
-                  StudentId: inner.StudentClass.StudentId,
-                  SectionId: inner.StudentClass.SectionId,
+                  StudentId: studentcls[0].StudentClasses[0].StudentId,
+                  SectionId: studentcls[0].StudentClasses[0].SectionId,
                 })
               }
             }
-            else {
-              this.StudentSubjects.push({
-                SubjectName: _subject,
-                ClassName: _class,
-                SectionName: _section,
-                SubjectId: s.SubjectId,
-                ClassId: s.ClassId,
-                StudentId: inner.StudentClass.StudentId,
-                SectionId: inner.StudentClass.SectionId,
-              })
-            }
-          })
+          //})
         })
         //SubjectCount = [];
         this.displayedColumns = [
-          'ClassName',
-          'SectionName',
+          //'ClassName',
+          //'SectionName',
           'SubjectName',
           'SubjectCount'
         ];

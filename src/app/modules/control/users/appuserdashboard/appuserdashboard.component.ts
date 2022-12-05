@@ -336,31 +336,32 @@ export class AppuserdashboardComponent implements OnInit {
     var _classId = this.searchForm.get("searchClassId").value;
     let filterStr = " and ClassId eq " + _classId;
 
-    let list: List = new List();
-    list.fields = [
-      "StudentClassId",
-      "ClassId",
-      "RollNo",
-      "SectionId",
-      "OrgId"
-    ];
-    list.PageName = "StudentClasses";
-    //list.lookupFields = ["Student($select=ContactNo,UserId,StudentId,FirstName,LastName,EmailAddress)"];
-    list.filter = [this.OrgIdAndBatchIdFilter + " and Active eq 1" + filterStr];
-    this.UserDetail = [];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
+    // let list: List = new List();
+    // list.fields = [
+    //   "StudentClassId",
+    //   "ClassId",
+    //   "RollNo",
+    //   "SectionId",
+    //   "OrgId"
+    // ];
+    // list.PageName = "StudentClasses";
+    // //list.lookupFields = ["Student($select=ContactNo,UserId,StudentId,FirstName,LastName,EmailAddress)"];
+    // list.filter = [this.OrgIdAndBatchIdFilter + " and Active eq 1" + filterStr];
+    // this.UserDetail = [];
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
         debugger;
         var _students: any = this.tokenStorage.getStudents();
-        _students = _students.filter(student => data.value.findIndex(fi => fi.StudentId == student.StudentId) > -1);
+        //_students = _students.filter(student => data.value.findIndex(fi => fi.StudentId == student.StudentId) > -1);
+        _students = _students.filter(student => student.StudentClasses.findIndex(e=>e.ClassId == _classId)>-1);
 
         _students.forEach(student => {
 
           var _lastname = student.LastName == null ? '' : " " + student.LastName;
-          var matchstudcls = data.value.filter(d => d.StudentId == student.StudentId);
+          //var matchstudcls = data.value.filter(d => d.StudentId == student.StudentId);
 
           if (student.EmailAddress != null && student.EmailAddress.length > 0) {
-            student.ClassName = this.Classes.filter(c => c.ClassId == matchstudcls[0].ClassId)[0].ClassName;
+            student.ClassName = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId)[0].ClassName;
             student.EmailAddress = student.EmailAddress;
             student.FullName = student.FirstName + _lastname;
             student.FirstName = student.FirstName.replaceAll(' ', '');
@@ -369,7 +370,7 @@ export class AppuserdashboardComponent implements OnInit {
           }
         })
         this.GetUsers()
-      });
+      //});
   }
   GetAppUsers() {
     // this.authservice.CallAPI("","SendSMS").subscribe((data:any)=>{

@@ -30,9 +30,9 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-checkbox style="margin-right:15px" formControlName="viewMarkPercentCheckBox" (click)="$event.stopPropagation()"
+    <!-- <mat-checkbox style="margin-right:15px" formControlName="viewMarkPercentCheckBox" (click)="$event.stopPropagation()"
         [checked]="false"> View in Percent
-    </mat-checkbox>
+    </mat-checkbox> -->
     <button style="margin-right: 15px;" [disabled]="loading" mat-raised-button color="accent"
         (click)="GetStudentSubjects()">
         <mat-icon>search</mat-icon>
@@ -88,11 +88,11 @@
             <mat-header-row *matHeaderRowDef="GradingDisplayedColumns;sticky:true"></mat-header-row>
             <mat-row *matRowDef="let row; columns: GradingDisplayedColumns;" class="element-row"></mat-row>
         </mat-table>
-        <!-- <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator> -->
+        <!-- <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginRator> -->
     </div>
 </div>
 <div style="display:flex;justify-content: center;">
-    <button [disabled]="loading || Permission=='read'" *ngIf="ExamStudentSubjectResult.length>0" matTooltip="print"
+    <button [disabled]="loading || Permission=='read'" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0" matTooltip="print"
         printSectionId="printSection" [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
         <mat-icon>print</mat-icon>
     </button>

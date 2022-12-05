@@ -61,6 +61,8 @@ export class studentsubjectdashboardComponent implements OnInit {
     StudentClassSubjectId: 0,
     SubjectId: 0,
     StudentClassId: 0,
+    ClassId: 0,
+    SectionId: 0,
     ClassSubjectId: 0,
     BatchId: 0,
     OrgId: 0,
@@ -111,17 +113,12 @@ export class studentsubjectdashboardComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
-        });
-
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-        if (this.Classes.length == 0 || this.Subjects.length == 0)
-          this.GetMasterData();
-        else {
-          this.loading = false; this.PageLoading = false;
-        }
+          
+        });       
+        this.GetMasterData();
       }
       else {
         this.loading = false; this.PageLoading = false;
@@ -159,74 +156,81 @@ export class studentsubjectdashboardComponent implements OnInit {
       return;
     }
     this.loading = true;
-    let list: List = new List();
-    list.fields = [
-      'StudentClassId',
-      'RollNo',
-      'SectionId',
-      'ClassId',
-      'Active'
-    ];
+    this.GetExistingStudentClassSubjects();
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentClassId',
+    //   'RollNo',
+    //   'SectionId',
+    //   'ClassId',
+    //   'Active'
+    // ];
 
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=PID,FirstName,LastName)"];
-    list.filter = [filterStr];
-    this.dataservice.get(list)
-      .subscribe((studentclassdb: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        this.StudentSubjectList = [];
-        var _studentClassExisting = [];
-        //if (studentclassdb.value.length > 0) {
+    // list.PageName = "StudentClasses";
+    // list.lookupFields = ["Student($select=PID,FirstName,LastName)"];
+    // list.filter = [filterStr];
+    // this.dataservice.get(list)
+    //   .subscribe((studentclassdb: any) => {
+    //     //debugger;
+    //     //  //console.log('data.value', data.value);
+    //     this.StudentSubjectList = [];
+    //     var _studentClassExisting = [];
+    //     //if (studentclassdb.value.length > 0) {
 
-        studentclassdb.value.forEach(item => {
-          var _lastname = item.Student.LastName == null || item.Student.LastName == '' ? '' : " " + item.Student.LastName;
-          _studentClassExisting.push({
-            StudentClassId: item.StudentClassId,
-            Active: item.Active,
-            ClassId: item.ClassId,
-            RollNo: item.RollNo,
-            Student: item.RollNo + " - " + item.Student.FirstName + _lastname,
-            SectionId: item.SectionId
-          })
-        })
-        this.GetExistingStudentClassSubjects(_studentClassExisting);
-      });
+    //     studentclassdb.value.forEach(item => {
+    //       var _lastname = item.Student.LastName == null || item.Student.LastName == '' ? '' : " " + item.Student.LastName;
+    //       _studentClassExisting.push({
+    //         StudentClassId: item.StudentClassId,
+    //         Active: item.Active,
+    //         ClassId: item.ClassId,
+    //         RollNo: item.RollNo,
+    //         Student: item.RollNo + " - " + item.Student.FirstName + _lastname,
+    //         SectionId: item.SectionId
+    //       })
+    //     })
+    //     this.GetExistingStudentClassSubjects(_studentClassExisting);
+    //   });
   }
-  GetExistingStudentClassSubjects(ParamstudentClassExisting) {
+  GetExistingStudentClassSubjects() {
 
-    var orgIdSearchstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
-
-    orgIdSearchstr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
-    //orgIdSearchstr += ' and SectionId eq ' + this.searchForm.get("searchSectionId").value;
+    var orgIdSearchstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    var _classId = this.searchForm.get("searchClassId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
+    orgIdSearchstr += ' and ClassId eq ' + _classId;
+    orgIdSearchstr += ' and SectionId eq ' + _sectionId;
 
     let list: List = new List();
 
     list.fields = [
-      "ClassId",
-      "SubjectId",
       "ClassSubjectId",
-      "Active"
+      "SubjectId",
+      "StudentClassId",
+      "StudentClassSubjectId",
+      "Active",
+      "ClassId",
+      "SectionId"
     ];
-    list.PageName = "ClassSubjects";
-    list.lookupFields = ["StudentClassSubjects($select=ClassSubjectId,SubjectId,StudentClassId,StudentClassSubjectId,Active)"];
-
-    list.filter = ["Active eq 1 and " + orgIdSearchstr];
+    list.PageName = "StudentClassSubjects";
+    //list.lookupFields = ["StudentClassSubjects($select=ClassSubjectId,SubjectId,StudentClassId,StudentClassSubjectId,Active)"];
+    //list.limitTo=100;
+    list.filter = [orgIdSearchstr];
     //list.orderBy = "ParentId";
     debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentClassSubjects = [];
-        data.value.forEach(m => {
-          if (m.StudentClassSubjects.length > 0) {
-            m.StudentClassSubjects.forEach(n => {
+        var filteredClassSubjects = this.ClassSubjectList.filter(clssubj => clssubj.ClassId == _classId);
+        filteredClassSubjects.forEach(clssubj => {
+          var existing = data.value.filter(db => db.ClassSubjectId == clssubj.ClassSubjectId);
+          if (existing.length > 0) {
+            existing.forEach(existing => {
               this.StudentClassSubjects.push({
-                'StudentClassSubjectId': n.StudentClassSubjectId,
-                'StudentClassId': n.StudentClassId,
-                'ClassSubjectId': n.ClassSubjectId,
-                'Active': n.Active,
-                'ClassId': m.ClassId,
-                'SubjectId': m.SubjectId
+                'StudentClassSubjectId': existing.StudentClassSubjectId,
+                'StudentClassId': existing.StudentClassId,
+                'ClassSubjectId': existing.ClassSubjectId,
+                'Active': existing.Active,
+                'ClassId': existing.ClassId,
+                'SubjectId': existing.SubjectId
               })
             })
           }
@@ -234,37 +238,66 @@ export class studentsubjectdashboardComponent implements OnInit {
             this.StudentClassSubjects.push({
               'StudentClassSubjectId': 0,
               'StudentClassId': 0,
-              'ClassSubjectId': m.ClassSubjectId,
+              'ClassSubjectId': clssubj.ClassSubjectId,
               'Active': 0,
-              'ClassId': m.ClassId,
-              'SubjectId': m.SubjectId
+              'ClassId': clssubj.ClassId,
+              'SubjectId': clssubj.SubjectId
             })
           }
         })
+        // data.value.forEach(m => {
+        //   if (m.StudentClassSubjects.length > 0) {
+        //     m.StudentClassSubjects.forEach(n => {
+        //       this.StudentClassSubjects.push({
+        //         'StudentClassSubjectId': n.StudentClassSubjectId,
+        //         'StudentClassId': n.StudentClassId,
+        //         'ClassSubjectId': n.ClassSubjectId,
+        //         'Active': n.Active,
+        //         'ClassId': m.ClassId,
+        //         'SubjectId': m.SubjectId
+        //       })
+        //     })
+        //   }
+        //   else {
+        //     this.StudentClassSubjects.push({
+        //       'StudentClassSubjectId': 0,
+        //       'StudentClassId': 0,
+        //       'ClassSubjectId': m.ClassSubjectId,
+        //       'Active': 0,
+        //       'ClassId': m.ClassId,
+        //       'SubjectId': m.SubjectId
+        //     })
+        //   }
+        // })
         //console.log("this.StudentClassSubjects", this.StudentClassSubjects);
 
         //////////////
         //var _studentDetail: any = {};
         this.StoreForUpdate = [];
-        if (ParamstudentClassExisting.length > 0) {
+        var _students: any = this.tokenstorage.getStudents();
+        var _filteredStudent = _students.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId && s.StudentClasses[0].SectionId == _sectionId);
+        if (_filteredStudent.length > 0) {
           //for all student in student class table for the selected class.
           this.displayedColumns = ["Student"];
           //console.log("ClassSubjectList",this.ClassSubjectList)
-          ParamstudentClassExisting.forEach(cs => {
+          this.StudentSubjectList =[];
+          _filteredStudent.forEach(cs => {
+            var lastName = (cs.LastName) ?" " + cs.LastName : "";
+            cs.Student = cs.StudentClasses[0].RollNo +"-"+ cs.FirstName + lastName;
             //var _filteredStudentClassSubjectlist = this.StudentClassSubjects.filter(c => c.StudentClassId == cs.StudentClassId);
-            if (cs.RollNo == null || cs.RollNo == '') {
-              this.contentservice.openSnackBar("Please assign roll no. for " + cs.Student, globalconstants.ActionText, globalconstants.RedBackground);
+            if (cs.StudentClasses[0].RollNo == null || cs.StudentClasses[0].RollNo == '') {
+              this.contentservice.openSnackBar("Please assign roll no. for " + cs.StudentClasses[0].Student, globalconstants.ActionText, globalconstants.RedBackground);
             }
             else {
               this.StudentDetail = {
                 // StudentClassSubjectId: cs.StudentClassSubjectId,
-                StudentClassId: cs.StudentClassId,
-                Student: cs.Student,
-                RollNo: cs.RollNo,
+                StudentClassId: cs.StudentClasses[0].StudentClassId,
+                Student: cs.Student,//cs.StudentClasses[0].Student,
+                RollNo: cs.StudentClasses[0].RollNo,
                 Action: false
               }
 
-              var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClassId);
+              var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClasses[0].StudentClassId);
               var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
               //console.log("specificclasssubjects",specificclasssubjects)
               specificclasssubjects.forEach((subjectTypes, indx) => {
@@ -281,7 +314,7 @@ export class studentsubjectdashboardComponent implements OnInit {
                   var newsubjects = JSON.parse(JSON.stringify(this.StudentClassSubjects[0]));
                   newsubjects["StudentClassSubjectId"] = 0;
                   newsubjects["ClassSubjectId"] = subjectTypes.ClassSubjectId;
-                  newsubjects["StudentClassId"] = cs.StudentClassId;
+                  newsubjects["StudentClassId"] = cs.StudentClasses[0].StudentClassId;
                   newsubjects["SubjectId"] = subjectTypes.SubjectId;
                   newsubjects["SubjectTypeId"] = subjectTypes.SubjectTypeId;
                   newsubjects["SubjectType"] = subjectTypes.SubjectTypeName;
@@ -563,7 +596,9 @@ export class studentsubjectdashboardComponent implements OnInit {
   UpdateOrSave(row, element) {
     //debugger;
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
-      " and StudentClassId eq " + row.StudentClassId
+      " and StudentClassId eq " + row.StudentClassId +
+      " and BatchId eq " + this.SelectedBatchId
+
 
     if (row.StudentClassSubjectId > 0)
       checkFilterString += " and StudentClassSubjectId ne " + row.StudentClassSubjectId;
@@ -577,6 +612,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
+          console.log("row.ClassSubjectId",row.ClassSubjectId)
           this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
@@ -589,6 +625,8 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.StudentSubjectData.StudentClassId = row.StudentClassId;
           this.StudentSubjectData.SubjectId = row.SubjectId;
           this.StudentSubjectData.ClassSubjectId = row.ClassSubjectId;
+          this.StudentSubjectData.ClassId = row.ClassId;
+          this.StudentSubjectData.SectionId = row.SectionId;
           ////console.log('data', this.StudentSubjectData);
           if (this.StudentSubjectData.StudentClassSubjectId == 0) {
             this.StudentSubjectData["CreatedDate"] = new Date();

@@ -129,7 +129,7 @@ export class AttendancepercentComponent implements OnInit {
     this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
 
   }
-
+  distinctStudent =[];
   GetStudentAttendance() {
     debugger;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
@@ -258,9 +258,9 @@ export class AttendancepercentComponent implements OnInit {
 
         var PresentAttendance = alasql('select sum(1) PresentAbsentCount,StudentRollNo,ClassName from ? where AttendanceStatus=1 group by StudentRollNo,ClassName', [this.StudentAttendanceList])
         var AbsentAttendance = alasql('select sum(1) PresentAbsentCount,StudentRollNo,ClassName from ? where AttendanceStatus=0 group by StudentRollNo,ClassName', [this.StudentAttendanceList])
-        var distinctStudent = alasql('select distinct StudentRollNo,RollNo,ClassName from ? ', [this.StudentAttendanceList])
+        this.distinctStudent = alasql('select distinct StudentRollNo,RollNo,ClassName from ? ', [this.StudentAttendanceList])
 
-        distinctStudent.forEach(p => {
+        this.distinctStudent.forEach(p => {
           var absent = AbsentAttendance.filter(a => a.StudentRollNo == p.StudentRollNo)
           var present = PresentAttendance.filter(a => a.StudentRollNo == p.StudentRollNo)
           if (absent.length > 0)
@@ -276,10 +276,10 @@ export class AttendancepercentComponent implements OnInit {
           p.Percent = ((p.PresentCount / (p.PresentCount + p.AbsentCount)) * 100).toFixed(2);
         })
 
-        distinctStudent = distinctStudent.sort((a, b) => a.ClassName - b.ClassName);
-        if (distinctStudent.length == 0)
+        this.distinctStudent = this.distinctStudent.sort((a, b) => a.ClassName - b.ClassName);
+        if (this.distinctStudent.length == 0)
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
-        this.dataSource = new MatTableDataSource<IStudentAttendance>(distinctStudent);
+        this.dataSource = new MatTableDataSource<IStudentAttendance>(this.distinctStudent);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;

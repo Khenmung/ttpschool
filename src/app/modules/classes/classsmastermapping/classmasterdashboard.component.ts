@@ -13,6 +13,8 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 //import { ClasssubjectComponent } from '../classsubject/classsubject.component';
 import { SwUpdate } from '@angular/service-worker';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-classmasterdashboard',
@@ -76,7 +78,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
 
-    private route: ActivatedRoute,
+    private dialog: MatDialog,
     private nav: Router,
     private shareddata: SharedataService,
   ) { }
@@ -288,7 +290,56 @@ export class ClassmasterdashboardComponent implements OnInit {
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
   }
+  delete(element) {
+    this.openDialog(element);
+  }
+  openDialog(row) {
+    //debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
 
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch(this.TeacherClassSubjectListName, toUpdate, row.TeacherClassMappingId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; this.PageLoading = false;
+        var idx = this.ClassSubjectTeacherList.findIndex(x => x.TeacherClassMappingId == row.TeacherClassMappingId);
+        this.ClassSubjectTeacherList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.ClassSubjectTeacherList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.GroupName.toLowerCase().indexOf(searchTerms.GroupName) !== -1
+    }
+    return filterFunction;
+  }
   UpdateOrSave(row) {
 
     //debugger;
@@ -455,6 +506,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
     this.allMasterData = this.tokenstorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Sections = this.Sections.filter(s=>s.MasterDataName !='N/A');
     //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);

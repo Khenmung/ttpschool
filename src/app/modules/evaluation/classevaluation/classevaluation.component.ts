@@ -12,6 +12,8 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassEvaluationOptionComponent } from '../classevaluationoption/classevaluationoption.component';
 import { SwUpdate } from '@angular/service-worker';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-ClassEvaluation',
@@ -85,7 +87,8 @@ export class ClassEvaluationComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private nav: Router,
-    private fb: UntypedFormBuilder
+    private fb: UntypedFormBuilder,
+    private dialog:MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -184,16 +187,55 @@ export class ClassEvaluationComponent implements OnInit {
     this.SubCategories = this.allMasterData.filter(f => f.ParentId == pCategoryId.value);
   }
   delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+    this.openDialog(element);
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
 
-        });
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      ClassEvaluationId:row.ClassEvaluationId,
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+    //console.log("toUpdate",toUpdate);
+    this.dataservice.postPatch('ClassEvaluations', toUpdate, row.ClassEvaluationId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; this.PageLoading = false;
+        var idx = this.ClassEvaluationList.findIndex(x => x.ClassEvaluationId == row.ClassEvaluationId)
+        this.ClassEvaluationList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.ClassEvaluationList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.Description.toLowerCase().indexOf(searchTerms.Description) !== -1
+    }
+    return filterFunction;
   }
   viewchild(row) {
     debugger;

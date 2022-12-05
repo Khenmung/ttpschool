@@ -74,13 +74,18 @@
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                    <mat-cell *matCellDef="let element">
+                        <button style="margin-right:15px" [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
                             mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>
+                        </button>
+                        <button [disabled]="loading 
+                                || !element.Action 
+                                || Permission !='rwd'" matTooltip="delete" mat-mini-fab (click)="delete(element)">
+                            <mat-icon>delete</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>
@@ -88,7 +93,8 @@
                 <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row">
                 </mat-row>
             </mat-table>
-            <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,100]"></mat-paginator>
+            <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,100]">
+            </mat-paginator>
         </div>
         <!-- <button type="button" class="btn btn-outline-secondary mr-2" placement="top"
             ngbPopover="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." popoverTitle="Popover on top">

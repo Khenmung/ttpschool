@@ -9,7 +9,10 @@ mat-form-field{
 button{
     margin-right:15px;
 }
-.mat-column-Section,.mat-column-Active,.mat-column-Action{
+.mat-column-Action{
+    flex:0 0 120px;
+ }
+.mat-column-Section,.mat-column-Active{
     flex:0 0 100px;
  }
  .mat-column-HelperId,.mat-column-TeacherId{

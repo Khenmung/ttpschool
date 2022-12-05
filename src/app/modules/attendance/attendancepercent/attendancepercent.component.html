@@ -95,3 +95,9 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
 </mat-table>
 <mat-paginator style="display:flex;justify-content: center;" [pageSizeOptions]="[10,20,50,75]"></mat-paginator>
+<div style="display:flex;justify-content: center;">
+    <button [disabled]="loading || Permission=='read'" *ngIf="distinctStudent.length>0" matTooltip="print"
+        printSectionId="printSection" [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
+        <mat-icon>print</mat-icon>
+    </button>
+</div>

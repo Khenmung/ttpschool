@@ -20,9 +20,12 @@ mat-cell:first-of-type {
 {
     flex:1 1 120px;
 }
-.mat-column-ClassId,
-.mat-column-ExamId,
 .mat-column-Action{   
+    flex:1 1 150px;
+}
+.mat-column-ClassId,
+.mat-column-ExamId
+{   
     flex:1 1 120px;
 }
 .mat-column-DisplayOrder{

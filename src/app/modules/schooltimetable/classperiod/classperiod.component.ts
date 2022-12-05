@@ -346,6 +346,7 @@ export class ClassperiodComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllClassPeriods = [...data.value];
+        this.loading = false;
       })
   }
   ReplicateToClasses() {
@@ -420,7 +421,8 @@ export class ClassperiodComponent implements OnInit {
     this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
     //this.shareddata.ChangeBatch(this.Batches);
     this.Batches = this.tokenstorage.getBatches()
-    this.loading = false; this.PageLoading = false;
+    this.loading = false;
+     this.PageLoading = false;
   }
 
   getDropDownData(dropdowntype) {

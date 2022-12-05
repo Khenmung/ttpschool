@@ -29,3 +29,11 @@ pre{
     font-family: inherit !important;
     font-size: inherit !important;
 }
+.mat-column-FullName{
+    flex: 1 0 150px;
+}
+.mat-column-Submitted,
+.mat-column-Action{
+    justify-content: center;
+    flex:1 0 80px;
+}

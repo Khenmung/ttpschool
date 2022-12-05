@@ -10,6 +10,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { AttendancepercentComponent } from './attendancepercent/attendancepercent.component';
 import { DefaulterComponent } from './defaulter/defaulter.component';
+import { NgxPrintModule } from 'ngx-print';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { DefaulterComponent } from './defaulter/defaulter.component';
     FormsModule,
     MaterialModule,
     SharedModule,
-    SharedhomepageModule
+    SharedhomepageModule,
+    NgxPrintModule
   ],
   exports:[AttendanceComponents],
   providers:[{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }]

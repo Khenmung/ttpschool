@@ -167,16 +167,55 @@ export class EvaluationMasterComponent implements OnInit {
     row.AppendAnswer = value.checked; //? 1: 0;
   }
   delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
+    this.openDialog(element);
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      EvaluationMasterId:row.EvaluationMasterId,
+      Active: false,
+      Deleted: true,
+      UpdatedDate: new Date()
     }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
+    //console.log("toUpdate",toUpdate);
+    this.dataservice.postPatch('EvaluationMasters', toUpdate, row.EvaluationMasterId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; this.PageLoading = false;
+        var idx = this.EvaluationMasterList.findIndex(x => x.EvaluationMasterId == row.EvaluationMasterId)
+        this.EvaluationMasterList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.EvaluationMasterList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-
-        });
+      });
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.EvaluationName.toLowerCase().indexOf(searchTerms.EvaluationName) !== -1
+    }
+    return filterFunction;
   }
   UpdateOrSave(row) {
 
@@ -266,49 +305,7 @@ export class EvaluationMasterComponent implements OnInit {
           this.loadingFalse();
         });
   }
-  Delete(row) {
-
-    this.openDialog(row)
-  }
-  openDialog(row) {
-    debugger;
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        message: 'Are you sure want to delete?',
-        buttonText: {
-          ok: 'Save',
-          cancel: 'No'
-        }
-      }
-    });
-
-    dialogRef.afterClosed()
-      .subscribe((confirmed: boolean) => {
-        if (confirmed) {
-          this.UpdateAsDeleted(row);
-        }
-      });
-  }
-
-  UpdateAsDeleted(row) {
-    debugger;
-    let toUpdate = {
-      Active: false,
-      Deleted: true,
-      UpdatedDate: new Date()
-    }
-
-    this.dataservice.postPatch('EvaluationMasters', toUpdate, row.EvaluationMasterId, 'patch')
-      .subscribe(res => {
-        row.Action = false;
-        this.loading = false; this.PageLoading = false;
-        var idx = this.EvaluationMasterList.findIndex(x => x.EvaluationMasterId == row.EvaluationMasterId)
-        this.EvaluationMasterList.splice(idx, 1);
-        this.dataSource = new MatTableDataSource<any>(this.EvaluationMasterList);
-        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-
-      });
-  }
+  
   GetEvaluationMaster() {
     debugger;
 
@@ -330,7 +327,7 @@ export class EvaluationMasterComponent implements OnInit {
       {
         result = this.EvaluationMasterList.filter(f => f.ClassGroupId == _classGroupId )
       }
-      console.log("result",result)
+      //console.log("result",result)
       this.dataSource = new MatTableDataSource<IEvaluationMaster>(result);
       this.dataSource.paginator = this.paging;
       this.loadingFalse();

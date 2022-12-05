@@ -33,7 +33,7 @@
                 </div>
             </form>
             <!-- <div style="width: 100%;"> -->
-            <mat-table #table [dataSource]="dataSource" matSort style="max-width: 1200px;">
+            <mat-table #table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="ClassEvaluationId">
                     <mat-header-cell *matHeaderCellDef>Id
                     </mat-header-cell>
@@ -148,6 +148,11 @@
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>
+                        </button>
+                        <button [disabled]="loading 
+                        || !element.Action 
+                        || Permission !='rwd'" matTooltip="delete" mat-mini-fab (click)="delete(element)">
+                            <mat-icon>delete</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>

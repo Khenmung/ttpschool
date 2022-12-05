@@ -33,7 +33,7 @@ button{
 
 mat-header-cell{
     border-right: 1px solid lightgray;
-    justify-content: flex-end;
+    justify-content: center;
     align-self: stretch;
 }
 
@@ -50,6 +50,6 @@ mat-cell{
     padding: 10px;
     display: flex;
     //justify-content: space-between;
-    flex:1 1 150px;
+    flex:1 1 110px;
 }
 

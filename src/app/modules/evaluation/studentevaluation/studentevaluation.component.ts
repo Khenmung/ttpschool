@@ -112,7 +112,8 @@ export class StudentEvaluationComponent implements OnInit {
     debugger;
     this.searchForm = this.fb.group({
       searchStudentName: [0],
-      searchClassId: [0]
+      searchClassId: [0],
+      searchSectionId: [0]
     });
     this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
       .pipe(
@@ -175,7 +176,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetSubjects(val) {
     debugger;
-    this.ClassId = this.searchForm.get("searchStudentName").value.ClassId;
+    this.ClassId = this.searchForm.get("searchClassId").value.ClassId;
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.ClassId);
   }
   UpdateAnswers(row, item, event, i) {
@@ -332,7 +333,7 @@ export class StudentEvaluationComponent implements OnInit {
             this.StudentEvaluationForUpdate[_lastIndex]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentEvaluationForUpdate[_lastIndex]["UpdatedDate"];
             delete this.StudentEvaluationForUpdate[_lastIndex]["UpdatedBy"];
-            //console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
+            console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
             //this.insert(row);
           }
           else {
@@ -392,12 +393,13 @@ export class StudentEvaluationComponent implements OnInit {
   }
   interval;
   startTimer(row) {
-    row.Duration *= 60;
+    //  row.tempDuration = row.Duration;
+    row.TempDuration *= 60;
     this.interval = setInterval(() => {
-      if (row.Duration > 0) {
-        row.Duration--;
+      if (row.TempDuration > 0) {
+        row.TempDuration--;
       }
-      else if (row.Duration == 0) {
+      else if (row.TempDuration == 0) {
         clearInterval(this.interval);
         this.SubmitEvaluation();
       }
@@ -412,9 +414,9 @@ export class StudentEvaluationComponent implements OnInit {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
     var objstudent = this.searchForm.get("searchStudentName").value;
-    this.ClassId = objstudent.ClassId;
+    this.ClassId = this.searchForm.get("searchClassId").value;
     this.StudentClassId = objstudent.StudentClassId;
-    this.StudentId = this.searchForm.get("searchStudentName").value.StudentId;
+    this.StudentId = objstudent.StudentId;
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += ' and StudentClassId eq ' + this.StudentClassId
@@ -460,6 +462,8 @@ export class StudentEvaluationComponent implements OnInit {
           row.Submitted = data.value[0].Submitted;
         }
         if (!row.Updatable && row.Duration > 0 && data.value.length == 0) {
+          if (row.TempDuration == undefined || row.TempDuration==0)
+            row.TempDuration = row.Duration;
           this.startTimer(row);
         }
 
@@ -587,6 +591,7 @@ export class StudentEvaluationComponent implements OnInit {
               if (EvaluationObj.length > 0) {
                 m.EvaluationName = EvaluationObj[0].EvaluationName;
                 m.Duration = EvaluationObj[0].Duration;
+                m.TempDuration = EvaluationObj[0].Duration;
                 m.Updatable = EvaluationObj[0].AppendAnswer;
 
                 var _clsObj = this.ClassGroups.filter(f => f.MasterDataId == m.ClassGroupId);
@@ -644,21 +649,7 @@ export class StudentEvaluationComponent implements OnInit {
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
     this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-      var filteredSection = this.Sections.filter(s => s.MasterDataName != 'N/A');
-      this.Classes = [];
-      data.value.forEach(d => {
-        //var _clsName = JSON.parse(JSON.stringify(d.ClassName));
-        filteredSection.forEach(s => {
-          this.Classes.push({
-            ClassSectionId: d.ClassId + '' + s.MasterDataId + '',
-            ClassId: d.ClassId,
-            ClassName: d.ClassName + "-" + s.MasterDataName,
-            SectionId: s.MasterDataId
-          });
-        })
-      })
-      //   console.log("this.Classes", this.Classes);
-      //this.GetStudentClasses();
+      this.Classes = data.value;
     });
 
     this.GetExams();
@@ -887,18 +878,22 @@ export class StudentEvaluationComponent implements OnInit {
     //debugger;
     var _filter = '';
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-    var _classSectionId = this.searchForm.get("searchClassId").value;
+    var _classId = this.searchForm.get("searchClassId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
 
-    if (_classSectionId == 0) {
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+    // if (_classId == 0) {
+    //   this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (_sectionId == 0) {
+    //   this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    if (_classId == 0 || _sectionId == 0)
       return;
-    }
-    else {
-      var selectedCls = this.Classes.filter(f => f.ClassSectionId == _classSectionId);
-      var _sectionId = selectedCls[0].SectionId;
-      var _classId = selectedCls[0].ClassId;
-      _filter = ' and ClassId eq ' + _classId + ' and SectionId eq ' + _sectionId + ' and Active eq 1';
-    }
+
+    _filter = ' and ClassId eq ' + _classId + ' and SectionId eq ' + _sectionId + ' and Active eq 1';
+
 
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       _filter = ' and StudentId eq ' + this.StudentId;
@@ -923,8 +918,7 @@ export class StudentEvaluationComponent implements OnInit {
           var studentclassobj = data.value.filter(f => f.StudentId == student.StudentId);
           if (studentclassobj.length > 0) {
             _studentClassId = studentclassobj[0].StudentClassId;
-            var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId
-              && c.SectionId == studentclassobj[0].SectionId);
+            var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
             _classId = studentclassobj[0].ClassId;
             if (_classNameobj.length > 0) {
               _className = _classNameobj[0].ClassName;
@@ -935,7 +929,7 @@ export class StudentEvaluationComponent implements OnInit {
                 _section = _SectionObj[0].MasterDataName;
               var _lastname = student.LastName == null ? '' : " " + student.LastName;
               _name = student.FirstName + _lastname;
-              var _fullDescription = _name + "-" + _className + "-" + _RollNo;
+              var _fullDescription = _RollNo + "-" + _name + "-" + _className + "-" + _section;
               this.Students.push({
                 StudentClassId: _studentClassId,
                 StudentId: student.StudentId,
@@ -949,14 +943,6 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    // var _filter = ' and Active eq 1';
-    // let list: List = new List();
-    // list.fields = [
-    //   'StudentId',
-    //   'FirstName',
-    //   'LastName',
-    //   'ContactNo',
-    // ];
     var _students: any = this.tokenstorage.getStudents();
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       this.StudentList = _students.filter(a => a.Active == 1 && a.StudentId == this.StudentId)
@@ -964,14 +950,6 @@ export class StudentEvaluationComponent implements OnInit {
     }
     else
       this.StudentList = _students.filter(a => a.Active == 1);
-
-    // list.PageName = "Students";
-    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
-
-    // this.dataservice.get(list)
-    //   .subscribe((data: any) => {
-    //     debugger;
-    //    this.StudentList = [...data.value];
 
     this.loading = false;
     this.PageLoading = false;

@@ -134,7 +134,7 @@ export class HomeDashboardComponent implements OnInit {
                   this.getBatches();
                   //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
                   if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management')
-                    this.GetStudents();
+                    this.GetStudentClass();
                   if (this.SelectedAppId > 0) {
                     this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
                       .subscribe((data: any) => {
@@ -286,7 +286,7 @@ export class HomeDashboardComponent implements OnInit {
 
 
       if (selectedApp[0].applicationName.toLowerCase() == 'education management')
-        this.GetStudents();
+        this.GetStudentClass();
       // if (SelectedAppId > 0) {
       this.GetMenuData(SelectedAppId);
       this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], SelectedAppId)
@@ -396,6 +396,26 @@ export class HomeDashboardComponent implements OnInit {
       this.loading = false; this.PageLoading = false;
     });
   }
+  Students=[];
+  StudentClasses=[];
+  GetStudentClass() {
+    let list: List = new List();
+    list.fields = [
+      "StudentClassId,StudentId,ClassId,SectionId,RollNo"
+    ];
+    list.PageName = "StudentClasses";
+    //list.lookupFields=["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId +";$select=)"]
+    var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq "+ this.SelectedBatchId;
+
+    list.filter = [standardfilter];
+    this.loading = true;
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.StudentClasses = [...data.value];
+        this.GetStudents();
+      })
+    }
+    
   GetStudents() {
     let list: List = new List();
     list.fields = [
@@ -418,7 +438,7 @@ export class HomeDashboardComponent implements OnInit {
       "AdmissionStatusId"
     ];
     list.PageName = "Students";
-
+    //list.lookupFields=["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId +";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo)"]
     var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"];
 
     list.filter = [standardfilter];
@@ -426,8 +446,11 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.loading = true;
-        //this.Students =[...data.value]
-        this.tokenStorage.saveStudents([...data.value]);
+        this.Students =data.value.map(d=>{
+          d.StudentClasses = this.StudentClasses.filter(f=>f.StudentId == d.StudentId);
+          return d;
+        })
+        this.tokenStorage.saveStudents(this.Students);
         this.loading = false;
         this.PageLoading = false;
       })
