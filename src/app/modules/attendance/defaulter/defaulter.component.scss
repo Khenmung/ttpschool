@@ -17,10 +17,13 @@ mat-cell,mat-header-cell{
     border-right: 1px solid lightgray;
     align-self: stretch;
 }
-.mat-column-Approved{
+.mat-column-Approved,.mat-column-Action,.mat-column-AbsentCount{
     flex:1 1 80px;
     justify-content: center;
 }
-.mat-column-ReportedTo{
+.mat-column-ReportedTo,.mat-column-ContactNo,.mat-column-ClassName{
     flex:1 1 120px;
+}
+.mat-column-StudentRollNo{
+    flex:1 1 140px;
 }

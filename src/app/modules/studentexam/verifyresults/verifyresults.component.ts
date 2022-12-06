@@ -310,15 +310,15 @@ export class VerifyResultsComponent implements OnInit {
             attendance.value.forEach(main => {
               //var cls = this.SelectedStudentClass.filter(studcls => studcls.StudentClassId == att.StudentClassId)
               //if (att.StudentClass.ClassId == _classId) {
-              main.Attendances.forEach(att => {
+             // main.Attendances.forEach(att => {
                 this.StudentAttendanceList.push({
-                  AttendanceId: att.AttendanceId,
-                  AttendanceStatus: att.AttendanceStatus,
-                  AttendanceDate: att.AttendanceDate,
+                  AttendanceId: main.AttendanceId,
+                  AttendanceStatus: main.AttendanceStatus,
+                  AttendanceDate: main.AttendanceDate,
                   StudentClassId: main.StudentClassId,
                   ClassId: main.ClassId
                 });
-              })
+              //})
             });
             this.ProcessVerify();
           });
@@ -432,6 +432,7 @@ export class VerifyResultsComponent implements OnInit {
       })
   }
   GetStudentSubjects() {
+    debugger;
     this.ClickedVerified = false;
     var _examId = this.searchForm.get("searchExamId").value;
     if (_examId == 0) {
@@ -453,9 +454,12 @@ export class VerifyResultsComponent implements OnInit {
     this.GetSpecificStudentGrades();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
-    if (_sectionId > 0)
+    if (_sectionId > 0) {
+      this.SectionSelected = true;
       filterStr += " and SectionId eq " + _sectionId
+    }
     else {
+      this.SectionSelected = false;
       this.loading = false;
       this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -465,11 +469,12 @@ export class VerifyResultsComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "StudentId", "RollNo", "SectionId", "ClassId", "StudentClassId"
+      //"StudentId", "RollNo", "SectionId", "ClassId", "StudentClassId"
+      "StudentClassSubjectId,ClassSubjectId,StudentClassId,ClassId,SectionId,Active"
     ];
 
-    list.PageName = "StudentClasses"
-    list.lookupFields = ["StudentClassSubjects($filter=Active eq 1;$select=StudentClassSubjectId,ClassSubjectId,StudentClassId,Active)"];
+    list.PageName = "StudentClassSubjects"
+    //list.lookupFields = ["StudentClassSubjects($filter=Active eq 1;$select=StudentClassSubjectId,ClassSubjectId,StudentClassId,Active)"];
     //list.lookupFields = ["ClassSubject($select=Active,SubjectId,SubjectTypeId,ClassId,SubjectCategoryId)",
     //"StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
@@ -481,46 +486,47 @@ export class VerifyResultsComponent implements OnInit {
         this.StudentSubjects = [];
         //console.log("data.value",data.value)
         //var _data = data.value.filter(x => x.ClassSubject.Active == 1);
+        //var _studentforselectedClass = this.Students.filter(stud => stud.StudentClasses && stud.StudentClasses[0].ClassId == _classId)
         data.value.forEach(s => {
           _class = '';
           _subject = '';
-          s.StudentClassSubjects.forEach(studsubj => {
+          //s.StudentClassSubjects.forEach(studsubj => {
 
-            var _activeStudents = this.Students.filter(a => a.StudentId == s.StudentId)
-            if (_activeStudents.length > 0) {
-              let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassId);
-              if (_stdClass.length > 0)
-                _class = _stdClass[0].ClassName;
-              var _subjectIdObj = this.ClassSubjects.filter(p => p.ClassSubjectId == studsubj.ClassSubjectId)
-              if (_subjectIdObj.length > 0) {
-                let _stdSubject = this.Subjects.filter(c => c.MasterDataId == _subjectIdObj[0].SubjectId);
-                if (_stdSubject.length > 0)
-                  _subject = _stdSubject[0].MasterDataName;
+          var _activeStudents = this.Students.filter(a => a.StudentClasses[0].StudentClassId == s.StudentClassId)
+          if (_activeStudents.length > 0) {
+            let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassId);
+            if (_stdClass.length > 0)
+              _class = _stdClass[0].ClassName;
+            var _subjectIdObj = this.ClassSubjects.filter(p => p.ClassSubjectId == s.ClassSubjectId)
+            if (_subjectIdObj.length > 0) {
+              let _stdSubject = this.Subjects.filter(c => c.MasterDataId == _subjectIdObj[0].SubjectId);
+              if (_stdSubject.length > 0)
+                _subject = _stdSubject[0].MasterDataName;
 
-                let _stdSection = this.Sections.filter(c => c.MasterDataId == s.SectionId);
-                if (_stdSection.length > 0)
-                  _section = _stdSection[0].MasterDataName;
+              let _stdSection = this.Sections.filter(c => c.MasterDataId == s.SectionId);
+              if (_stdSection.length > 0)
+                _section = _stdSection[0].MasterDataName;
 
-                this.StudentSubjects.push({
-                  StudentClassSubjectId: studsubj.StudentClassSubjectId,
-                  ClassSubjectId: _subjectIdObj[0].ClassSubjectId,
-                  StudentClassId: s.StudentClassId,
-                  RollNo: s.RollNo,
-                  SubjectId: _subjectIdObj[0].SubjectId,
-                  Subject: _subject,
-                  Section: _section,
-                  ClassId: s.ClassId,
-                  StudentId: s.StudentId,
-                  SectionId: s.SectionId,
-                  SubjectTypeId: _subjectIdObj[0].SubjectTypeId,
-                  SubjectType: _subjectIdObj[0].SubjectType,
-                  SelectHowMany: _subjectIdObj[0].SelectHowMany,
-                  SubjectCategoryId: _subjectIdObj[0].SubjectCategoryId,
-                  Active: studsubj.Active
-                });
-              }
+              this.StudentSubjects.push({
+                StudentClassSubjectId: s.StudentClassSubjectId,
+                ClassSubjectId: _subjectIdObj[0].ClassSubjectId,
+                StudentClassId: s.StudentClassId,
+                RollNo: s.RollNo,
+                SubjectId: _subjectIdObj[0].SubjectId,
+                Subject: _subject,
+                Section: _section,
+                ClassId: s.ClassId,
+                StudentId: s.StudentId,
+                SectionId: s.SectionId,
+                SubjectTypeId: _subjectIdObj[0].SubjectTypeId,
+                SubjectType: _subjectIdObj[0].SubjectType,
+                SelectHowMany: _subjectIdObj[0].SelectHowMany,
+                SubjectCategoryId: _subjectIdObj[0].SubjectCategoryId,
+                Active: s.Active
+              });
             }
-          })
+          }
+          //})
         });
         this.GetExamStudentSubjectResults(_examId, _classId, _sectionId);
         this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], _classId, _sectionId, this.SelectedBatchId)
@@ -586,12 +592,11 @@ export class VerifyResultsComponent implements OnInit {
         var ForGrading, ForNonGrading;
 
         StudentOwnSubjects.forEach(f => {
-          var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
-          var _lastname = stud[0].LastName == null ? '' : " " + stud[0].LastName;
+          var stud = this.Students.filter(s => s.StudentClasses[0].StudentClassId == f.StudentClassId);
           if (stud.length > 0) {
-            f.Student = stud[0].RollNo + "-" + stud[0].FirstName + _lastname + "-" + f.Section;
+            var _lastname = stud[0].LastName == null ? '' : " " + stud[0].LastName;
+            f.Student = stud[0].StudentClasses[0].RollNo + "-" + stud[0].FirstName + _lastname + "-" + f.Section;
           }
-
         })
 
         var filteredIndividualStud = alasql("select distinct Student,StudentClassId,FullMark from ? ", [StudentOwnSubjects]);
@@ -712,10 +717,15 @@ export class VerifyResultsComponent implements OnInit {
                   markPercent = +parseFloat((markPercent + (parseFloat(dividend) / compmarkobtained.FullMark)) + "").toFixed(2);
                 }
                 ////////////////////added for component mark display
-                if (this.displayedColumns.indexOf(compmarkobtained.SubjectComponentName) == -1 &&  compmarkobtained.SubjectComponentName) {
-                  this.displayedColumns.push(compmarkobtained.SubjectComponentName);                  
+                if (subjectEachComponentWithPassmarkZero.length > 1) {
+                  if (this.displayedColumns.indexOf(compmarkobtained.SubjectComponentName) == -1 && compmarkobtained.SubjectComponentName) {
+                    this.displayedColumns.push(compmarkobtained.SubjectComponentName);
+                  }
+                  if (componentobtainedmark.length > 0)
+                    ForNonGrading[compmarkobtained.SubjectComponentName] = componentobtainedmark[0].Marks;
+                  else
+                    ForNonGrading[compmarkobtained.SubjectComponentName] = 0;
                 }
-                ForNonGrading[compmarkobtained.SubjectComponentName] = componentobtainedmark[0].Marks;
                 /////////////////////
               })
               //console.log("markPercent",markPercent);
@@ -1021,12 +1031,26 @@ export class VerifyResultsComponent implements OnInit {
       })
   }
   GetStudentGrade() {
-    //debugger;
+    debugger;
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
-    if (_classId > 0) {
+    if (_classId > 0 && _sectionId > 0) {
       this.SelectedClassAttendances = this.AttendanceStatusSum.filter(f => f.ClassId == _classId);
-      this.GetStudents(_classId, _sectionId)
+      var studentList: any = this.tokenstorage.getStudents();
+      this.Students = studentList.filter(s =>
+        s["Active"] == 1 && s.StudentClasses
+        && s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId && s.StudentClasses[0].SectionId == _sectionId
+
+      );
+      //console.log("students",this.Students);
+      // data.value.forEach(f => {
+      //   var match = _students.filter(stud => stud["StudentId"] == f.StudentId)
+      //   f.FirstName = match[0]["FirstName"];
+      //   f.LastName = match[0]["LastName"];
+      //   this.Students.push(f);
+      // })
+      //this.GetStudents(_classId, _sectionId)
+
     }
     this.FilterClass();
 
@@ -1132,19 +1156,21 @@ export class VerifyResultsComponent implements OnInit {
       //console.log("examObj[0].AttendanceStartDate",examObj[0].AttendanceStartDate)
       _startDate = moment(examObj[0].AttendanceStartDate).format('YYYY-MM-DD');
       _endDate = moment(examObj[0].EndDate).format('YYYY-MM-DD');
-      _filter = 'AttendanceDate ge ' + _startDate + ' and AttendanceDate le ' + _endDate;
+      _filter = ' and AttendanceDate ge ' + _startDate + ' and AttendanceDate le ' + _endDate;
 
 
       let list: List = new List();
       list.fields = [
-        "ClassId,RollNo,SectionId"
+        //"ClassId,RollNo,SectionId"
+        "AttendanceId,ClassId,SectionId,StudentClassId,AttendanceDate,AttendanceStatus"
       ];
-      list.PageName = "StudentClasses";
-      list.lookupFields = ["Attendances($filter=" + _filter + ";$select=AttendanceId,StudentClassId,AttendanceDate,AttendanceStatus)"];
+      //list.PageName = "StudentClasses";
+      //list.lookupFields = ["Attendances($filter=" + _filter + ";$select=AttendanceId,StudentClassId,AttendanceDate,AttendanceStatus)"];
+      list.PageName = "Attendances";
       list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
         " and ClassId eq " + _classId +
         " and SectionId eq " + _sectionId +
-        " and BatchId eq " + this.SelectedBatchId];
+        " and BatchId eq " + this.SelectedBatchId + _filter];
       //  list.limitTo=10;
 
       return this.dataservice.get(list)

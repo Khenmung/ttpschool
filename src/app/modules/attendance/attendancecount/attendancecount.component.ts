@@ -182,6 +182,8 @@ export class AttendanceCountComponent implements OnInit {
     list.fields = [
       "AttendanceId",
       "StudentClassId",
+      "ClassId",
+      "SectionId",
       "AttendanceDate",
       "AttendanceStatus",
       "ClassSubjectId",
@@ -190,7 +192,7 @@ export class AttendanceCountComponent implements OnInit {
       "BatchId"
     ];
     list.PageName = "Attendances";
-    list.lookupFields = ["StudentClass($select=ClassId,StudentClassId,SectionId)"];
+    //list.lookupFields = ["StudentClass($select=ClassId,StudentClassId,SectionId)"];
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
@@ -198,10 +200,10 @@ export class AttendanceCountComponent implements OnInit {
       .subscribe((attendance: any) => {
         attendance.value.forEach(sc => {
           var _className = '', _sectionName = '';
-          var clsObj = this.Classes.filter(c => c.ClassId == sc.StudentClass.ClassId);
+          var clsObj = this.Classes.filter(c => c.ClassId == sc.ClassId);
           if (clsObj.length > 0) {
             _className = clsObj[0].ClassName;
-            var sectionObj = this.Sections.filter(c => c.MasterDataId == sc.StudentClass.SectionId);
+            var sectionObj = this.Sections.filter(c => c.MasterDataId == sc.SectionId);
             if (sectionObj.length > 0) {
               _sectionName = sectionObj[0].MasterDataName;
               this.StudentAttendanceList.push({

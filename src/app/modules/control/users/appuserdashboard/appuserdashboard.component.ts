@@ -331,7 +331,7 @@ export class AppuserdashboardComponent implements OnInit {
       });
   }
   GetStudents() {
-    //debugger;
+    debugger;
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
     let filterStr = " and ClassId eq " + _classId;
@@ -352,6 +352,7 @@ export class AppuserdashboardComponent implements OnInit {
     //   .subscribe((data: any) => {
         debugger;
         var _students: any = this.tokenStorage.getStudents();
+        this.UserDetail =[];
         //_students = _students.filter(student => data.value.findIndex(fi => fi.StudentId == student.StudentId) > -1);
         _students = _students.filter(student => student.StudentClasses.findIndex(e=>e.ClassId == _classId)>-1);
 

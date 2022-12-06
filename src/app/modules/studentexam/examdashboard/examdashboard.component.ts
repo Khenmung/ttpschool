@@ -32,7 +32,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     ExamncalculateComponent,    
     ExamSubjectMarkEntryComponent,
     VerifyResultsComponent,
-    VerifyresultstatusComponent,
+    //VerifyresultstatusComponent,
     ExamslotComponent,
     SlotnclasssubjectComponent,
         
@@ -48,7 +48,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
-    { "label": "khat peuhpeuh", "faIcon": '' }
+   // { "label": "khat peuhpeuh", "faIcon": '' }
   ];
   //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
   Permissions =
@@ -84,7 +84,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.STUDENTGRADE)
-    this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS)
+    //this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMNCALCULATE)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMMARKCONFIG)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMCLASSGROUPMAP)

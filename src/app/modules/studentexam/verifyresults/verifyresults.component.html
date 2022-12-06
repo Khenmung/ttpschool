@@ -23,7 +23,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" style="width:200px">
         <mat-label>Section</mat-label>
-        <mat-select formControlName="searchSectionId">
+        <mat-select formControlName="searchSectionId" (selectionChange)="GetStudentGrade()">
             <mat-option value="0">select</mat-option>
             <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
                 {{item.MasterDataName}}
@@ -44,7 +44,7 @@
         (click)="clear()">
         <mat-icon>clear_all</mat-icon>
     </button>
-    <button [disabled]="loading || ClickedVerified || SectionSelected || ExamReleased==1" matTooltip="verified"
+    <button [disabled]="loading || ClickedVerified || !SectionSelected || ExamReleased==1" matTooltip="verified"
         *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0" mat-raised-button color="accent"
         (click)="Verified()">
         <mat-icon>checked</mat-icon>

@@ -127,7 +127,7 @@ export class VerifyresultstatusComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ExamResultSubjectMarks";
-    list.lookupFields = ["StudentClass($select=ClassId)"];
+    //list.lookupFields = ["StudentClass($select=ClassId)"];
     list.filter = [filterstr + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -192,13 +192,13 @@ export class VerifyresultstatusComponent implements OnInit {
 
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
 
     list.fields = ["ExamId", "ExamNameId", "ClassGroupId"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 and ReleaseResult eq 0 " + orgIdSearchstr];
+    list.filter = ["Active eq 1" + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

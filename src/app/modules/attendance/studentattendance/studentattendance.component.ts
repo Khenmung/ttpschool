@@ -60,6 +60,8 @@ export class StudentAttendanceComponent implements OnInit {
   StudentAttendanceData = {
     AttendanceId: 0,
     StudentClassId: 0,
+    ClassId:0,
+    SectionId:0,
     AttendanceStatus: 0,
     AttendanceDate: new Date(),
     ClassSubjectId: 0,
@@ -77,7 +79,7 @@ export class StudentAttendanceComponent implements OnInit {
     'Action'
   ];
   SelectedApplicationId = 0;
-
+  Students = [];
   constructor(private servicework: SwUpdate,
 
     private fb: UntypedFormBuilder,
@@ -111,6 +113,7 @@ export class StudentAttendanceComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
+        this.Students = this.tokenstorage.getStudents();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
@@ -149,14 +152,15 @@ export class StudentAttendanceComponent implements OnInit {
     //this.StudentAttendanceList=[];
     //this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //' and StudentClassId eq ' + this.StudentClassId;
-    if (this.searchForm.get("searchClassId").value == 0) {
+    var _classId = this.searchForm.get("searchClassId").value;
+    if (_classId == 0) {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
-      filterStr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
+      filterStr += ' and ClassId eq ' + _classId;
     }
     var filterStrClsSub = '';
     var _sectionId = this.searchForm.get("searchSectionId").value;
@@ -187,7 +191,7 @@ export class StudentAttendanceComponent implements OnInit {
       filterStr += " and SectionId eq " + _sectionId;
     }
     if (_classSubjectId > 0) {
-      filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
+      filterStr += " and ClassSubjectId eq " + _classSubjectId;
     }
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
@@ -199,99 +203,107 @@ export class StudentAttendanceComponent implements OnInit {
     }
     this.StudentAttendanceList = [];
     this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentClassId',
+    //   'RollNo',
+    //   'ClassId',
+    //   'SectionId',
+    //   'Active'
+    // ];
+
+    // list.PageName = "StudentClasses";
+    // list.lookupFields = ["Student($select=FirstName,LastName)"];
+    // list.filter = [filterStr];
+    // this.StudentClassList = [];
+    // this.dataservice.get(list)
+    //   .subscribe((studentclass: any) => {
+
+    //     if (studentclass.value.length == 0) {
+    //       this.loading = false; this.PageLoading = false;
+    //       this.contentservice.openSnackBar("No student exist in this class/section!", globalconstants.ActionText, globalconstants.RedBackground);
+    //       return;
+    //     }
+
+    //     this.StudentClassList = studentclass.value.map(item => {
+    //       var _lastname = item.Student.LastName == null ? '' : " " + item.Student.LastName;
+    //       return {
+    //         StudentClassId: item.StudentClassId,
+    //         Active: item.Active,
+    //         ClassId: item.ClassId,
+    //         RollNo: item.RollNo,
+    //         Student: item.Student.FirstName + _lastname,
+    //         StudentRollNo: item.Student.FirstName + _lastname.trim() + "-" + item.RollNo
+    //       }
+    //     })
+    //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+    var datefilterStr = filterStr + ' and AttendanceDate ge ' + moment(this.searchForm.get("searchAttendanceDate").value).format('yyyy-MM-DD')
+    datefilterStr += ' and AttendanceDate lt ' + moment(this.searchForm.get("searchAttendanceDate").value).add(1, 'day').format('yyyy-MM-DD')
+    datefilterStr += ' and StudentClassId gt 0'
+
     let list: List = new List();
     list.fields = [
-      'StudentClassId',
-      'RollNo',
-      'ClassId',
-      'SectionId',
-      'Active'
+      "AttendanceId",
+      "StudentClassId",
+      "ClassId",
+      "SectionId",
+      "AttendanceDate",
+      "AttendanceStatus",
+      "ClassSubjectId",
+      "Remarks",
+      "OrgId",
+      "BatchId"
     ];
+    list.PageName = "Attendances";
+    //list.lookupFields = ["StudentClass"];
+    list.filter = [datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName)"];
-    list.filter = [filterStr];
-    this.StudentClassList = [];
     this.dataservice.get(list)
-      .subscribe((studentclass: any) => {
+      .subscribe((attendance: any) => {
+        var studentCls = this.Students.filter(f => f.StudentClasses
+          && f.StudentClasses.length > 0 && f.StudentClasses[0].ClassId == _classId && f.StudentClasses[0].SectionId == _sectionId);
 
-        if (studentclass.value.length == 0) {
-          this.loading = false; this.PageLoading = false;
-          this.contentservice.openSnackBar("No student exist in this class/section!", globalconstants.ActionText, globalconstants.RedBackground);
-          return;
-        }
-
-        this.StudentClassList = studentclass.value.map(item => {
-          var _lastname = item.Student.LastName == null ? '' : " " + item.Student.LastName;
-          return {
-            StudentClassId: item.StudentClassId,
-            Active: item.Active,
-            ClassId: item.ClassId,
-            RollNo: item.RollNo,
-            Student: item.Student.FirstName + _lastname,
-            StudentRollNo: item.Student.FirstName + _lastname.trim() + "-" + item.RollNo
+        studentCls.forEach(sc => {
+          var studName = sc.StudentClasses[0].RollNo + "-" + sc.FirstName + (sc.LastName ? " " + sc.LastName : "");
+          let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClasses[0].StudentClassId);
+          if (existing.length > 0) {
+            this.StudentAttendanceList.push({
+              AttendanceId: existing[0].AttendanceId,
+              RollNo: sc.StudentClasses[0].RollNo,
+              ClassId:sc.StudentClasses[0].ClassId,
+              SectionId:sc.StudentClasses[0].SectionId,
+              StudentClassId: existing[0].StudentClassId,
+              AttendanceStatus: existing[0].AttendanceStatus,
+              AttendanceDate: existing[0].AttendanceDate,
+              ClassSubjectId: existing[0].ClassSubjectId,
+              Remarks: existing[0].Remarks,
+              StudentRollNo: studName,
+              Action: false
+            });
           }
+          else
+            this.StudentAttendanceList.push({
+              AttendanceId: 0,
+              RollNo: sc.StudentClasses[0].RollNo,
+              ClassId:sc.StudentClasses[0].ClassId,
+              SectionId:sc.StudentClasses[0].SectionId,
+              StudentClassId: sc.StudentClasses[0].StudentClassId,
+              AttendanceStatus: 0,
+              AttendanceDate: new Date(),
+              ClassSubjectId: 0,
+              Remarks: '',
+              StudentRollNo: studName,
+              Action: false
+            });
         })
-        //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-        var datefilterStr = ' and AttendanceDate ge ' + moment(this.searchForm.get("searchAttendanceDate").value).format('yyyy-MM-DD')
-        datefilterStr += ' and AttendanceDate lt ' + moment(this.searchForm.get("searchAttendanceDate").value).add(1, 'day').format('yyyy-MM-DD')
-        datefilterStr += ' and StudentClassId gt 0'
-
-        let list: List = new List();
-        list.fields = [
-          "AttendanceId",
-          "StudentClassId",
-          "AttendanceDate",
-          "AttendanceStatus",
-          "ClassSubjectId",
-          "Remarks",
-          "OrgId",
-          "BatchId"
-        ];
-        list.PageName = "Attendances";
-        //list.lookupFields = ["StudentClass"];
-        list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-          datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
-
-        this.dataservice.get(list)
-          .subscribe((attendance: any) => {
-
-            this.StudentClassList.forEach(sc => {
-              let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
-              if (existing.length > 0) {
-                this.StudentAttendanceList.push({
-                  AttendanceId: existing[0].AttendanceId,
-                  RollNo: sc.RollNo,
-                  StudentClassId: existing[0].StudentClassId,
-                  AttendanceStatus: existing[0].AttendanceStatus,
-                  AttendanceDate: existing[0].AttendanceDate,
-                  ClassSubjectId: existing[0].ClassSubjectId,
-                  Remarks: existing[0].Remarks,
-                  StudentRollNo: sc.StudentRollNo,
-                  Action: false
-                });
-              }
-              else
-                this.StudentAttendanceList.push({
-                  AttendanceId: 0,
-                  RollNo: sc.RollNo,
-                  StudentClassId: sc.StudentClassId,
-                  AttendanceStatus: 0,
-                  AttendanceDate: new Date(),
-                  ClassSubjectId: 0,
-                  Remarks: '',
-                  StudentRollNo: sc.StudentRollNo,
-                  Action: false
-                });
-            })
-            this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => a.RollNo - b.RollNo)
-            this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;
-            this.loading = false; this.PageLoading = false;
-          });
-        //this.changeDetectorRefs.detectChanges();
+        this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => a.RollNo - b.RollNo)
+        this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.loading = false; this.PageLoading = false;
       });
+    //this.changeDetectorRefs.detectChanges();
+    //});
   }
   clear() {
     this.searchForm.patchValue({
@@ -372,6 +384,8 @@ export class StudentAttendanceComponent implements OnInit {
         else {
 
           this.StudentAttendanceData.StudentClassId = row.StudentClassId;
+          this.StudentAttendanceData.ClassId = row.ClassId;
+          this.StudentAttendanceData.SectionId = row.SectionId;
           this.StudentAttendanceData.AttendanceDate = new Date(_AttendanceDate);
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -501,6 +515,8 @@ export class StudentAttendanceComponent implements OnInit {
 export interface IStudentAttendance {
   AttendanceId: number;
   RollNo: number;
+  ClassId:number;
+  SectionId:number;
   StudentClassId: number;
   AttendanceStatus: number;
   ClassSubjectId: number;
