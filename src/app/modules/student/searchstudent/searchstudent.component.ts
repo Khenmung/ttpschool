@@ -158,9 +158,8 @@ export class searchstudentComponent implements OnInit {
 
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
+        this.GetMasterData();
       });
-      
-      this.GetMasterData();
       this.GetFeeTypes();
       if (+localStorage.getItem('studentId') > 0) {
         this.GetSibling();
@@ -384,8 +383,14 @@ export class searchstudentComponent implements OnInit {
   ClearData() {
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
-    //this.GetStudentClasses();
-    //this.filteredStudents = this.Students.filter(s=>s.)
+    // var _classId = this.studentSearchForm.get("searchClassId").value;
+    // var _students = [];
+    // if (_classId > 0)
+    //   _students = this.StudentList.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId)
+    // else
+    //   _students = this.StudentList.filter(s => s.StudentClasses.length == 0)
+    // this.Students = [];
+    // this.AssignNameClassSection(_students);
   }
   generateDetail(element) {
     let StudentName = element.PID + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
@@ -678,27 +683,27 @@ export class searchstudentComponent implements OnInit {
 
     //}
   }
-  GetStudentClasses() {
-    debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
-    var _ClassId = this.studentSearchForm.get("searchClassId").value;
-    var _sectionId = this.studentSearchForm.get("searchSectionId").value;
-    //if (_ClassId > 0)
-    filterOrgIdNBatchId += " and ClassId eq " + _ClassId;
-    if (_sectionId > 0)
-      filterOrgIdNBatchId += " and SectionId eq " + _sectionId;
+  // GetStudentClasses() {
+  //   debugger;
+  //   var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+  //   var _ClassId = this.studentSearchForm.get("searchClassId").value;
+  //   var _sectionId = this.studentSearchForm.get("searchSectionId").value;
+  //   //if (_ClassId > 0)
+  //   filterOrgIdNBatchId += " and ClassId eq " + _ClassId;
+  //   if (_sectionId > 0)
+  //     filterOrgIdNBatchId += " and SectionId eq " + _sectionId;
 
-    let list: List = new List();
-    list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
-    list.PageName = "StudentClasses";
-    list.filter = [filterOrgIdNBatchId];
+  //   let list: List = new List();
+  //   list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
+  //   list.PageName = "StudentClasses";
+  //   list.filter = [filterOrgIdNBatchId];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.StudentClasses = [...data.value];
-        this.GetStudents();
-      })
-  }
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       this.StudentClasses = [...data.value];
+  //       this.GetStudents();
+  //     })
+  // }
   GetSibling() {
 
     var _studentId = localStorage.getItem('studentId');
@@ -729,6 +734,7 @@ export class searchstudentComponent implements OnInit {
   }
   GetStudents() {
     debugger;
+    var _tempStudent = [];
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       //list.lookupFields = ["StudentFamilyNFriends($select=StudentId,ParentStudentId)"]
       this.studentSearchForm.get("searchClassId").disable()
@@ -739,24 +745,24 @@ export class searchstudentComponent implements OnInit {
 
       var _studentId = localStorage.getItem('studentId');
       if (this.Siblings.length > 0) {
-        this.Students = this.StudentList.filter(s => s.StudentId == _studentId || s.ParentStudentId == this.Siblings[0].ParentStudentId)
+        _tempStudent = this.StudentList.filter(s => s.StudentId == _studentId || s.ParentStudentId == this.Siblings[0].ParentStudentId)
         //standardfilter += ' and (StudentId eq ' + _studentId + ' or ParentStudentId eq ' + this.Siblings[0].ParentStudentId + ")";
       }
       else {
-        this.Students = this.StudentList.filter(s => s.StudentId == _studentId);
+        _tempStudent = this.StudentList.filter(s => s.StudentId == _studentId);
 
       }
 
     }
     else {
-      this.Students = [...this.StudentList];
+      _tempStudent = [...this.StudentList]//this.StudentList.filter(nocls => nocls.StudentClasses.length == 0);
     }
 
     this.loading = true;
-    if (this.Students.length > 0) {
+    if (_tempStudent.length > 0) {
       if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
         var _students = [];
-        this.Students.forEach(student => {
+        _tempStudent.forEach(student => {
           if (student.StudentFamilyNFriends.length > 0) {
             var indx = student.StudentFamilyNFriends.findIndex(sibling => sibling.StudentId == student.StudentId)
             if (indx > -1) {
@@ -769,7 +775,7 @@ export class searchstudentComponent implements OnInit {
         })
       }
       else {
-        _students = [...this.Students];
+        _students = [..._tempStudent];
       }
       var fatherObj = this.studentSearchForm.get("FatherName").value;
       var _fathername = fatherObj.FatherName;
@@ -779,35 +785,7 @@ export class searchstudentComponent implements OnInit {
       //   _students = this.Students.filter(f => f.StudentClasses.length == 0);
       // }
       this.Students = [];
-      _students.forEach(student => {
-        var _RollNo = '';
-        var _name = '';
-        var _className = '';
-        var _section = '';
-        var _studentClassId = 0;
-        //var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-        //if (studentclassobj.length > 0) {
-        if (student.StudentClasses && student.StudentClasses.length>0) {
-          _studentClassId = student.StudentClasses[0].StudentClassId;
-          var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
-
-          if (_classNameobj.length > 0)
-            _className = _classNameobj[0].ClassName;
-          var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.StudentClasses[0].SectionId)
-
-          if (_SectionObj.length > 0)
-            _section = _SectionObj[0].MasterDataName;
-          _RollNo = student.StudentClasses[0].RollNo == null ? '' : student.StudentClasses[0].RollNo;
-        }
-        student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-        var _lastname = student.LastName == null ? '' : " " + student.LastName;
-        _name = student.FirstName + _lastname;
-        var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo;
-        student.StudentClassId = _studentClassId;
-        student.Name = _fullDescription;
-        this.Students.push(student);
-
-      })
+      this.AssignNameClassSection(_students);
       // if (this.StudentSearch.length > 0)
       //   this.GetStudent();
     }
@@ -815,6 +793,37 @@ export class searchstudentComponent implements OnInit {
     this.loading = false;
     this.PageLoading = false;
     //})
+  }
+  AssignNameClassSection(pStudents) {
+    pStudents.forEach(student => {
+      var _RollNo = '';
+      var _name = '';
+      var _className = '';
+      var _section = '';
+      var _studentClassId = 0;
+      //var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+      //if (studentclassobj.length > 0) {
+      if (student.StudentClasses && student.StudentClasses.length > 0) {
+        _studentClassId = student.StudentClasses[0].StudentClassId;
+        var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
+
+        if (_classNameobj.length > 0)
+          _className = _classNameobj[0].ClassName;
+        var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.StudentClasses[0].SectionId)
+
+        if (_SectionObj.length > 0)
+          _section = _SectionObj[0].MasterDataName;
+        _RollNo = student.StudentClasses[0].RollNo == null ? '' : student.StudentClasses[0].RollNo;
+      }
+      student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+      var _lastname = student.LastName == null ? '' : " " + student.LastName;
+      _name = student.FirstName + _lastname;
+      var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo;
+      student.StudentClassId = _studentClassId;
+      student.Name = _fullDescription;
+      this.Students.push(student);
+
+    })
   }
 
 }

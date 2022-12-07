@@ -93,7 +93,7 @@ export class ChangePasswordComponent implements OnInit { PageLoading=true;
       },
       err => {
         if (err.error) {
-          var modelState = err.error.errors;
+          var modelState = err.error.errors ?err.error.errors:err.error.Errors?err.error.Errors:"";
           this.errorMessage = '';
           //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
           for (var key in modelState) {
@@ -108,5 +108,21 @@ export class ChangePasswordComponent implements OnInit { PageLoading=true;
         }
       }
     );
+  }
+  visibility = 'visibility';
+  password='password';
+  show=false;
+  showhidePassword() {
+
+    if (this.password === 'password') {
+      this.password = 'text';
+      this.show = true;
+      this.visibility = 'visibility';
+    } else {
+      this.password = 'password';
+      this.show = false;
+      this.visibility = 'visibility_off';
+    }
+
   }
 }

@@ -3,7 +3,7 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { evaluate, i } from 'mathjs';
 import * as moment from 'moment';
@@ -101,6 +101,7 @@ export class VerifyResultsComponent implements OnInit {
   ];
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
+    private route:Router,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -453,10 +454,12 @@ export class VerifyResultsComponent implements OnInit {
     this.loading = true;
     this.GetSpecificStudentGrades();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    filterStr += " and ClassId eq " + _classId
     if (_sectionId > 0) {
       this.SectionSelected = true;
       filterStr += " and SectionId eq " + _sectionId
+      
     }
     else {
       this.SectionSelected = false;
@@ -464,9 +467,7 @@ export class VerifyResultsComponent implements OnInit {
       this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    filterStr += " and ClassId eq " + _classId + " and BatchId eq " + this.SelectedBatchId;
-
-
+ 
     let list: List = new List();
     list.fields = [
       //"StudentId", "RollNo", "SectionId", "ClassId", "StudentClassId"
@@ -474,6 +475,7 @@ export class VerifyResultsComponent implements OnInit {
     ];
 
     list.PageName = "StudentClassSubjects"
+    //list.limitTo=90;
     //list.lookupFields = ["StudentClassSubjects($filter=Active eq 1;$select=StudentClassSubjectId,ClassSubjectId,StudentClassId,Active)"];
     //list.lookupFields = ["ClassSubject($select=Active,SubjectId,SubjectTypeId,ClassId,SubjectCategoryId)",
     //"StudentClass($select=StudentId,RollNo,SectionId)"]
@@ -533,6 +535,8 @@ export class VerifyResultsComponent implements OnInit {
           .subscribe((data: any) => {
             this.ClassStrength = data.value.length;
           })
+      },error=>{
+        console.log(error);
       });
   }
 
@@ -1042,6 +1046,10 @@ export class VerifyResultsComponent implements OnInit {
         && s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId && s.StudentClasses[0].SectionId == _sectionId
 
       );
+      if(this.Students.length==0)
+      {
+        this.route.navigate(['/']);
+      }
       //console.log("students",this.Students);
       // data.value.forEach(f => {
       //   var match = _students.filter(stud => stud["StudentId"] == f.StudentId)

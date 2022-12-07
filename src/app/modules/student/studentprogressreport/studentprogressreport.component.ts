@@ -110,6 +110,7 @@ export class StudentprogressreportComponent implements OnInit {
   }
   StudentName = [];
   FeePaymentPermission = '';
+  ExamClassGroups = [];
   PageLoad() {
     debugger;
     this.loading = true;
@@ -143,7 +144,12 @@ export class StudentprogressreportComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-
+        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], 0)
+          .subscribe((data: any) => {
+            this.ExamClassGroups = [...data.value];
+            //var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+            //this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+          });
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
         this.GetStudentGradeDefn();
@@ -279,6 +285,20 @@ export class StudentprogressreportComponent implements OnInit {
   back() {
     this.nav.navigate(['/edu']);
   }
+  GetClassGroupMapping() {
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        //debugger;
+        data.value.map(f => {
+          f.ClassName = f.Class.ClassName;
+          if (f.ClassGroup) {
+            f.GroupName = f.ClassGroup.GroupName;
+            this.ClassGroupMappings.push(f);
+          }
+
+        });
+      })
+  }
   GetStudentSubject() {
 
     let filterStr = 'Active eq 1 and StudentClassId eq ' + this.StudentClassId;
@@ -413,7 +433,7 @@ export class StudentprogressreportComponent implements OnInit {
 
                 currentSubjectrow = this.GradedMarksResults.filter(f => f.Subject.toLowerCase() == eachexam["Subject"].toLowerCase());
                 if (currentSubjectrow.length == 0)
-                  this.GradedMarksResults.push({ "Subject": eachexam["Subject"], [examName]: eachexam["Grade"] });
+                  this.GradedMarksResults.push({ "Subject": eachexam["Subject"], [examName]: eachexam["Grade"], "ExamId": eachexam.ExamId });
                 else
                   currentSubjectrow[0][examName] = eachexam["Grade"]
               }
@@ -437,11 +457,13 @@ export class StudentprogressreportComponent implements OnInit {
           //if (obj.length > 0) {
           var _gradingSubjectCategoryId = this.SubjectCategory.filter(s => s.MasterDataName.toLowerCase() == 'grading')[0].MasterDataId;
           var OverAllGradeRow = { 'Subject': this.OverAllGrade };
-
-          Object.keys(objExam).forEach(exam => {
+          var obj = this.ExamClassGroups.filter(ex => ex.ExamId == objExam["ExamId"]);
+          var filteredClasses = this.ClassGroupMappings.filter(m=>obj.findIndex(e=>e.ClassGroupId == m.ClassGroupId)>-1)
+          
+          Object.keys(objExam).forEach((exam:any) => {
             var totalPoints = 0;
             if (exam != 'Subject') {
-              var obj = this.Exams.filter(ex => ex.ExamName.toLowerCase() == exam.toLowerCase());
+              //var obj = this.Exams.filter(ex => ex.ExamName.toLowerCase() == exam.toLowerCase());
               if (obj.length > 0) {
                 var currentExamStudentGrades = this.StudentGrades.filter(s => s.ClassGroupId == obj[0].ClassGroupId
                   && s.SubjectCategoryId == _gradingSubjectCategoryId);

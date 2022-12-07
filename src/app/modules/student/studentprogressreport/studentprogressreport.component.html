@@ -48,7 +48,7 @@
                     <mat-table #table [dataSource]="GradedSubjectsDataSource" matSort>
                         <ng-container *ngFor="let disCol of GradedDisplayColumns; let colIndex = index"
                             matColumnDef="{{disCol}}">
-                            <mat-header-cell *matHeaderCellDef mat-sort-header style="display:none">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>
                                 <span *ngIf="disCol!='Subject'">{{disCol}}</span>
                             </mat-header-cell>
                             <mat-cell *matCellDef="let element">

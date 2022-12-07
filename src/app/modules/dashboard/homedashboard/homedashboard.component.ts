@@ -99,52 +99,52 @@ export class HomeDashboardComponent implements OnInit {
                 msg = "Your plan is expiring within " + diffDays + " days. i.e on " + moment(_validTo).format('DD/MM/YYYY');
               this.contentservice.openSnackBar(msg, globalconstants.ActionText, globalconstants.GreenBackground);
             }
-            else {
-              debugger;
-              this.loading = true;
-              this.userName = localStorage.getItem('userName');
-              var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
+            //else {
+            debugger;
+            this.loading = true;
+            this.userName = localStorage.getItem('userName');
+            var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
 
-              if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {
-                this.route.navigate(["/auth/selectplan"]);
+            if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {
+              this.route.navigate(["/auth/selectplan"]);
+            }
+            else {
+              var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
+              if (_roleName.toLowerCase() != 'admin')
+                this.PermittedApplications = _UniquePermittedApplications.filter(f => f.applicationName.toLowerCase() != 'common panel');
+              else
+                this.PermittedApplications = [..._UniquePermittedApplications];
+
+              if (this.PermittedApplications.length == 0) {
+                this.contentservice.openSnackBar("No permitted application found.", globalconstants.ActionText, globalconstants.RedBackground);
+                this.tokenStorage.signOut();
+                //this.route.navigate(['/auth/login']);
               }
               else {
-                var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-                if (_roleName.toLowerCase() != 'admin')
-                  this.PermittedApplications = _UniquePermittedApplications.filter(f => f.applicationName.toLowerCase() != 'common panel');
+                this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);
+                if (this.userName === undefined || this.userName === null || this.userName == '')
+                  this.loggedIn = false;
                 else
-                  this.PermittedApplications = [..._UniquePermittedApplications];
-
-                if (this.PermittedApplications.length == 0) {
-                  this.contentservice.openSnackBar("No permitted application found.", globalconstants.ActionText, globalconstants.RedBackground);
-                  this.tokenStorage.signOut();
-                  //this.route.navigate(['/auth/login']);
-                }
-                else {
-                  this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);
-                  if (this.userName === undefined || this.userName === null || this.userName == '')
-                    this.loggedIn = false;
-                  else
-                    this.loggedIn = true;
-                  //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
-                  this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
-                  this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-                  this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-                  this.SelectedAppName = this.tokenStorage.getSelectedAppName();
-                  this.getBatches();
-                  //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-                  if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management')
-                    this.GetStudentClass();
-                  if (this.SelectedAppId > 0) {
-                    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
-                      .subscribe((data: any) => {
-                        this.tokenStorage.saveMasterData(data.value);
-                      })
-                    this.GetMenuData(this.SelectedAppId);
-                  }
+                  this.loggedIn = true;
+                //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
+                this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
+                this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+                this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
+                this.SelectedAppName = this.tokenStorage.getSelectedAppName();
+                this.getBatches();
+                //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
+                if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management')
+                  this.GetStudentClass();
+                if (this.SelectedAppId > 0) {
+                  this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
+                    .subscribe((data: any) => {
+                      this.tokenStorage.saveMasterData(data.value);
+                    })
+                  this.GetMenuData(this.SelectedAppId);
                 }
               }
             }
+            //}
           }
           this.loading = false;
           this.PageLoading = false;
@@ -261,10 +261,10 @@ export class HomeDashboardComponent implements OnInit {
     this.ValueChanged = true;
   }
   submit() {
-    var selectedBatchId = this.searchForm.get("searchBatchId").value;
+    this.SelectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
-    if (selectedBatchId > 0)
-      this.SaveBatchIds(selectedBatchId);
+    if (this.SelectedBatchId > 0)
+      this.SaveBatchIds(this.SelectedBatchId);
     else {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select batch.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -277,7 +277,7 @@ export class HomeDashboardComponent implements OnInit {
 
       //this line is added because when batch is not defined for new user, selected batch name is null.
       if (this.Batches.length > 0) {
-        var _batchName = this.Batches.filter(f => f.BatchId == selectedBatchId)[0].BatchName;
+        var _batchName = this.Batches.filter(f => f.BatchId == this.SelectedBatchId)[0].BatchName;
         this.tokenStorage.saveSelectedBatchName(_batchName)
       }
       else
@@ -396,16 +396,20 @@ export class HomeDashboardComponent implements OnInit {
       this.loading = false; this.PageLoading = false;
     });
   }
-  Students=[];
-  StudentClasses=[];
+  Students = [];
+  StudentClasses = [];
   GetStudentClass() {
+    var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
       "StudentClassId,StudentId,ClassId,SectionId,RollNo"
     ];
+    if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
+      standardfilter += " and StudentId eq " + localStorage.getItem("studentId");
+    }
     list.PageName = "StudentClasses";
     //list.lookupFields=["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId +";$select=)"]
-    var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq "+ this.SelectedBatchId;
+
 
     list.filter = [standardfilter];
     this.loading = true;
@@ -414,8 +418,8 @@ export class HomeDashboardComponent implements OnInit {
         this.StudentClasses = [...data.value];
         this.GetStudents();
       })
-    }
-    
+  }
+
   GetStudents() {
     let list: List = new List();
     list.fields = [
@@ -440,14 +444,16 @@ export class HomeDashboardComponent implements OnInit {
     list.PageName = "Students";
     //list.lookupFields=["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId +";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo)"]
     var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"];
-
+    if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
+      standardfilter += " and StudentId eq " + localStorage.getItem("studentId");
+    }
     list.filter = [standardfilter];
     this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.loading = true;
-        this.Students =data.value.map(d=>{
-          d.StudentClasses = this.StudentClasses.filter(f=>f.StudentId == d.StudentId);
+        this.Students = data.value.map(d => {
+          d.StudentClasses = this.StudentClasses.filter(f => f.StudentId == d.StudentId);
           return d;
         })
         this.tokenStorage.saveStudents(this.Students);

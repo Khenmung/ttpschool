@@ -121,7 +121,7 @@ export class LoginComponent implements OnInit {
         debugger;
         this.loading = false; this.PageLoading = false;
         //this.errorMessage = '';
-        this.errorMessage = globalconstants.formatError(err);
+        this.errorMessage = globalconstants.formatError(err.error.Messages);
         // var modelState;
         // if (err.error.ModelState != null)
         //   modelState = JSON.parse(JSON.stringify(err.error.ModelState));
