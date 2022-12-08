@@ -135,24 +135,7 @@ export class searchstudentComponent implements OnInit {
       })
       //var searchstudent = this.token.getStudentSearch();
       //if (searchstudent.length > 0)
-      this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
-        .pipe(
-          startWith(''),
-          map(value => typeof value === 'string' ? value : value.Name),
-          map(Name => Name ? this._filter(Name) : this.Students.slice())
-        );
-      this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
-        .pipe(
-          startWith(''),
-          map(value => typeof value === 'string' ? value : value.FatherName),
-          map(Name => Name ? this._filterF(Name) : this.Students.slice())
-        );
-      this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
-        .pipe(
-          startWith(''),
-          map(value => typeof value === 'string' ? value : value.MotherName),
-          map(Name => Name ? this._filterM(Name) : this.Students.slice())
-        );
+
       this.allMasterData = this.token.getMasterData();
       this.StudentSearch = this.token.getStudentSearch();
 
@@ -786,8 +769,25 @@ export class searchstudentComponent implements OnInit {
       // }
       this.Students = [];
       this.AssignNameClassSection(_students);
-      // if (this.StudentSearch.length > 0)
-      //   this.GetStudent();
+
+      this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.Name),
+          map(Name => Name ? this._filter(Name) : this.Students.slice())
+        );
+      this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.FatherName),
+          map(Name => Name ? this._filterF(Name) : this.Students.slice())
+        );
+      this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.MotherName),
+          map(Name => Name ? this._filterM(Name) : this.Students.slice())
+        );
     }
     //this.token.saveStudents(this.Students);
     this.loading = false;
@@ -824,6 +824,7 @@ export class searchstudentComponent implements OnInit {
       this.Students.push(student);
 
     })
+
   }
 
 }

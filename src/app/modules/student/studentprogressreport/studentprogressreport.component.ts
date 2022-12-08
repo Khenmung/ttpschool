@@ -110,7 +110,7 @@ export class StudentprogressreportComponent implements OnInit {
   }
   StudentName = [];
   FeePaymentPermission = '';
-  ExamClassGroups = [];
+  //ExamClassGroups = [];
   PageLoad() {
     debugger;
     this.loading = true;
@@ -132,6 +132,7 @@ export class StudentprogressreportComponent implements OnInit {
         studentdetail.forEach(s => {
           this.StudentName.push({ "Name": s.StudentName, "Class": s.ClassName, "Section": s.Section, "RollNo": s.RollNo })
         })
+
         //console.log("StudentName",this.StudentName);
         //this.LoginUserDetail = this.tokenStorage.getUserDetail();
         this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
@@ -144,12 +145,12 @@ export class StudentprogressreportComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], 0)
-          .subscribe((data: any) => {
-            this.ExamClassGroups = [...data.value];
-            //var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
-            //this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
-          });
+        // this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], 0)
+        //   .subscribe((data: any) => {
+        //     this.ExamClassGroups = [...data.value];
+        //     //var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+        //     //this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+        //   });
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
         this.GetStudentGradeDefn();
@@ -455,18 +456,28 @@ export class StudentprogressreportComponent implements OnInit {
           var objExam = this.GradedMarksResults[0];
           //var obj = this.Exams.filter(ex => ex.ExamId == objExam[0].ExamId);
           //if (obj.length > 0) {
+          let _classId = this.tokenstorage.getClassId();
+
           var _gradingSubjectCategoryId = this.SubjectCategory.filter(s => s.MasterDataName.toLowerCase() == 'grading')[0].MasterDataId;
           var OverAllGradeRow = { 'Subject': this.OverAllGrade };
-          var obj = this.ExamClassGroups.filter(ex => ex.ExamId == objExam["ExamId"]);
-          var filteredClasses = this.ClassGroupMappings.filter(m=>obj.findIndex(e=>e.ClassGroupId == m.ClassGroupId)>-1)
-          
-          Object.keys(objExam).forEach((exam:any) => {
+          //var obj = this.ExamClassGroups.filter(ex => ex.ExamId == objExam["ExamId"]);
+          var _studentClassGroupObj = this.ClassGroupMappings.filter(m => m.ClassId == _classId)
+          // var _classGroupId = 0;
+          // if (_studentClassGroupObj.length > 0) {
+          //   var obj = this.ExamClassGroups.filter(ex => ex.ClassGroupId == _studentClassGroupObj[0].ClassGroupId &&
+          //     ex.ExamId == objExam["ExamId"]);
+          //   if (obj.length > 0)
+          //     _classGroupId = obj[0].ClassGroupId;
+
+          // }
+          Object.keys(objExam).forEach((exam: any) => {
             var totalPoints = 0;
             if (exam != 'Subject') {
               //var obj = this.Exams.filter(ex => ex.ExamName.toLowerCase() == exam.toLowerCase());
-              if (obj.length > 0) {
-                var currentExamStudentGrades = this.StudentGrades.filter(s => s.ClassGroupId == obj[0].ClassGroupId
-                  && s.SubjectCategoryId == _gradingSubjectCategoryId);
+              if (_studentClassGroupObj.length > 0) {
+                var currentExamStudentGrades = this.StudentGrades.filter(s => s.ClassGroupId == _studentClassGroupObj[0].ClassGroupId
+                  && s.SubjectCategoryId == _gradingSubjectCategoryId
+                  && s.ExamId ==objExam["ExamId"]);
 
                 this.GradedMarksResults.forEach(subj => {
                   var objgradepoint = currentExamStudentGrades.filter(c => c.GradeName == subj[exam]);

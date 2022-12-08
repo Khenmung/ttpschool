@@ -92,6 +92,7 @@ export class StudentActivityComponent implements OnInit {
     debugger;
 
     this.searchForm = this.fb.group({
+      searchClassId: 0,
       searchStudentName: [0],
       searchActivityId: [0],
       searchCategoryId: [0],
@@ -137,10 +138,11 @@ export class StudentActivityComponent implements OnInit {
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
+            this.loading = false;
           });
         }
 
-        this.GetStudentClasses();
+        // this.GetStudentClasses();
       }
     }
   }
@@ -171,6 +173,12 @@ export class StudentActivityComponent implements OnInit {
 
     debugger;
     this.loading = true;
+    var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    if (_studentclassId == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (row.RankId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -224,6 +232,7 @@ export class StudentActivityComponent implements OnInit {
               RankId: row.RankId,
               Achievement: globalconstants.encodeSpecialChars(row.Achievement),
               SportsNameId: row.SportsNameId,
+              ClassId: row.ClassId,
               GroupId: _groupId,
               CategoryId: row.CategoryId,
               SubCategoryId: row.SubCategoryId,
@@ -296,15 +305,18 @@ export class StudentActivityComponent implements OnInit {
     var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
-    //var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
+    var _classId = this.searchForm.get("searchClassId").value;
     var _SessionId = this.searchForm.get("searchSessionId").value;
     if (_studentclassId != undefined) {
       filterStr += " and StudentClassId eq " + _studentclassId;
     }
-    else {
-      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+    if (_classId == 0) {
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    else
+      filterStr += " and ClassId eq " + _classId;
+
     if (_SportsNameId > 0) {
       filterStr += " and SportsNameId eq " + _SportsNameId;
     }
@@ -343,6 +355,7 @@ export class StudentActivityComponent implements OnInit {
       "RankId",
       "Achievement",
       "SportsNameId",
+      "ClassId",
       "CategoryId",
       "SubCategoryId",
       "AchievementDate",
@@ -407,6 +420,12 @@ export class StudentActivityComponent implements OnInit {
     var _activityId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     var _sessionId = this.searchForm.get("searchSessionId").value;
+    var _classId = this.searchForm.get("searchClassId").value;
+    if (_classId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (_activityId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -430,6 +449,7 @@ export class StudentActivityComponent implements OnInit {
       RankId: 0,
       Achievement: '',
       SportsNameId: _activityId,
+      ClassId: _classId,
       CategoryId: _categoryId,
       SubCategoryId: 0,
       SubCategories: _subcategory,
@@ -512,41 +532,43 @@ export class StudentActivityComponent implements OnInit {
     debugger;
     this.Students = [];
     var _students: any = this.tokenstorage.getStudents();
-    if (_students.length > 0) {
+    //if (_students.length > 0) {
+    var _classId = this.searchForm.get("searchClassId").value;
+    _students = _students.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId);
+    _students.forEach(student => {
+      var _RollNo = '';
+      var _name = '';
+      var _className = '';
+      var _classId = '';
+      var _section = '';
+      var _studentClassId = 0;
+      //var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+      //if (student.StudentClasses.length > 0) {
+      _studentClassId = student.StudentClasses[0].StudentClassId;
+      var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
+      _classId = student.StudentClasses[0].ClassId;
+      if (_classNameobj.length > 0)
+        _className = _classNameobj[0].ClassName;
+      var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.StudentClasses[0].SectionId)
 
-      _students.forEach(student => {
-        var _RollNo = '';
-        var _name = '';
-        var _className = '';
-        var _classId = '';
-        var _section = '';
-        var _studentClassId = 0;
-        var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
-        if (studentclassobj.length > 0) {
-          _studentClassId = studentclassobj[0].StudentClassId;
-          var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
-          _classId = studentclassobj[0].ClassId;
-          if (_classNameobj.length > 0)
-            _className = _classNameobj[0].ClassName;
-          var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
-
-          if (_SectionObj.length > 0)
-            _section = _SectionObj[0].MasterDataName;
-          _RollNo = studentclassobj[0].RollNo;
-          var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
-          _name = student.FirstName + _lastname;
-          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-          this.Students.push({
-            StudentClassId: _studentClassId,
-            StudentId: student.StudentId,
-            HouseId: student.HouseId,
-            ClassId: _classId,
-            Name: _fullDescription,
-          });
-        }
-      })
-    }
-    this.loading = false; this.PageLoading = false;
+      if (_SectionObj.length > 0)
+        _section = _SectionObj[0].MasterDataName;
+      _RollNo = student.StudentClasses[0].RollNo;
+      var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
+      _name = student.FirstName + _lastname;
+      var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+      this.Students.push({
+        StudentClassId: _studentClassId,
+        StudentId: student.StudentId,
+        HouseId: student.HouseId,
+        ClassId: _classId,
+        Name: _fullDescription,
+      });
+      //}
+    })
+    //}
+    this.loading = false;
+    this.PageLoading = false;
     //})
   }
   GetPoints() {
@@ -567,7 +589,8 @@ export class StudentActivityComponent implements OnInit {
               this.AchievementAndPoints.push(f);
           }
         })
-
+        this.loading = false;
+        this.PageLoading = false;
       })
   }
 }

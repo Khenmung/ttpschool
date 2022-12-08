@@ -134,7 +134,10 @@ export class HomeDashboardComponent implements OnInit {
                 this.getBatches();
                 //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
                 if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management')
-                  this.GetStudentClass();
+                {
+                  let obj = {appShortName:'edu',applicationName:this.SelectedAppName};                
+                  this.GetStudentClass(this.SelectedAppId,obj);
+                }
                 if (this.SelectedAppId > 0) {
                   this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
                     .subscribe((data: any) => {
@@ -284,48 +287,51 @@ export class HomeDashboardComponent implements OnInit {
         this.tokenStorage.saveSelectedBatchName('');
       //////for local storage
 
-
-      if (selectedApp[0].applicationName.toLowerCase() == 'education management')
-        this.GetStudentClass();
-      // if (SelectedAppId > 0) {
       this.GetMenuData(SelectedAppId);
-      this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], SelectedAppId)
-        .subscribe((data: any) => {
-          this.tokenStorage.saveMasterData([...data.value]);
-
-          this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
-          this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
-            .subscribe((data: any) => {
-              data.value.forEach(item => {
-                var feature = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
-                if (feature.length == 0) {
-                  this.loginUserDetail[0]['applicationRolePermission'].push({
-                    'planFeatureId': 0,
-                    'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
-                    'roleId': item.RoleId,
-                    'permissionId': item.PermissionId,
-                    'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
-                    'applicationName': selectedApp[0].applicationName,
-                    'applicationId': item.ApplicationId,
-                    'appShortName': selectedApp[0].appShortName,
-                    'faIcon': '',
-                    'label': '',
-                    'link': ''
-                  })
-                }
-              });
-              this.tokenStorage.saveUserdetail(this.loginUserDetail);
-              this.tokenStorage.saveCustomFeature(data.value);
-              this.SelectedAppName = selectedApp[0].applicationName;
-              this.route.navigate(['/', selectedApp[0].appShortName])
-            });
-        })
+      if (selectedApp[0].applicationName.toLowerCase() == 'education management')
+        this.GetStudentClass(SelectedAppId,selectedApp[0]);
+      else
+        this.GetMasterData(SelectedAppId,selectedApp[0]);     
+      
     }
     else {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+  }
+  GetMasterData(SelectedAppId,selectedApp){
+    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], SelectedAppId)
+    .subscribe((data: any) => {
+      this.tokenStorage.saveMasterData([...data.value]);
+
+      this.tokenStorage.saveSelectedAppName(selectedApp.applicationName);
+      this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
+        .subscribe((data: any) => {
+          data.value.forEach(item => {
+            var feature = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
+            if (feature.length == 0) {
+              this.loginUserDetail[0]['applicationRolePermission'].push({
+                'planFeatureId': 0,
+                'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
+                'roleId': item.RoleId,
+                'permissionId': item.PermissionId,
+                'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
+                'applicationName': selectedApp.applicationName,
+                'applicationId': item.ApplicationId,
+                'appShortName': selectedApp.appShortName,
+                'faIcon': '',
+                'label': '',
+                'link': ''
+              })
+            }
+          });
+          this.tokenStorage.saveUserdetail(this.loginUserDetail);
+          this.tokenStorage.saveCustomFeature(data.value);
+          this.SelectedAppName = selectedApp.applicationName;
+          this.route.navigate(['/', selectedApp.appShortName])
+        });
+    })
   }
   SaveBatchIds(selectedBatchId) {
     debugger;
@@ -398,7 +404,7 @@ export class HomeDashboardComponent implements OnInit {
   }
   Students = [];
   StudentClasses = [];
-  GetStudentClass() {
+  GetStudentClass(SelectedAppId,selectedApp) {
     var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
@@ -416,11 +422,11 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentClasses = [...data.value];
-        this.GetStudents();
+        this.GetStudents(SelectedAppId,selectedApp);
       })
   }
 
-  GetStudents() {
+  GetStudents(SelectedAppId,selectedApp) {
     let list: List = new List();
     list.fields = [
       'StudentId',
@@ -457,6 +463,7 @@ export class HomeDashboardComponent implements OnInit {
           return d;
         })
         this.tokenStorage.saveStudents(this.Students);
+        this.GetMasterData(SelectedAppId,selectedApp); 
         this.loading = false;
         this.PageLoading = false;
       })
