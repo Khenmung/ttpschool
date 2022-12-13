@@ -48,6 +48,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   PaymentTypes = [];
   FeeCategories = [];
   OffLineReceiptNo = '';
+  CashAmount =0;
   PaymentTypeId = 0;
   StudentLedgerId = 0;
   GeneralLedgerAccountId = 0;
@@ -671,7 +672,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
           this.VariableObjList.splice(this.VariableObjList.indexOf(f), 1);
           AmountAfterFormulaApplied = evaluate(formula);
-          _newCount++;
+          _newCount+=1;
           this.MonthlyDueDetail.push({
             SlNo: _newCount,
             AccountingVoucherId: 0,

@@ -225,7 +225,7 @@ export class VariableConfigComponent implements OnInit {
           row.VariableConfigurationId = data.VariableConfigurationId;
           this.loading = false; this.PageLoading = false;
           row.Action = false;
-          // this.rowCount++;
+          // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -244,7 +244,7 @@ export class VariableConfigComponent implements OnInit {
         (data: any) => {
           this.loading = false; this.PageLoading = false;
           row.Action = false;
-          // this.rowCount++;
+          // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);

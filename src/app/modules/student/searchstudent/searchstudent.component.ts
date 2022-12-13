@@ -321,7 +321,7 @@ export class searchstudentComponent implements OnInit {
     debugger;
     let StudentName = element.Name;
 
-    let studentclass = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
+    let studentclass:any = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0) {
       var _clsName = '';
       var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
@@ -335,10 +335,10 @@ export class searchstudentComponent implements OnInit {
       this.StudentClassId = studentclass[0].StudentClassId
       //StudentName += "-" + _clsName + "-" + _sectionName + "-" + studentclass[0].RollNo;
     }
-    var StudentDetail = '"StudentName":"' + StudentName + '","ClassName":"' + _clsName + '", "Section":"' + _sectionName + '","RollNo":"' + element.RollNo + '"';
+    var StudentDetail = '"StudentName":"' + StudentName + '","ClassName":"' + _clsName + '", "Section":"' + _sectionName + '","RollNo":"' + studentclass[0].RollNo + '"';
     localStorage.setItem("StudentDetail", StudentDetail + "");
     //this.shareddata.ChangeStudentName(StudentName);
-
+    this.token.saveStudentClassId(this.StudentClassId+"");
     this.SaveIds(element);
     this.route.navigate(['/edu/progressreport/']);
   }
@@ -821,6 +821,7 @@ export class searchstudentComponent implements OnInit {
       var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo;
       student.StudentClassId = _studentClassId;
       student.Name = _fullDescription;
+      student.ClassName = _className;
       this.Students.push(student);
 
     })

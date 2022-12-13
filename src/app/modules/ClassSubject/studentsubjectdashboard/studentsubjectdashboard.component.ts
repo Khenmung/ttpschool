@@ -656,7 +656,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.edited = false;
-          this.rowCount++;
+          this.rowCount+=1;
           row.StudentClassSubjectId = data.StudentClassSubjectId;
 
           if (this.rowCount == Object.keys(row).length - 3) {
@@ -673,7 +673,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         (data: any) => {
           this.edited = false;
 
-          this.rowCount++;
+          this.rowCount+=1;
           if (this.rowCount == Object.keys(row).length - 3) {
             element.Action = false;
             this.loading = false; this.PageLoading = false;

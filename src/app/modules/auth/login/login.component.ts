@@ -18,7 +18,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   jwtHelper = new JwtHelperService();
   userInfo = [];
   loading = false;
@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     this.password = 'password';
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
@@ -121,7 +121,11 @@ export class LoginComponent implements OnInit {
         debugger;
         this.loading = false; this.PageLoading = false;
         //this.errorMessage = '';
-        this.errorMessage = globalconstants.formatError(err.error.Messages);
+        if (err.error.Messages)
+          this.errorMessage = globalconstants.formatError(err.error.Messages);
+        else if (err.error.Errors) {
+          this.errorMessage = globalconstants.formatError(err.error.Errors);
+        }
         // var modelState;
         // if (err.error.ModelState != null)
         //   modelState = JSON.parse(JSON.stringify(err.error.ModelState));
@@ -250,7 +254,7 @@ export class LoginComponent implements OnInit {
         })
     })
   }
- 
+
   get f() {
     return this.loginForm.controls;
   }
@@ -287,14 +291,13 @@ export class LoginComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         //console.log("all",data.value)
-        var _allPermission =[]; 
-        data.value.forEach(m=>{
-            if(m.PlanFeature.Page.Active==1)
-            {
-              _allPermission.push(m);
-            }
+        var _allPermission = [];
+        data.value.forEach(m => {
+          if (m.PlanFeature.Page.Active == 1) {
+            _allPermission.push(m);
+          }
         })
-        
+
         //console.log("fitlered",_allPermission)
         if (_allPermission.length > 0) {
 

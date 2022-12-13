@@ -471,7 +471,7 @@ export class StudentEvaluationComponent implements OnInit {
         _classEvaluations.forEach((clseval, index) => {
 
           if (clseval.QuestionnaireType.toLowerCase() == 'questionnaire') {
-            indx++;
+            indx+=1;
             SlNo = indx + "";
           }
           else

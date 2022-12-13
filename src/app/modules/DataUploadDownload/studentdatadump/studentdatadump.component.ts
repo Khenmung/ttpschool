@@ -405,7 +405,7 @@ export class StudentDatadumpComponent implements OnInit {
 
     let list: List = new List();
     list.fields = ["*"];
-    list.lookupFields = ["StudentClasses($filter=" + classfilter + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId)"];
+    list.lookupFields = ["StudentClasses($filter=" + classfilter + ";$select=Remarks,StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";
@@ -428,7 +428,7 @@ export class StudentDatadumpComponent implements OnInit {
 
               delete sc.FeeTypeId;
               delete sc.ReasonForLeavingId;
-
+              sc.Notes = sc.StudentClasses[0].Remarks;
               sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
               formattedData.push(sc);
             }

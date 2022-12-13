@@ -285,9 +285,10 @@ export class AddstudentclassComponent implements OnInit {
         this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0, 0, this.SelectedBatchId)
           .subscribe((data: any) => {
             ClassStrength = data.value.length;
-            ClassStrength++;
-
-            var _year = new Date().getFullYear();
+            ClassStrength += 1;
+            var _batchName = this.tokenstorage.getSelectedBatchName();
+            var _admissionNo = this.studentclassForm.get("AdmissionNo").value;
+            var _year = _batchName.split('-')[0].trim();
             this.loading = true;
             this.studentclassData.Active = this.studentclassForm.get("Active").value ? 1 : 0;
             this.studentclassData.BatchId = this.SelectedBatchId;
@@ -295,13 +296,15 @@ export class AddstudentclassComponent implements OnInit {
             this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
             this.studentclassData.SectionId = this.studentclassForm.value.SectionId;
             this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
-            this.studentclassData.AdmissionNo = this.studentclassForm.get("AdmissionNo").value == null ? _year + "/" + ClassStrength : this.studentclassForm.get("AdmissionNo").value;
+            this.studentclassData.AdmissionNo = !_admissionNo ?_year + ClassStrength : _admissionNo;
             this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
             this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
             this.studentclassData.OrgId = this.LoginUserDetail[0]["orgId"];
             this.studentclassData.StudentId = this.StudentId;
-            if (this.StudentClassId == 0)
+            if (!this.StudentClassId || this.StudentClassId == 0) {
+              this.StudentClassId = 0;
               this.insert();
+            }
             else {
               this.studentclassData.StudentClassId = this.StudentClassId;
               this.update();
@@ -319,6 +322,7 @@ export class AddstudentclassComponent implements OnInit {
         (data: any) => {
           this.loading = false; this.PageLoading = false;
           this.StudentClassId = data.StudentClassId;
+          this.studentclassForm.patchValue({"AdmissionNo": this.studentclassData.AdmissionNo })
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
           this.CreateInvoice();
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -331,6 +335,7 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.CreateInvoice();
+          this.studentclassForm.patchValue({"AdmissionNo": this.studentclassData.AdmissionNo })
         });
   }
   CreateInvoice() {

@@ -68,8 +68,12 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field style="text-align: center;"
                         *ngIf="disCol !='StudentClassSubject' && disCol !='Action'">
-                        <input matInput (blur)="onBlur(element,$event)" [attr.name]="disCol" [value]="element[disCol]"
-                            [(ngModel)]="element[disCol]">
+                        <input matInput (blur)="onBlur(element,$event)" 
+                        onfocus="this.select()" 
+                        autocomplete="Off"
+                        [attr.name]="disCol" 
+                        [value]="element[disCol]"
+                        [(ngModel)]="element[disCol]">
                     </mat-form-field>
                     <button *ngIf="disCol=='Action'"
                         [disabled]="loading || Permission=='read' || !element.Action || ResultReleased==1"

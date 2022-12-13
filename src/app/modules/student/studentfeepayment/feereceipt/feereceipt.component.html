@@ -118,6 +118,17 @@
                     </div>
                 </div>
             </div>
+            <hr>
+            <div style="margin-left:20px">
+                <mat-form-field style="width: 150px;margin-right: 15px;">
+                    <mat-label>Cash</mat-label>
+                    <input matInput #CashAmount value="0" type="number" autocomplete="Off">
+                </mat-form-field>
+                <mat-form-field style="width: 150px;margin-right: 15px;">
+                    <mat-label>Return</mat-label>
+                    <input matInput [value]="+CashAmount.value -TotalAmount" autocomplete="Off">
+                </mat-form-field>
+            </div>
             <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
                 <div fxLayout="row" fxLayoutAlign="space-around center"
                     *ngIf="studentInfoTodisplay.ReceiptNo>0 && BillStatus==1">

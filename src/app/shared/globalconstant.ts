@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiU+++.*-=-0983`9556'nb656RL
-    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
+    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -145,9 +145,9 @@ export class globalconstants {
                     "EMPLOYMENTHISTORY": "employment history",
                     "EMPLOYEEPROFILE": "employee profile"
                 },
-                "employeeactivity":{
-                    "EMPLOYEEACTIVITY":"employee activity",
-                    "ACTIVITY":"activity"
+                "employeeactivity": {
+                    "EMPLOYEEACTIVITY": "employee activity",
+                    "ACTIVITY": "activity"
                 }
             },
             "edu": {
@@ -583,19 +583,28 @@ export class globalconstants {
     public static formatError(err) {
         var errorMessage = '';
         var modelState;
-        if (err.error.ModelState != null)
-            modelState = JSON.parse(JSON.stringify(err.error.ModelState));
-        else if (err.error != null)
-            modelState = JSON.parse(JSON.stringify(err.error));
-        else
-            modelState = JSON.parse(JSON.stringify(err));
+        if (err != undefined) {
+            if (err.error != undefined) {
+                if (err.error.ModelState)
+                    modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+                else
+                    modelState = JSON.parse(JSON.stringify(err.error));
+            }
+            else if (err.Errors != undefined)
+                modelState = JSON.parse(JSON.stringify(err.Errors));
 
+            else
+                modelState = JSON.parse(JSON.stringify(err));
+
+        }
         //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
         for (var key in modelState) {
             if (modelState.hasOwnProperty(key) && (key.toLowerCase() == 'errors' || key.toLowerCase() == 'error')) {
                 for (var key1 in modelState[key])
                     errorMessage += (errorMessage == "" ? "" : errorMessage + "<br/>") + modelState[key][key1];
             }
+            else
+                errorMessage += modelState[key];
         }
         return errorMessage;
     }

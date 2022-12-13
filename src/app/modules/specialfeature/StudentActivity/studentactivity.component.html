@@ -14,6 +14,15 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            <mat-form-field appearance="outline" style="width:100px">
+                <mat-label>Section</mat-label>
+                <mat-select formControlName="searchSectionId" (selectionChange)="GetStudents()">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="300">
                 <mat-label>Student</mat-label>
                 <input type="text" matInput
@@ -25,7 +34,7 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Activity</mat-label>
                 <mat-select formControlName="searchActivityId" (selectionChange)="SetCategory()">
                     <mat-option value="0">select</mat-option>
@@ -39,17 +48,15 @@
                     <mat-option *ngFor="let item of ActivityCategory" [value]="item.MasterDataId">
                         {{item.MasterDataName}}</mat-option>
                 </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
+            </mat-form-field> -->
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Session</mat-label>
                 <mat-select formControlName="searchSessionId">
                     <mat-option value="0">select</mat-option>
                     <mat-option *ngFor="let item of ActivitySessions" [value]="item.MasterDataId">
                         {{item.MasterDataName}}</mat-option>
                 </mat-select>
-            </mat-form-field>
-        </div>
-        <div style="width:100%;display: flex; justify-content: center;">
+            </mat-form-field> -->
             <button [disabled]="loading" style="margin-right:15px" 
             matTooltip="search"
             mat-raised-button color="accent"
@@ -64,6 +71,21 @@
                 <mat-icon>add</mat-icon>
             </button>
         </div>
+        <!-- <div style="width:100%;display: flex; justify-content: center;">
+            <button [disabled]="loading" style="margin-right:15px" 
+            matTooltip="search"
+            mat-raised-button color="accent"
+                (click)="GetSportsResult()">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+            <button [disabled]="loading || Permission=='read' || StudentClassId==0" matTooltip="add new" mat-mini-fab
+                (click)="AddNew()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div> -->
     </form>
     <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="SportResultId">
@@ -72,6 +94,14 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 {{element.SportResultId}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Student">
+            <mat-header-cell *matHeaderCellDef>
+                Student
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.Student}}
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="RankId">
@@ -103,7 +133,7 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <mat-select [(ngModel)]="element.SportsNameId" (selectionChange)="onBlur(element)"
+                    <mat-select [(ngModel)]="element.SportsNameId" (selectionChange)="SelectCategory(element)"
                         [value]="element.SportsNameId">
                         <mat-option *ngFor="let item of ActivityNames" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
@@ -118,7 +148,7 @@
                 <mat-form-field appearance="outline">
                     <mat-select [(ngModel)]="element.CategoryId" (selectionChange)="SelectSubCategory(element,$event)"
                         [value]="element.CategoryId">
-                        <mat-option *ngFor="let item of ActivityCategory" [value]="item.MasterDataId">
+                        <mat-option *ngFor="let item of element.FilteredCategory" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -176,9 +206,16 @@
 
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
-                    mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                <button style="margin-right: 15px;" [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                    mat-mini-fab color="accent" (click)="UpdateOrSave(element)">
                     <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
+                <button [disabled]="loading || !element.Action || Permission!='rwd'" matTooltip="save"
+                mat-mini-fab color="accent" (click)="delete(element)">
+                    <mat-icon>delete</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>

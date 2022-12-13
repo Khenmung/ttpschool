@@ -219,7 +219,7 @@ export class ClassperiodComponent implements OnInit {
     this.dataservice.postPatch(this.SchoolClassPeriodListName, this.SchoolClassPeriodData, this.SchoolClassPeriodData.SchoolClassPeriodId, 'patch')
       .subscribe(
         (data: any) => {
-          this.rowCount++;
+          this.rowCount+=1;
           row.Action = false;
           //this.DataToSave--;
           if (this.DataToSave == 0) {

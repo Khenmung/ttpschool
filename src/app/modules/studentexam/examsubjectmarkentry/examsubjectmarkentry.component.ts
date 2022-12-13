@@ -225,7 +225,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
           valuerow.Action = false;
 
           this.loading = false; this.PageLoading = false;
-          this.rowCount++;
+          this.rowCount+=1;
           if (this.rowCount == this.displayedColumns.length - 2) {
             this.loading = false; this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -240,7 +240,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
         (data: any) => {
           //this.loading = false; this.PageLoading=false;
           valuerow.Action = false;
-          this.rowCount++;
+          this.rowCount+=1;
           if (this.rowCount == this.displayedColumns.length - 2) {
             this.loading = false; this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -330,8 +330,8 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)",
-      "StudentClass($select=StudentId,RollNo,SectionId)"]
+    //list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)",
+    //  "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -341,40 +341,67 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
         var _studname = '';
 
         this.StudentSubjects = [];
-        var dbdata = data.value.filter(x => x.ClassSubject.Active == 1)
+
+        //var dbdata = data.value.filter(x => x.ClassSubject.Active == 1)
+        var dbdata =[]; 
+        data.value.forEach(x => {
+          var clssubj = this.ClassSubjects.filter(f=>f.ClassSubjectId == x.ClassSubjectId && f.Active==1);
+          if(clssubj.length>0)
+          {
+            x.ClassId = clssubj[0].ClassId;
+            x.SubjectId = clssubj[0].SubjectId;
+            
+            x.SubjectCategoryId = clssubj[0].SubjectCategoryId;
+            
+            var stdcls = this.Students.filter(d=>d.StudentClasses.length>0 && d.StudentClasses[0].StudentClassId == x.StudentClassId);
+            if(stdcls.length>0)
+            {
+              var _lastname = stdcls[0].LastName == null || stdcls[0].LastName == '' ? '' : " " + stdcls[0].LastName;
+              _studname = stdcls[0].FirstName + _lastname;
+              x.Name = _studname;
+              x.SectionId = stdcls[0].StudentClasses[0].SectionId;
+              x.RollNo = stdcls[0].StudentClasses[0].RollNo;
+              x.StudentId = stdcls[0].StudentId;
+              dbdata.push(x);
+            }
+          }
+          
+          //return x;
+        })
         dbdata.forEach(s => {
           _class = '';
           _subject = '';
           _studname = '';
-          let _studentObj = this.Students.filter(c => c.StudentId == s.StudentClass.StudentId);
-          if (_studentObj.length > 0) {
-            var _lastname = _studentObj[0].LastName == null || _studentObj[0].LastName == '' ? '' : " " + _studentObj[0].LastName;
-            _studname = _studentObj[0].FirstName + _lastname;
+          //var clssubj = this.ClassSubjects.filter(f=>f.ClassSubjectId == s.ClassSubjectId);
+          // let _studentObj = this.Students.filter(c => c.StudentId == s.StudentClass.StudentId);
+          // if (_studentObj.length > 0) {
+          //   var _lastname = _studentObj[0].LastName == null || _studentObj[0].LastName == '' ? '' : " " + _studentObj[0].LastName;
+          //   _studname = _studentObj[0].FirstName + _lastname;
 
-            let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassSubject.ClassId);
+            let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassId);
             if (_stdClass.length > 0)
               _class = _stdClass[0].ClassName;
 
-            let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.ClassSubject.SubjectId);
+            let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.SubjectId);
             if (_stdSubject.length > 0)
               _subject = _stdSubject[0].MasterDataName;
 
-            let _stdSection = this.Sections.filter(c => c.MasterDataId == s.StudentClass.SectionId);
+            let _stdSection = this.Sections.filter(c => c.MasterDataId == s.SectionId);
             if (_stdSection.length > 0)
               _section = _stdSection[0].MasterDataName;
             this.StudentSubjects.push({
               StudentClassSubjectId: s.StudentClassSubjectId,
               ClassSubjectId: s.ClassSubjectId,
               StudentClassId: s.StudentClassId,
-              RollNo: s.StudentClass.RollNo,
-              StudentClassSubject: s.StudentClass.RollNo + '-' + _studname + '-' + _class + '-' + _section + ' - ' + _subject,
-              SubjectId: s.ClassSubject.SubjectId,
-              ClassId: s.ClassSubject.ClassId,
-              StudentId: s.StudentClass.StudentId,
-              SectionId: s.StudentClass.SectionId,
-              SubjectCategoryId: s.ClassSubject.SubjectCategoryId
+              RollNo: s.RollNo,
+              StudentClassSubject: s.RollNo + '-' + s.Name + '-' + _class + '-' + _section + ' - ' + _subject,
+              SubjectId: s.SubjectId,
+              ClassId: s.ClassId,
+              StudentId: s.StudentId,
+              SectionId: s.SectionId,
+              SubjectCategoryId: s.SubjectCategoryId
             })
-          }
+         // }
         })
         //console.log("this.StudentSubjects",this.StudentSubjects)
         this.loading = false;

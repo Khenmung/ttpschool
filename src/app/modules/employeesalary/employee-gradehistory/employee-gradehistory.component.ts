@@ -234,7 +234,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
         (data: any) => {
           row.EmployeeGradeHistoryId = data.EmployeeGradeHistoryId;
           this.loading = false; this.PageLoading=false;
-          // this.rowCount++;
+          // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -248,7 +248,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           this.loading = false; this.PageLoading=false;
-          //this.rowCount++;
+          //this.rowCount+=1;
           //if (this.rowCount == this.displayedColumns.length - 2) {
           //  this.loading = false; this.PageLoading=false;
           //  this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);

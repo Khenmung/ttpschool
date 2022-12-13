@@ -512,8 +512,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (this.PreviousBatchId == -1)
+    if (this.PreviousBatchId == -1) {
+      this.StudentClassList = [];
+      this.dataSource = new MatTableDataSource<IStudentClass>();
       this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+    }
     else {
       var SameClassPreviousBatchData = [];
       var ExistingData = [];
@@ -586,9 +589,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (this.PreviousBatchId == -1)
+    if (this.PreviousBatchId == -1) {
+      this.StudentClassList = [];
+      this.dataSource = new MatTableDataSource<IStudentClass>();
       this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-    else {
+
+    } else {
       this.HeaderTitle = 'From Previous Class and Previous Batch'
       var PreviousClassAndPreviousBatchData = [];
       this.StudentClassList = [];
@@ -864,8 +870,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             .subscribe((data: any) => {
 
               var ClassStrength = data.value.length;
-              ClassStrength++;
-              var _year = new Date().getFullYear();
+              ClassStrength +=1;
+              var _batchName = this.tokenstorage.getSelectedBatchName();
+              //var _admissionNo = this.searchForm.get("AdmissionNo").value;
+              var _year = _batchName.split('-')[0].trim();
+              //var _year = new Date().getFullYear();
 
               //var _section= this.Sections.filter(s=>s.MasterDataId == row.Section)
               this.StudentClassData.Active = row.Active;
@@ -876,7 +885,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.StudentClassData.RollNo = row.RollNo;
               this.StudentClassData.SectionId = row.SectionId;
               this.StudentClassData.Remarks = row.Remarks;
-              this.StudentClassData.AdmissionNo = row.AdmissionNo == null ? _year + "/" + ClassStrength : row.AdmissionNo;
+              this.StudentClassData.AdmissionNo = !row.AdmissionNo? _year + ClassStrength : row.AdmissionNo;
 
               this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
               this.StudentClassData.BatchId = this.SelectedBatchId;

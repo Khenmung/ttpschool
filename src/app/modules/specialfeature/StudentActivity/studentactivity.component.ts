@@ -11,6 +11,8 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-StudentActivity',
   templateUrl: './studentactivity.component.html',
@@ -61,12 +63,13 @@ export class StudentActivityComponent implements OnInit {
   };
   SportsResultForUpdate = [];
   displayedColumns = [
-    "SportResultId",
+    //"SportResultId",
+    "Student",
     "RankId",
-    "SportsNameId",
     "Achievement",
+    "SportsNameId",    
     "CategoryId",
-    "SubCategoryId",
+    //"SubCategoryId",
     "SessionId",
     "AchievementDate",
     "Active",
@@ -74,6 +77,7 @@ export class StudentActivityComponent implements OnInit {
   ];
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
+    private dialog: MatDialog,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -93,10 +97,11 @@ export class StudentActivityComponent implements OnInit {
 
     this.searchForm = this.fb.group({
       searchClassId: 0,
+      searchSectionId: 0,
       searchStudentName: [0],
-      searchActivityId: [0],
-      searchCategoryId: [0],
-      searchSessionId: [0]
+      //searchActivityId: [0],
+      //searchCategoryId: [0],
+      //searchSessionId: [0]
     });
     this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
       .pipe(
@@ -148,16 +153,54 @@ export class StudentActivityComponent implements OnInit {
   }
 
   delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+    this.openDialog(element);
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
 
-        });
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch('SportResults', toUpdate, row.SportResultId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; this.PageLoading = false;
+        var idx = this.SportsResultList.findIndex(x => x.SportResultId == row.SportResultId)
+        this.SportsResultList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.SportsResultList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.MasterDataName.toLowerCase().indexOf(searchTerms.MasterDataName) !== -1
+    }
+    return filterFunction;
   }
   SetStudentClassId() {
     debugger;
@@ -173,12 +216,12 @@ export class StudentActivityComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
-    if (_studentclassId == undefined) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please enter student.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    // if (_studentclassId == undefined) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please enter student.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     if (row.RankId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -196,12 +239,13 @@ export class StudentActivityComponent implements OnInit {
     }
 
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    let checkFilterString = "StudentClassId eq " + this.StudentClassId +
+    let checkFilterString = "RankId eq " + row.RankId +
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +
       " and CategoryId eq " + row.CategoryId +
       " and SubCategoryId eq " + row.SubCategoryId +
-      " and BatchId eq " + this.SelectedBatchId;
+      " and BatchId eq " + this.SelectedBatchId +
+      " and Active eq " + row.Active;
     this.RowsToUpdate = 0;
 
     if (row.SportResultId > 0)
@@ -220,7 +264,7 @@ export class StudentActivityComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          var studentObj = this.Students.filter(s => s.StudentClassId == this.StudentClassId)
+          var studentObj = this.Students.filter(s => s.StudentClassId == row.StudentClassId)
           var _groupId = 0;
           if (studentObj.length > 0)
             _groupId = studentObj[0].HouseId;
@@ -233,15 +277,16 @@ export class StudentActivityComponent implements OnInit {
               Achievement: globalconstants.encodeSpecialChars(row.Achievement),
               SportsNameId: row.SportsNameId,
               ClassId: row.ClassId,
+              SectionId: row.SectionId,
               GroupId: _groupId,
               CategoryId: row.CategoryId,
               SubCategoryId: row.SubCategoryId,
-              StudentClassId: this.StudentClassId,
+              StudentClassId: row.StudentClassId,
               AchievementDate: row.AchievementDate,
               SessionId: row.SessionId,
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"],
-              BatchId: this.SelectedBatchId
+              BatchId: row.BatchId
             });
 
           if (this.SportsResultForUpdate[0].SportResultId == 0) {
@@ -252,12 +297,13 @@ export class StudentActivityComponent implements OnInit {
             this.insert(row);
           }
           else {
-            //console.log("this.SportsResultForUpdate[0] update", this.SportsResultForUpdate[0])
+
             this.SportsResultForUpdate[0]["UpdatedDate"] = new Date();
             this.SportsResultForUpdate[0]["UpdatedBy"];
             delete this.SportsResultForUpdate[0]["CreatedDate"];
             delete this.SportsResultForUpdate[0]["CreatedBy"];
-            this.insert(row);
+            console.log("this.SportsResultForUpdate[0] update", this.SportsResultForUpdate[0])
+            this.update(row);
           }
         }
       }, error => {
@@ -287,26 +333,26 @@ export class StudentActivityComponent implements OnInit {
   }
   update(row) {
     //console.log("updating",this.SportsResultForUpdate);
-    this.dataservice.postPatch('SportResults', this.SportsResultForUpdate[0], this.SportsResultForUpdate[0].SportsResultResultId, 'patch')
+    this.dataservice.postPatch('SportResults', this.SportsResultForUpdate[0], this.SportsResultForUpdate[0].SportResultId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
-          console.log("data update", data.value);
+          //console.log("data update", data.value);
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
-
+ 
   GetSportsResult() {
     debugger;
-    var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
 
     var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
-    var _SportsNameId = this.searchForm.get("searchActivityId").value;
-    var _categoryId = this.searchForm.get("searchCategoryId").value;
+    //var _SportsNameId = this.searchForm.get("searchActivityId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
     var _classId = this.searchForm.get("searchClassId").value;
-    var _SessionId = this.searchForm.get("searchSessionId").value;
+    //var _SessionId = this.searchForm.get("searchSessionId").value;
     if (_studentclassId != undefined) {
       filterStr += " and StudentClassId eq " + _studentclassId;
     }
@@ -316,23 +362,25 @@ export class StudentActivityComponent implements OnInit {
     }
     else
       filterStr += " and ClassId eq " + _classId;
-
-    if (_SportsNameId > 0) {
-      filterStr += " and SportsNameId eq " + _SportsNameId;
+    if (_sectionId > 0) {
+      filterStr += " and SectionId eq " + _sectionId;
     }
+    // if (_SportsNameId > 0) {
+    //   filterStr += " and SportsNameId eq " + _SportsNameId;
+    // }
     // if(_SessionId==0) {
     //   this.loading = false;
     //   this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
     //   return;
     // }
     // else
-    if (_SessionId > 0) {
-      filterStr += " and SessionId eq " + _SessionId;
-    }
+    // if (_SessionId > 0) {
+    //   filterStr += " and SessionId eq " + _SessionId;
+    // }
 
-    if (_categoryId > 0) {
-      filterStr += " and CategoryId eq " + _categoryId;
-    }
+    // if (_categoryId > 0) {
+    //   filterStr += " and CategoryId eq " + _categoryId;
+    // }
     // if (_subCategoryId > 0) {
     //   filterStr += " and SubCategoryId eq " + _subCategoryId;
     // }
@@ -344,7 +392,7 @@ export class StudentActivityComponent implements OnInit {
     // if (_SessionId > 0) {
     //   filterStr += " and SessionId eq " + _SessionId;
     // }
-
+    
     this.loading = true;
     this.SportsResultList = [];
 
@@ -356,10 +404,12 @@ export class StudentActivityComponent implements OnInit {
       "Achievement",
       "SportsNameId",
       "ClassId",
+      "SectionId",
       "CategoryId",
       "SubCategoryId",
       "AchievementDate",
       "SessionId",
+      "BatchId",
       "Active"
     ];
 
@@ -369,22 +419,28 @@ export class StudentActivityComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var _subCategory = [];
-        this.SportsResultList = data.value.map(m => {
-          if (m.CategoryId > 0)
-            _subCategory = this.allMasterData.filter(f => f.ParentId == m.CategoryId);
-          else
-            _subCategory = [];
-          var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
-          if (obj.length > 0)
-            m.SportsName = obj[0].MasterDataName;
-          else
-            m.SportsName = '';
-          m.SubCategories = _subCategory;
-          m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
-          m.Action = false;
-          return m;
+        data.value.forEach(m => {
+          var _student = this.Students.filter(s => s.StudentClassId == m.StudentClassId);
+          if (_student.length > 0) {
+            // var lastName = _student[0].LastName ? " " + _student[0].LastName : "";
+            m.Student = _student[0].Name;//_student[0].StudentClasses[0].RollNO + "-" + _student[0].FirstName + lastName;
+            m.FilteredCategory = this.allMasterData.filter(a=>a.ParentId == m.SportsNameId);
+            if (m.CategoryId > 0)
+              _subCategory = this.allMasterData.filter(f => f.ParentId == m.CategoryId);
+            else
+              _subCategory = [];
+            var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
+            if (obj.length > 0)
+              m.SportsName = obj[0].MasterDataName;
+            else
+              m.SportsName = '';
+            m.SubCategories = _subCategory;
+            m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
+            m.Action = false;
+            this.SportsResultList.push(m);
+          }
         })
-
+        console.log("SportsResultList",this.SportsResultList);
         if (this.SportsResultList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
@@ -393,6 +449,11 @@ export class StudentActivityComponent implements OnInit {
         this.loadingFalse();
       });
 
+  }
+  //FilteredCategory=[];
+  SelectCategory(row){
+    //debugger;
+    row.FilteredCategory= this.allMasterData.filter(f => f.ParentId == row.SportsNameId);
   }
   SelectSubCategory(row, event) {
     if (row.CategoryId > 0)
@@ -411,51 +472,65 @@ export class StudentActivityComponent implements OnInit {
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.GetPoints();
   }
-  SetCategory() {
-    var _activityId = this.searchForm.get("searchActivityId").value;
-    if (_activityId > 0)
-      this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
-  }
+  // SetCategory(row) {
+  //   var _activityId = this.searchForm.get("searchActivityId").value;
+  //   if (_activityId > 0)
+  //     this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
+  // }
   AddNew() {
-    var _activityId = this.searchForm.get("searchActivityId").value;
-    var _categoryId = this.searchForm.get("searchCategoryId").value;
-    var _sessionId = this.searchForm.get("searchSessionId").value;
+    //var _activityId = this.searchForm.get("searchActivityId").value;
+    //var _categoryId = this.searchForm.get("searchCategoryId").value;
+    //var _sessionId = this.searchForm.get("searchSessionId").value;
     var _classId = this.searchForm.get("searchClassId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
+    var _studentClassId = 0,_studName='';
+    var studObj =this.searchForm.get("searchStudentName").value;
+    _studentClassId = studObj.StudentClassId;
+    _studName = studObj.Name;
+    if (!_studentClassId || _studentClassId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
     if (_classId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (_activityId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (_categoryId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (_sessionId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // if (_activityId == 0) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (_categoryId == 0) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (_sessionId == 0) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+  
     var _subcategory = [];
-    if (_categoryId > 0)
-      _subcategory = this.allMasterData.filter(f => f.ParentId == _categoryId);
+    // if (_categoryId > 0)
+    //   _subcategory = this.allMasterData.filter(f => f.ParentId == _categoryId);
     var newdata = {
       SportResultId: 0,
+      Student:_studName,
       RankId: 0,
       Achievement: '',
-      SportsNameId: _activityId,
+      SportsNameId: 0,
       ClassId: _classId,
-      CategoryId: _categoryId,
+      SectionId: _sectionId,
+      CategoryId: 0,
       SubCategoryId: 0,
       SubCategories: _subcategory,
-      StudentClassId: this.StudentClassId,
+      StudentClassId: _studentClassId,
       AchievementDate: new Date(),
-      SessionId: this.searchForm.get("searchSessionId").value,
+      SessionId: 0,//this.searchForm.get("searchSessionId").value,
       Active: 0,
       Action: false
     };
@@ -515,26 +590,17 @@ export class StudentActivityComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    // let list: List = new List();
-    // list.fields = [
-    //   'StudentId',
-    //   'FirstName',
-    //   'LastName',
-    //   'ContactNo',
-    //   'HouseId'
-    // ];
-
-    // list.PageName = "Students";
-    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-
-    // this.dataservice.get(list)
-    //   .subscribe((data: any) => {
-    debugger;
     this.Students = [];
     var _students: any = this.tokenstorage.getStudents();
     //if (_students.length > 0) {
     var _classId = this.searchForm.get("searchClassId").value;
-    _students = _students.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId);
+    var _sectionId = this.searchForm.get("searchSectionId").value;
+    if (_sectionId > 0 && _classId > 0)
+      _students = _students.filter(s => s.StudentClasses.length > 0
+        && s.StudentClasses[0].SectionId == _sectionId && s.StudentClasses[0].ClassId == _classId);
+    else if (_sectionId == 0 && _classId > 0)
+      _students = _students.filter(s => s.StudentClasses.length > 0
+        && s.StudentClasses[0].ClassId == _classId);
     _students.forEach(student => {
       var _RollNo = '';
       var _name = '';
@@ -556,12 +622,13 @@ export class StudentActivityComponent implements OnInit {
       _RollNo = student.StudentClasses[0].RollNo;
       var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
       _name = student.FirstName + _lastname;
-      var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+      var _fullDescription = _RollNo + "-" + _name + "-" + _className + "-" + _section;
       this.Students.push({
         StudentClassId: _studentClassId,
         StudentId: student.StudentId,
         HouseId: student.HouseId,
         ClassId: _classId,
+        RollNo: _RollNo,
         Name: _fullDescription,
       });
       //}

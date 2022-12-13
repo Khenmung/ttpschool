@@ -125,6 +125,11 @@ export class AccountNatureComponent implements OnInit {
     }
 
   }
+  FilteredAccountNature=[];
+  filterAccountNature(){
+    var _parentId = this.searchForm.get("searchAccountName").value;
+    this.FilteredAccountNature = this.AccountNatureList.filter(f=>f.ParentId == _parentId);
+  }
   private _filter(name: string): IAccountNature[] {
 
     const filterValue = name.toLowerCase();
@@ -156,15 +161,16 @@ export class AccountNatureComponent implements OnInit {
     this.loading = true;
 
     var _searchAccountId = this.searchForm.get("searchAccountName").value.AccountNatureId;
-    var _searchParentId = this.searchForm.get("searchParentId").value;
+    //var _searchParentId = this.searchForm.get("searchParentId").value;
     if (_searchAccountId == undefined) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select account.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (_searchParentId > 0)
-      filterStr += " and ParentId eq " + _searchParentId
-    else if (_searchAccountId != undefined) {
+    // if (_searchParentId > 0)
+    //   filterStr += " and ParentId eq " + _searchParentId
+    //else 
+    if (_searchAccountId != undefined) {
       filterStr += " and ParentId eq " + _searchAccountId
     }
 
@@ -190,6 +196,31 @@ export class AccountNatureComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
+        this.loading = false;
+        this.PageLoading = false;
+      });
+  }
+  GetAccountNatures() {
+
+    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
+    debugger;
+    this.loading = true;
+    
+    let list: List = new List();
+    list.fields = [
+      "AccountNatureId",
+      "AccountName",
+      "ParentId",
+      "DebitType",
+      "Active",
+    ];
+
+    list.PageName = this.AccountNatureListName;
+    list.filter = [filterStr];
+    this.AccountNatureList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.AccountNatureList = [...data.value];
         this.loading = false;
         this.PageLoading = false;
       });

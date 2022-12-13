@@ -48,52 +48,54 @@
         </button>
     </div>
 </form>
-<mat-table #table [dataSource]="dataSource" matSort>
-    <ng-container matColumnDef="ClassName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Class
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.ClassName}}
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="StudentRollNo">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Student-Rollno
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.StudentRollNo}}
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="ClassSubject">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Subject
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.ClassSubject}}
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Percent">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Percent
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.Percent}}
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="PresentCount">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Present
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.PresentCount}}
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="AbsentCount">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Absent
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.AbsentCount}}
-        </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-</mat-table>
+<div id="printSection">
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="ClassName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Class
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.ClassName}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="StudentRollNo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Student-Rollno
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.StudentRollNo}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="ClassSubject">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Subject
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.ClassSubject}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Percent">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Percent
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.Percent}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="PresentCount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Present
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.PresentCount}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="AbsentCount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Absent
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.AbsentCount}}
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    </mat-table>
+</div>
 <mat-paginator style="display:flex;justify-content: center;" [pageSizeOptions]="[10,20,50,75]"></mat-paginator>
 <div style="display:flex;justify-content: center;">
     <button [disabled]="loading || Permission=='read'" *ngIf="distinctStudent.length>0" matTooltip="print"

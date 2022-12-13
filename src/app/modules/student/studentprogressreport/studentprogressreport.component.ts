@@ -110,7 +110,7 @@ export class StudentprogressreportComponent implements OnInit {
   }
   StudentName = [];
   FeePaymentPermission = '';
-  //ExamClassGroups = [];
+  ExamClassGroups = [];
   PageLoad() {
     debugger;
     this.loading = true;
@@ -145,12 +145,12 @@ export class StudentprogressreportComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-        // this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], 0)
-        //   .subscribe((data: any) => {
-        //     this.ExamClassGroups = [...data.value];
-        //     //var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
-        //     //this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
-        //   });
+        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], 0)
+          .subscribe((data: any) => {
+            this.ExamClassGroups = [...data.value];
+            //var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
+            //this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
+          });
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
         this.GetStudentGradeDefn();
@@ -301,7 +301,7 @@ export class StudentprogressreportComponent implements OnInit {
       })
   }
   GetStudentSubject() {
-
+debugger;
     let filterStr = 'Active eq 1 and StudentClassId eq ' + this.StudentClassId;
 
     let list: List = new List();
@@ -313,7 +313,7 @@ export class StudentprogressreportComponent implements OnInit {
       "SubjectId"
     ];
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=SubjectCategoryId,ClassId)"]
+    list.lookupFields = ["ClassSubject($select=SubjectCategoryId,ClassId)"];
     list.filter = [filterStr];
 
     this.dataservice.get(list)
@@ -462,20 +462,20 @@ export class StudentprogressreportComponent implements OnInit {
           var OverAllGradeRow = { 'Subject': this.OverAllGrade };
           //var obj = this.ExamClassGroups.filter(ex => ex.ExamId == objExam["ExamId"]);
           var _studentClassGroupObj = this.ClassGroupMappings.filter(m => m.ClassId == _classId)
-          // var _classGroupId = 0;
-          // if (_studentClassGroupObj.length > 0) {
-          //   var obj = this.ExamClassGroups.filter(ex => ex.ClassGroupId == _studentClassGroupObj[0].ClassGroupId &&
-          //     ex.ExamId == objExam["ExamId"]);
-          //   if (obj.length > 0)
-          //     _classGroupId = obj[0].ClassGroupId;
+          var _classGroupId = 0;
+          if (_studentClassGroupObj.length > 0) {
+            var obj = this.ExamClassGroups.filter(ex => _studentClassGroupObj.findIndex(fi=> fi.ClassGroupId == ex.ClassGroupId) >-1 &&
+              ex.ExamId == objExam["ExamId"]);
+            if (obj.length > 0)
+              _classGroupId = obj[0].ClassGroupId;
 
-          // }
+          }
           Object.keys(objExam).forEach((exam: any) => {
             var totalPoints = 0;
             if (exam != 'Subject') {
               //var obj = this.Exams.filter(ex => ex.ExamName.toLowerCase() == exam.toLowerCase());
               if (_studentClassGroupObj.length > 0) {
-                var currentExamStudentGrades = this.StudentGrades.filter(s => s.ClassGroupId == _studentClassGroupObj[0].ClassGroupId
+                var currentExamStudentGrades = this.StudentGrades.filter(s => s.ClassGroupId == _classGroupId
                   && s.SubjectCategoryId == _gradingSubjectCategoryId
                   && s.ExamId ==objExam["ExamId"]);
 

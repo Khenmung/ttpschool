@@ -244,7 +244,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
           this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.VariableConfigs.push({ "VariableName": row.SalaryComponent, "VariableAmount": row.Amount });
-          // this.rowCount++;
+          // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -262,7 +262,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
           var vartoUpdate = this.VariableConfigs.filter(f => f.VariableName == row.VariableName);
           if (vartoUpdate.length > 0)
             vartoUpdate[0].VariableAmount = row.Amount;
-          // this.rowCount++;
+          // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);

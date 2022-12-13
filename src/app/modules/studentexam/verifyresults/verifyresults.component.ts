@@ -786,10 +786,10 @@ export class VerifyResultsComponent implements OnInit {
                   ForNonGrading["FullMark"] = this.ClassFullMark;
 
                   if (failedInComponent || _statusFail) {
-                    ForNonGrading["FailCount"]++;
+                    ForNonGrading["FailCount"]+=1;
                   }
                   else
-                    ForNonGrading["PassCount"]++;
+                    ForNonGrading["PassCount"]+=1;
 
                   if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
                     this.displayedColumns.push(eachsubj.Subject)

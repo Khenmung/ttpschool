@@ -10,16 +10,16 @@
         <mat-datepicker-toggle matSuffix [for]="searchPostingDate"></mat-datepicker-toggle>
         <mat-datepicker #searchPostingDate></mat-datepicker>
     </mat-form-field> -->
-    
+
     <!-- <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Reference</mat-label>
         <input type="text" matInput formControlName="searchReferenceId" [maxlength]="50" autocomplete="Off">
     </mat-form-field> -->
-    
+
     <mat-form-field appearance="outline" [style.width.px]="350">
         <mat-label>Account</mat-label>
         <input type="text" matInput formControlName="searchGeneralLedgerId" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+        <mat-autocomplete (optionSelected)="ClearShorttext()" #auto="matAutocomplete" [displayWith]="displayFn">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
                 {{option.GeneralLedgerName}}
             </mat-option>
@@ -89,8 +89,8 @@
     <ng-container matColumnDef="Debit">
         <mat-header-cell *matHeaderCellDef> Debit</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-checkbox (click)="$event.stopPropagation()" 
-            (change)="UpdateDebit(element,$event)" [checked]="element.Debit">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateDebit(element,$event)"
+                [checked]="element.Debit">
             </mat-checkbox>
         </mat-cell>
     </ng-container>
@@ -98,12 +98,8 @@
         <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
-                <input matInput autocomplete="Off" 
-                type="number"
-                (blur)="onBlur(element)" 
-                [max]="1000000" 
-                [(ngModel)]="element.BaseAmount"
-                [value]="element.BaseAmount">
+                <input matInput autocomplete="Off" type="number" (blur)="onBlur(element)" [max]="1000000"
+                    [(ngModel)]="element.BaseAmount" [value]="element.BaseAmount">
             </mat-form-field>
         </mat-cell>
     </ng-container>
@@ -144,3 +140,6 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" style="align-items: baseline;"></mat-row>
 </mat-table>
+<div style="display:flex;justify-content:center">
+    <mat-paginator [pageSizeOptions]="[10,20,50]"></mat-paginator>
+</div>

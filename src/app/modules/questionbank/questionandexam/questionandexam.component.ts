@@ -711,7 +711,7 @@ export class QuestionandexamComponent implements OnInit {
     //var numbering = 0;
     this.QuestionBankList.forEach((listrow, indx) => {
       if (indx > editedrowindx) {
-        //numbering++;
+        //numbering+=1;
         //listrow.DisplayOrder = editedrow.DisplayOrder + numbering;
         listrow.Action = true;
       }

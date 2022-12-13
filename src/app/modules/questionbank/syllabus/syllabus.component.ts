@@ -675,7 +675,7 @@ export class SyllabusComponent implements OnInit {
     //var numbering = 0;
     this.SyllabusList.forEach((listrow, indx) => {
       if (indx > editedrowindx) {
-        //numbering++;
+        //numbering+=1;
         //listrow.DisplayOrder = editedrow.DisplayOrder + numbering;
         listrow.Action = true;
       }

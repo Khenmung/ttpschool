@@ -12,6 +12,7 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IGeneralLedger } from '../ledgeraccount/ledgeraccount.component';
 import { SwUpdate } from '@angular/service-worker';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-JournalEntry',
@@ -19,6 +20,7 @@ import { SwUpdate } from '@angular/service-worker';
   styleUrls: ['./JournalEntry.component.scss']
 })
 export class JournalEntryComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   PageLoading = true;
   @ViewChild("table") mattable;
   GeneralLedgers = [];
@@ -109,8 +111,8 @@ export class JournalEntryComponent implements OnInit {
     this.filteredOptions = this.searchForm.get("searchGeneralLedgerId").valueChanges
       .pipe(
         startWith(''),
-        map(value => typeof value === 'string' ? value : value.TeacherName),
-        map(TeacherName => TeacherName ? this._filter(TeacherName) : this.GeneralLedgers.slice())
+        map(value => typeof value === 'string' ? value : value.GeneralLedgerName),
+        map(GeneralLedgerName => GeneralLedgerName ? this._filter(GeneralLedgerName) : this.GeneralLedgers.slice())
       );
 
     if (this.LoginUserDetail == null)
@@ -199,8 +201,8 @@ export class JournalEntryComponent implements OnInit {
     ];
 
     list.PageName = this.AccountingVoucherListName;
-    list.limitTo = 50;
-    list.orderBy = "ShortText";
+    //list.limitTo = 50;
+    //list.orderBy = "ShortText";
     //list.lookupFields = ["AccountingLedgerTrialBalance"];
     list.filter = ["GeneralLedgerAccountId ne null and " + filterStr];
     this.AccountingVoucherList = [];
@@ -221,7 +223,7 @@ export class JournalEntryComponent implements OnInit {
               searchReferenceId: this.AccountingVoucherList[0].Reference
             });
           this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
-
+          this.dataSource.paginator = this.paginator;
         }
 
         this.loading = false; this.PageLoading = false;
@@ -254,7 +256,9 @@ export class JournalEntryComponent implements OnInit {
 
   //       });
   // }
-
+  ClearShorttext(){
+    this.searchForm.patchValue({"searchShortText":""});
+  }
   UpdateOrSave(row) {
 
     //debugger;

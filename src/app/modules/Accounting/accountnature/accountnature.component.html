@@ -7,20 +7,20 @@
         <mat-form-field appearance="outline" [style.width.px]="350">
             <mat-label>account</mat-label>
             <input type="text" matInput formControlName="searchAccountName" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-autocomplete (optionSelected)="filterAccountNature()" #auto="matAutocomplete" [displayWith]="displayFn">
                 <mat-option *ngFor="let option of filteredAccounts | async" [value]="option">
                     {{option.AccountName}}
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>       
        
-        <mat-form-field appearance="outline" [style.width.px]="200">
+        <!-- <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>sub account</mat-label>
             <mat-select formControlName="searchParentId">
-                <mat-option *ngFor="let item of AccountNatureList" [value]="item.AccountNatureId">{{item.AccountName}}
+                <mat-option *ngFor="let item of FilteredAccountNature" [value]="item.AccountNatureId">{{item.AccountName}}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetAccountNature()">
             <mat-icon>search</mat-icon>
             <mat-icon *ngIf="loading">

@@ -188,7 +188,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
           })
           if (startMonth == 11) {
             startMonth = -1;
-            _Year++;
+            _Year+=1;
           }
         }
       }
@@ -259,7 +259,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
         (data: any) => {
           row.LeavePolicyId = data.LeavePolicyId;
           this.loading = false; this.PageLoading=false;
-          // this.rowCount++;
+          // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -273,7 +273,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           this.loading = false; this.PageLoading=false;
-          // this.rowCount++;
+          // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);

@@ -88,7 +88,7 @@ export class ClassEvaluationComponent implements OnInit {
     private tokenstorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder,
-    private dialog:MatDialog
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -110,7 +110,7 @@ export class ClassEvaluationComponent implements OnInit {
   displayFn(user: IStudent): string {
     return user && user.Name ? user.Name : '';
   }
-
+  ExamClassGroups = [];
   PageLoad() {
     debugger;
     this.loading = true;
@@ -134,6 +134,11 @@ export class ClassEvaluationComponent implements OnInit {
           });
           //this.GetClassEvaluation();
         }
+        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], 0)
+          .subscribe((data: any) => {
+            this.ExamClassGroups = [...data.value];
+            
+          });
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.ClassGroups = [...data.value];
@@ -164,8 +169,11 @@ export class ClassEvaluationComponent implements OnInit {
     debugger;
     var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
     this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId);
-    this.FilteredExam = this.Exams.filter(e => e.ClassGroupId == _searchClassGroupId);
+    var examsOfSelectGroup = this.ExamClassGroups.filter(exgroup=>exgroup.ClassGroupId == _searchClassGroupId)
+
+    this.FilteredExam = this.Exams.filter(e => examsOfSelectGroup.findIndex(x=>x.ExamId == e.ExamId)>-1);
   }
+
   GetExams() {
 
     this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
@@ -212,7 +220,7 @@ export class ClassEvaluationComponent implements OnInit {
   UpdateAsDeleted(row) {
     debugger;
     let toUpdate = {
-      ClassEvaluationId:row.ClassEvaluationId,
+      ClassEvaluationId: row.ClassEvaluationId,
       Active: 0,
       Deleted: true,
       UpdatedDate: new Date()
@@ -593,7 +601,7 @@ export class ClassEvaluationComponent implements OnInit {
     var numbering = 0;
     this.ClassEvaluationList.forEach((listrow, indx) => {
       if (indx > editedrowindx) {
-        numbering++;
+        numbering+=1;
         listrow.DisplayOrder = editedrow.DisplayOrder + numbering;
         listrow.Action = true;
       }

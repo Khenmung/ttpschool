@@ -44,6 +44,7 @@ export class HomeDashboardComponent implements OnInit {
 
   ) { }
   Role = '';
+  Submitted = false;
   ngOnInit(): void {
     this.servicework.activateUpdate().then(() => {
       this.servicework.checkForUpdate().then((value) => {
@@ -133,10 +134,9 @@ export class HomeDashboardComponent implements OnInit {
                 this.SelectedAppName = this.tokenStorage.getSelectedAppName();
                 this.getBatches();
                 //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-                if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management')
-                {
-                  let obj = {appShortName:'edu',applicationName:this.SelectedAppName};                
-                  this.GetStudentClass(this.SelectedAppId,obj);
+                if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
+                  let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+                  this.GetStudentClass(this.SelectedAppId, obj);
                 }
                 if (this.SelectedAppId > 0) {
                   this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
@@ -264,6 +264,7 @@ export class HomeDashboardComponent implements OnInit {
     this.ValueChanged = true;
   }
   submit() {
+    this.Submitted=true;
     this.SelectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     if (this.SelectedBatchId > 0)
@@ -289,10 +290,10 @@ export class HomeDashboardComponent implements OnInit {
 
       this.GetMenuData(SelectedAppId);
       if (selectedApp[0].applicationName.toLowerCase() == 'education management')
-        this.GetStudentClass(SelectedAppId,selectedApp[0]);
+        this.GetStudentClass(SelectedAppId, selectedApp[0]);
       else
-        this.GetMasterData(SelectedAppId,selectedApp[0]);     
-      
+        this.GetMasterData(SelectedAppId, selectedApp[0]);
+
     }
     else {
       this.loading = false; this.PageLoading = false;
@@ -300,38 +301,39 @@ export class HomeDashboardComponent implements OnInit {
       return;
     }
   }
-  GetMasterData(SelectedAppId,selectedApp){
+  GetMasterData(SelectedAppId, selectedApp) {
     this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], SelectedAppId)
-    .subscribe((data: any) => {
-      this.tokenStorage.saveMasterData([...data.value]);
+      .subscribe((data: any) => {
+        this.tokenStorage.saveMasterData([...data.value]);
 
-      this.tokenStorage.saveSelectedAppName(selectedApp.applicationName);
-      this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
-        .subscribe((data: any) => {
-          data.value.forEach(item => {
-            var feature = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
-            if (feature.length == 0) {
-              this.loginUserDetail[0]['applicationRolePermission'].push({
-                'planFeatureId': 0,
-                'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
-                'roleId': item.RoleId,
-                'permissionId': item.PermissionId,
-                'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
-                'applicationName': selectedApp.applicationName,
-                'applicationId': item.ApplicationId,
-                'appShortName': selectedApp.appShortName,
-                'faIcon': '',
-                'label': '',
-                'link': ''
-              })
-            }
+        this.tokenStorage.saveSelectedAppName(selectedApp.applicationName);
+        this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
+          .subscribe((data: any) => {
+            data.value.forEach(item => {
+              var feature = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
+              if (feature.length == 0) {
+                this.loginUserDetail[0]['applicationRolePermission'].push({
+                  'planFeatureId': 0,
+                  'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
+                  'roleId': item.RoleId,
+                  'permissionId': item.PermissionId,
+                  'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
+                  'applicationName': selectedApp.applicationName,
+                  'applicationId': item.ApplicationId,
+                  'appShortName': selectedApp.appShortName,
+                  'faIcon': '',
+                  'label': '',
+                  'link': ''
+                })
+              }
+            });
+            this.tokenStorage.saveUserdetail(this.loginUserDetail);
+            this.tokenStorage.saveCustomFeature(data.value);
+            this.SelectedAppName = selectedApp.applicationName;
+            if (this.Submitted)
+              this.route.navigate(['/', selectedApp.appShortName]);
           });
-          this.tokenStorage.saveUserdetail(this.loginUserDetail);
-          this.tokenStorage.saveCustomFeature(data.value);
-          this.SelectedAppName = selectedApp.applicationName;
-          this.route.navigate(['/', selectedApp.appShortName])
-        });
-    })
+      })
   }
   SaveBatchIds(selectedBatchId) {
     debugger;
@@ -404,7 +406,7 @@ export class HomeDashboardComponent implements OnInit {
   }
   Students = [];
   StudentClasses = [];
-  GetStudentClass(SelectedAppId,selectedApp) {
+  GetStudentClass(SelectedAppId, selectedApp) {
     var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
@@ -422,11 +424,11 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentClasses = [...data.value];
-        this.GetStudents(SelectedAppId,selectedApp);
+        this.GetStudents(SelectedAppId, selectedApp);
       })
   }
 
-  GetStudents(SelectedAppId,selectedApp) {
+  GetStudents(SelectedAppId, selectedApp) {
     let list: List = new List();
     list.fields = [
       'StudentId',
@@ -463,7 +465,7 @@ export class HomeDashboardComponent implements OnInit {
           return d;
         })
         this.tokenStorage.saveStudents(this.Students);
-        this.GetMasterData(SelectedAppId,selectedApp); 
+        this.GetMasterData(SelectedAppId, selectedApp);
         this.loading = false;
         this.PageLoading = false;
       })

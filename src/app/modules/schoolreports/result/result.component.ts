@@ -335,7 +335,7 @@ export class ResultComponent implements OnInit {
         PassStudent = PassStudent.sort((a, b) => b["Percent"] - a["Percent"])
         PassStudent.forEach(p => {
           if (_previouspercent != p["Percent"]) {
-            _rank++;
+            _rank+=1;
           }
           p.Rank = _rank;
           _previouspercent = p["Percent"];
