@@ -51,6 +51,7 @@ export class AbsentListComponent implements OnInit {
     searchClassId: [0],
     searchSectionId: [0],
     searchClassSubjectId: [0],
+    searchAttendanceFromDate:[new Date()],
     searchAttendanceDate: [new Date()]
   });
   StudentClassSubjectId = 0;
@@ -65,6 +66,7 @@ export class AbsentListComponent implements OnInit {
   displayedColumns = [
     'ClassName',
     'StudentRollNo',
+    'AttendanceDate',
     'ContactNo',
     'ClassSubject',
     'Remarks',
@@ -194,7 +196,9 @@ export class AbsentListComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
 
     var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
+    //var _AttendanceFromDate = new Date(this.searchForm.get("searchAttendanceFromDate").value)
     _AttendanceDate.setHours(0, 0, 0, 0);
+    //_AttendanceFromDate.setHours(0, 0, 0, 0);
     if (_AttendanceDate.getTime() > today.getTime()) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -216,7 +220,7 @@ export class AbsentListComponent implements OnInit {
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     //filterStr += ' and AttendanceStatus eq 0';
 
-    var datefilterStr = " and AttendanceDate ge " + moment(this.searchForm.get("searchAttendanceDate").value).format('yyyy-MM-DD')
+    var datefilterStr = " and AttendanceDate ge " + moment(this.searchForm.get("searchAttendanceFromDate").value).format('yyyy-MM-DD')
     datefilterStr += ' and AttendanceDate lt ' + moment(this.searchForm.get("searchAttendanceDate").value).add(1, 'day').format('yyyy-MM-DD')
     datefilterStr += ' and StudentClassId gt 0'
     datefilterStr += ' and AttendanceStatus eq 0'

@@ -25,10 +25,10 @@
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="350">
+    <!-- <mat-form-field appearance="outline" [style.width.px]="350">
         <mat-label>Short Text</mat-label>
         <input type="text" matInput formControlName="searchShortText" [maxlength]="250" autocomplete="Off">
-    </mat-form-field>
+    </mat-form-field> -->
     <button [disabled]="loading" mat-raised-button color="accent" (click)="GetAccountingVoucher()">
         <mat-icon>search</mat-icon>
         <mat-icon *ngIf="loading">
@@ -65,15 +65,24 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <!-- <ng-container matColumnDef="Reference">
+    <ng-container matColumnDef="ShortText">
+        <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+                <mat-label>description</mat-label>
+                <input matInput [maxlength]="256" autocomplete="Off" [(ngModel)]="element.ShortText" [value]="element.ShortText">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Reference">
         <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <mat-label>Reference</mat-label>
-                <input matInput autocomplete="Off" [(ngModel)]="element.Reference" [value]="element.Reference">
+                <input matInput [maxlength]="30" autocomplete="Off" [(ngModel)]="element.Reference" [value]="element.Reference">
             </mat-form-field>
         </mat-cell>
-    </ng-container> -->
+    </ng-container>
     <ng-container matColumnDef="GeneralLedgerAccountId">
         <mat-header-cell *matHeaderCellDef> Account</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -103,14 +112,7 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="ShortText">
-        <mat-header-cell *matHeaderCellDef> Short Text </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
-                <input matInput autocomplete="Off" [(ngModel)]="element.ShortText" [value]="element.ShortText">
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
+    
     <ng-container matColumnDef="Active">
         <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
         <mat-cell *matCellDef="let element">

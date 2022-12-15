@@ -101,7 +101,7 @@ export class VerifyResultsComponent implements OnInit {
   ];
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
-    private route:Router,
+    private route: Router,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -311,14 +311,14 @@ export class VerifyResultsComponent implements OnInit {
             attendance.value.forEach(main => {
               //var cls = this.SelectedStudentClass.filter(studcls => studcls.StudentClassId == att.StudentClassId)
               //if (att.StudentClass.ClassId == _classId) {
-             // main.Attendances.forEach(att => {
-                this.StudentAttendanceList.push({
-                  AttendanceId: main.AttendanceId,
-                  AttendanceStatus: main.AttendanceStatus,
-                  AttendanceDate: main.AttendanceDate,
-                  StudentClassId: main.StudentClassId,
-                  ClassId: main.ClassId
-                });
+              // main.Attendances.forEach(att => {
+              this.StudentAttendanceList.push({
+                AttendanceId: main.AttendanceId,
+                AttendanceStatus: main.AttendanceStatus,
+                AttendanceDate: main.AttendanceDate,
+                StudentClassId: main.StudentClassId,
+                ClassId: main.ClassId
+              });
               //})
             });
             this.ProcessVerify();
@@ -459,7 +459,7 @@ export class VerifyResultsComponent implements OnInit {
     if (_sectionId > 0) {
       this.SectionSelected = true;
       filterStr += " and SectionId eq " + _sectionId
-      
+
     }
     else {
       this.SectionSelected = false;
@@ -467,7 +467,7 @@ export class VerifyResultsComponent implements OnInit {
       this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
- 
+
     let list: List = new List();
     list.fields = [
       //"StudentId", "RollNo", "SectionId", "ClassId", "StudentClassId"
@@ -530,12 +530,14 @@ export class VerifyResultsComponent implements OnInit {
           }
           //})
         });
+
+        //console.log("this.StudentSubjects",this.StudentSubjects)
         this.GetExamStudentSubjectResults(_examId, _classId, _sectionId);
         this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], _classId, _sectionId, this.SelectedBatchId)
           .subscribe((data: any) => {
             this.ClassStrength = data.value.length;
           })
-      },error=>{
+      }, error => {
         console.log(error);
       });
   }
@@ -584,7 +586,13 @@ export class VerifyResultsComponent implements OnInit {
             return studentsubject.ClassId == pClassId
           });
         }
-
+        // StudentOwnSubjects = StudentOwnSubjects.sort((a, b) => {
+        //   if (a.SubjectTypeId == b.SubjectTypeId) 
+        //     return (a.ClassSubjectId < b.ClassSubjectId)?-1:(a.ClassSubjectId > b.ClassSubjectId) ? 1 : 0; 
+        //   else
+        //     return a.SubjectTypeId < b.SubjectTypeId? -1 : 1;
+        // });
+        // console.log("StudentOwnSubjects",StudentOwnSubjects)
         var _examSubjectMarkComponentDefn = this.ClassSubjectComponents.filter(c => c.ClassId == pClassId && c.ExamId == pExamId);
         var filteredExistingComponentMarks = [];
         examComponentResult.value.forEach(d => {
@@ -654,6 +662,7 @@ export class VerifyResultsComponent implements OnInit {
           }
 
           var forEachSubjectOfStud = this.StudentSubjects.filter(s => s.Student == ss.Student)
+          forEachSubjectOfStud = forEachSubjectOfStud.sort((a, b) => a.SubjectType.localeCompare(b.SubjectType));
           //var _subjectDetailToInsert ={}
           //this.ClassFullMark = 0;
 
@@ -786,10 +795,10 @@ export class VerifyResultsComponent implements OnInit {
                   ForNonGrading["FullMark"] = this.ClassFullMark;
 
                   if (failedInComponent || _statusFail) {
-                    ForNonGrading["FailCount"]+=1;
+                    ForNonGrading["FailCount"] += 1;
                   }
                   else
-                    ForNonGrading["PassCount"]+=1;
+                    ForNonGrading["PassCount"] += 1;
 
                   if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
                     this.displayedColumns.push(eachsubj.Subject)
@@ -1046,8 +1055,7 @@ export class VerifyResultsComponent implements OnInit {
         && s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId && s.StudentClasses[0].SectionId == _sectionId
 
       );
-      if(this.Students.length==0)
-      {
+      if (this.Students.length == 0) {
         this.route.navigate(['/']);
       }
       //console.log("students",this.Students);

@@ -612,8 +612,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
       if (DiscountrowIndxToDelete > -1)
         this.MonthlyDueDetail.splice(DiscountrowIndxToDelete, 1);
 
-      var _generalAccountObj = this.GeneralLedgerAccounts.filter(f => f.StudentClassId == this.studentInfoTodisplay.StudentClassId)
-
+      //var _generalAccountObj = this.GeneralLedgerAccounts.filter(f => f.StudentClassId == this.studentInfoTodisplay.StudentClassId)
+      var _generalAccountObj = this.GeneralLedgerAccounts.filter(f => f.GeneralLedgerName.toLowerCase() == "tuition fee")
+      
       if (_generalAccountObj.length > 0)
         this.StudentLedgerId = _generalAccountObj[0].GeneralLedgerId;
       // .GeneralLedgerAccountId =_discountAccountId;

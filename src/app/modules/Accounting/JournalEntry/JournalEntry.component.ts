@@ -64,9 +64,11 @@ export class JournalEntryComponent implements OnInit {
   };
 
   displayedColumns = [
-    "DocDate",
+    //"DocDate",
     "PostingDate",
     "GeneralLedgerAccountId",
+    "ShortText",
+    "Reference",
     "BaseAmount",
     "Debit",
     "Active",
@@ -95,7 +97,7 @@ export class JournalEntryComponent implements OnInit {
     })
     this.searchForm = this.fb.group({
       searchGeneralLedgerId: [0],
-      searchReferenceId: [''],
+      //searchReferenceId: [''],
       searchShortText: [''],
       //searchPostingDate:[new Date()]
     });
@@ -143,7 +145,7 @@ export class JournalEntryComponent implements OnInit {
       AccountingVoucherId: 0,
       DocDate: new Date(),
       PostingDate: new Date(),
-      Reference: this.searchForm.get("searchReferenceId").value,
+      Reference: '',
       FeeReceiptId: 0,
       ParentId: 0,
       ClassFeeId: 0,
@@ -162,7 +164,7 @@ export class JournalEntryComponent implements OnInit {
   }
 
   GetAccountingVoucher() {
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = '(ClassFeeId eq 0 and FeeReceiptId eq 0) or (ClassFeeId eq 0 and FeeReceiptId gt 0) and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
     this.loading = true;
     var FinancialStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
@@ -173,10 +175,10 @@ export class JournalEntryComponent implements OnInit {
     if (AccountId != 0) {
       filterStr += " and GeneralLedgerAccountId eq " + AccountId
     }
-    var referenceId = this.searchForm.get("searchReferenceId").value;
-    if (referenceId != null && referenceId != "") {
-      filterStr += " and Reference eq '" + referenceId + "'"
-    }
+    // var referenceId = this.searchForm.get("searchReferenceId").value;
+    // if (referenceId != null && referenceId != "") {
+    //   filterStr += " and Reference eq '" + referenceId + "'"
+    // }
     var shorttext = this.searchForm.get("searchShortText").value;
     if (shorttext != "") {
       filterStr += " and ShortText eq '" + shorttext + "'"
@@ -218,10 +220,10 @@ export class JournalEntryComponent implements OnInit {
             this.searchForm.patchValue({
               searchShortText: this.AccountingVoucherList[0].ShortText
             });
-          if (referenceId == '')
-            this.searchForm.patchValue({
-              searchReferenceId: this.AccountingVoucherList[0].Reference
-            });
+          // if (referenceId == '')
+          //   this.searchForm.patchValue({
+          //     searchReferenceId: this.AccountingVoucherList[0].Reference
+          //   });
           this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
           this.dataSource.paginator = this.paginator;
         }
@@ -256,22 +258,27 @@ export class JournalEntryComponent implements OnInit {
 
   //       });
   // }
-  ClearShorttext(){
-    this.searchForm.patchValue({"searchShortText":""});
+  ClearShorttext() {
+    this.searchForm.patchValue({ "searchShortText": "" });
   }
   UpdateOrSave(row) {
 
     //debugger;
-    this.loading = true;
     var errorMessage = '';
     var reference = '';
     if (row.GeneralLedgerAccountId == 0)
       errorMessage += 'Please select one of the accounts<br>';
-    if (row.Reference == '')
-      errorMessage += "Please enter reference.<br>";
+    if (row.Reference == '') {
+      this.contentservice.openSnackBar("Please enter reference.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     else
-      reference = this.searchForm.get("searchReferenceId").value;
+      reference = row.Reference;
 
+    if (row.ShortText.length == 0) {
+      this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (row.Amount > 1000000 || row.Amount < -1000000)
       errorMessage += "Amount should be less than 10,00,000 or greater than -10,00,000<br>";
 
@@ -293,7 +300,7 @@ export class JournalEntryComponent implements OnInit {
     list.fields = ["AccountingVoucherId"];
     list.PageName = this.AccountingVoucherListName;
     list.filter = [checkFilterString];
-
+    this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -316,8 +323,7 @@ export class JournalEntryComponent implements OnInit {
           this.AccountingVoucherData.ClassFeeId = 0;
           this.AccountingVoucherData.FeeReceiptId = 0;
           this.AccountingVoucherData.ParentId = this.ParentId;
-
-          this.AccountingVoucherData.ShortText = this.searchForm.get("searchShortText").value;
+          this.AccountingVoucherData.ShortText = row.ShortText;
           this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
 
           if (row.AccountingVoucherId == 0) {

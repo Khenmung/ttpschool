@@ -16,9 +16,9 @@ import { TrialBalanceComponent } from '../trial-balance/trial-balance.component'
 })
 export class AccountingboardComponent implements AfterViewInit {
   components:any = [
-    JournalEntryComponent,
     AccountNatureComponent,
     LedgerAccountComponent,
+    JournalEntryComponent,
     LedgerBalanceComponent,
     TrialBalanceComponent
   ];

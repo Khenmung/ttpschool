@@ -12,7 +12,8 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 
-export class AuthService implements OnInit { PageLoading=true;
+export class AuthService implements OnInit { 
+  PageLoading=true;
   //userInfo = new BehaviorSubject(null);
   jwtHelper = new JwtHelperService();
   httpOptions:{headers:{"Content-Type":"application/json"}};

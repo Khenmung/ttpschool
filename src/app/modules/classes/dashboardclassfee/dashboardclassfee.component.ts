@@ -197,6 +197,11 @@ export class DashboardclassfeeComponent implements OnInit {
             data.value.forEach(studcls => {
               var _feeName = '';
               var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
+              var _className = '';
+              var obj = this.Classes.filter(c => c.ClassId == studcls.ClassId);
+              if (obj.length > 0)
+                _className = obj[0].ClassName;
+
               objClassFee.forEach(clsfee => {
                 var _category = '';
                 var _subCategory = '';
@@ -223,7 +228,8 @@ export class DashboardclassfeeComponent implements OnInit {
                     FeeSubCategory: _subCategory,
                     FeeTypeId: studcls.FeeTypeId,
                     SectionId: studcls.SectionId,
-                    RollNo: studcls.RollNo
+                    RollNo: studcls.RollNo,
+                    ClassName:_className
                   });
                 }
 
@@ -303,7 +309,7 @@ export class DashboardclassfeeComponent implements OnInit {
         })
         if (startMonth == 11) {
           startMonth = -1;
-          _Year+=1;
+          _Year += 1;
         }
       }
     }

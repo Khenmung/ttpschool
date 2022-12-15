@@ -25,7 +25,13 @@
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="150">
-        <mat-label>Attendance Date</mat-label>
+        <mat-label>From</mat-label>
+        <input formControlName="searchAttendanceFromDate" matInput [matDatepicker]="AttendanceFromDate" autocomplete="off">
+        <mat-datepicker-toggle matSuffix [for]="AttendanceFromDate"></mat-datepicker-toggle>
+        <mat-datepicker #AttendanceFromDate></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline" [style.width.px]="150">
+        <mat-label>To</mat-label>
         <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
         <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
         <mat-datepicker #AttendanceDate></mat-datepicker>
@@ -50,6 +56,13 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.StudentRollNo}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="AttendanceDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Date
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.AttendanceDate|date:'dd/MM/yyyy'}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="ClassSubject">

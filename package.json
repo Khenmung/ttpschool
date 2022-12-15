@@ -43,6 +43,7 @@
     "bootstrap": "^4.5.3",
     "chart.js": "^2.9.3",
     "ckeditor4-angular": "^3.1.1",
+    "classlist.js": "^1.1.20150312",
     "date-fns": "^2.28.0",
     "exifr": "^4.3.5",
     "file-saver": "^2.0.5",
@@ -51,6 +52,7 @@
     "jquery": "^3.5.1",
     "mathjs": "^9.4.4",
     "moment": "^2.29.1",
+    "ng-connection-service": "^1.0.4",
     "ng-material-multilevel-menu": "^5.5.3",
     "ng2-charts": "^2.3.0",
     "ngx-dropzone": "^2.3.0",
@@ -62,6 +64,7 @@
     "primeicons": "^4.1.0",
     "rxjs": "~6.6.0",
     "sweetalert2": "^10.13.0",
+    "web-animations-js": "^2.3.2",
     "xlsx": "^0.17.2",
     "zone.js": "~0.11.4"
   },

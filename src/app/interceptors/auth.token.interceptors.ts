@@ -13,7 +13,7 @@ import { SharedataService } from '../shared/sharedata.service';
 @Injectable()
 export class AuthTokenInterceptors implements HttpInterceptor {
   jwtHelper = new JwtHelperService();
-  constructor(private servicework: SwUpdate,private authService: AuthService,
+  constructor(private authService: AuthService,
     private shareddata:SharedataService
     ) {}
   intercept(
@@ -37,7 +37,7 @@ export class AuthTokenInterceptors implements HttpInterceptor {
         Token: access_token,
         RefreshToken: localStorage.getItem('refresh_token'),
       };
-      return this.authService.callRefershToken(payload).pipe(
+      return this.authService.CallAPI("RefreshToken",payload).pipe(
         switchMap((newTokens: any) => {
           localStorage.setItem('access_token', newTokens.token);
           localStorage.setItem('refresh_token', newTokens.refreshToken);

@@ -8,6 +8,9 @@ import { List } from '../../interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { SidenavService } from '../../sidenav.service';
+import { ConnectionService } from 'ng-connection-service';
+import { ContentService } from '../../content.service';
+import { globalconstants } from '../../globalconstant';
 
 @Component({
   selector: 'app-home',
@@ -33,7 +36,7 @@ export class HomeComponent implements OnInit {
   SelectedApplicationId = 0;
   MenuData = [];
   /////////////////////////
-
+  
   constructor(
     private sidenavService: SidenavService,
     private servicework: SwUpdate,
@@ -41,7 +44,12 @@ export class HomeComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private shareddata: SharedataService
-  ) { }
+   
+  ) {
+
+    
+
+   }
   ngAfterViewInit(): void {
     this.sidenavService.setSidenav(this.sidenav);
   }

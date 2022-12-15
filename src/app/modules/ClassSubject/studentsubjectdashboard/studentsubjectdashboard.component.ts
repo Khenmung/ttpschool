@@ -230,6 +230,7 @@ export class studentsubjectdashboardComponent implements OnInit {
                 'ClassSubjectId': existing.ClassSubjectId,
                 'Active': existing.Active,
                 'ClassId': existing.ClassId,
+                'SectionId': existing.SectionId,
                 'SubjectId': existing.SubjectId
               })
             })
@@ -241,6 +242,7 @@ export class studentsubjectdashboardComponent implements OnInit {
               'ClassSubjectId': clssubj.ClassSubjectId,
               'Active': 0,
               'ClassId': clssubj.ClassId,
+              'SectionId': _sectionId,
               'SubjectId': clssubj.SubjectId
             })
           }

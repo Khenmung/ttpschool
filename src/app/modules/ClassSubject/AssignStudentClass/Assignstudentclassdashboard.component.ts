@@ -721,7 +721,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
       list.PageName = "StudentClasses";
       list.lookupFields = ["Student($select=PID,FirstName,LastName,GenderId,RemarkId)"];
-      list.filter = ['Active eq 1 and ' + filterStr];
+      list.filter = [filterStr];
       this.StudentClassList = [];
       return this.dataservice.get(list);
     }
@@ -870,7 +870,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             .subscribe((data: any) => {
 
               var ClassStrength = data.value.length;
-              ClassStrength +=1;
+              ClassStrength += 1;
               var _batchName = this.tokenstorage.getSelectedBatchName();
               //var _admissionNo = this.searchForm.get("AdmissionNo").value;
               var _year = _batchName.split('-')[0].trim();
@@ -885,7 +885,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.StudentClassData.RollNo = row.RollNo;
               this.StudentClassData.SectionId = row.SectionId;
               this.StudentClassData.Remarks = row.Remarks;
-              this.StudentClassData.AdmissionNo = !row.AdmissionNo? _year + ClassStrength : row.AdmissionNo;
+              this.StudentClassData.AdmissionNo = !row.AdmissionNo ? _year + ClassStrength : row.AdmissionNo;
 
               this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
               this.StudentClassData.BatchId = this.SelectedBatchId;
@@ -1045,20 +1045,20 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     //  })
   }
   GetMasterData() {
-
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
-      .subscribe((data: any) => {
-        debugger;
-        this.allMasterData = [...data.value];
-        this.RollNoGeneration = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLLNOGENERATION);
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
-        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-        this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
-        this.loading = false; this.PageLoading = false;
-      });
+    this.allMasterData = this.tokenstorage.getMasterData();
+    // this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    //   .subscribe((data: any) => {
+    //     debugger;
+    //     this.allMasterData = [...data.value];
+    this.RollNoGeneration = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLLNOGENERATION);
+    this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+    this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
+    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+    this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
+    this.loading = false; this.PageLoading = false;
+    // });
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);

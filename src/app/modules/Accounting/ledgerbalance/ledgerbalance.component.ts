@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { DatePipe } from '@angular/common';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import alasql from 'alasql';
+import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
+import { IGeneralLedger } from '../ledgeraccount/ledgeraccount.component';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-ledgerbalance',
@@ -19,59 +24,62 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class LedgerBalanceComponent implements OnInit {
   PageLoading = true;
-  LoginUserDetail: any[] = [];
-  CurrentRow: any = {};
-  SelectedApplicationId = 0;
-  StudentClassId = 0;
-  Permission = '';
-  StandardFilter = '';
-  loading = false;
-  GeneralLedgerList: IGeneralLedger[] = [];
-  SelectedBatchId = 0;
-  TopAccountNatures = [];
-  AccountNatures = [];
-  AccountGroups = [];
-  GeneralLedgerAutoComplete = [];
-  AccountNatureList = [];
-  filteredOptions: Observable<IGeneralLedger[]>;
-  dataSource: MatTableDataSource<IGeneralLedger>;
-  allMasterData = [];
+  @ViewChild("table") mattable;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) matsort: MatSort;
 
-  ExamId = 0;
-  GeneralLedgerData = {
-    GeneralLedgerId: 0,
-    GeneralLedgerName: '',
-    ContactNo: '',
-    ContactName: '',
-    Email: '',
-    Address: '',
-    AccountNatureId: 0,
-    AccountGroupId: 0,
-    OrgId: 0,
-    Active: 0
-  };
-  GeneralLedgerForUpdate = [];
-  displayedColumns = [
-    'GeneralLedgerId',
-    'GeneralLedgerName',
-    'AccountNatureId',
-    'AccountGroupId',
-    'ContactNo',
-    'ContactName',
-    'Email',
-    'Address',
-    'Active',
-    'Action'
-  ];
+
+  //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
+  AccountingVoucherListName = 'AccountingVouchers';
+  LoginUserDetail: any[] = [];
+  exceptionColumns: boolean;
+  CurrentRow: any = {};
+  filteredOptions: Observable<IGeneralLedger[]>;
+  AccountingPeriod = [];
+  SelectedApplicationId = 0;
+  Permission = '';
+  StandardFilterWithBatchId = '';
+  loading = false;
+  GLAccounts = [];
+  GeneralLedgers = [];
+  CurrentBatchId = 0;
+  SelectedBatchId = 0;
+  AccountingVoucherList: IAccountingVoucher[] = [];
+  dataSource: MatTableDataSource<IAccountingVoucher>;
+  allMasterData = [];
   searchForm: UntypedFormGroup;
+  TotalDebit = 0;
+  TotalCredit = 0;
+  AccountingVoucherData = {
+    AccountingVoucherId: 0,
+    DocDate: new Date(),
+    PostingDate: new Date(),
+    Reference: '',
+    LedgerId: 0,
+    Debit: false,
+    Amount: '',
+    ShortText: '',
+    OrgId: 0,
+    SubOrgId: 0,
+    Active: 0,
+  };
+
+  displayedColumns = [
+    "AccountName",
+    "ShortText",
+    "Reference",
+    "Dr",
+    "Cr",
+    "Balance"
+  ];
+
   constructor(private servicework: SwUpdate,
-    private contentservice: ContentService,
+    private datepipe: DatePipe,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
     private nav: Router,
-    private shareddata: SharedataService,
-    private fb: UntypedFormBuilder
+    private contentservice: ContentService,
   ) { }
 
   ngOnInit(): void {
@@ -82,327 +90,353 @@ export class LedgerBalanceComponent implements OnInit {
         }
       })
     })
-    //debugger;
     this.searchForm = this.fb.group({
-      searchLedgerName: [0],
-      searchAccountNatureId: [0],
-      searchAccountGroupId: [0]
+      searchFromDate: [new Date()],
+      searchToDate: [new Date()],
+      searchGeneralLedgerId: [0]
     });
-    this.filteredOptions = this.searchForm.get("searchLedgerName").valueChanges
+    this.filteredOptions = this.searchForm.get("searchGeneralLedgerId").valueChanges
       .pipe(
         startWith(''),
-        map(value => typeof value === 'string' ? value : value.GeneralLedgerName),
-        map(GeneralLedgerName => GeneralLedgerName ? this._filter(GeneralLedgerName) : this.GeneralLedgerAutoComplete.slice())
+        map(value => typeof value === 'string' ? value : value.TeacherName),
+        map(TeacherName => TeacherName ? this._filter(TeacherName) : this.GeneralLedgers.slice())
       );
-    //this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.PageLoad();
+    //        this.GetTeachers();
   }
-  private _filter(name: string): IGeneralLedger[] {
+  // private _filter(name: string): ITeachers[] {
+
+  //   const filterValue = name.toLowerCase();
+  //   return this.Teachers.filter(option => option.TeacherName.toLowerCase().includes(filterValue));
+
+  // }
+  // displayFn(teacher: ITeachers): string {
+  //   return teacher && teacher.TeacherName ? teacher.TeacherName : '';
+  // }
+  private _filter(name: string): IAccountingVoucher[] {
 
     const filterValue = name.toLowerCase();
-    return this.GeneralLedgerAutoComplete.filter(option => option.GeneralLedgerName.toLowerCase().includes(filterValue));
+    return this.GeneralLedgers.filter(option => option.GeneralLedgerName.toLowerCase().includes(filterValue));
 
   }
   displayFn(ledger: IGeneralLedger): string {
     return ledger && ledger.GeneralLedgerName ? ledger.GeneralLedgerName : '';
   }
-
   PageLoad() {
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.STUDENTAPROFILE)
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
+
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.TRIALBALANCE);
       if (perObj.length > 0) {
+
         this.Permission = perObj[0].permission;
-      }
-      debugger;
-      if (this.Permission != 'deny') {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-        this.GetMasterData();
-        this.GetAccountNature();
-        this.GetGeneralLedgerAutoComplete();
+        if (this.Permission != 'deny') {
+          this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+          //this.GetMasterData();
+          this.GetGLAccounts();
+          this.GetGeneralLedgerAutoComplete();
+        }
+
       }
     }
   }
-
-  delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-        });
+  updateDebitCredit(row, event) {
+    row.Active = event.checked ? 1 : 0;
+    row.Action = true;
   }
-  AddNew() {
-    var newItem = {
-      GeneralLedgerId: 0,
-      GeneralLedgerName: '',
-      AccountSubGroupId: 0,
-      AccountNatureId: this.searchForm.get("searchAccountNatureId").value,
-      AccountGroupId: this.searchForm.get("searchAccountGroupId").value,
-      AccountGroups: this.AccountGroups,
-      ContactNo: '',
-      ContactName: '',
-      Email: '',
-      Address: '',
-      OrgId: 0,
+  addnew() {
+    var newdata = {
+      AccountingVoucherId: 0,
+      DocDate: new Date(),
+      PostingDate: new Date(),
+      Reference: '',
+      LedgerId: 0,
+      Debit: false,
+      Amount: '',
+      ShortText: '',
       Active: 0,
-      Action: false
+      Action: true
     }
-    this.GeneralLedgerList = [];
-    this.GeneralLedgerList.push(newItem);
-    this.dataSource = new MatTableDataSource(this.GeneralLedgerList);
+    //this.AccountingVoucherList.push(newdata);
+    this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
   }
+
+  GetAccountingVoucher() {
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    debugger;
+    this.loading = true;
+
+    var _GeneralLedgerId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
+    if (_GeneralLedgerId != undefined) {
+      filterStr += " and GeneralLedgerAccountId eq " + _GeneralLedgerId
+    }
+    else
+      filterStr += " and (ClassFeeId eq 0 and FeeReceiptId eq 0) or (ClassFeeId eq 0 and FeeReceiptId gt 0)"
+
+    //filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
+    //  "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate, 'yyyy-MM-dd') + "'";//T00:00:00.000Z
+    filterStr += " and PostingDate ge " + this.datepipe.transform(this.searchForm.get("searchFromDate").value, 'yyyy-MM-dd') + //T00:00:00.000Z
+      " and  PostingDate le " + this.datepipe.transform(this.searchForm.get("searchToDate").value, 'yyyy-MM-dd');//T00:00:00.000Z
+    // if (_ClassId != 0)
+    //   filterStr += " and ClassId eq " + _ClassId;
+
+    let list: List = new List();
+    list.fields = [
+      "AccountingVoucherId",
+      "GeneralLedgerAccountId",
+      "ShortText",
+      "Reference",
+      "LedgerId",
+      "Debit",
+      "BaseAmount",
+      "Amount",
+      "Active",
+    ];
+
+    list.PageName = this.AccountingVoucherListName;
+    //list.lookupFields = ["AccountingTrialBalance"];
+    list.filter = [filterStr];
+    this.AccountingVoucherList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.forEach(f => {
+          var _generalaccount = this.GLAccounts.filter(g => g.GeneralLedgerId == f.GeneralLedgerAccountId);
+          if (_generalaccount.length > 0) {
+            f.AccountName = _generalaccount[0].GeneralLedgerName;
+            f.DebitAccount = _generalaccount[0].DebitAccount;
+            f.AccountGroupId = _generalaccount[0].AccountGroupId;
+            f.AccountSubGroupId = _generalaccount[0].AccountSubGroupId;
+            f.AccountNatureId = _generalaccount[0].AccountNatureId;
+            this.AccountingVoucherList.push(f);
+          }
+        })
+        //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
+        var groupbyDebitCredit = alasql("select sum(BaseAmount) as Amount,Debit,AccountName from ? GROUP BY AccountName,Debit order by AccountName",
+          [this.AccountingVoucherList])
+        this.AccountingVoucherList = this.AccountingVoucherList.sort((a, b) => a["AccountName"].localeCompare(b["AccountName"]));
+        var _tempAccountName = '', _tempRow: any = {};
+        var itemcount = this.AccountingVoucherList.length;
+        //var groupbyAccountName = [];
+        this.AccountingVoucherList.forEach((f: any, index) => {
+          _tempAccountName = f.AccountName;
+          if (f.Debit) {
+            f.Dr = f.BaseAmount;
+            f.Cr = 0;
+            f.Balance = 0;
+          }
+          else {
+            f.Cr = f.BaseAmount
+            f.Dr = 0;
+            f.Balance = 0;
+          }
+
+          let objDebit = groupbyDebitCredit.filter(r => r.AccountName == f.AccountName && r.Debit == true);
+          let objCredit = groupbyDebitCredit.filter(r => r.AccountName == f.AccountName && r.Debit == false);
+          let creditAmount = 0;
+          let debitAmount = 0;
+          if (objDebit.length > 0)
+            debitAmount = objDebit[0].Amount;
+          if (objCredit.length > 0)
+            creditAmount = objCredit[0].Amount;
+
+          if (index < itemcount - 1) {
+            if (_tempAccountName != this.AccountingVoucherList[index + 1]["AccountName"]) {
+              f.Balance = debitAmount - creditAmount;
+            }
+          }
+          else if (index == itemcount - 1) {
+            f.Balance = debitAmount - creditAmount;
+          }
+
+
+
+        })
+        //var  groupbyDebitCredit = 
+        console.log("groupbyDebitCredit", this.AccountingVoucherList)
+        var display = this.AccountingVoucherList.filter((f: any) => f.Dr != undefined)
+        this.TotalCredit = display.reduce((acc, current) => acc + current["Cr"], 0)
+        this.TotalDebit = display.reduce((acc, current) => acc + current["Dr"], 0)
+
+        this.dataSource = new MatTableDataSource<IAccountingVoucher>(display);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.matsort;
+        this.loading = false; this.PageLoading = false;
+        //this.changeDetectorRefs.detectChanges();
+      });
+  }
+  GetGeneralLedgerAutoComplete() {
+
+    let list: List = new List();
+    list.fields = [
+      "GeneralLedgerId",
+      "GeneralLedgerName",
+      "AccountNatureId",
+      "AccountGroupId"
+    ];
+
+    list.PageName = "GeneralLedgers";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    this.GLAccounts = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.GeneralLedgers = [...data.value];
+        this.loading = false; this.PageLoading = false;
+      })
+  }
+  onBlur(row) {
+    row.Action = true;
+  }
+  updateActive(row, value) {
+
+    row.Active = value.checked ? 1 : 0;
+    row.Action = true;
+  }
+  // delete(element) {
+  //   let toupdate = {
+  //     Active: element.Active == 1 ? 0 : 1
+  //   }
+  //   this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
+  //     .subscribe(
+  //       (data: any) => {
+  //         // this.GetApplicationRoles();
+  //         this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+
+  //       });
+  // }
+
   UpdateOrSave(row) {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = this.StandardFilter;
-    if (row.AccountNatureId == 0) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please select account nature.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
+
+
+    this.AccountingVoucherData.Active = row.Active;
+    this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
+    this.AccountingVoucherData.Amount = row.Amount;
+    this.AccountingVoucherData.DocDate = row.DocDate;
+    this.AccountingVoucherData.Debit = row.Debit;
+    this.AccountingVoucherData.PostingDate = row.PostingDate;
+    this.AccountingVoucherData.Reference = row.Reference;
+    this.AccountingVoucherData.LedgerId = row.LedgerId;
+    this.AccountingVoucherData.ShortText = row.ShortText;
+    this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
+    if (row.AccountingVoucherId == 0) {
+      this.AccountingVoucherData["CreatedDate"] = new Date();
+      this.AccountingVoucherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+      delete this.AccountingVoucherData["UpdatedDate"];
+      delete this.AccountingVoucherData["UpdatedBy"];
+      //console.log('to insert', this.AccountingVoucherData)
+      this.insert(row);
     }
     else {
-      checkFilterString += ' and AccountNatureId eq ' + row.AccountNatureId;
+      delete this.AccountingVoucherData["CreatedDate"];
+      delete this.AccountingVoucherData["CreatedBy"];
+      this.AccountingVoucherData["UpdatedDate"] = new Date();
+      this.AccountingVoucherData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+      //console.log('to update', this.AccountingVoucherData)
+      this.update(row);
     }
-    if (row.AccountGroupId == 0) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please select account group.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    else {
-      checkFilterString += ' and AccountGroupId eq ' + row.AccountGroupId;
-    }
-    if (row.GeneralLedgerName.length == 0) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please enter account name.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    else {
-      checkFilterString += " and GeneralLedgerName eq '" + row.GeneralLedgerName + "'";
-    }
-    if (row.AccountSubGroupId > 0) {
-      checkFilterString += " and AccountSubGroupId eq " + row.AccountSubGroupId;
-    }
+    //        }
+    //      });
 
-    if (row.GeneralLedgerId > 0)
-      checkFilterString += " and GeneralLedgerId ne " + row.GeneralLedgerId;
-
-    let list: List = new List();
-    list.fields = ["GeneralLedgerId"];
-    list.PageName = "GeneralLedgers";
-    list.filter = [checkFilterString];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          this.loading = false; this.PageLoading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-        }
-        else {
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          this.GeneralLedgerForUpdate = [];;
-          this.GeneralLedgerData.GeneralLedgerId = row.GeneralLedgerId;
-          this.GeneralLedgerData.AccountNatureId = row.AccountNatureId;
-          this.GeneralLedgerData.AccountGroupId = row.AccountGroupId;
-          // this.GeneralLedgerData.AccountSubGroupId = row.AccountSubGroupId==null?0:row.AccountSubGroupId;          
-          this.GeneralLedgerData.GeneralLedgerName = row.GeneralLedgerName;
-          this.GeneralLedgerData.ContactNo = row.ContactNo;
-          this.GeneralLedgerData.ContactName = row.ContactName;
-          this.GeneralLedgerData.Email = row.Email;
-          this.GeneralLedgerData.Address = row.Address;
-
-          this.GeneralLedgerData.Active = row.Active;
-          this.GeneralLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
-
-
-          if (this.GeneralLedgerData.GeneralLedgerId == 0) {
-            this.GeneralLedgerData["CreatedDate"] = new Date();
-            this.GeneralLedgerData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.GeneralLedgerData["UpdatedDate"] = new Date();
-            delete this.GeneralLedgerData["UpdatedBy"];
-            console.log("inserting1", this.GeneralLedgerData);
-            this.insert(row);
-          }
-          else {
-            this.GeneralLedgerData["CreatedDate"] = new Date();
-            this.GeneralLedgerData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.GeneralLedgerData["UpdatedDate"] = new Date();
-            delete this.GeneralLedgerData["UpdatedBy"];
-            console.log("inserting2", this.GeneralLedgerData);
-            this.update(row);
-          }
-        }
-      });
   }
-  loadingFalse() {
-    this.loading = false; this.PageLoading = false;
-  }
+
   insert(row) {
-    //console.log("inserting",this.GeneralLedgerForUpdate);
+
     //debugger;
-    this.dataservice.postPatch("GeneralLedgers", this.GeneralLedgerData, 0, 'post')
+    this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.GeneralLedgerId = data.GeneralLedgerId;
-          row.Action = false;
+          this.loading = false; this.PageLoading = false;
+          row.AccountingVoucherId = data.AccountingVoucherId;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.loadingFalse()
         });
   }
   update(row) {
-    //console.log("updating",this.GeneralLedgerForUpdate);
-    this.dataservice.postPatch("GeneralLedgers", this.GeneralLedgerData, this.GeneralLedgerData.GeneralLedgerId, 'patch')
+
+    this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, this.AccountingVoucherData.AccountingVoucherId, 'patch')
       .subscribe(
         (data: any) => {
-          row.Action = false;
+          this.loading = false; this.PageLoading = false;
+
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.loadingFalse();
         });
   }
-  GetAccountNature() {
-    //debugger;
-    this.loading = true;
-    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
-
-    let list: List = new List();
-    list.fields = [
-      'AccountNatureId',
-      'AccountName',
-      'ParentId',
-      'DebitType',
-      'Active'
-    ];
-
-    list.PageName = "AccountNatures";
-    list.filter = [filterStr];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        if (data.value.length > 0) {
-          this.AccountNatures = [...data.value];
-          this.TopAccountNatures = this.AccountNatures.filter(f => f.ParentId == 0);
-        }
-        this.loadingFalse();
-      });
-
+  isNumeric(str: number) {
+    if (typeof str != "string") return false // we only process strings!  
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+      !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
-  GetGeneralLedgerAutoComplete() {
-    //debugger;
-    this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+
+  GetGLAccounts() {
 
     let list: List = new List();
     list.fields = [
-      'GeneralLedgerId',
-      'GeneralLedgerName',
-      'AccountSubGroupId',
-      'AccountNatureId',
-      'AccountGroupId',
-      'Active',
+      "GeneralLedgerId",
+      "GeneralLedgerName",
+      "AccountNatureId",
+      "AccountGroupId",
+      "AccountSubGroupId",
+      "Active"
     ];
 
     list.PageName = "GeneralLedgers";
-    list.filter = [filterStr];
-    this.GeneralLedgerList = [];
+    list.lookupFields = ["AccountNature($select=Active,AccountNatureId,DebitType)"];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        if (data.value.length > 0) {
-          this.GeneralLedgerAutoComplete = [...data.value];
-        }
-        this.loadingFalse();
-      });
+        //debugger;
+        //  //console.log('data.value', data.value);
+        data.value.forEach(f => {
 
+          if (f.AccountNature.Active == true) {
+            f.DebitAccount = f.AccountNature.DebitType
+            this.GLAccounts.push(f)
+          }
+        });
+
+        //this.loading = false; this.PageLoading = false;
+      })
   }
-  GetGeneralLedger() {
-    //debugger;
-    this.loading = true;
+  GetAccountingPeriod() {
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    var AccountNatureId = this.searchForm.get("searchAccountNatureId").value
-    var AccountGroupId = this.searchForm.get("searchAccountGroupId").value
-    var GeneralLedgerId = this.searchForm.get("searchLedgerName").value.GeneralLedgerId;
-
-    if (AccountNatureId == 0 && AccountGroupId == 0 && GeneralLedgerId == 0) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please select search criteria", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (AccountNatureId > 0) {
-      filterStr += ' and AccountNatureId eq ' + AccountNatureId;
-    }
-    if (AccountGroupId > 0) {
-      filterStr += ' and AccountGroupId eq ' + AccountGroupId;
-    }
-    if (GeneralLedgerId > 0) {
-      filterStr += ' and GeneralLedgerId eq ' + GeneralLedgerId;
-    }
     let list: List = new List();
     list.fields = [
-      'GeneralLedgerId',
-      'GeneralLedgerName',
-      'AccountSubGroupId',
-      'AccountNatureId',
-      'AccountGroupId',
-      'ContactNo',
-      'ContactName',
-      'Email',
-      'Address',
-      'Active',
+      "AccountingPeriodId",
+      "StartDate",
+      "EndDate"
     ];
 
-    list.PageName = "GeneralLedgers";
-    list.filter = [filterStr];
-    this.GeneralLedgerList = [];
+    list.PageName = "AccountingPeriods";
+    list.filter = ["CurrentPeriod eq 1 and Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        if (data.value.length > 0) {
-          var acgroup = [];
-          this.GeneralLedgerList = data.value.map(item => {
-            //acgroup = this.allMasterData.filter(f => f.ParentId == item.AccountNatureId);
-            item.AccountGroups = this.AccountNatures.filter(f => f.ParentId == item.AccountNatureId);
-            item.AccountSubGroups = this.AccountNatures.filter(f => f.ParentId == item.AccountGroupId);
-            item.Action = false;
-            return item;
-          });
-        }
-        this.dataSource = new MatTableDataSource<IGeneralLedger>(this.GeneralLedgerList);
-        this.loadingFalse();
-      });
+        this.AccountingPeriod = data.value.map(f => {
+          return {
+            StartDate: f.StartDate,
+            EndDate: f.EndDate
+          }
+        });
 
+        this.loading = false; this.PageLoading = false;
+      })
   }
 
   GetMasterData() {
 
     this.allMasterData = this.tokenstorage.getMasterData();
-  }
-  onBlur(row) {
-    row.Action = true;
-  }
-  AccountNatureChanged(row) {
-    debugger;
-    row.Action = true;
-    var acgroup = this.AccountNatures.filter(f => f.ParentId == row.AccountNatureId);
-    row.AccountGroups = acgroup;
-    this.dataSource = new MatTableDataSource(this.GeneralLedgerList);
-  }
-  SearchAccountNatureChanged() {
-    debugger;
-    var natureId = this.searchForm.get("searchAccountNatureId").value;
-    if (natureId > 0)
-      this.AccountGroups = this.AccountNatures.filter(f => f.ParentId == natureId);
-  }
-  UpdateActive(row, event) {
-    row.Active = event.checked ? 1 : 0;
-    row.Action = true;
+    this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
@@ -422,24 +456,15 @@ export class LedgerBalanceComponent implements OnInit {
   }
 
 }
-export interface IGeneralLedger {
-  GeneralLedgerId: number;
-  GeneralLedgerName: string;
-  AccountSubGroupId: number;
-  ContactNo: string;
-  ContactName: string;
-  Email: string;
-  Address: string;
-  AccountNatureId: number;
+export interface ITrialBalance {
+  AccountingTrialBalanceId: number;
+  GeneralLedger: string;
   AccountGroupId: number;
-  AccountGroups: any[];
-  OrgId: number;
+  AccountNatureId: number;
+  DebitCreditId: number;
+  Balance: number;
+  DepartmentId: number;
   Active: number;
-  Action: boolean;
-}
-export interface IStudent {
-  StudentClassId: number;
-  StudentId: number;
-  Name: string;
+  Action: boolean
 }
 

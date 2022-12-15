@@ -7,7 +7,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -92,14 +91,15 @@ export class TrialBalanceComponent implements OnInit {
       })
     })
     this.searchForm = this.fb.group({
-      searchGeneralLedgerId: [0]
+      searchFromDate: [new Date()],
+      searchToDate: [new Date()]
     });
-    this.filteredOptions = this.searchForm.get("searchGeneralLedgerId").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.TeacherName),
-        map(TeacherName => TeacherName ? this._filter(TeacherName) : this.GeneralLedgers.slice())
-      );
+    // this.filteredOptions = this.searchForm.get("searchGeneralLedgerId").valueChanges
+    //   .pipe(
+    //     startWith(''),
+    //     map(value => typeof value === 'string' ? value : value.TeacherName),
+    //     map(TeacherName => TeacherName ? this._filter(TeacherName) : this.GeneralLedgers.slice())
+    //   );
     this.PageLoad();
     //        this.GetTeachers();
   }
@@ -169,22 +169,24 @@ export class TrialBalanceComponent implements OnInit {
   }
 
   GetAccountingVoucher() {
-    let filterStr = 'FeeReceiptId gt 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = '(ClassFeeId eq 0 and FeeReceiptId eq 0) or (ClassFeeId eq 0 and FeeReceiptId gt 0) and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
     this.loading = true;
 
-    var _GeneralLedgerId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
-    if (_GeneralLedgerId == undefined) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select account.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    else {
-      filterStr += " and GeneralLedgerAccountId eq " + _GeneralLedgerId
-    }
+    // var _GeneralLedgerId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
+    // if (_GeneralLedgerId == undefined) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select account.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // else {
+    //   filterStr += " and GeneralLedgerAccountId eq " + _GeneralLedgerId
+    // }
 
     //filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
     //  "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate, 'yyyy-MM-dd') + "'";//T00:00:00.000Z
+      filterStr += " and PostingDate ge " + this.datepipe.transform(this.searchForm.get("searchFromDate").value, 'yyyy-MM-dd') + //T00:00:00.000Z
+      " and  PostingDate le " + this.datepipe.transform(this.searchForm.get("searchToDate").value, 'yyyy-MM-dd');//T00:00:00.000Z
     // if (_ClassId != 0)
     //   filterStr += " and ClassId eq " + _ClassId;
 
@@ -220,18 +222,38 @@ export class TrialBalanceComponent implements OnInit {
         //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
         var groupbyDebitCredit = alasql("select sum(BaseAmount) as Amount,Debit,AccountName from ? GROUP BY AccountName,Debit order by AccountName",
           [this.AccountingVoucherList])
-        groupbyDebitCredit.forEach(f => {
-          if (f.Debit) {
-            f.Dr = f.Amount
-            f.Cr = 0;
-          }
-          else {
-            f.Cr = f.Amount
-            f.Dr = 0;
-          }
+          groupbyDebitCredit = groupbyDebitCredit.sort((a,b)=>a.AccountName -b.AccountName);
+          var result =[];
+          groupbyDebitCredit.forEach(f => {
+
+            var existing = result.filter(r=>r.AccountName ==f.AccountName);
+            if(existing.length>0)
+            {
+              if (f.Debit) {
+                existing[0].Dr += f.Amount;
+                //existing[0].Cr = 0;
+              }
+              else {
+                existing[0].Cr += f.Amount
+                //f.Dr = 0;
+              }
+            }
+            else
+            {
+              var temprow ={"AccountName":f.AccountName, "Dr":0,"Cr":0};
+              if (f.Debit) {
+                temprow.Dr = f.Amount;
+                temprow.Cr = 0;
+              }
+              else {
+                temprow.Cr = f.Amount
+                temprow.Dr = 0;
+              }
+              result.push(temprow);
+            }
         })
-        console.log("groupbyDebitCredit", groupbyDebitCredit)
-        var display = groupbyDebitCredit.filter(f => f.Dr != undefined)
+        //console.log("groupbyDebitCredit", groupbyDebitCredit)
+        var display = result.filter(f => f.Dr != undefined)
         this.TotalCredit = display.reduce((acc, current) => acc + current.Cr, 0)
         this.TotalDebit = display.reduce((acc, current) => acc + current.Dr, 0)
 

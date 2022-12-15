@@ -818,7 +818,7 @@ export class searchstudentComponent implements OnInit {
       student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
       var _lastname = student.LastName == null ? '' : " " + student.LastName;
       _name = student.FirstName + _lastname;
-      var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo;
+      var _fullDescription = student.PID +"-"+ _name + "-" + _className + "-" + _section + "-" + _RollNo;
       student.StudentClassId = _studentClassId;
       student.Name = _fullDescription;
       student.ClassName = _className;

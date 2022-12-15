@@ -10,6 +10,7 @@ import { StudentprogressreportComponent } from '../studentprogressreport/student
 import { Router } from '@angular/router';
 import { StudentviewComponent } from '../studentview/studentview.component';
 import { SidenavService } from 'src/app/shared/sidenav.service';
+import { ConnectionService } from 'ng-connection-service';
 
 @Component({
   selector: 'app-studentboard',
@@ -45,19 +46,33 @@ export class StudentboardComponent implements AfterViewInit {
   LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
-
+  isConnected = true;
+  noInternetConnection: boolean;
   constructor(
     private sidenav: SidenavService,
     private cdr: ChangeDetectorRef,
     private nav: Router,
     private contentservice: ContentService,
+    private connectionService: ConnectionService,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService) {
-    this.StudentId = tokenStorage.getStudentId();
+   
+    this.connectionService.monitor().subscribe(isConnected => {
+      this.isConnected = isConnected;
+      if (this.isConnected) {
+        this.contentservice.openSnackBar("No internet connection.",globalconstants.ActionText,globalconstants.RedBackground);
+        //this.noInternetConnection = false;
+      }
+      else {
+        this.noInternetConnection = true;
+        this.StudentId = tokenStorage.getStudentId();
+      }
+    })
   }
   toggleRightSidenav() {
     //console.log("this.sidenav",this.sidenav.)
     this.sidenav.toggle();
+   
  }
  FeePaymentPermission='';
   public ngAfterViewInit(): void {
