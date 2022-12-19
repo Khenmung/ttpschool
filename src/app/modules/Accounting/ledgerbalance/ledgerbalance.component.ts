@@ -179,7 +179,7 @@ export class LedgerBalanceComponent implements OnInit {
       filterStr += " and GeneralLedgerAccountId eq " + _GeneralLedgerId
     }
     else
-      filterStr += " and (ClassFeeId eq 0 and FeeReceiptId eq 0) or (ClassFeeId eq 0 and FeeReceiptId gt 0)"
+      filterStr += " and LedgerId eq 0 "
 
     //filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
     //  "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate, 'yyyy-MM-dd') + "'";//T00:00:00.000Z

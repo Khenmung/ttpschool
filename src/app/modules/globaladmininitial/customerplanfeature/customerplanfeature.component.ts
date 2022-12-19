@@ -259,6 +259,7 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
       "PlanId",
       "Title",
       "Description",
+      "Sequence",
       "Logic"
     ];
 
@@ -266,7 +267,8 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
     list.filter = ["Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.Plans = [...data.value];
+        var result = data.value.sort((a,b)=>a.Sequence - b.Sequence);
+        this.Plans =[...result];
       })
   }
   GetTopFeature() {
@@ -321,7 +323,9 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         
         this.CustomerPlanFeatureList = data.value.map(d=>{
-          d.PlanName = this.Plans.filter(f=>f.PlanId == d.PlanId)[0].PlanName;
+         var obj =this.Plans.filter(f=>f.PlanId == d.PlanId);
+         if(obj.length>0)
+          d.PlanName = obj[0].PlanName;
           return d;
         })
         

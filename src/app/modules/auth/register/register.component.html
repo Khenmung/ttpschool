@@ -66,8 +66,15 @@
                     </span>
                 </mat-form-field>
             </div>
+            <div style="display:flex;justify-content:flex-start;">    
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="AcceptReject($event)"
+                    [checked]="false">
+                </mat-checkbox>&nbsp; Accept  &nbsp;          
+                <textarea [value]="AgreementText" style="padding: 10px;color:gray;font-size: small;" rows="4" cols="48"></textarea>
+                
+            </div>
             <div fxLayoutAlign="start" style="margin: 30px;">
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="onSave()" matTooltip="create">
+                <button [disabled]="loading || !AgreementAccepted" mat-raised-button color="accent" (click)="onSave()" matTooltip="create">
                     <mat-icon>create</mat-icon>
                 </button>
                 <button [disabled]="loading" (click)="gotohome()" class="mat-raised-button" matTooltip="cancel">

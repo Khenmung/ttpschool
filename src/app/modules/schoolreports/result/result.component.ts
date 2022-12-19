@@ -279,6 +279,8 @@ export class ResultComponent implements OnInit {
               ExamId: res.ExamId,
               StudentClassId: studcls.StudentClassId,
               Student: stud[0].FirstName + " " + (stud[0].LastName == null ? '' : stud[0].LastName),
+              SectionId:studcls.SectionId,
+              RollNo:studcls.RollNo,
               TotalMarks: res.TotalMarks,
               Division: res.Division,
               MarkPercent: res.MarkPercent,
@@ -518,6 +520,8 @@ export interface IExamStudentResult {
   ExamStudentResultId: number;
   ExamId: number;
   StudentClassId: number;
+  SectionId:number;
+  RollNo:number;
   StudentClass: {},
   TotalMarks: number;
   MarkPercent: number;

@@ -81,7 +81,7 @@ export class TrialBalanceComponent implements OnInit {
     private nav: Router,
     private contentservice: ContentService,
   ) { }
-
+  MinDate :Date;
   ngOnInit(): void {
     this.servicework.activateUpdate().then(() => {
       this.servicework.checkForUpdate().then((value) => {
@@ -90,6 +90,8 @@ export class TrialBalanceComponent implements OnInit {
         }
       })
     })
+    var FinancialStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
+    this.MinDate = FinancialStartEnd.StartDate;
     this.searchForm = this.fb.group({
       searchFromDate: [new Date()],
       searchToDate: [new Date()]
@@ -169,7 +171,7 @@ export class TrialBalanceComponent implements OnInit {
   }
 
   GetAccountingVoucher() {
-    let filterStr = '(ClassFeeId eq 0 and FeeReceiptId eq 0) or (ClassFeeId eq 0 and FeeReceiptId gt 0) and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
     this.loading = true;
 

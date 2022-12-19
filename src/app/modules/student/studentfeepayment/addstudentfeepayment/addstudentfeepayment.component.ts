@@ -98,7 +98,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   AccountGroup = [];
   StudentClassFees: any[] = [];
   FeeTypes = [];
-  LedgerListName = 'AccountingLedgerTrialBalances';
+  //AccountingLedgerTrialBalanceListName = 'AccountingLedgerTrialBalances';
   ELEMENT_DATA: ILedger[] = [];
   ExistingStudentLedgerList = [];
   StudentLedgerList: ILedger[];
@@ -460,7 +460,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         "OrgId",
         "BatchId",
         "Active"]
-      list.PageName = this.LedgerListName;
+      list.PageName = this.AccountingLedgerTrialBalanceListName;
       //list.lookupFields = ["StudentClass", "PaymentDetails"];
       list.filter = ['Active eq 1 and StudentClassId eq ' + this.studentInfoTodisplay.StudentClassId];
       //list.orderBy = "ParentId";

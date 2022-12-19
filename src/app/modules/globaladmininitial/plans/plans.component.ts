@@ -46,6 +46,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
     PlanId: 0,
     Title: '',
     Description: '',
+    Sequence:0,
     Logic:'',
     PCPM: 0,
     MinPrice: 0,
@@ -56,6 +57,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
     "PlanId",
     "Title",
     "Description",
+    "Sequence",
     "Logic",
     "PCPM",
     "MinPrice",
@@ -122,6 +124,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
       "PlanId": 0,
       "Title": '',
       "Description": '',
+      "Sequence":0,
       "Logic":'',
       "PCPM":0,
       "MinPrice":0,
@@ -187,6 +190,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
           this.PlanData.PlanId = row.PlanId;
           this.PlanData.Title = row.Title;
           this.PlanData.Description = row.Description;
+          this.PlanData.Sequence = row.Sequence;
           this.PlanData.Logic = row.Logic;
           this.PlanData.PCPM = +row.PCPM;
           this.PlanData.MinPrice = +row.MinPrice;
@@ -240,6 +244,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
       "PlanId",
       "Title",
       "Description",
+      "Sequence",
       "Logic",
       "PCPM",
       "MinCount",
@@ -259,6 +264,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
             return m;
           });
         }
+        this.PlanList =this.PlanList.sort((a,b)=>a.Sequence - b.Sequence);
         this.dataSource = new MatTableDataSource<IPlan>(this.PlanList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -298,6 +304,7 @@ export interface IPlan {
   PlanId: number;
   Title: string;
   Description: string;
+  Sequence:number;
   Logic:string;
   PCPM: number;
   MinPrice: number;

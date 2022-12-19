@@ -13,6 +13,8 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-accountnature',
@@ -66,11 +68,10 @@ export class AccountNatureComponent implements OnInit {
   filteredAccounts: Observable<IAccountNature[]>;
 
   constructor(private servicework: SwUpdate,
-    private datepipe: DatePipe,
+    private dialog: MatDialog,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
     private nav: Router,
     private contentservice: ContentService,
   ) { }
@@ -156,21 +157,16 @@ export class AccountNatureComponent implements OnInit {
 
   GetAccountNature() {
 
-    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
+    let filterStr = '(OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
     debugger;
     this.loading = true;
 
     var _searchAccountId = this.searchForm.get("searchAccountName").value.AccountNatureId;
     //var _searchParentId = this.searchForm.get("searchParentId").value;
     if (_searchAccountId == undefined) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select account.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
+      filterStr += " and ParentId eq 0"
     }
-    // if (_searchParentId > 0)
-    //   filterStr += " and ParentId eq " + _searchParentId
-    //else 
-    if (_searchAccountId != undefined) {
+    else if (_searchAccountId >0) {
       filterStr += " and ParentId eq " + _searchAccountId
     }
 
@@ -358,28 +354,54 @@ export class AccountNatureComponent implements OnInit {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
+ 
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
 
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
 
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: false,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
 
-  // GetGeneralLedgerAutoComplete() {
+    this.dataservice.postPatch('AccountNatures', toUpdate, row.AccountNatureId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; this.PageLoading = false;
+        var idx = this.AccountNatureList.findIndex(x => x.AccountNatureId == row.AccountNatureId)
+        this.AccountNatureList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.AccountNatureList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
-  //   let list: List = new List();
-  //   list.fields = [
-  //     "GeneralLedgerId",
-  //     "GeneralLedgerName",
-  //     "AccountNatureId",
-  //     "AccountGroupId"
-  //   ];
-
-  //   list.PageName = "GeneralLedgers";
-  //   list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
-  //   this.GLAccounts = [];
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       this.GeneralLedgers = [...data.value];
-  //       this.loading = false; this.PageLoading = false;
-  //     })
-  // }
+      });
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.MasterDataName.toLowerCase().indexOf(searchTerms.MasterDataName) !== -1
+    }
+    return filterFunction;
+  }
   GetMasterData() {
 
     this.allMasterData = this.tokenstorage.getMasterData();

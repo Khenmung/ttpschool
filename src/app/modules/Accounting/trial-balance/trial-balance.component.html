@@ -5,7 +5,7 @@
 <form [formGroup]="searchForm">
     <mat-form-field appearance="outline" [style.width.px]="150">
         <mat-label>From</mat-label>
-        <input formControlName="searchFromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
+        <input formControlName="searchFromDate" [min]="MinDate" matInput [matDatepicker]="FromDate" autocomplete="off">
         <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
         <mat-datepicker #FromDate></mat-datepicker>
     </mat-form-field>

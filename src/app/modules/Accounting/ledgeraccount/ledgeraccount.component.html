@@ -23,7 +23,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Account Sub-Group</mat-label>
-                <mat-select formControlName="searchAccountSubGroupId">
+                <mat-select formControlName="searchAccountSubGroupId" (selectionChange)="GetSubGroupAccounts()">
                     <mat-option value="0">select</mat-option>
                     <mat-option *ngFor="let option of AccountSubGroups" [value]="option.AccountNatureId">
                         {{option.AccountName}}
@@ -34,7 +34,7 @@
                 <mat-label>ledger account</mat-label>
                 <input type="text" matInput formControlName="searchLedgerName" [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    <mat-option *ngFor="let option of filteredOptions" [value]="option">
                         {{option.GeneralLedgerName}}
                     </mat-option>
                 </mat-autocomplete>

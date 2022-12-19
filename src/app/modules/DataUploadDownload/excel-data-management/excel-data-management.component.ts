@@ -231,12 +231,8 @@ export class ExcelDataManagementComponent implements OnInit {
         "Club",
         "House",
         "Remarks",
-        "OrgId",
-        "CreatedDate",
-        "CreatedBy",
-        "UpdatedDate",
-        "UpdatedBy",
-        "BatchId"
+        "BoardRegistrationNo",
+        "IdentificationMark"        
       ];
     }
     //  this.readExcel();
@@ -658,7 +654,7 @@ export class ExcelDataManagementComponent implements OnInit {
       else if (element.PermanentAddressPincode == undefined)
         element.PermanentAddressPincode = '';
       if (element.IDMark.length > 100)
-        this.ErrorMessage += 'IDMark must be less 100 characters at row ' + indx + '.\n';
+        this.ErrorMessage += 'Identification Mark must be less 100 characters at row ' + indx + '.\n';
       else if (element.IDMark == undefined)
         element.IDMark = '';
 
@@ -1060,6 +1056,9 @@ export class ExcelDataManagementComponent implements OnInit {
       if (element.EmailAddress != undefined && element.EmailAddress.length > 50) {
         this.ErrorMessage += 'EmailAddress should not be greater than 50 characters.';
       }
+      if (element.BoardRegistrationNo != undefined && element.BoardRegistrationNo.length > 15) {
+        this.ErrorMessage += 'Board Registration No. should not be greater than 15 characters.';
+      }
       if (element.LastSchoolPercentage != undefined && element.LastSchoolPercentage.length > 10) {
         this.ErrorMessage += 'LastSchoolPercentage should not be greater than 10 characters.';
       }
@@ -1271,6 +1270,7 @@ export class ExcelDataManagementComponent implements OnInit {
             "BatchId": +row["BatchId"],
             "RemarkId": +row["RemarkId"],
             "IdentificationMark": row["IdentificationMark"],
+            "BoardRegistrationNo": row["BoardRegistrationNo"],
             "Weight": +row["Weight"],
             "Height": +row["Height"],
             "SectionId": +row["SectionId"],
@@ -1383,9 +1383,6 @@ export class ExcelDataManagementComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.loginDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         //var SelectedApplicationName = '';
-
-
-
         this.AllMasterData = [...data.value];
 
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);

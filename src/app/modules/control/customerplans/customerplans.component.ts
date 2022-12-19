@@ -254,6 +254,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
       "PlanId",
       "Title",
       "Description",
+      "Sequence",
       "Logic",
       "PCPM",
       "MinCount",
@@ -314,6 +315,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
               "CurrencyId": p.CurrencyId,
               "CustomerPlanId": d[0].CustomerPlanId,
               "PlanId": d[0].PlanId,
+              "Sequence":p.Sequence,
               "PlanName": p.Title,
               "Logic": p.Logic == null ? '' : p.Logic,
               "Formula": d[0].Formula,
@@ -334,6 +336,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
               "CustomerPlanId": 0,
               "PlanId": p.PlanId,
               "PlanName": p.Title,
+              "Sequence":p.Sequence,
               "Logic": p.Logic == null ? '' : p.Logic,
               "Formula": '',
               "LoginUserCount": 0,
@@ -351,7 +354,8 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
         if (this.Org.toLowerCase() != 'ttp') {
           this.CustomerPlansList = this.CustomerPlansList.filter(f => f.PlanName.toLowerCase() != 'delux');
         }
-        console.log("customer list", this.CustomerPlansList)
+        this.CustomerPlansList = this.CustomerPlansList.sort((a,b)=>a.Sequence - b.Sequence);
+        //console.log("customer list", this.CustomerPlansList)
         this.dataSource = new MatTableDataSource<any>(this.CustomerPlansList);
         this.loading = false; this.PageLoading=false;
       })

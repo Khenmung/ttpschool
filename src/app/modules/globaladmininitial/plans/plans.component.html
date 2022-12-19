@@ -35,6 +35,16 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="Sequence">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Sequence
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="5"
+                                [value]="element.Sequence" [(ngModel)]="element.Sequence">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="Logic">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Logic
                     </mat-header-cell>

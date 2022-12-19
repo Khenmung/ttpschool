@@ -164,7 +164,7 @@ export class JournalEntryComponent implements OnInit {
   }
 
   GetAccountingVoucher() {
-    let filterStr = '(ClassFeeId eq 0 and FeeReceiptId eq 0) or (ClassFeeId eq 0 and FeeReceiptId gt 0) and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'FeeReceiptId gt 0 and LedgerId gt 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
     this.loading = true;
     var FinancialStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());

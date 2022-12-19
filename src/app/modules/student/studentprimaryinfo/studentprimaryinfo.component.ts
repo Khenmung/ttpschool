@@ -191,6 +191,7 @@ export class studentprimaryinfoComponent implements OnInit {
       House: [0],
       Remarks: [0],
       IdentificationMark: [''],
+      BoardRegistrationNo:[''],
       Weight: [0],
       Height: [0],
       Active: [1]
@@ -443,6 +444,7 @@ export class studentprimaryinfoComponent implements OnInit {
       ReasonForLeavingId: this.studentForm.get("ReasonForLeaving").value,
       OrgId: this.loginUserDetail[0]["orgId"],
       IdentificationMark: this.studentForm.get("IdentificationMark").value,
+      BoardRegistrationNo: this.studentForm.get("BoardRegistrationNo").value,
       Height: this.studentForm.get("Height").value,
       Weight: this.studentForm.get("Weight").value,
       BatchId: this.tokenService.getSelectedBatchId()
@@ -637,6 +639,7 @@ export class studentprimaryinfoComponent implements OnInit {
               Active: stud.Active,
               ReasonForLeaving: stud.ReasonForLeavingId,
               IdentificationMark: stud.IdentificationMark,
+              BoardRegistrationNo: stud.BoardRegistrationNo,
               Weight: stud.Weight,
               Height: stud.Height
             })

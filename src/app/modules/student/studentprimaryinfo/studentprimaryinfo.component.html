@@ -410,7 +410,11 @@
                         <input formControlName="IdentificationMark" (blur)="OnBlur()" autocomplete="Off" matInput
                             [maxlength]="50">
                     </mat-form-field>
-
+                    <mat-form-field appearance="outline">
+                        <mat-label>Board Registration No.</mat-label>
+                        <input formControlName="BoardRegistrationNo" (blur)="OnBlur()" autocomplete="Off" matInput
+                            [maxlength]="15">
+                    </mat-form-field>
 
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active

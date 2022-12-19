@@ -81,7 +81,7 @@
                         *ngIf="EvaluationDisplayedColumns.length>1">
                         <ng-container *ngFor="let disCol of EvaluationDisplayedColumns; let colIndex = index"
                             matColumnDef="{{disCol}}">
-                            <mat-header-cell *matHeaderCellDef mat-sort-header style="display:none;border:1px solid lightgray">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>
                                 <span style="padding-left: 15px;"
                                     *ngIf="disCol!='FirstCol' && disCol!='Description'">{{disCol}}</span>
                             </mat-header-cell>

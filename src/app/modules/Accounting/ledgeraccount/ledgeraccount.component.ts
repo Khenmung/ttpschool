@@ -35,7 +35,7 @@ export class LedgerAccountComponent implements OnInit {
   AccountGroups = [];
   GeneralLedgerAutoComplete = [];
   AccountNatureList = [];
-  filteredOptions: Observable<IGeneralLedger[]>;
+  filteredOptions=[];
   dataSource: MatTableDataSource<IGeneralLedger>;
   allMasterData = [];
 
@@ -93,12 +93,12 @@ export class LedgerAccountComponent implements OnInit {
       searchAccountGroupId: [0],
       searchAccountSubGroupId: [0]
     });
-    this.filteredOptions = this.searchForm.get("searchLedgerName").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.GeneralLedgerName),
-        map(GeneralLedgerName => GeneralLedgerName ? this._filter(GeneralLedgerName) : this.GeneralLedgerAutoComplete.slice())
-      );
+    // this.filteredOptions = this.searchForm.get("searchLedgerName").valueChanges
+    //   .pipe(
+    //     startWith(''),
+    //     map(value => typeof value === 'string' ? value : value.GeneralLedgerName),
+    //     map(GeneralLedgerName => GeneralLedgerName ? this._filter(GeneralLedgerName) : this.GeneralLedgerAutoComplete.slice())
+    //   );
     //this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.PageLoad();
   }
@@ -138,7 +138,13 @@ export class LedgerAccountComponent implements OnInit {
     var _groupId = this.searchForm.get("searchAccountGroupId").value;
     if (_groupId > 0) {
       this.AccountSubGroups = this.AccountNatures.filter(f => f.ParentId == _groupId)
+      this.filteredOptions = this.GeneralLedgerAutoComplete.filter(x=>x.AccountGroupId ==_groupId)
     }
+
+  }
+  GetSubGroupAccounts(){
+    var _subgroupId = this.searchForm.get("searchAccountSubGroupId").value;
+    this.filteredOptions = this.GeneralLedgerAutoComplete.filter(x=>x.AccountGroupId ==_subgroupId)
   }
   delete(element) {
     let toupdate = {
