@@ -170,7 +170,7 @@ export class LedgerBalanceComponent implements OnInit {
   }
 
   GetAccountingVoucher() {
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
     this.loading = true;
 
@@ -178,8 +178,8 @@ export class LedgerBalanceComponent implements OnInit {
     if (_GeneralLedgerId != undefined) {
       filterStr += " and GeneralLedgerAccountId eq " + _GeneralLedgerId
     }
-    else
-      filterStr += " and LedgerId eq 0 "
+    // else
+    //   filterStr += " and"
 
     //filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
     //  "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate, 'yyyy-MM-dd') + "'";//T00:00:00.000Z

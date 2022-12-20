@@ -30,6 +30,7 @@ export class StudentfamilynfriendComponent implements OnInit {
   StudentFamilyNFriendList: IStudentFamilyNFriends[] = [];
   filteredOptions: Observable<IStudentFamilyNFriends[]>;
   dataSource: MatTableDataSource<IStudentFamilyNFriends>;
+  dataSourceSiblings:MatTableDataSource<any>;
   allMasterData = [];
   StudentFamilyNFriends = [];
   FamilyRelationship = [];
@@ -66,6 +67,8 @@ export class StudentfamilynfriendComponent implements OnInit {
     'Action'
   ];
   searchForm: UntypedFormGroup;
+  filteredFathers: Observable<IStudent[]>;
+  filteredMothers: Observable<IStudent[]>;
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -84,6 +87,8 @@ export class StudentfamilynfriendComponent implements OnInit {
     })
     //debugger;
     this.searchForm = this.fb.group({
+      FatherName: [0],
+      MotherName: [0],
       searchContactNo: [''],
       searchStudentName: [''],
       searchSiblings: [''],
@@ -102,11 +107,39 @@ export class StudentfamilynfriendComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Students.slice())
       );
-
+    this.filteredFathers = this.searchForm.get("FatherName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.FatherName),
+        map(Name => Name ? this._filterF(Name) : this.Students.slice())
+      );
+    this.filteredMothers = this.searchForm.get("MotherName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.MotherName),
+        map(Name => Name ? this._filterM(Name) : this.Students.slice())
+      );
     this.PageLoad();
 
   }
+  private _filterF(name: string): IStudent[] {
 
+    const filterValue = name.toLowerCase();
+    return this.Students.filter(option => option.FatherName.toLowerCase().includes(filterValue));
+
+  }
+  private _filterM(name: string): IStudent[] {
+
+    const filterValue = name.toLowerCase();
+    return this.Students.filter(option => option.MotherName.toLowerCase().includes(filterValue));
+
+  }
+  displayFnF(stud: IStudent): string {
+    return stud && stud.FatherName ? stud.FatherName : '';
+  }
+  displayFnM(stud: IStudent): string {
+    return stud && stud.MotherName ? stud.MotherName : '';
+  }
   PageLoad() {
 
     debugger;
@@ -342,65 +375,137 @@ export class StudentfamilynfriendComponent implements OnInit {
   GetStudentFamilyNFriends() {
     debugger;
     var _ParentStudentId = this.searchForm.get("searchStudentName").value.ParentStudentId;
-    if (_ParentStudentId == undefined) {
-      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+    var _fatherName = this.searchForm.get("FatherName").value.FatherName;
+    var _motherName = this.searchForm.get("MotherName").value.MotherName;
+    if (_ParentStudentId == undefined && _fatherName == undefined && _motherName == undefined) {
+      this.contentservice.openSnackBar("Please select student or father or mother.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
+    var _fatherMotherFilter = "";
     //this.StudentId = _studentId;
 
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]['orgId']
-    if (_ParentStudentId > 0)
+    if (_ParentStudentId != undefined && _ParentStudentId > 0)
       filterStr += ' and ParentStudentId eq ' + _ParentStudentId;
     else
       filterStr += ' and ParentStudentId eq ' + this.searchForm.get("searchStudentName").value.StudentId;
 
-    var _RelationshipId = this.searchForm.get("searchRelationshipId").value;
-    if (_RelationshipId > 0)
-      filterStr += ' and RelationshipId eq ' + _RelationshipId;
+    if (_fatherName != undefined)
+      _fatherMotherFilter += " and FatherName eq '" + _fatherName + "'";
+    if (_motherName != undefined)
+      _fatherMotherFilter += " and MotherName eq '" + _motherName + "'";
+    if (_fatherMotherFilter.length > 0) {
+      this.GetStudentFromCache();
+    }
+    else {
+      var _RelationshipId = this.searchForm.get("searchRelationshipId").value;
+      if (_RelationshipId > 0)
+        filterStr += ' and RelationshipId eq ' + _RelationshipId;
 
-    this.loading = true;
+      this.loading = true;
 
-    let list: List = new List();
-    list.fields = [
-      'StudentFamilyNFriendId',
-      'StudentId',
-      'ParentStudentId',
-      'Name',
-      'ContactNo',
-      'RelationshipId',
-      'Active',
-      'Remarks'
-    ];
-    list.orderBy = "RelationshipId";
-    list.PageName = this.StudentFamilyNFriendListName;
-    list.filter = [filterStr];
-    this.StudentFamilyNFriendList = [];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          this.StudentFamilyNFriendList = data.value.map(m => {
-            if (m.StudentId > 0) {
-              var obj = this.Students.filter(f => f.StudentId == m.StudentId);
-              if (obj.length > 0) {
-                m.SiblingName = obj[0].Name;
-                m.FeeType = obj[0].FeeType;
-                m.FeeTypeRemarks = obj[0].Remarks;
+      let list: List = new List();
+      list.fields = [
+        'StudentFamilyNFriendId',
+        'StudentId',
+        'ParentStudentId',
+        'Name',
+        'ContactNo',
+        'RelationshipId',
+        'Active',
+        'Remarks'
+      ];
+      list.orderBy = "RelationshipId";
+      list.PageName = this.StudentFamilyNFriendListName;
+      list.filter = [filterStr];
+      this.StudentFamilyNFriendList = [];
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          //debugger;
+          if (data.value.length > 0) {
+            this.StudentFamilyNFriendList = data.value.map(m => {
+              if (m.StudentId > 0) {
+                var obj = this.Students.filter(f => f.StudentId == m.StudentId);
+                if (obj.length > 0) {
+                  m.SiblingName = obj[0].Name;
+                  m.FeeType = obj[0].FeeType;
+                  m.FeeTypeRemarks = obj[0].Remarks;
+                }
               }
-            }
-            else
-              m.SiblingName = m.Name;
-            return m;
-          });
-        }
-        if (this.StudentFamilyNFriendList.length == 0) {
+              else
+                m.SiblingName = m.Name;
+              return m;
+            });
+          }
+          if (this.StudentFamilyNFriendList.length == 0) {
+            this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          }
+          this.dataSource = new MatTableDataSource<IStudentFamilyNFriends>(this.StudentFamilyNFriendList);
+          this.loadingFalse();
+        });
+    }
+  }
+  siblingsColumns=[];
+  GetStudentFromCache() {
+    debugger;
+    this.siblingsColumns =["Name","FeeType","Remarks"]
+    var _fatherName = this.searchForm.get("FatherName").value.FatherName;
+    var _motherName = this.searchForm.get("MotherName").value.MotherName;
+    var _students: any =this.tokenstorage.getStudents();
+    if (_fatherName != undefined && _motherName != undefined)
+      _students = _students.filter(f => f.FatherName == _fatherName && f.MotherName == _motherName);
+    else if (_motherName != undefined && _fatherName == undefined)
+      _students = _students.filter(f => f.MotherName == _motherName);
+    else if (_motherName == undefined && _fatherName != undefined)
+      _students = _students.filter(f => f.FatherName == _fatherName);
+    _students.forEach(student => {
+      var _RollNo = '';
+      var _name = '';
+      var _className = '';
+      var _section = '';
+      var _feeType = '';
+      var _remarks = '';
+      var _studentClassId = 0;
+      //ar studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+      if (student.StudentClasses.length > 0) {
+        _studentClassId = student.StudentClasses[0].StudentClassId;
+
+        var feetypeobj = this.FeeType.filter(f => f.FeeTypeId == student.StudentClasses[0].FeeTypeId)
+        if (feetypeobj.length > 0)
+          _feeType = feetypeobj[0].FeeTypeName;
+
+        _remarks = student.StudentClasses[0].Remarks;
+        var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
+
+        if (_classNameobj.length > 0)
+          _className = _classNameobj[0].ClassName;
+        var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.StudentClasses[0].SectionId)
+
+        if (_SectionObj.length > 0)
+          _section = _SectionObj[0].MasterDataName;
+
+        _RollNo = student.StudentClasses[0].RollNo;
+        var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
+        _name = student.FirstName + _lastname;
+        var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo// + "-" + student.ContactNo;
+        var result = [];
+        result.push({
+          StudentClassId: _studentClassId,
+          StudentId: student.StudentId,
+          Name: _fullDescription,
+          FatherName: student.FatherName,
+          MotherName: student.MotherName,
+          ParentStudentId: 0,
+          FeeType: _feeType,
+          Remarks: _remarks
+        });
+        if (result.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
-        this.dataSource = new MatTableDataSource<IStudentFamilyNFriends>(this.StudentFamilyNFriendList);
+        this.dataSourceSiblings = new MatTableDataSource(result);
         this.loadingFalse();
-      });
-
+      }
+    });
   }
   GetStudentClasses() {
     debugger;

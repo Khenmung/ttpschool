@@ -710,6 +710,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       list.fields = [
         'StudentClassId',
         'AdmissionNo',
+        'AdmissionDate',
         'StudentId',
         'FeeTypeId',
         'ClassId',
@@ -760,6 +761,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             PID: s.Student.PID,
             StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
             AdmissionNo: s.AdmissionNo,
+            AdmissionDate:s.AdmissionDate,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
             StudentName: s.Student.FirstName + _lastname,
@@ -845,8 +847,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     //debugger;
     this.loading = true;
 
-    let checkFilterString = "ClassId eq " + row.ClassId +
-      " and StudentId eq " + row.StudentId + ' and BatchId eq ' + this.SelectedBatchId
+    let checkFilterString = "StudentId eq " + row.StudentId + ' and BatchId eq ' + this.SelectedBatchId //"ClassId eq " + row.ClassId +
+      
 
     if (row.StudentClassId > 0)
       checkFilterString += " and StudentClassId ne " + row.StudentClassId;
@@ -890,6 +892,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
               this.StudentClassData.BatchId = this.SelectedBatchId;
               if (this.StudentClassData.StudentClassId == 0) {
+                this.StudentClassData["AdmissionDate"] = new Date();
                 this.StudentClassData["CreatedDate"] = new Date();
                 this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
                 delete this.StudentClassData["UpdatedDate"];
@@ -1082,6 +1085,7 @@ export interface IStudentClass {
   PID: number;
   StudentClassId: number;
   AdmissionNo: string;
+  AdmissionDate:Date;
   ClassId: number;
   ClassName: string;
   StudentId: number;

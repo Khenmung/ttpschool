@@ -58,6 +58,7 @@ export class StudentboardComponent implements AfterViewInit {
     private shareddata: SharedataService) {
    
     this.connectionService.monitor().subscribe(isConnected => {
+      debugger;
       this.isConnected = isConnected;
       if (this.isConnected) {
         this.contentservice.openSnackBar("No internet connection.",globalconstants.ActionText,globalconstants.RedBackground);
@@ -65,9 +66,10 @@ export class StudentboardComponent implements AfterViewInit {
       }
       else {
         this.noInternetConnection = true;
-        this.StudentId = tokenStorage.getStudentId();
+       
       }
     })
+    this.StudentId = tokenStorage.getStudentId();
   }
   toggleRightSidenav() {
     //console.log("this.sidenav",this.sidenav.)
