@@ -72,6 +72,7 @@ export class searchstudentComponent implements OnInit {
   StudentClassId = 0;
   StudentId = 0;
   StudentFamilyNFriendList = [];
+  StudentOfClass = [];
   studentSearchForm: UntypedFormGroup;
   filteredStudents: Observable<IStudent[]>;
   filteredFathers: Observable<IStudent[]>;
@@ -152,7 +153,12 @@ export class searchstudentComponent implements OnInit {
 
     }
 
-
+    this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(Name => Name ? this._filter(Name) : this.StudentOfClass.slice())
+      );
     // this.StudentSearch.forEach(fr=>{
     //   this.studentSearchForm.patchValue({[fr.Text]:fr.Value})
     // })
@@ -161,7 +167,7 @@ export class searchstudentComponent implements OnInit {
   private _filter(name: string): IStudent[] {
 
     const filterValue = name.toLowerCase();
-    return this.Students.filter(option => option.Name.toLowerCase().includes(filterValue));
+    return this.StudentOfClass.filter(option => option.Name.toLowerCase().includes(filterValue));
 
   }
   private _filterF(name: string): IStudent[] {
@@ -272,8 +278,13 @@ export class searchstudentComponent implements OnInit {
       && this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() != 'student') {
       this.studentSearchForm.patchValue({ searchClassId: searchObj[0].Value })
       var searchSectionIdObj = this.StudentSearch.filter(f => f.Text == 'SectionId');
-      if (searchSectionIdObj.length > 0 && searchSectionIdObj[0].Value > 0)
+      if (searchSectionIdObj.length > 0 && searchSectionIdObj[0].Value > 0) {
         this.studentSearchForm.patchValue({ searchSectionId: searchSectionIdObj[0].Value })
+        this.StudentOfClass = this.Students.filter(f => f.ClassId == searchObj[0].Value && f.SectionId == searchSectionIdObj[0].Value);
+      }
+      else
+        this.StudentOfClass = this.Students.filter(f => f.ClassId == searchObj[0].Value);
+
       var searchFatherObj = this.StudentSearch.filter(f => f.Text == 'FatherName');
       if (searchFatherObj.length > 0 && searchFatherObj[0].Value > 0) {
         var selectedFatherObj = this.Students.filter(f => f.FatherName.includes(searchFatherObj[0].Value))
@@ -321,7 +332,7 @@ export class searchstudentComponent implements OnInit {
     debugger;
     let StudentName = element.Name;
 
-    let studentclass:any = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
+    let studentclass: any = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0) {
       var _clsName = '';
       var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
@@ -338,7 +349,7 @@ export class searchstudentComponent implements OnInit {
     var StudentDetail = '"StudentName":"' + StudentName + '","ClassName":"' + _clsName + '", "Section":"' + _sectionName + '","RollNo":"' + studentclass[0].RollNo + '"';
     localStorage.setItem("StudentDetail", StudentDetail + "");
     //this.shareddata.ChangeStudentName(StudentName);
-    this.token.saveStudentClassId(this.StudentClassId+"");
+    this.token.saveStudentClassId(this.StudentClassId + "");
     this.SaveIds(element);
     this.route.navigate(['/edu/progressreport/']);
   }
@@ -363,12 +374,12 @@ export class searchstudentComponent implements OnInit {
     this.token.saveStudentId(this.StudentId + "");
 
   }
-  StudentOfClass=[];
+
   ClearData() {
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
-     var _classId = this.studentSearchForm.get("searchClassId").value;
-     this.StudentOfClass = this.Students.filter(f=>f.ClassId == _classId);
+    var _classId = this.studentSearchForm.get("searchClassId").value;
+    this.StudentOfClass = this.Students.filter(f => f.ClassId == _classId);
     // var _students = [];
     // if (_classId > 0)
     //   _students = this.StudentList.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId)
@@ -377,10 +388,10 @@ export class searchstudentComponent implements OnInit {
     // this.Students = [];
     // this.AssignNameClassSection(_students);
   }
-  SelectStudent(){
+  SelectStudent() {
     var _classId = this.studentSearchForm.get("searchClassId").value;
     var _sectionId = this.studentSearchForm.get("searchSectionId").value;
-     this.StudentOfClass = this.Students.filter(f=>f.ClassId == _classId && f.SectionId == _sectionId);
+    this.StudentOfClass = this.Students.filter(f => f.ClassId == _classId && f.SectionId == _sectionId);
   }
   generateDetail(element) {
     let StudentName = element.PID + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
@@ -777,12 +788,12 @@ export class searchstudentComponent implements OnInit {
       this.Students = [];
       this.AssignNameClassSection(_students);
 
-      this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
-        .pipe(
-          startWith(''),
-          map(value => typeof value === 'string' ? value : value.Name),
-          map(Name => Name ? this._filter(Name) : this.Students.slice())
-        );
+      //  this.filteredStudents  = this.studentSearchForm.get("searchStudentName").valueChanges
+      //     .pipe(
+      //       startWith(''),
+      //       map(value => typeof value === 'string' ? value : value.Name),
+      //       map(Name => Name ? this._filter(Name) : this.Students.slice())
+      //     );
       // this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
       //   .pipe(
       //     startWith(''),
@@ -806,9 +817,9 @@ export class searchstudentComponent implements OnInit {
       var _RollNo = '';
       var _name = '';
       var _className = '';
-      var _classId =0;
+      var _classId = 0;
       var _section = '';
-      var _sectionId =0;
+      var _sectionId = 0;
       var _studentClassId = 0;
       //var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
       //if (studentclassobj.length > 0) {
@@ -823,13 +834,13 @@ export class searchstudentComponent implements OnInit {
         if (_SectionObj.length > 0)
           _section = _SectionObj[0].MasterDataName;
         _RollNo = student.StudentClasses[0].RollNo == null ? '' : student.StudentClasses[0].RollNo;
-      _classId =student.StudentClasses[0].ClassId;
-      _sectionId = student.StudentClasses[0].SectionId;
+        _classId = student.StudentClasses[0].ClassId;
+        _sectionId = student.StudentClasses[0].SectionId;
       }
       student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
       var _lastname = student.LastName == null ? '' : " " + student.LastName;
       _name = student.FirstName + _lastname;
-      var _fullDescription = student.PID +"-"+ _name + "-" + _className + "-" + _section + "-" + _RollNo;
+      var _fullDescription = student.PID + "-" + _name + "-" + _className + "-" + _section + "-" + _RollNo;
       student.StudentClassId = _studentClassId;
       student.ClassId = _classId;
       student.RollNo = _RollNo;

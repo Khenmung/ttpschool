@@ -14,6 +14,7 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
+            <div style="margin-right:15px">or</div>
             <mat-form-field appearance="outline" [style.width.px]="150">
                 <mat-label>Father</mat-label>
                 <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">
@@ -86,13 +87,27 @@
                 {{element.Name}}
             </mat-cell>
         </ng-container>
-        <!-- <ng-container matColumnDef="ContactNo">
+        <ng-container matColumnDef="FatherName">
+            <mat-header-cell *matHeaderCellDef>Father
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.FatherName}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="MotherName">
+            <mat-header-cell *matHeaderCellDef>Mother
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.MotherName}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="ContactNo">
             <mat-header-cell *matHeaderCellDef>Contact No.
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 {{element.ContactNo}}
             </mat-cell>
-        </ng-container> -->
+        </ng-container>
         <ng-container matColumnDef="FeeType">
             <mat-header-cell *matHeaderCellDef>Fee Type
             </mat-header-cell>

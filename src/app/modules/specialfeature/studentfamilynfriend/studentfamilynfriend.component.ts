@@ -30,7 +30,7 @@ export class StudentfamilynfriendComponent implements OnInit {
   StudentFamilyNFriendList: IStudentFamilyNFriends[] = [];
   filteredOptions: Observable<IStudentFamilyNFriends[]>;
   dataSource: MatTableDataSource<IStudentFamilyNFriends>;
-  dataSourceSiblings:MatTableDataSource<any>;
+  dataSourceSiblings: MatTableDataSource<any>;
   allMasterData = [];
   StudentFamilyNFriends = [];
   FamilyRelationship = [];
@@ -69,6 +69,8 @@ export class StudentfamilynfriendComponent implements OnInit {
   searchForm: UntypedFormGroup;
   filteredFathers: Observable<IStudent[]>;
   filteredMothers: Observable<IStudent[]>;
+  UniqueFathers=[];
+  UniqueMothers=[];
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -119,13 +121,17 @@ export class StudentfamilynfriendComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.MotherName),
         map(Name => Name ? this._filterM(Name) : this.Students.slice())
       );
-    this.PageLoad();
+   
+      this.PageLoad();
 
   }
+  
   private _filterF(name: string): IStudent[] {
 
     const filterValue = name.toLowerCase();
-    return this.Students.filter(option => option.FatherName.toLowerCase().includes(filterValue));
+    //const unique = [...new Set(this.Students.map((item) => item.FatherName))];
+    //return unique;
+    return this.UniqueFathers.filter(option => option.FatherName.toLowerCase().includes(filterValue));
 
   }
   private _filterM(name: string): IStudent[] {
@@ -394,10 +400,12 @@ export class StudentfamilynfriendComponent implements OnInit {
       _fatherMotherFilter += " and FatherName eq '" + _fatherName + "'";
     if (_motherName != undefined)
       _fatherMotherFilter += " and MotherName eq '" + _motherName + "'";
-    if (_fatherMotherFilter.length > 0) {
+    if (_fatherMotherFilter.length > 0 && _ParentStudentId == undefined) {
       this.GetStudentFromCache();
     }
     else {
+      this.dataSourceSiblings = new MatTableDataSource([]);
+
       var _RelationshipId = this.searchForm.get("searchRelationshipId").value;
       if (_RelationshipId > 0)
         filterStr += ' and RelationshipId eq ' + _RelationshipId;
@@ -445,19 +453,21 @@ export class StudentfamilynfriendComponent implements OnInit {
         });
     }
   }
-  siblingsColumns=[];
+  siblingsColumns = [];
   GetStudentFromCache() {
     debugger;
-    this.siblingsColumns =["Name","FeeType","Remarks"]
+    this.siblingsColumns = ["Name","FatherName","MotherName", "ContactNo", "FeeType", "Remarks"]
+    this.StudentFamilyNFriendList =[];
     var _fatherName = this.searchForm.get("FatherName").value.FatherName;
     var _motherName = this.searchForm.get("MotherName").value.MotherName;
-    var _students: any =this.tokenstorage.getStudents();
+    var _students: any = this.tokenstorage.getStudents();
     if (_fatherName != undefined && _motherName != undefined)
       _students = _students.filter(f => f.FatherName == _fatherName && f.MotherName == _motherName);
     else if (_motherName != undefined && _fatherName == undefined)
       _students = _students.filter(f => f.MotherName == _motherName);
     else if (_motherName == undefined && _fatherName != undefined)
       _students = _students.filter(f => f.FatherName == _fatherName);
+    var result = [];
     _students.forEach(student => {
       var _RollNo = '';
       var _name = '';
@@ -488,14 +498,14 @@ export class StudentfamilynfriendComponent implements OnInit {
         var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
         _name = student.FirstName + _lastname;
         var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo// + "-" + student.ContactNo;
-        var result = [];
+
         result.push({
           StudentClassId: _studentClassId,
           StudentId: student.StudentId,
           Name: _fullDescription,
           FatherName: student.FatherName,
           MotherName: student.MotherName,
-          ParentStudentId: 0,
+          ContactNo: student.ContactNo,
           FeeType: _feeType,
           Remarks: _remarks
         });
@@ -590,7 +600,10 @@ export class StudentfamilynfriendComponent implements OnInit {
               });
             }
           })
-          this.Students.sort((a, b) => a.Name - b.Name);
+          this.Students = this.Students.sort((a, b) => a.Name - b.Name);
+          //this.UniqueFathers = [...new Set(this.Students.map((item) => item.FatherName))];
+          //this.UniqueMothers = [...new Set(this.Students.map((item) => item.MotherName))];
+        
         }
         this.loading = false; this.PageLoading = false;
       })
