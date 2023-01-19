@@ -627,13 +627,14 @@ export class StudentviewComponent implements OnInit {
       DOB: this.adjustDateForTimeOffset(this.studentForm.get("DOB").value),
       BloodgroupId: this.studentForm.get("Bloodgroup").value,
       CategoryId: this.studentForm.get("Category").value,
+      AccountHolderName:this.studentForm.get("AccountHolderName").value,
       BankAccountNo: this.studentForm.get("BankAccountNo").value,
       IFSCCode: this.studentForm.get("IFSCCode").value,
       MICRNo: this.studentForm.get("MICRNo").value,
       AdhaarNo: this.studentForm.get("AdhaarNo").value,
       Photo: this.studentForm.get("Photo").value,
       ReligionId: this.studentForm.get("Religion").value,
-      ContactNo: this.studentForm.get("ContactNo").value,
+      PersonalNo: this.studentForm.get("PersonalNo").value,
       WhatsAppNumber: this.studentForm.get("WhatsAppNumber").value,
       FatherContactNo: this.studentForm.get("FatherContactNo").value,
       MotherContactNo: this.studentForm.get("MotherContactNo").value,
@@ -902,13 +903,14 @@ export class StudentviewComponent implements OnInit {
             ];
 
             var BankAccountInfo = [
+              { Text: 'Account Holder Name', Value: stud.AccountHolderName },
               { Text: 'Bank Account No', Value: stud.BankAccountNo },
               { Text: 'IFSC Code', Value: stud.IFSCCode },
               { Text: 'MICR No.', Value: stud.MICRNo },
             ];
             var ContactInfo = [
               { Text: 'Adhaar No.', Value: stud.AdhaarNo },
-              { Text: 'Contact No.', Value: stud.ContactNo },
+              { Text: 'Personal No.', Value: stud.PersonalNo },
               { Text: 'WhatsApp Number', Value: stud.WhatsAppNumber },
               { Text: 'Father Contact No.', Value: stud.FatherContactNo },
               { Text: 'Mother Contact No.', Value: stud.MotherContactNo },

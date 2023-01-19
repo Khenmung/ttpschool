@@ -166,13 +166,14 @@ export class studentprimaryinfoComponent implements OnInit {
       Bloodgroup: [0, [Validators.required]],
       Category: [0, [Validators.required]],
       ClassAdmissionSought: [0, [Validators.required]],
-      Religion: [0, [Validators.required]],
+      Religion: [0, [Validators.required]],      
+      AccountHolderName: [''],
       BankAccountNo: [''],
       IFSCCode: [''],
       MICRNo: [''],
       AdhaarNo: [''],
       Photo: [''],
-      ContactNo: ['', [Validators.required]],
+      PersonalNo: ['', [Validators.required]],
       WhatsAppNumber: [''],
       FatherContactNo: [''],
       MotherContactNo: [''],
@@ -414,13 +415,14 @@ export class studentprimaryinfoComponent implements OnInit {
       DOB: this.adjustDateForTimeOffset(this.studentForm.get("DOB").value),
       BloodgroupId: this.studentForm.get("Bloodgroup").value,
       CategoryId: this.studentForm.get("Category").value,
+      AccountHolderName: this.studentForm.get("AccountHolderName").value,
       BankAccountNo: this.studentForm.get("BankAccountNo").value,
       IFSCCode: this.studentForm.get("IFSCCode").value,
       MICRNo: this.studentForm.get("MICRNo").value,
       AdhaarNo: this.studentForm.get("AdhaarNo").value,
       Photo: this.studentForm.get("Photo").value,
       ReligionId: this.studentForm.get("Religion").value,
-      ContactNo: this.studentForm.get("ContactNo").value,
+      PersonalNo: this.studentForm.get("PersonalNo").value,
       WhatsAppNumber: this.studentForm.get("WhatsAppNumber").value,
       FatherContactNo: this.studentForm.get("FatherContactNo").value,
       MotherContactNo: this.studentForm.get("MotherContactNo").value,
@@ -546,6 +548,7 @@ export class studentprimaryinfoComponent implements OnInit {
   getFields(pModuleName) {
     this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
+      debugger;
         var _baseReportId = 0;
         if (data.value.length > 0) {
           _baseReportId = data.value.filter(f => f.ReportName == 'Reports' && f.ParentId == 0)[0].ReportConfigItemId;
@@ -562,7 +565,7 @@ export class studentprimaryinfoComponent implements OnInit {
             _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId;
           }
 
-          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId)
+          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId && f.OrgId==this.loginUserDetail[0]["orgId"])
 
         }
 
@@ -612,12 +615,13 @@ export class studentprimaryinfoComponent implements OnInit {
               Bloodgroup: stud.BloodgroupId,
               Category: stud.CategoryId,
               Religion: stud.ReligionId,
+              AccountHolderName:stud.AccountHolderName,
               BankAccountNo: stud.BankAccountNo,
               IFSCCode: stud.IFSCCode,
               MICRNo: stud.MICRNo,
               AdhaarNo: stud.AdhaarNo,
               Photo: stud.Photo,
-              ContactNo: stud.ContactNo,
+              PersonalNo: stud.PersonalNo,
               WhatsAppNumber: stud.WhatsAppNumber,
               FatherContactNo: stud.FatherContactNo,
               MotherContactNo: stud.MotherContactNo,

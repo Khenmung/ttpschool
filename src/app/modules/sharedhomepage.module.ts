@@ -12,6 +12,7 @@ import { MultiLevelMenuModule } from './dynamicMultiLevelMenu/MultiLevelMenu.mod
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MyFilterPipe } from '../shared/FilterPipe';
+//import { EmployeeattendanceboardComponent } from './employeeattendance/employeeattendanceboard/employeeattendanceboard.component';
 
 const sharedHomeComponent = [
   HomeComponent,
@@ -26,7 +27,9 @@ const sharedHomeComponent = [
 
 @NgModule({
   declarations: [
-    sharedHomeComponent],
+    sharedHomeComponent,
+    //EmployeeattendanceboardComponent
+  ],
   imports: [
     CommonModule,
     MaterialModule,

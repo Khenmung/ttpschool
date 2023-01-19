@@ -9,7 +9,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import alasql from 'alasql';
 import { evaluate } from 'mathjs';
 import { AuthService } from '../_services/auth.service';
-import { environment } from 'src/environments/environment';
+//import { environment } from 'src/environments/environment';
+import * as moment from 'moment';
+import { ActivatedRoute, Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +30,9 @@ export class ContentService implements OnInit {
     private tokenService: TokenStorageService,
     private http: HttpClient,
     private dataservice: NaomitsuService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    //private route: Router,
+    //private contentservice:ContentService
   ) { }
   ngOnInit(): void {
 
@@ -448,6 +452,41 @@ export class ContentService implements OnInit {
       return [];
 
   }
+  getDropDownDataNoConfidentail(dropdowntype, token, pAllMasterData) {
+    let Id = 0;
+    let Ids = pAllMasterData.filter((item, indx) => item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase());//globalconstants.GENDER
+    //let Permission = '';
+    if (Ids.length > 0) {
+      Id = Ids[0].MasterDataId;
+      var dropvalues = pAllMasterData.filter(item => item.ParentId == Id);
+      //var confidentialdatalist = dropvalues.filter(f => f.Confidential == 1)
+      // for (var i = 0; i < dropvalues.length; i++) {
+      //   if (dropvalues[i].Confidential) {
+
+      //     var perObj = globalconstants.getPermission(token, dropvalues[i].MasterDataName);
+      //     if (perObj.length > 0) {
+      //       Permission = perObj[0].permission;
+      //       if (Permission == 'deny') {
+      //         dropvalues.splice(i, 1);
+      //         i--;
+      //       }
+      //     }
+      //     else {
+      //       dropvalues.splice(i, 1);
+      //       i--;
+      //     }
+      //   }
+      // }
+      dropvalues.forEach(d => {
+        d.Sequence = d.Sequence == 0 ? 100 : d.Sequence;
+      });
+      var result = dropvalues.sort((a, b) => a.Sequence - b.Sequence);
+      return result;
+    }
+    else
+      return [];
+
+  }
   getConfidentialData(token, pClassSubject, pColumnName) {
     //let Id = 0;
     //let  = pClassSubject.filter((item, indx) => item.ClassName.toLowerCase() + "-" + item.SubjectName.toLowerCase()== dropdowntype.toLowerCase());//globalconstants.GENDER
@@ -824,6 +863,49 @@ export class ContentService implements OnInit {
         }
       })
   }
+
+  // GetOrgExpiry(pLoginUserDetail) {
+  //   let list: List = new List();
+  //   list.fields = ["OrganizationId", "OrganizationName", "ValidTo", "ValidFrom"];
+  //   list.PageName = "Organizations";
+  //   list.filter = ["Active eq 1 and OrganizationId eq " + pLoginUserDetail[0]["orgId"]];
+  //   //debugger;
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       if (data.value.length > 0) {
+  //         var _validTo = new Date(data.value[0].ValidTo);//
+  //         _validTo.setHours(0, 0, 0, 0);
+  //         var _today = new Date();//
+  //         _today.setHours(0, 0, 0, 0);
+  //         var _roleName = pLoginUserDetail[0]['RoleUsers'][0].role;
+  //         const diffTime = Math.abs(_validTo.getTime() - _today.getTime());
+  //         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  //         //console.log("diffDays", diffDays)
+  //         var alertDate = localStorage.getItem("alertdate");
+  //         var todaystring = moment(new Date()).format('DD-MM-YYYY')
+
+  //         // var days = new Date(_validTo) - new Date(_today);
+  //         if (diffDays < 0) {
+  //           this.tokenService.signOut();
+  //           this.contentservice.openSnackBar("Login expired! Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
+  //           //setTimeout(() => {
+  //           this.route.navigate(['/auth/login'])
+  //           //}, 3000);
+  //         }
+  //         else if (diffDays < 6 && alertDate != todaystring && _roleName.toLowerCase() == 'admin') {
+  //           localStorage.setItem("alertdate", todaystring);
+  //           var msg = '';
+  //           if (diffDays == 0)
+  //             msg = "Your plan is expiring today";
+  //           else if (diffDays == 1)
+  //             msg = "Your plan is expiring tommorrow.";
+  //           else
+  //             msg = "Your plan is expiring within " + diffDays + " days. i.e on " + moment(_validTo).format('DD/MM/YYYY');
+  //           this.contentservice.openSnackBar(msg, globalconstants.ActionText, globalconstants.GreenBackground);
+  //         }
+  //       }
+  //     })
+  // }
   GetPermittedAppId(appShortName) {
     var appId = 0;
     var apps = this.tokenService.getPermittedApplications();

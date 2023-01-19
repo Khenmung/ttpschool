@@ -47,7 +47,7 @@
                         <mat-label>Teacher</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.EmployeeId"
                             [value]="element.EmployeeId">
-                      
+
                             <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
                                 {{option.TeacherName}}
                             </mat-option>
@@ -103,14 +103,20 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
-                        mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                    <button style="margin-right: 15px;" [disabled]="loading || !element.Action || Permission=='read'"
+                        matTooltip="save" mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                         <mat-icon *ngIf="loading">
                             <mat-spinner diameter="20" color="Blue"></mat-spinner>
                         </mat-icon>
                     </button>
-
+                    <button [disabled]="loading || !element.Action || Permission!='rwd' || element.TeacherSubjectId==0"
+                        matTooltip="delete" mat-raised-button color="accent" (click)="Delete(element)">
+                        <mat-icon>delete</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

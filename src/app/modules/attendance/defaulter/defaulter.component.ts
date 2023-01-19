@@ -66,7 +66,7 @@ export class DefaulterComponent implements OnInit {
   displayedColumns = [
     'ClassName',
     'StudentRollNo',
-    'ContactNo',
+    'PersonalNo',
     'AbsentCount',
     //'ClassSubject',
     //'Approved',    
@@ -320,13 +320,13 @@ export class DefaulterComponent implements OnInit {
               RollNo: sc.StudentClasses[0].RollNo,
               StudentRollNo: sc.StudentClasses[0].RollNo + "-" + sc.FirstName + _lastname,
               ClassName: _className,
-              ContactNo: sc.ContactNo,
+              PersonalNo: sc.PersonalNo,
               ClassSequence: sc.ClassSequence
             });
           })
         })
 
-        this.StudentAttendanceList = alasql("select sum(1) AbsentCount,StudentRollNo,ClassName,ContactNo,ClassSequence from ? group by StudentRollNo,ClassName,ContactNo,ClassSequence", [this.StudentAttendanceList])
+        this.StudentAttendanceList = alasql("select sum(1) AbsentCount,StudentRollNo,ClassName,PersonalNo,ClassSequence from ? group by StudentRollNo,ClassName,PersonalNo,ClassSequence", [this.StudentAttendanceList])
         this.StudentAttendanceList = this.StudentAttendanceList.filter(d => d["AbsentCount"] >= _AbsentDays);
         if (this.StudentAttendanceList.length == 0)
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -480,8 +480,9 @@ export class DefaulterComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -523,7 +524,7 @@ export interface IStudentAttendance {
   ClassSubjectId: number;
   ClassSubject: string;
   StudentRollNo: string;
-  ContactNo: string;
+  PersonalNo: string;
   ClassName: string;
   Approved: boolean;
   ClassSequence: number;

@@ -591,7 +591,8 @@ export class SchooltimetableComponent implements OnInit {
   }
   GetClassSubject() {
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     //+ ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();

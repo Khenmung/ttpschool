@@ -49,6 +49,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   StandardFilterWithPreviousBatchId = '';
   SameClassPreviousBatch = "SameClassPreviousBatch";
   PreviousClassPreviousBatch = "PreviousClassPreviousBatch";
+  SameClassPreviousBatchLabel = "";
+  PreviousClassPreviousBatchLabel = "";
   HeaderTitle = '';
   loading = false;
   RollNoGeneration = [];
@@ -85,11 +87,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    'AdmissionNo',
     'StudentName',
     'GenderName',
     'Remark',
-    'ClassName',
+    'AdmissionNo',
+    'ClassId',
     'SectionId',
     'RollNo',
     'FeeTypeId',
@@ -387,7 +389,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             AadharNo: stud.Student.AadharNo,
             Photo: stud.Student.Photo,
             Religion: stud.Student.Religion,
-            ContactNo: stud.Student.ContactNo,
+            PersonalNo: stud.Student.PersonalNo,
             WhatsAppNumber: stud.Student.WhatsAppNumber,
             FatherContactNo: stud.Student.FatherContactNo,
             MotherContactNo: stud.Student.MotherContactNo,
@@ -521,7 +523,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       var SameClassPreviousBatchData = [];
       var ExistingData = [];
       this.StudentClassList = [];
-      this.HeaderTitle = 'Same Class From Previous Batch'
+      this.HeaderTitle = this.SameClassPreviousBatchLabel;
       this.GetStudentClasses(this.SameClassPreviousBatch)
         .subscribe((data: any) => {
           //SameClassPreviousBatchData = [...data.value];
@@ -544,7 +546,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             var _lastname = s.Student.LastName == null ? '' : " " + s.Student.LastName;
             SameClassPreviousBatchData.push({
               StudentClassId: 0,
-              ClassId: _classId,
+              ClassId: s.ClassId,
               StudentId: s.StudentId,
               StudentName: s.Student.FirstName + _lastname,
               ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
@@ -591,11 +593,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     }
     if (this.PreviousBatchId == -1) {
       this.StudentClassList = [];
-      this.dataSource = new MatTableDataSource<IStudentClass>();
+      this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
       this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
 
     } else {
-      this.HeaderTitle = 'From Previous Class and Previous Batch'
+      this.HeaderTitle = this.PreviousClassPreviousBatchLabel;
       var PreviousClassAndPreviousBatchData = [];
       this.StudentClassList = [];
       var ExistingData = [];
@@ -622,7 +624,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             var _lastname = s.Student.LastName == null ? '' : " " + s.Student.LastName;
             PreviousClassAndPreviousBatchData.push({
               StudentClassId: 0,
-              ClassId: _classId,
+              ClassId: s.ClassId,
               StudentId: s.StudentId,
               StudentName: s.Student.FirstName + _lastname,
               ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
@@ -659,6 +661,33 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         })
     }
   }
+  SetLabel() {
+    let _classId = this.searchForm.get("searchClassId").value;
+    let _previousBathId = +this.tokenstorage.getPreviousBatchId();
+    let _currentClassIndex = this.Classes.findIndex(s => s.ClassId == _classId);
+    let _previousClassName = '', _sameClassName;
+    if (_currentClassIndex > 0)
+      _previousClassName = this.Classes[_currentClassIndex - 1].ClassName;
+    _sameClassName = this.Classes[_currentClassIndex].ClassName;
+    let _previousBatchName = '';
+    if (_previousBathId > 0)
+      _previousBatchName = this.Batches.filter(f => f.BatchId == _previousBathId)[0].BatchName;
+
+    if (_previousBathId > -1 && _currentClassIndex > 0) {
+
+
+      this.PreviousClassPreviousBatchLabel = _previousClassName + " from " + _previousBatchName;
+      this.SameClassPreviousBatchLabel = _sameClassName + " from " + _previousBatchName;
+    }
+    else if (_previousBathId > -1 && _currentClassIndex == 0) {
+      this.PreviousClassPreviousBatchLabel = "";
+      this.SameClassPreviousBatchLabel = _sameClassName + " from " + _previousBatchName;
+    }
+    else {
+      this.PreviousClassPreviousBatchLabel = "";
+      this.SameClassPreviousBatchLabel = "";
+    }
+  }
   GetStudentClasses(previousbatch) {
 
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -667,14 +696,14 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     var _FeeTypeId = this.searchForm.get("searchFeeTypeId").value;
 
     //this.HeaderTitle = '';
-
+    var classIdIndex = this.Classes.findIndex(s => s.ClassId == _classId);
     if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
       filterStr = this.StandardFilterWithPreviousBatchId;
       filterStr += " and ClassId eq " + _classId;
     }
     else if (previousbatch == this.PreviousClassPreviousBatch) {
       filterStr = this.StandardFilterWithPreviousBatchId;
-      var classIdIndex = this.Classes.findIndex(s => s.ClassId == _classId);
+
       var previousClassId = 0;
       if (classIdIndex > 0)//means not if first element
       {
@@ -687,6 +716,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         //return;
       }
     }
+
     else {
       filterStr = this.StandardFilterWithBatchId;
       if (_classId > 0)
@@ -699,8 +729,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     if (this.searchForm.get("searchSectionId").value > 0)
       filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
     //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
-    if (filterStr.length == 0) {
+    if (classIdIndex == 0 && previousbatch == this.PreviousClassPreviousBatch) {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Previous class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+      return null;
+    }
+    else if (filterStr.length == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return null;
@@ -728,6 +762,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     }
   }
   GetData(previousbatch) {
+    this.HeaderTitle = '';
     this.GetStudentClasses('')
       .subscribe((StudentClassesdb: any) => {
         var result;
@@ -761,7 +796,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             PID: s.Student.PID,
             StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
             AdmissionNo: s.AdmissionNo,
-            AdmissionDate:s.AdmissionDate,
+            AdmissionDate: s.AdmissionDate,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
             StudentName: s.Student.FirstName + _lastname,
@@ -848,7 +883,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.loading = true;
 
     let checkFilterString = "StudentId eq " + row.StudentId + ' and BatchId eq ' + this.SelectedBatchId //"ClassId eq " + row.ClassId +
-      
+
 
     if (row.StudentClassId > 0)
       checkFilterString += " and StudentClassId ne " + row.StudentClassId;
@@ -863,7 +898,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false; this.PageLoading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Student already exist in this batch.", globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
         }
@@ -887,11 +922,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.StudentClassData.RollNo = row.RollNo;
               this.StudentClassData.SectionId = row.SectionId;
               this.StudentClassData.Remarks = row.Remarks;
-              this.StudentClassData.AdmissionNo = !row.AdmissionNo ? _year + ClassStrength : row.AdmissionNo;
+              this.StudentClassData.AdmissionNo = row.AdmissionNo;
 
               this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
               this.StudentClassData.BatchId = this.SelectedBatchId;
               if (this.StudentClassData.StudentClassId == 0) {
+                this.StudentClassData.AdmissionNo = _year + ClassStrength;
                 this.StudentClassData["AdmissionDate"] = new Date();
                 this.StudentClassData["CreatedDate"] = new Date();
                 this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -1085,7 +1121,7 @@ export interface IStudentClass {
   PID: number;
   StudentClassId: number;
   AdmissionNo: string;
-  AdmissionDate:Date;
+  AdmissionDate: Date;
   ClassId: number;
   ClassName: string;
   StudentId: number;

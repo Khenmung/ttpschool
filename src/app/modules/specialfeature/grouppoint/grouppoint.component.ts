@@ -280,7 +280,7 @@ export class GrouppointComponent implements OnInit {
           _RollNo = studentclassobj[0].RollNo;
           var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
           _name = student.FirstName + _lastname;
-          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.PersonalNo;
           this.Students.push({
             StudentClassId: _studentClassId,
             StudentId: student.StudentId,

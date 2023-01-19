@@ -152,22 +152,22 @@ export class LedgerBalanceComponent implements OnInit {
     row.Active = event.checked ? 1 : 0;
     row.Action = true;
   }
-  addnew() {
-    var newdata = {
-      AccountingVoucherId: 0,
-      DocDate: new Date(),
-      PostingDate: new Date(),
-      Reference: '',
-      LedgerId: 0,
-      Debit: false,
-      Amount: '',
-      ShortText: '',
-      Active: 0,
-      Action: true
-    }
-    //this.AccountingVoucherList.push(newdata);
-    this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
-  }
+  // addnew() {
+  //   var newdata = {
+  //     AccountingVoucherId: 0,
+  //     DocDate: new Date(),
+  //     PostingDate: new Date(),
+  //     Reference: '',
+  //     LedgerId: 0,
+  //     Debit: false,
+  //     Amount: '',
+  //     ShortText: '',
+  //     Active: 0,
+  //     Action: true
+  //   }
+  //   //this.AccountingVoucherList.push(newdata);
+  //   this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
+  // }
 
   GetAccountingVoucher() {
     let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];

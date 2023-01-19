@@ -11,6 +11,8 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-classsubjectdetail',
@@ -74,6 +76,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     SubjectTypeId: 0,
     SubjectCategoryId: 0,
     Confidential: 0,
+    BatchId:0,
     Active: 1
   };
   displayedColumns = [
@@ -96,7 +99,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
+    private dialog:MatDialog,
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -245,8 +248,8 @@ export class ClassSubjectDetailComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class/course", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
-    filterStr += ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    filterStr += ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     // if (previousbatch == 1)
     //   filterStr += ' and ' + this.StandardFilterWithPreviousBatchId;
     // else
@@ -374,17 +377,50 @@ export class ClassSubjectDetailComponent implements OnInit {
 
     //     });
   }
-  delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+  Delete(row) {
 
-        });
+    this.openDialog(row)
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch(this.ClassSubjectListName, toUpdate, row.ClassSubjectId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; 
+        this.PageLoading = false;
+        var idx = this.ClassSubjectList.findIndex(x => x.ClassSubjectId == row.ClassSubjectId)
+        this.ClassSubjectList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.ClassSubjectList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
   }
   updateSelectHowMany(row) {
     //debugger;
@@ -429,7 +465,8 @@ export class ClassSubjectDetailComponent implements OnInit {
     }
 
     let checkFilterString = "ClassId eq " + row.ClassId +
-      " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
+    " and BatchId eq " + this.SelectedBatchId +
+    " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
     // " and Active eq " + row.Active +
 
 
@@ -464,7 +501,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           this.ClassSubjectData.SubjectCategoryId = row.SubjectCategoryId;
           //      this.ClassSubjectData.TeacherId = row.TeacherId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          //this.ClassSubjectData.BatchId = this.SelectedBatchId;
+          this.ClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.ClassSubjectData.ClassSubjectId == 0) {
             this.ClassSubjectData["CreatedDate"] = new Date();
             this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];

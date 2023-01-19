@@ -188,8 +188,8 @@ export class VerifyResultsComponent implements OnInit {
 
   GetClassSubject() {
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-
+    //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
@@ -547,8 +547,13 @@ export class VerifyResultsComponent implements OnInit {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentSubjectResult = [];
     this.ExamStudentSubjectGrading = [];
+
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = "Active eq 1 and ExamId eq " + pExamId;
+    var filterstr = "Active eq 1 and ExamId eq " + pExamId +
+      " and ClassId eq " + pClassId
+    if (pSectionId > 0)
+      filterstr += " and SectionId eq " + pSectionId;
+
 
     let list: List = new List();
     list.fields = [
@@ -1252,7 +1257,20 @@ export class VerifyResultsComponent implements OnInit {
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
   }
-
+  GetDropDownWithNoConfidential(dropdowntype) {
+    let Id = 0;
+    let Ids = this.allMasterData.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    })
+    if (Ids.length > 0) {
+      Id = Ids[0].MasterDataId;
+      return this.allMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      })
+    }
+    else
+      return [];
+  }
 }
 export interface IExamStudentSubjectResult {
   ExamStudentSubjectResultId: number;

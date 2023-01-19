@@ -67,7 +67,7 @@ export class AbsentListComponent implements OnInit {
     'ClassName',
     'StudentRollNo',
     'AttendanceDate',
-    'ContactNo',
+    'PersonalNo',
     'ClassSubject',
     'Remarks',
     'ReportedTo',
@@ -370,7 +370,7 @@ export class AbsentListComponent implements OnInit {
               Remarks: sc.Remarks,
               RollNo: _student[0].StudentClasses[0].RollNo,
               StudentRollNo: _student[0].StudentClasses[0].RollNo + "-" + _student[0].FirstName + " " + (_student[0].LastName == null ? '' : _student[0].LastName) + _section,
-              ContactNo: _student[0].ContactNo,
+              PersonalNo: _student[0].PersonalNo,
               ClassSequence: sc.ClassSequence
             });
 
@@ -531,8 +531,9 @@ export class AbsentListComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -583,7 +584,7 @@ export interface IStudentAttendance {
   ClassSubject: string;
   AttendanceDate: Date;
   StudentRollNo: string;
-  ContactNo: string;
+  PersonalNo: string;
   ClassName: string;
   Approved: boolean;
   ReportedTo: number;

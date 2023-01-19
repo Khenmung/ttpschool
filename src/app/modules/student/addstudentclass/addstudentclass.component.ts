@@ -71,7 +71,7 @@ export class AddstudentclassComponent implements OnInit {
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
     var today = new Date();
     this.studentclassForm = this.fb.group({
-      AdmissionNo: [{ value: '', disabled: true }],
+      //AdmissionNo: [{ value: '', disabled: true }],
       StudentName: [{ value: this.StudentName, disabled: true }],
       ClassId: [0, [Validators.required]],
       SectionId: [0],
@@ -296,13 +296,14 @@ export class AddstudentclassComponent implements OnInit {
             this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
             this.studentclassData.SectionId = this.studentclassForm.value.SectionId;
             this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
-            this.studentclassData.AdmissionNo = !_admissionNo ?_year + ClassStrength : _admissionNo;
+            this.studentclassData.AdmissionNo = _admissionNo;// ?_year + ClassStrength : _admissionNo;
             this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
             this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
             this.studentclassData.OrgId = this.LoginUserDetail[0]["orgId"];
             this.studentclassData.StudentId = this.StudentId;
             if (!this.StudentClassId || this.StudentClassId == 0) {
               this.StudentClassId = 0;
+              this.studentclassData.AdmissionNo = _year + ClassStrength;
               this.insert();
             }
             else {

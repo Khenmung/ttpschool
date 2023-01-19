@@ -97,7 +97,7 @@ export class JournalEntryComponent implements OnInit {
     })
     this.searchForm = this.fb.group({
       searchGeneralLedgerId: [0],
-      //searchReferenceId: [''],
+      searchReference: [''],
       searchShortText: [''],
       //searchPostingDate:[new Date()]
     });
@@ -139,22 +139,30 @@ export class JournalEntryComponent implements OnInit {
   displayFn(ledger: IGeneralLedger): string {
     return ledger && ledger.GeneralLedgerName ? ledger.GeneralLedgerName : '';
   }
-  addnew(debit) {
+  TransactionMode=true;
+  addnew(mode) {
+    this.TransactionMode = mode;
+    if(this.TransactionMode)
+    {
+      this.reference =''
+    }
+  
     //var debitcredit = debit == 'debit' ? 0 : 1
     var newdata = {
       AccountingVoucherId: 0,
       DocDate: new Date(),
       PostingDate: new Date(),
-      Reference: '',
+      Reference: this.reference,
       FeeReceiptId: 0,
       ParentId: 0,
       ClassFeeId: 0,
       LedgerId: 0,
+      GeneralLedgerName:'',
       GeneralLedgerAccountId: this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId,
       Debit: false,
       BaseAmount: 0,
       Amount: 0,
-      ShortText: this.searchForm.get("searchShortText").value,
+      ShortText: '',
       Active: 0,
       Action: true
     }
@@ -179,9 +187,9 @@ export class JournalEntryComponent implements OnInit {
     // if (referenceId != null && referenceId != "") {
     //   filterStr += " and Reference eq '" + referenceId + "'"
     // }
-    var shorttext = this.searchForm.get("searchShortText").value;
-    if (shorttext != "") {
-      filterStr += " and ShortText eq '" + shorttext + "'"
+    var searchReference = this.searchForm.get("searchReference").value;
+    if (searchReference != "") {
+      filterStr += " and Reference eq '" + searchReference + "'"
     }
 
     let list: List = new List();
@@ -211,25 +219,34 @@ export class JournalEntryComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AccountingVoucherList = [...data.value];
-        if (this.AccountingVoucherList.length == 0) {
-          this.addnew('debit');
-        }
-        else {
+        // if (this.AccountingVoucherList.length == 0) {
+        //   this.addnew(true);
+        // }
+        // else {
           //var shorttext = this.searchForm.get("searchShortText").value;
-          if (shorttext == '')
-            this.searchForm.patchValue({
-              searchShortText: this.AccountingVoucherList[0].ShortText
-            });
+          // if (searchReference == '')
+          //   this.searchForm.patchValue({
+          //     searchShortText: this.AccountingVoucherList[0].ShortText
+          //   });
           // if (referenceId == '')
           //   this.searchForm.patchValue({
           //     searchReferenceId: this.AccountingVoucherList[0].Reference
           //   });
+          if(this.AccountingVoucherList.length==0)
+          {
+            this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+          }
           this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
           this.dataSource.paginator = this.paginator;
-        }
+        //}
 
         this.loading = false; this.PageLoading = false;
       });
+  }
+  filterAccount(name: string) {
+    return name && this.GeneralLedgers.filter(
+      account => account.GeneralLedgerName.toLowerCase().includes(name?.toLowerCase())
+    ) || this.GeneralLedgers;
   }
   onBlur(row) {
     row.Action = true;
@@ -261,11 +278,12 @@ export class JournalEntryComponent implements OnInit {
   ClearShorttext() {
     this.searchForm.patchValue({ "searchShortText": "" });
   }
+  reference ='';
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     var errorMessage = '';
-    var reference = '';
+    //var reference = '';
     if (row.GeneralLedgerAccountId == 0)
       errorMessage += 'Please select one of the accounts<br>';
     if (row.Reference == '') {
@@ -273,10 +291,11 @@ export class JournalEntryComponent implements OnInit {
       return;
     }
     else
-      reference = row.Reference;
+      this.reference = row.Reference;
 
     if (row.ShortText.length == 0) {
-      this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      errorMessage += 'Please enter description.<br>';
+      //this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.Amount > 1000000 || row.Amount < -1000000)
@@ -290,7 +309,7 @@ export class JournalEntryComponent implements OnInit {
     }
 
     let checkFilterString = "GeneralLedgerAccountId eq " + row.GeneralLedgerAccountId +
-      " and Reference eq '" + reference + "'";
+      " and Reference eq '" + this.reference + "'";
 
 
     if (row.AccountingVoucherId > 0)
@@ -317,7 +336,7 @@ export class JournalEntryComponent implements OnInit {
           this.AccountingVoucherData.DocDate = row.DocDate;
           this.AccountingVoucherData.Debit = row.Debit;
           this.AccountingVoucherData.PostingDate = row.PostingDate;
-          this.AccountingVoucherData.Reference = reference;
+          this.AccountingVoucherData.Reference = this.reference;
           this.AccountingVoucherData.LedgerId = row.LedgerId;
           this.AccountingVoucherData.GeneralLedgerAccountId = row.GeneralLedgerAccountId;
           this.AccountingVoucherData.ClassFeeId = 0;
@@ -426,6 +445,7 @@ export interface IAccountingVoucher {
   Reference: string;
   LedgerId: number;
   GeneralLedgerAccountId: number;
+  GeneralLedgerName:string;
   ParentId: number;
   Debit: boolean;
   Amount: number;

@@ -25,15 +25,20 @@
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>
-    <!-- <mat-form-field appearance="outline" [style.width.px]="350">
-        <mat-label>Short Text</mat-label>
-        <input type="text" matInput formControlName="searchShortText" [maxlength]="250" autocomplete="Off">
-    </mat-form-field> -->
-    <button [disabled]="loading" mat-raised-button color="accent" (click)="GetAccountingVoucher()">
+    <mat-form-field appearance="outline" [style.width.px]="150">
+        <mat-label>Reference</mat-label>
+        <input type="text" matInput formControlName="searchReference" [maxlength]="50" autocomplete="Off">
+    </mat-form-field>
+    <button [disabled]="loading" style="margin-right:15px" mat-raised-button color="accent"
+        (click)="GetAccountingVoucher()">
         <mat-icon>search</mat-icon>
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20" color="Blue"></mat-spinner>
         </mat-icon>
+    </button>
+    <button [disabled]="loading || Permission=='read'" matTooltip="new entry" class="mat-raised-button"
+        (click)="addnew(true)" fxFlex="10">
+        <mat-icon>add</mat-icon>
     </button>
 </form>
 
@@ -56,7 +61,7 @@
         <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Posting Date
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" [style.width.px]="120">
                 <mat-label>Posting Date</mat-label>
                 <input [(ngModel)]="element.PostingDate" [value]="element.PostingDate" matInput
                     [matDatepicker]="PostingDate" autocomplete="off">
@@ -70,7 +75,8 @@
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <mat-label>description</mat-label>
-                <input matInput [maxlength]="256" autocomplete="Off" [(ngModel)]="element.ShortText" [value]="element.ShortText">
+                <input matInput [maxlength]="256" autocomplete="Off" [(ngModel)]="element.ShortText"
+                    [value]="element.ShortText">
             </mat-form-field>
         </mat-cell>
     </ng-container>
@@ -79,20 +85,32 @@
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <mat-label>Reference</mat-label>
-                <input matInput [maxlength]="30" autocomplete="Off" [(ngModel)]="element.Reference" [value]="element.Reference">
+                <input [disabled]="!TransactionMode" matInput [maxlength]="30" autocomplete="Off"
+                    [(ngModel)]="element.Reference" [value]="element.Reference">
             </mat-form-field>
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="GeneralLedgerAccountId">
         <mat-header-cell *matHeaderCellDef> Account</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" [style.width.px]="150">
+                <mat-label>Account</mat-label>
+                <input type="text" matInput [(ngModel)]="element.GeneralLedgerAccountId"
+                    [value]="element.GeneralLedgerAccountId" [matAutocomplete]="autoRow">
+                <mat-autocomplete #autoRow="matAutocomplete">
+                    <mat-option *ngFor="let option of filterAccount(element.GeneralLedgerName)" [value]="element.GeneralLedgerAccountId">
+                        {{option.GeneralLedgerName}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+
+            <!-- <mat-form-field appearance="outline">
                 <mat-select [(ngModel)]="element.GeneralLedgerAccountId" [value]="element.GeneralLedgerAccountId">
                     <mat-option *ngFor="let item of GeneralLedgers" [value]="item.GeneralLedgerId">
                         {{item.GeneralLedgerName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Debit">
@@ -112,7 +130,7 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    
+
     <ng-container matColumnDef="Active">
         <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -124,8 +142,8 @@
     <ng-container matColumnDef="Action">
         <mat-header-cell *matHeaderCellDef>
             <button [disabled]="loading || Permission=='read'" matTooltip="new item" class="mat-raised-button"
-                (click)="addnew('credit')" fxFlex="10">
-                <mat-icon>add</mat-icon>
+                (click)="addnew(false)" fxFlex="10">
+                <mat-icon>edit</mat-icon>
             </button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
@@ -136,7 +154,6 @@
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
                 </mat-icon>
             </button>
-
         </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

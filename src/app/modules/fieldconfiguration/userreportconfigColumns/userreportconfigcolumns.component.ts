@@ -69,7 +69,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     Active: 0
   };
   ModuleName ='';
-  StudentAllMustMandatory = ['FirstName', 'Gender', 'DOB', 'Bloodgroup', 'Category', 'Religion', 'ContactNo',
+  StudentAllMustMandatory = ['FirstName', 'Gender', 'DOB', 'Bloodgroup', 'Category', 'Religion', 'PersonalNo',
     'ClassAdmissionSought',
     'House', 'AdmissionStatus'];
   EmployeeAllMustMandatory = ['FirstName', 'Gender', 'DOB', 'Bloodgroup', 'Category', 'Religion', 'ContactNo',

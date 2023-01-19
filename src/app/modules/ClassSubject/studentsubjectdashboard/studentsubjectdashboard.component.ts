@@ -418,7 +418,8 @@ export class studentsubjectdashboardComponent implements OnInit {
     list.PageName = "ClassSubjects";
     list.lookupFields = ["SubjectType($select=SubjectTypeName,SelectHowMany)"];
 
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     //list.orderBy = "ParentId";
     this.ClassSubjectList = [];
     this.dataservice.get(list)
@@ -693,7 +694,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
 
   GetMasterData() {
-
+debugger;
     this.allMasterData = this.tokenstorage.getMasterData();
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -702,7 +703,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownDataNoConfidentail(dropdowntype, this.tokenstorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

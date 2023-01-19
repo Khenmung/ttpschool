@@ -52,6 +52,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/DataUploadDownload/generalreport.module').then(m=>m.GeneralreportModule)
   },
   {
+    path: 'emp/attendance',
+    loadChildren: () => import('./modules/EmpAttendance/employeeattendance.module').then(m=>m.EmployeeattendanceModule)
+  },
+  {
     path: 'edu',
     loadChildren: () => import('./modules/student/student.module').then(m => m.StudentModule)
   },
@@ -86,10 +90,6 @@ const routes: Routes = [
   {
     path: 'edu/misc',
     loadChildren: () => import('./modules/frontoffice/misc.module').then(m => m.MiscModule)
-  },
-  {
-    path: 'emp/attendance',
-    loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
   {
     path: 'edu/specialfeature',

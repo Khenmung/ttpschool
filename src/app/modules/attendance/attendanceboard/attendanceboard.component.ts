@@ -6,7 +6,7 @@ import { AbsentListComponent } from '../absentlist/absentlist.component';
 import { AttendancepercentComponent } from '../attendancepercent/attendancepercent.component';
 import { AttendanceCountComponent } from '../attendancecount/attendancecount.component';
 import { StudentAttendanceComponent } from '../studentattendance/studentattendance.component';
-import { TeacherAttendanceComponent } from '../teacherattendance/teacherattendance.component';
+//import { TeacherAttendanceComponent } from '../../EmployeeAttendance/employeeattendance/employeeattendance.component';
 import { DefaulterComponent } from '../defaulter/defaulter.component';
 
 @Component({
@@ -18,7 +18,7 @@ export class AttendanceboardComponent implements AfterViewInit {
 
   components: any = [
     StudentAttendanceComponent,
-    TeacherAttendanceComponent,
+    //TeacherAttendanceComponent,
     AttendanceCountComponent,
     AbsentListComponent,
     DefaulterComponent,
@@ -31,7 +31,7 @@ export class AttendanceboardComponent implements AfterViewInit {
     { label: 'Attendance', faIcon: '' },
     { label: 'Attendance', faIcon: '' },
     { label: 'Attendance', faIcon: '' },
-    { label: 'Attendance', faIcon: '' },
+  //  { label: 'Attendance', faIcon: '' },
   ];
 
   Permissions =
@@ -65,11 +65,7 @@ export class AttendanceboardComponent implements AfterViewInit {
     }
 
     if (this.SelectedAppName.toLowerCase() == 'education management') {
-      var comindx = this.components.indexOf(TeacherAttendanceComponent);
-      if (comindx > -1) {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
+      
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       var comindx = this.components.indexOf(StudentAttendanceComponent);
       this.AddRemoveComponent(perObj, comindx);
@@ -118,9 +114,9 @@ export class AttendanceboardComponent implements AfterViewInit {
         this.tabNames.splice(comindx, 1);
       }
 
-      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
-      var comindx = this.components.indexOf(TeacherAttendanceComponent);
-      this.AddRemoveComponent(perObj, comindx);
+      // perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
+      // var comindx = this.components.indexOf(TeacherAttendanceComponent);
+      // this.AddRemoveComponent(perObj, comindx);
     }
 
 

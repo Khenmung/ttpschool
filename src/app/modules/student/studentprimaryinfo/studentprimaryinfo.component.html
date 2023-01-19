@@ -167,7 +167,7 @@
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Admission Date</mat-label>
+                            <mat-label>School Join Date</mat-label>
                             <input formControlName="AdmissionDate" matInput (dateChange)="OnBlur()"
                                 [matDatepicker]="AdmissionDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="AdmissionDate"></mat-datepicker-toggle>
@@ -205,8 +205,8 @@
             <div style="padding:15px 15px 10px 15px;"><strong>Contact</strong></div>
             <div class="content" fxLayout="row wrap" fxLayoutGap="130px">
                 <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Contact no.</mat-label>
-                    <input formControlName="ContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                    <mat-label>Personal no.</mat-label>
+                    <input formControlName="PersonalNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
                         [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
@@ -309,20 +309,25 @@
                 <mat-icon>account_balance</mat-icon>Bank Account
             </ng-template>
             <div style="padding:15px 15px 10px 15px;"><strong>Bank Account</strong></div>
-            <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
+            <div style="display:flex;flex-direction: column;padding:15px">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Account Holder Name</mat-label>
+                    <input formControlName="AccountHolderName" (blur)="OnBlur()" autocomplete="Off" matInput
+                        [maxlength]="30">
+                </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Account no.</mat-label>
-                    <input formControlName="BankAccountNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                    <input formControlName="BankAccountNo" (blur)="OnBlur()" autocomplete="Off" matInput
                         [maxlength]="15">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>IFSC</mat-label>
-                    <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                    <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" matInput
                         [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>MICR No.</mat-label>
-                    <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                    <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" matInput
                         [maxlength]="10">
                 </mat-form-field>
             </div>

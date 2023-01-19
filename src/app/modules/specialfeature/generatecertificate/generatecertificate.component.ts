@@ -240,7 +240,7 @@ export class GenerateCertificateComponent implements OnInit {
         "MICRNo," +
         "AdhaarNo," +
         "Religion," +
-        "ContactNo," +
+        "PersonalNo," +
         "HouseId," +
         "AlternateContact," +
         "EmailAddress," +
@@ -329,7 +329,7 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "MICRNo", val: d.Student.MICRNo },
             { name: "AdhaarNo", val: d.Student.AdhaarNo },
             { name: "Religion", val: _religion },
-            { name: "ContactNo", val: d.Student.ContactNo },
+            { name: "PersonalNo", val: d.Student.PersonalNo },
             { name: "AlternateContact", val: d.Student.AlternateContact },
             { name: "EmailAddress", val: d.Student.EmailAddress },
             { name: "LastSchoolPercentage", val: d.Student.LastSchoolPercentage },
@@ -941,10 +941,10 @@ export class GenerateCertificateComponent implements OnInit {
             _section = _SectionObj[0].MasterDataName;
           _RollNo = student.RollNo == null ? '' : student.RollNo;
 
-          student.ContactNo = student.Student.ContactNo == null ? '' : student.Student.ContactNo;
+          student.PersonalNo = student.Student.PersonalNo == null ? '' : student.Student.PersonalNo;
           var _lastname = student.Student.LastName == null || student.Student.LastName == '' ? '' : " " + student.Student.LastName;
           _name = student.Student.FirstName + _lastname;
-          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.Student.ContactNo;
+          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.Student.PersonalNo;
           this.Students.push({
             StudentClassId: student.StudentClassId,
             StudentId: student.StudentId,
@@ -1007,10 +1007,10 @@ export class GenerateCertificateComponent implements OnInit {
             _section = _SectionObj[0].MasterDataName;
           _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
 
-          student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+          student.PersonalNo = student.PersonalNo == null ? '' : student.PersonalNo;
           var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
           _name = student.FirstName + _lastname;
-          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.PersonalNo;
           this.Students.push({
             StudentClassId: _studentClassId,
             StudentId: student.StudentId,

@@ -131,7 +131,7 @@ export class StudentfamilynfriendComponent implements OnInit {
     const filterValue = name.toLowerCase();
     //const unique = [...new Set(this.Students.map((item) => item.FatherName))];
     //return unique;
-    return this.UniqueFathers.filter(option => option.FatherName.toLowerCase().includes(filterValue));
+    return this.Students.filter(option => option.FatherName.toLowerCase().includes(filterValue));
 
   }
   private _filterM(name: string): IStudent[] {

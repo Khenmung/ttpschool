@@ -291,8 +291,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   GetClassSubject() {
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-
+    //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr  = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",

@@ -4,17 +4,17 @@ import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { AttendanceboardComponent } from './attendanceboard/attendanceboard.component';
 import { AbsentListComponent } from './absentlist/absentlist.component';
 import { AttendanceCountComponent } from './attendancecount/attendancecount.component';
-import { EmployeetotalattendanceComponent } from './employeetotalattendance/employeetotalattendance.component';
+//import { EmployeetotalattendanceComponent } from '../EmployeeAttendance/employeetotalattendance/employeetotalattendance.component';
 import { StudentAttendanceComponent } from './studentattendance/studentattendance.component';
 import { StudenttotalattendanceComponent } from './studenttotalattendance/studenttotalattendance.component';
-import { TeacherAttendanceComponent } from './teacherattendance/teacherattendance.component';
+//import { EmployeeAttendanceComponent } from '../EmployeeAttendance/employeeattendance/employeeattendance.component';
 import { AttendancepercentComponent } from './attendancepercent/attendancepercent.component';
 
 const routes: Routes = [
   {path:'',component:HomeComponent,
   children:[
     {path:'',component:AttendanceboardComponent},
-    {path:'teacher',component:TeacherAttendanceComponent}
+    //{path:'teacher',component:EmployeeAttendanceComponent}
   ]
 }
 ];
@@ -27,10 +27,10 @@ export class AttendanceRoutingModule { }
 export const AttendanceComponents=[
   AttendanceboardComponent,
   StudentAttendanceComponent,
-  TeacherAttendanceComponent,
+  //EmployeeAttendanceComponent,
   AttendanceboardComponent, 
   StudenttotalattendanceComponent, 
-  EmployeetotalattendanceComponent,
+  //EmployeetotalattendanceComponent,
   AttendanceCountComponent,
   AbsentListComponent,
   AttendancepercentComponent

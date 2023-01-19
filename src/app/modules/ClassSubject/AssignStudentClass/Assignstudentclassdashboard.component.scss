@@ -3,17 +3,20 @@ mat-form-field{
     width:98%;
 }
 .mat-column-AdmissionNo{
-    justify-content: center;
+   
     flex:1 1 100px;
 }
-.mat-column-GenderName,.mat-column-Active,
-.mat-column-Action,
+.mat-column-GenderName,
 .mat-column-RollNo,
-.mat-column-ClassName,
-.mat-column-Remark,
 .mat-column-SectionId{
+    flex:1 0 60px;
+}
+.mat-column-Active,
+.mat-column-Action,
+.mat-column-ClassId,
+.mat-column-Remark{
     //justify-content: center;
-    flex:1 0 100px;
+    flex:1 1 100px;
 }
 
 .mat-column-StudentName,.mat-column-FeeTypeId,.mat-column-Remarks{

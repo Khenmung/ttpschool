@@ -201,13 +201,14 @@ export class ExcelDataManagementComponent implements OnInit {
         "DOB",
         "Bloodgroup",
         "Category",
+        "AccountHolderName",
         "BankAccountNo",
         "IFSCCode",
         "MICRNo",
         "AdhaarNo",
         "Photo",
         "Religion",
-        "ContactNo",
+        "PersonalNo",
         "AlternateContact",
         "EmailAddress",
         "ClassAdmissionSought",
@@ -596,8 +597,8 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'AdhaarNo must be less than 16 characters at row ' + indx + '.\n';
       if (element.PhotoPath != undefined && element.PhotoPath.length > 50)
         this.ErrorMessage += 'PhotoPath must be less than 51 characters at row ' + indx + '.\n';
-      if (element.ContactNo != undefined && element.ContactNo.length > 50)
-        this.ErrorMessage += 'ContactNo must be less than 51 characters at row ' + indx + '.\n';
+      if (element.PersonalNo != undefined && element.PersonalNo.length > 50)
+        this.ErrorMessage += 'PersonalNo must be less than 51 characters at row ' + indx + '.\n';
       if (element.WhatsappNo != undefined && element.WhatsappNo.length > 30)
         this.ErrorMessage += 'WhatsappNo must be less than 31 characters at row ' + indx + '.\n';
       if (element.AlternateContactNo != undefined && element.AlternateContactNo.length > 30)
@@ -776,6 +777,7 @@ export class ExcelDataManagementComponent implements OnInit {
     });
     ////console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
   }
+  
   ValidateStudentData() {
     let slno: any = 0;
     debugger;
@@ -783,10 +785,15 @@ export class ExcelDataManagementComponent implements OnInit {
     this.jsonData.forEach((element, indx) => {
       slno = parseInt(indx) + 1;
 
-      if (element.DOB != undefined && element.DOB != '')
-        element.DOB = new Date(element.DOB);
-      else
-        element.DOB = new Date();
+      // if (element.DOB != undefined && element.DOB != '')
+      //   element.DOB = new Date(element.DOB);
+      // else
+      //   element.DOB = new Date();
+      if(isNaN(new Date(element.DOB).getTime()))
+      {
+        this.ErrorMessage +="Invalid date at row : " + indx;
+      }
+
       if (element.CreatedDate != undefined && element.CreatedDate != '')
         element.CreatedDate = new Date(element.CreatedDate);
       else
@@ -809,7 +816,7 @@ export class ExcelDataManagementComponent implements OnInit {
       // if (_MadatoryField.length > 0)
       //   this.ErrorMessage += _MadatoryField + " is required at row " + slno + ".<br>";
 
-      debugger;
+      //debugger;
       if (element.Gender != undefined) {
         let GenderFilter = this.Genders.filter(g => g.MasterDataName.toLowerCase() == element.Gender.toLowerCase());
         if (GenderFilter.length == 0)
@@ -930,7 +937,7 @@ export class ExcelDataManagementComponent implements OnInit {
       }
       else
         element.RemarkId = 0;
-
+      debugger;
       if (element.PermanentAddressCountry != undefined) {
         let CountryObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressCountry.toLowerCase());
         if (CountryObj.length == 0)
@@ -1006,10 +1013,10 @@ export class ExcelDataManagementComponent implements OnInit {
       }
 
 
-      if (element.ContactNo != undefined && element.ContactNo.length > 32) {
+      if (element.PersonalNo != undefined && element.PersonalNo.length > 32) {
         this.ErrorMessage += 'Contact no length is more than 32 characters.';
       }
-      if (element.FirstName != undefined && element.ContactNo.length > 50) {
+      if (element.FirstName != undefined && element.FirstName.length > 50) {
         this.ErrorMessage += 'Firstname should not be greater than 50 characters.';
       }
       if (element.LastName != undefined && element.LastName.length > 50) {
@@ -1093,7 +1100,10 @@ export class ExcelDataManagementComponent implements OnInit {
       if (element.AdmissionNo != undefined && element.AdmissionNo.length > 15) {
         this.ErrorMessage += 'AdmissionNo should not be greater than 15 characters.';
       }
-
+      if (element.Active == undefined) {
+        element.Active =1;
+      }
+    
       element.StudentId = +element.StudentId;
 
       element.OrgId = this.loginDetail[0]["orgId"];
@@ -1112,7 +1122,7 @@ export class ExcelDataManagementComponent implements OnInit {
       this.ELEMENT_DATA.push(element);
 
     });
-
+    //console.log("this.ELEMENT_DATA",this.ELEMENT_DATA)
   }
   clear() {
     //this.fileUploaded=;
@@ -1202,12 +1212,12 @@ export class ExcelDataManagementComponent implements OnInit {
         if (this.ELEMENT_DATA.length > globalconstants.RowUploadLimit) {
           this.ELEMENT_DATA.splice(globalconstants.RowUploadLimit);
         }
-        else if (this.NoOfStudent + this.ELEMENT_DATA.length > this.NoOfStudentInPlan) {
-          this.loading = false;
-          this.contentservice.openSnackBar("No. of student exceeded no. of students in the plan.", globalconstants.ActionText, globalconstants.RedBackground);
-          return;
+        // else if (this.NoOfStudent + this.ELEMENT_DATA.length > this.NoOfStudentInPlan) {
+        //   this.loading = false;
+        //   this.contentservice.openSnackBar("No. of student exceeded no. of students in the plan.", globalconstants.ActionText, globalconstants.RedBackground);
+        //   return;
 
-        }
+        // }
 
 
         this.ELEMENT_DATA.forEach(row => {
@@ -1222,7 +1232,7 @@ export class ExcelDataManagementComponent implements OnInit {
             "CategoryId": +row["CategoryId"],
             "GenderId": +row["GenderId"],
             "ClassAdmissionSought": +row["ClassAdmissionSought"],
-            "ContactNo": row["ContactNo"],
+            "PersonalNo": row["PersonalNo"],
             "ContactPersonContactNo": row["ContactPersonContactNo"],
             "DOB": this.datepipe.transform(row["DOB"], 'yyyy/MM/dd'),
             "EmailAddress": row["EmailAddress"],
@@ -1275,11 +1285,12 @@ export class ExcelDataManagementComponent implements OnInit {
             "Height": +row["Height"],
             "SectionId": +row["SectionId"],
             "RollNo": row["RollNo"],
-            "AdmissionNo": row["AdmissionNo"]
+            "AdmissionNo": row["AdmissionNo"],
+            "Notes": row["Notes"]
           });
         });
 
-        console.log("toInsert", toInsert)
+        //console.log("toInsert", toInsert)
         this.dataservice.postPatch('Students', toInsert, 0, 'post')
           .subscribe((result: any) => {
             this.loading = false; this.PageLoading = false;

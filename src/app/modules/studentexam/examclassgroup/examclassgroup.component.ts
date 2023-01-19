@@ -86,6 +86,7 @@ export class ExamclassgroupComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      //this.contentservice.GetOrgExpiry(this.LoginUserDetail);
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMCLASSGROUPMAP);

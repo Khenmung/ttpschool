@@ -302,8 +302,8 @@ export class StudentSubjectReportComponent implements OnInit {
   }
   GetClassSubject() {
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-
+    //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
@@ -631,7 +631,7 @@ export class StudentSubjectReportComponent implements OnInit {
 
     list.PageName = "ClassSubjects"
     list.filter = ['Active eq 1 and TeacherId eq ' + localStorage.getItem('nameId') +
-      ' and OrgId eq ' + this.LoginUserDetail[0]['orgId']];
+      ' and OrgId eq ' + this.LoginUserDetail[0]['orgId'] + " and BatchId eq " + this.SelectedBatchId];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllowedSubjectIds = [...data.value];

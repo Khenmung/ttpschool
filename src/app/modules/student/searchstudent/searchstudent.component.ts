@@ -157,7 +157,7 @@ export class searchstudentComponent implements OnInit {
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.StudentOfClass.slice())
+        map(Name => Name ? this._filter(Name) : this.StudentList.slice())
       );
     // this.StudentSearch.forEach(fr=>{
     //   this.studentSearchForm.patchValue({[fr.Text]:fr.Value})
@@ -167,7 +167,7 @@ export class searchstudentComponent implements OnInit {
   private _filter(name: string): IStudent[] {
 
     const filterValue = name.toLowerCase();
-    return this.StudentOfClass.filter(option => option.Name.toLowerCase().includes(filterValue));
+    return this.StudentList.filter(option => option.Name.toLowerCase().includes(filterValue));
 
   }
   private _filterF(name: string): IStudent[] {
@@ -623,7 +623,7 @@ export class searchstudentComponent implements OnInit {
         }
         formattedData = formattedData.filter(sc => {
           let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
-          if (sc.StudentClasses != undefined) {
+          if (sc.StudentClasses != undefined && sc.StudentClasses.length > 0) {
             var obj = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId);
             if (obj.length > 0) {
               sc.FeeType = obj[0].FeeTypeName
@@ -631,6 +631,8 @@ export class searchstudentComponent implements OnInit {
             else
               sc.FeeType = '';
           }
+          else
+            sc.FeeType = '';
 
           sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
           return sc;
@@ -837,7 +839,7 @@ export class searchstudentComponent implements OnInit {
         _classId = student.StudentClasses[0].ClassId;
         _sectionId = student.StudentClasses[0].SectionId;
       }
-      student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+      student.PersonalNo = student.PersonalNo == null ? '' : student.PersonalNo;
       var _lastname = student.LastName == null ? '' : " " + student.LastName;
       _name = student.FirstName + _lastname;
       var _fullDescription = student.PID + "-" + _name + "-" + _className + "-" + _section + "-" + _RollNo;

@@ -436,7 +436,7 @@ export class HomeDashboardComponent implements OnInit {
       'LastName',
       'FatherName',
       'MotherName',
-      'ContactNo',
+      'PersonalNo',
       'FatherContactNo',
       'MotherContactNo',
       "PID",
@@ -471,11 +471,13 @@ export class HomeDashboardComponent implements OnInit {
       })
   }
   sendmessage() {
-    var api = "https://api.chat-api.com/instance358541/sendMessage?token=sfhfmzsd9temr6ca";
-    var data = {
-      "phone": "918974098031",
-      "body": "WhatsApp API on Chat API from TTP again"
-    }
+    var api = "https://graph.facebook.com/v15.0/107273275514184/messages";
+    var data={ "messaging_product": "whatsapp", "to": "918974098031", "type": "template", "template": { "name": "hello_world", "language": { "code": "en_US" } } }
+    
+    // var data = {
+    //   "phone": "918974098031",
+    //   "body": "WhatsApp API on Chat API from TTP again"
+    // }
     this.http.post(api, data).subscribe((data: any) => {
       //console.log("messagereturn",data);
     });

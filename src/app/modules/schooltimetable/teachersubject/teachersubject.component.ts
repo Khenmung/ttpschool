@@ -11,6 +11,8 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-teachersubject',
@@ -80,6 +82,7 @@ export class TeachersubjectComponent implements OnInit {
     private tokenstorage: TokenStorageService,
     private nav: Router,
     private shareddata: SharedataService,
+    private dialog:MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -453,7 +456,8 @@ export class TeachersubjectComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -473,7 +477,7 @@ export class TeachersubjectComponent implements OnInit {
             });
           }
         })
-        console.log("this.ClassSubjects", this.ClassSubjects)
+        //console.log("this.ClassSubjects", this.ClassSubjects)
       })
   }
   TempClassSubject = [];
@@ -513,7 +517,34 @@ export class TeachersubjectComponent implements OnInit {
 
       })
   }
+  TeachingEmployees=[];
+  GetTeachingEmployees() {
 
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
+    var _workAccountId = 0;
+    if (_WorkAccount.length > 0)
+      _workAccountId = _WorkAccount[0].MasterDataId;
+
+    let list: List = new List();
+
+    list.fields = ["EmpEmployeeId", "FirstName", "LastName"];
+    list.PageName = "EmpEmployees";
+    //list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName", "LastName)"]
+    list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+    //list.orderBy = "ParentId";
+    this.Teachers = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.filter(f => {
+          this.TeachingEmployees.push({
+            TeacherId: f.Employee.EmpEmployeeId,
+            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+          })
+        })
+
+      })
+  }
   GetMasterData() {
 
     this.allMasterData = this.tokenstorage.getMasterData();
@@ -522,6 +553,7 @@ export class TeachersubjectComponent implements OnInit {
     this.Batches = this.tokenstorage.getBatches()
     this.shareddata.ChangeSubjects(this.Subjects);
     this.GetTeachers();
+    //this.GetTeachingEmployees();
     this.GetClassSubject();
     this.loading = false; this.PageLoading = false;
   }
@@ -541,7 +573,52 @@ export class TeachersubjectComponent implements OnInit {
     //   return [];
 
   }
+  Delete(row) {
 
+    this.openDialog(row)
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch(this.TeacherSubjectListName, toUpdate, row.TeacherSubjectId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; 
+        this.PageLoading = false;
+        var idx = this.TeacherSubjectList.findIndex(x => x.TeacherSubjectId == row.TeacherSubjectId)
+        this.TeacherSubjectList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.TeacherSubjectList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
+  
 }
 export interface ITeacherSubject {
   TeacherSubjectId: number;

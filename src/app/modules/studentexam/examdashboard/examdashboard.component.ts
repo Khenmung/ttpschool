@@ -72,6 +72,7 @@ export class ExamdashboardComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
     debugger
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    //this.contentservice.GetOrgExpiry(this.LoginUserDetail);
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAM)
     if (perObj.length > 0) {

@@ -351,7 +351,8 @@ export class EvaluationresultlistComponent implements OnInit {
     let list = new List();
     list.PageName = "ClassSubjects";
     list.fields = ["ClassSubjectId,ClassId,SubjectId"];
-    list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    //list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(m => {

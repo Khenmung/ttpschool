@@ -274,7 +274,8 @@ export class SlotnclasssubjectComponent implements OnInit {
     element.Action = true;
   }
   GetClassSubject() {
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
+    //let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
+    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     this.loading = true;
     //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();

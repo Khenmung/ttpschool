@@ -54,6 +54,8 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
     StudentClassId: 0,
+    ClassId:0,
+    SectionId:0,
     ExamId: 0,
     StudentClassSubjectId: 0,
     ClassSubjectMarkComponentId: 0,
@@ -157,8 +159,9 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     }
 
     this.loading = true;
+    var _examId =this.searchForm.get("searchExamId").value;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
+    let checkFilterString = "ExamId eq " + _examId +
       " and StudentClassSubjectId eq " + row.StudentClassSubjectId +
       " and ClassSubjectMarkComponentId eq " + row.ClassSubjectMarkComponentId;
 
@@ -185,10 +188,13 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
             _examstatus = this.ExamStatuses.filter(f => f.MasterDataName.toLowerCase() == "pass")[0].MasterDataId;
           else
             _examstatus = this.ExamStatuses.filter(f => f.MasterDataName.toLowerCase() == "fail")[0].MasterDataId;
-
+          var _classId = this.searchForm.get("searchClassId").value;
+          var _sectionId = this.searchForm.get("searchSectionId").value;
           this.ExamStudentSubjectResultData.ExamStudentSubjectResultId = row.ExamStudentSubjectResultId;
-          this.ExamStudentSubjectResultData.ExamId = this.searchForm.get("searchExamId").value;
+          this.ExamStudentSubjectResultData.ExamId = _examId;
           this.ExamStudentSubjectResultData.StudentClassId = row.StudentClassId;
+          this.ExamStudentSubjectResultData.ClassId = _classId;
+          this.ExamStudentSubjectResultData.SectionId = _sectionId;
           this.ExamStudentSubjectResultData.Active = row.Active;
           this.ExamStudentSubjectResultData.StudentClassSubjectId = row.StudentClassSubjectId;
           this.ExamStudentSubjectResultData.ClassSubjectMarkComponentId = row.ClassSubjectMarkComponentId;
@@ -438,8 +444,8 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
   }
   GetClassSubject() {
 
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
-
+    //let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
+    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
@@ -1120,8 +1126,8 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects"
-    list.filter = ['Active eq 1 and TeacherId eq ' + localStorage.getItem('nameId') +
-      ' and OrgId eq ' + this.LoginUserDetail[0]['orgId']];
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]['orgId'] + 
+    ' and BatchId eq ' + this.SelectedBatchId +' and Active eq 1 and TeacherId eq ' + localStorage.getItem('nameId')];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllowedSubjectIds = [...data.value];

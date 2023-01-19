@@ -793,10 +793,10 @@ export class StudentDatadumpComponent implements OnInit {
           _section = _SectionObj[0].MasterDataName;
         _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
       }
-      student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+      student.PersonalNo = student.PersonalNo == null ? '' : student.PersonalNo;
       var _lastname = student.LastName == null ? '' : " " + student.LastName;
       _name = student.FirstName + _lastname;
-      var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+      var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.PersonalNo;
       return {
         StudentClassId: _studentClassId,
         StudentId: student.StudentId,

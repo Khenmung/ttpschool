@@ -244,8 +244,8 @@ export class StudentattendancereportComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
