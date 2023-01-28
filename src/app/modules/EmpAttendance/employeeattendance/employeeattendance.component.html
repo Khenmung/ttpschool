@@ -4,8 +4,8 @@
 <form [formGroup]="searchForm">
     <div style="display:flex;justify-content: space-between;">
         <div>
-            <mat-form-field appearance="outline" [style.width.px]="130">
-                <mat-label>Attendance Date</mat-label>
+            <mat-form-field appearance="outline" [style.width.px]="140">
+                <mat-label>Date</mat-label>
                 <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate"
                     autocomplete="off">
                 <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>

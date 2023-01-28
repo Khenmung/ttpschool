@@ -8,6 +8,7 @@ import { AttendanceCountComponent } from '../attendancecount/attendancecount.com
 import { StudentAttendanceComponent } from '../studentattendance/studentattendance.component';
 //import { TeacherAttendanceComponent } from '../../EmployeeAttendance/employeeattendance/employeeattendance.component';
 import { DefaulterComponent } from '../defaulter/defaulter.component';
+import { StudentattendancereportComponent } from '../studentattendancereport/studentattendancereport.component';
 
 @Component({
   selector: 'app-attendanceboard',
@@ -18,7 +19,7 @@ export class AttendanceboardComponent implements AfterViewInit {
 
   components: any = [
     StudentAttendanceComponent,
-    //TeacherAttendanceComponent,
+    StudentattendancereportComponent,
     AttendanceCountComponent,
     AbsentListComponent,
     DefaulterComponent,
@@ -31,7 +32,7 @@ export class AttendanceboardComponent implements AfterViewInit {
     { label: 'Attendance', faIcon: '' },
     { label: 'Attendance', faIcon: '' },
     { label: 'Attendance', faIcon: '' },
-  //  { label: 'Attendance', faIcon: '' },
+    { label: 'Attendance', faIcon: '' },
   ];
 
   Permissions =
@@ -78,12 +79,16 @@ export class AttendanceboardComponent implements AfterViewInit {
       var comindx = this.components.indexOf(AttendancepercentComponent);
       this.AddRemoveComponent(perObj, comindx);
 
-      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCEREPORT)
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCECOUNT)
       var comindx = this.components.indexOf(AttendanceCountComponent);
       this.AddRemoveComponent(perObj, comindx);
       
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.DEFAULTER)
       var comindx = this.components.indexOf(DefaulterComponent);
+      this.AddRemoveComponent(perObj, comindx);
+  
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENDANCEREPORT)
+      var comindx = this.components.indexOf(StudentattendancereportComponent);
       this.AddRemoveComponent(perObj, comindx);
 
     }

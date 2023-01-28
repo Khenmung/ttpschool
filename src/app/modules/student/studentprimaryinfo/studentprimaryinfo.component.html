@@ -138,6 +138,13 @@
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
+                            <mat-label>Adhaar No</mat-label>
+                            <input formControlName="AdhaarNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                                [maxlength]="10">
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile [colspan]="1" [rowspan]="1">
+                        <mat-form-field appearance="outline" fxFlex>
                             <mat-label>DOB</mat-label>
                             <input formControlName="DOB" matInput (dateChange)="OnBlur()" [matDatepicker]="picker"
                                 autocomplete="off">
@@ -174,6 +181,7 @@
                             <mat-datepicker #AdmissionDate></mat-datepicker>
                         </mat-form-field>
                     </mat-grid-tile>
+                    
                 </mat-grid-list>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
@@ -210,7 +218,7 @@
                         [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>WhatsApp No.</mat-label>
+                    <mat-label>Messaging No.</mat-label>
                     <input formControlName="WhatsAppNumber" (blur)="OnBlur()" autocomplete="Off" matInput
                         [maxlength]="10">
                 </mat-form-field>
@@ -229,11 +237,7 @@
                     <input type="email" formControlName="EmailAddress" (blur)="OnBlur()" autocomplete="Off" #Pincode
                         matInput [maxlength]="50">
                 </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Adhaar No</mat-label>
-                    <input formControlName="AdhaarNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
-                        [maxlength]="10">
-                </mat-form-field>
+
                 <mat-form-field appearance="outline" [style.width.px]="250">
                     <mat-label>Permanent address</mat-label>
                     <textarea formControlName="PermanentAddress" (blur)="OnBlur()" autocomplete="Off" matInput
@@ -322,13 +326,11 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>IFSC</mat-label>
-                    <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" matInput
-                        [maxlength]="10">
+                    <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>MICR No.</mat-label>
-                    <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" matInput
-                        [maxlength]="10">
+                    <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="10">
                 </mat-form-field>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
@@ -471,7 +473,7 @@
             <li>
                 Define Class-course -> Detail, Fee definition, class fee, fee type.
             </li>
-            
+
         </ol>
     </span>
 </div>

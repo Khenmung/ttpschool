@@ -94,7 +94,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Approved">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Approved
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Leave Granted
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateApproved(element,$event)"
@@ -103,7 +103,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="ApprovedByName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Approved By
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Granted By
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
         {{element.ApprovedByName}}

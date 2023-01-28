@@ -156,10 +156,12 @@ export class AttendanceCountComponent implements OnInit {
     var today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    var _fromDate = new Date(this.searchForm.get("searchFromDate").value)
+    
     var _toDate = new Date(this.searchForm.get("searchToDate").value)
+    var _fromDate = new Date(this.searchForm.get("searchToDate").value);
+    _toDate.setDate(_toDate.getDate()+1);
     var _subjectwise = this.searchForm.get("searchSubjectWise").value;
-    _fromDate.setHours(0, 0, 0, 0);
+    //_fromDate.setHours(0, 0, 0, 0);
     _toDate.setHours(0, 0, 0, 0);
 
 

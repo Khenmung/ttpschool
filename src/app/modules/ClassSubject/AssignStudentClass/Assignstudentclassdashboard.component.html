@@ -4,46 +4,59 @@
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form style="display: flex;flex-direction:column;justify-content: space-around;" [formGroup]="searchForm">
     <div>
-        <mat-form-field appearance="outline" style="width: 150px;">
-            <mat-label>Class</mat-label>
-            <mat-select formControlName="searchClassId" (selectionChange)="SetLabel()">
-                <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
-                    {{item.ClassName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline" style="width: 150px;">
-            <mat-label>Section</mat-label>
-            <mat-select formControlName="searchSectionId">
-                <mat-option value="0">--section--</mat-option>
-                <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
-                    {{item.MasterDataName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline" style="width: 150px;">
-            <mat-label>Fee Type</mat-label>
-            <mat-select formControlName="searchFeeTypeId">
-                <mat-option *ngFor="let item of FeeTypes" [value]="item.FeeTypeId">
-                    {{item.FeeTypeName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline" style="width: 150px;">
-            <mat-label>Remarks</mat-label>
-            <mat-select formControlName="searchRemarkId">
-                <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">
-                    {{item.MasterDataName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button [disabled]="loading" style="margin-right: 10px;" mat-raised-button color="accent" (click)="GetData('')">
-            <mat-icon>search</mat-icon>
-            <mat-icon *ngIf="loading">
-                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-            </mat-icon>
-        </button>
-        <div style="display:flex">
+        <div style="padding:10px 0px 0px 15px;border:1px solid lightgray">
+            <mat-form-field appearance="outline" style="width: 150px;">
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="searchClassId" (selectionChange)="SetLabel()">
+                    <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                        {{item.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 150px;">
+                <mat-label>Section</mat-label>
+                <mat-select formControlName="searchSectionId">
+                    <mat-option value="0">--section--</mat-option>
+                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 150px;">
+                <mat-label>Fee Type</mat-label>
+                <mat-select formControlName="searchFeeTypeId">
+                    <mat-option *ngFor="let item of FeeTypes" [value]="item.FeeTypeId">
+                        {{item.FeeTypeName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 150px;">
+                <mat-label>Remarks</mat-label>
+                <mat-select formControlName="searchRemarkId">
+                    <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" style="margin-right: 10px;" mat-raised-button color="accent"
+                (click)="GetData('')">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </div>
+        <div style="margin-top:15px; display:flex;border: 1px solid lightgray;padding:10px 0px 10px 15px;">
+            <div *ngIf="PreviousClassPreviousBatchLabel.length>0 || SameClassPreviousBatchLabel.length>0">
+                <mat-form-field appearance="outline" style="width:150px">
+                    <mat-label>Status from</mat-label>
+                    <mat-select formControlName="searchExamId">
+                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                            {{item.ExamName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
             <div style="margin-right:15px;padding:15px;border:1px solid lawngreen"
                 *ngIf="PreviousClassPreviousBatchLabel.length>0">
                 <span style="margin-right: 15px;">{{PreviousClassPreviousBatchLabel}}&nbsp;</span>
@@ -52,8 +65,7 @@
                     <mat-icon>arrow_back_ios</mat-icon>
                 </button>
             </div>
-            <div style="padding:15px;border:1px solid lawngreen"
-                *ngIf="SameClassPreviousBatchLabel.length>0">
+            <div style="padding:15px;border:1px solid lawngreen" *ngIf="SameClassPreviousBatchLabel.length>0">
                 <span style="margin-right: 15px;">{{SameClassPreviousBatchLabel}}&nbsp;</span>
                 <button [disabled]="loading" class="mat-raised-button" (click)="CopyFromSameClassPreviousBatch()">
                     <mat-icon>skip_previous</mat-icon>
@@ -86,20 +98,7 @@
 </form>
 <div style="font-size: medium;padding: 15px 0px 15px 0px;font-weight: bold;color:darkgreen">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
-    <!-- <ng-container matColumnDef="AdmissionNo">
-        <mat-header-cell *matHeaderCellDef mat-sort-header style="display:flex ;">
-            <span style="display: flex;flex-direction: column;justify-content: flex-start;">
-                <span style="justify-content: flex-start;display: flex;">Admission No.</span>
-                <mat-form-field style="width: 80px;">
-                    <mat-label>Admission No.</mat-label>
-                    <input matInput [formControl]="IdFilter" autocomplete="Off">
-                </mat-form-field>
-            </span>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.AdmissionNo}}
-        </mat-cell>
-    </ng-container> -->
+   
     <ng-container matColumnDef="StudentName">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
             <span style="display: flex;flex-direction: column;justify-content: start;">
@@ -158,7 +157,6 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-
     <ng-container matColumnDef="SectionId">
         <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Section
         </mat-header-cell>
@@ -188,13 +186,6 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> Remark </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.Remark}}
-            <!-- <mat-form-field>
-                <mat-select (selectionChange)="onBlur(element)" [value]="element.RemarkId"
-                    [(ngModel)]="element.RemarkId">
-                    <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">{{item.MasterDataName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field> -->
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Remarks">
@@ -205,6 +196,13 @@
                 <input matInput (blur)="onBlur(element)" [value]="element.Remarks" [(ngModel)]="element.Remarks"
                     autocomplete="Off" [maxlength]="250">
             </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ExamStatus">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Exam Result
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.ExamStatus}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Active">

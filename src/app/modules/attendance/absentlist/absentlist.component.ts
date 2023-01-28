@@ -51,7 +51,7 @@ export class AbsentListComponent implements OnInit {
     searchClassId: [0],
     searchSectionId: [0],
     searchClassSubjectId: [0],
-    searchAttendanceFromDate:[new Date()],
+    searchAttendanceFromDate: [new Date()],
     searchAttendanceDate: [new Date()]
   });
   StudentClassSubjectId = 0;
@@ -213,9 +213,9 @@ export class AbsentListComponent implements OnInit {
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;
     }
-    //if (_classSubjectId > 0) {
-    filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
-    //}
+    // if (_classSubjectId != undefined && _classSubjectId > 0) {
+    //   filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
+    // }
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     //filterStr += ' and AttendanceStatus eq 0';
@@ -224,7 +224,10 @@ export class AbsentListComponent implements OnInit {
     datefilterStr += ' and AttendanceDate lt ' + moment(this.searchForm.get("searchAttendanceDate").value).add(1, 'day').format('yyyy-MM-DD')
     datefilterStr += ' and StudentClassId gt 0'
     datefilterStr += ' and AttendanceStatus eq 0'
-    datefilterStr += " and ClassSubjectId eq " + _classSubjectId;
+    if (_classSubjectId != undefined && _classSubjectId > 0) {
+      datefilterStr += " and ClassSubjectId eq " + _classSubjectId;
+    }
+    
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -318,12 +321,12 @@ export class AbsentListComponent implements OnInit {
             stud.StudentClasses.length > 0 &&
             stud.StudentClasses[0].ClassId == _classId && stud.StudentClasses[0].SectionId == _sectionId)
         }
-        else  if (_classId > 0 && _sectionId == 0) {
+        else if (_classId > 0 && _sectionId == 0) {
           _AllStudents = _AllStudents.filter(stud => stud.StudentClasses &&
             stud.StudentClasses.length > 0 &&
             stud.StudentClasses[0].ClassId == _classId)
         }
-        else  if (_classId == 0 && _sectionId == 0) {
+        else if (_classId == 0 && _sectionId == 0) {
           _AllStudents = _AllStudents.filter(stud => stud.StudentClasses &&
             stud.StudentClasses.length > 0)
         }

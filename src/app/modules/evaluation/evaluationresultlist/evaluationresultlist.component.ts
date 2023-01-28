@@ -483,7 +483,7 @@ export class EvaluationresultlistComponent implements OnInit {
     if (_classgroupObj.length > 0) {
       _classGroupId = _classgroupObj[0].ClassGroupId;
       this.FilteredClasses = this.ClassGroupMappings.filter(g => g.ClassGroupId == _classGroupId)
-    }    
+    }
   }
   // SelectClass() {
   //   var _evaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
@@ -670,8 +670,44 @@ export class EvaluationresultlistComponent implements OnInit {
       .subscribe((data: any) => {
         this.StudentClasses = [...data.value];
         this.GetStudents();
-        this.GetEvaluationMapping(_searchClassId, _searchSectionId, _evaluationdetail[0].EvaluationExamMapId, _evaluationMasterId, _examId);
+        if (this.EvaluationUpdatable)
+          this.ForUpdatableEvaluation(_searchClassId, _searchSectionId, _evaluationMasterId, _examId);
+        else
+          this.GetEvaluationMapping(_searchClassId, _searchSectionId, _evaluationdetail[0].EvaluationExamMapId, _evaluationMasterId, _examId);
       })
+  }
+  ForUpdatableEvaluation(pClassId, pSectionId, pEvaluationMasterId,pExamId) {
+    var _students = [];
+    var _evaluationName = this.EvaluationMaster.filter(e => e.EvaluationMasterId == pEvaluationMasterId)[0].EvaluationName;
+    if (pSectionId > 0)
+      _students = this.Students.filter(s => s.ClassId == pClassId && s.SectionId == pSectionId);
+    else
+      _students = this.Students.filter(s => s.ClassId == pClassId);
+    _students.forEach(stud => {
+      // var answeredstudent = data.value.filter(ans => ans.StudentClassId == stud.StudentClassId)
+      // if (answeredstudent.length > 0) {
+      //   answeredstudent[0].Name = stud.FullName;
+      //   answeredstudent[0].EvaluationMasterId = pEvaluationMasterId;
+      //   answeredstudent[0].EvaluationName = _evaluationName;
+      //   answeredstudent[0].ExamId = pExamId;
+      //   answeredstudent[0].StudentId = stud.StudentId;
+
+      this.EvaluatedStudent.push({
+        Name: stud.FullName,
+        EvaluationMasterId: pEvaluationMasterId,
+        EvaluationName: _evaluationName,
+        ExamId: pExamId,
+        StudentId: stud.StudentId
+      });
+    })
+    if (this.EvaluatedStudent.length == 0) {
+      this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    }
+    //console.log("this.StudentEvaluationList", this.EvaluatedStudent)
+    this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.EvaluatedStudent);
+    this.AssessmentTypeDatasource.paginator = this.paginator;
+    this.loading = false;
+    this.PageLoading = false;
   }
   GetStudents() {
     this.loading = true;

@@ -917,7 +917,7 @@ export class GenerateCertificateComponent implements OnInit {
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=StudentId,FirstName,LastName,FatherName,MotherName,ContactNo,FatherContactNo,MotherContactNo)"]
+    list.lookupFields = ["Student($select=StudentId,FirstName,LastName,FatherName,MotherName,PersonalNo,FatherContactNo,MotherContactNo)"]
     list.filter = [filterOrgIdNBatchId];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -944,7 +944,7 @@ export class GenerateCertificateComponent implements OnInit {
           student.PersonalNo = student.Student.PersonalNo == null ? '' : student.Student.PersonalNo;
           var _lastname = student.Student.LastName == null || student.Student.LastName == '' ? '' : " " + student.Student.LastName;
           _name = student.Student.FirstName + _lastname;
-          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.Student.PersonalNo;
+          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo;
           this.Students.push({
             StudentClassId: student.StudentClassId,
             StudentId: student.StudentId,

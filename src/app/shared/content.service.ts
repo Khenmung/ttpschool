@@ -320,8 +320,8 @@ export class ContentService implements OnInit {
     var _StartYear = new Date(_sessionStartEnd["StartDate"]).getFullYear();
     var _EndYear = new Date(_sessionStartEnd["EndDate"]).getFullYear();
     var startMonth = new Date(_sessionStartEnd["StartDate"]).getMonth();
-
-    for (var month = 0; month < 12; month++, startMonth++) {
+    var noOfMonths = globalconstants.MonthDiff(new Date(_sessionStartEnd["StartDate"]),new Date(_sessionStartEnd["EndDate"]));
+    for (var month = 0; month <= noOfMonths; month++, startMonth++) {
       monthArray.push({
         MonthName: Months[startMonth] + " " + _StartYear,
         val: parseInt(_StartYear + startMonth.toString().padStart(2, "0"))
@@ -333,6 +333,7 @@ export class ContentService implements OnInit {
     }
     return monthArray;
   }
+  
   ReSequence(editedrow, MasterList: any[]) {
     debugger;
     var diff = editedrow.OldSequence - editedrow.DisplayOrder;

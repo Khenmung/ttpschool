@@ -42,8 +42,8 @@ Subject can be assigned to student defined in student class.
                         <div style="writing-mode: tb-rl;transform: rotate(-180deg);">
                             {{disCol!='Action' && disCol!='Student'?disCol:''}}</div>
                         <div style="margin-top:10px" *ngIf="disCol!='Action' && disCol!='Student'">
-                            <mat-checkbox matTooltip="select {{disCol}} for all"
-                                (click)="$event.stopPropagation()" (change)="SelectAllRowInColumn($event,disCol)">
+                            <mat-checkbox matTooltip="select {{disCol}} for all" (click)="$event.stopPropagation()"
+                                (change)="SelectAllRowInColumn($event,disCol)">
                             </mat-checkbox>
                         </div>
                     </div>
@@ -69,9 +69,9 @@ Subject can be assigned to student defined in student class.
                 </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-checkbox style="margin-left:10px;margin-right:15px" matTooltip="select {{disCol}}" *ngIf="disCol !='Student'"
-                    (click)="$event.stopPropagation()" (change)="SelectAllInRow(element,$event,disCol)"
-                    [checked]="element[disCol]==1?true:false">
+                <mat-checkbox style="margin-left:10px;margin-right:15px" matTooltip="select {{disCol}}"
+                    *ngIf="disCol !='Student'" (click)="$event.stopPropagation()"
+                    (change)="SelectAllInRow(element,$event,disCol)" [checked]="element[disCol]==1?true:false">
                 </mat-checkbox>
                 <div fxLayout="column" fxLayoutAlign="center end">
                     <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read' || !element.Action"
@@ -90,4 +90,17 @@ Subject can be assigned to student defined in student class.
     </mat-table>
 </div>
 <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
-<!-- </div> -->
+<div style="margin-top:30px;" data-expand="false" #expandWrap>
+    <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+        <mat-icon>info</mat-icon>
+        Guides..
+    </span>
+    <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+        <ul>
+            <li>
+                <div><b>Class Subject Detail</b> must be defined before <b>Student Subject</b> can be defined.
+                </div>
+            </li>
+        </ul>
+    </span>
+</div>

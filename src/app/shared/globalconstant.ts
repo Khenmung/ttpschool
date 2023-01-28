@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiU+++.*-=-0983`9556'nb656RL
-    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
+    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -150,7 +150,8 @@ export class globalconstants {
                     "ACTIVITY": "activity"
                 },
                 "employeeattendance": {
-                    "EMPLOYEEATTENDANCE": "employee attendance"
+                    "EMPLOYEEATTENDANCE": "employee attendance",
+                    "ATTENDANCEREPORT": "attendance report"
                 }
             },
             "edu": {
@@ -215,7 +216,8 @@ export class globalconstants {
                     'SUBJECTMARKCOMPONENT': 'subject mark component',
                     'CLASSSTUDENT': 'class student',
                     'SUBJECTTYPE': 'subject type',
-                    'TEACHERSUBJECT': 'teacher subject'
+                    'TEACHERSUBJECT': 'teacher subject',
+                    'PROMOTESTUDENT': 'Promote Student'
                 },
                 'TIMETABLE': {
                     'TIMETABLE': 'time table',
@@ -229,15 +231,13 @@ export class globalconstants {
                 'ATTENDANCE': {
                     'ATTENDANCE': 'attendance',
                     'STUDENTATTENDANCE': 'student attendance',
-                    'TEACHERATTENDANCE': 'employee attendance',
-                    'TEACHERATTENDANCERECORD': 'teacher attendance record',
                     'STUDENTATTENDANCERECORD': 'student attendance record',
                     'STUDENTTOTALATTENDANCE': 'student total attendance',
-                    'EMPLOYEETOTALATTENDANCE': 'employee total attendance',
-                    'ATTENANCEREPORT': 'attendance count',
+                    'ATTENANCECOUNT': 'attendance count',
                     'ATTENANCELIST': 'Absent list',
                     'ATTENANCEPERCENT': 'attendance percent',
-                    'DEFAULTER': 'defaulter'
+                    'DEFAULTER': 'defaulter',
+                    'ATTENDANCEREPORT': 'attendance report'
                 },
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',
@@ -684,6 +684,13 @@ export class globalconstants {
         var format = /[!@#$&%^&*_+\=\[\]{};:'"\\|<>]+/;
         return str.replace(format, function (m) { return map[m]; });
         //return str.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+    public static MonthDiff(d1, d2) {
+        var months;
+        months = (d2.getFullYear() - d1.getFullYear()) * 12;
+        months -= d1.getMonth();
+        months += d2.getMonth();
+        return months <= 0 ? 0 : months;
     }
     GetApplicationRolesPermission(tokenservice: TokenStorageService, Applications: any[]) {
 

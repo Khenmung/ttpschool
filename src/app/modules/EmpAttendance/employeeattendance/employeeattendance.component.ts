@@ -52,9 +52,10 @@ export class EmployeeAttendanceComponent implements OnInit {
     EmployeeId: 0,
     AttendanceStatus: 0,
     AttendanceDate: new Date(),
-    ReportedTo: '',
+    ReportedTo: 0,
     Approved: false,
     ApprovedBy: '',
+    Active:true,
     Remarks: '',
     BatchId: 0,
     OrgId: 0
@@ -138,6 +139,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       else
         record.AttendanceStatus = 0;
       record.Action = true;
+      record["Active"] =true;
     })
     //this.AnyEnableSave=true;
   }
@@ -219,11 +221,11 @@ export class EmployeeAttendanceComponent implements OnInit {
           else
             this.EmployeeAttendanceList.push({
               EmployeeAttendanceId: 0,
-              EmployeeId: 0,
+              EmployeeId: emp.EmpEmployeeId,
               Employee:empName,
               Approved: false,
               ApprovedBy: '',
-              ReportedTo: '',
+              ReportedTo: 0,
               AttendanceStatus: 0,
               AttendanceDate: new Date(),
               Remarks: '',
@@ -247,7 +249,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
   UpdateActive(element, event) {
     element.Action = true;
-    //this.AnyEnableSave=true;
+    element.Active=true;
     element.AttendanceStatus = event.checked == true ? 1 : 0;
   }
   onChangeEvent(row, value) {
@@ -301,7 +303,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     list.fields = ["EmployeeAttendanceId"];
     list.PageName = "EmployeeAttendances";
     list.filter = [checkFilterString + " and " + this.StandardFilter];
-
+    this.loading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -319,19 +321,22 @@ export class EmployeeAttendanceComponent implements OnInit {
           this.EmployeeAttendanceData.Approved = false;
           this.EmployeeAttendanceData.ApprovedBy = '';
           this.EmployeeAttendanceData.Remarks = row.Remarks;
+          this.EmployeeAttendanceData.Active = row.Active;
           if (this.EmployeeAttendanceData.EmployeeAttendanceId == 0) {
             this.EmployeeAttendanceData["CreatedDate"] = new Date();
             this.EmployeeAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.EmployeeAttendanceData["UpdatedDate"];
             delete this.EmployeeAttendanceData["UpdatedBy"];
-            //console.log("EmployeeAttendanceData",this.EmployeeAttendanceData);
+            console.log("EmployeeAttendanceData",this.EmployeeAttendanceData);
             this.insert(row);
           }
           else {
+            
             delete this.EmployeeAttendanceData["CreatedDate"];
             delete this.EmployeeAttendanceData["CreatedBy"];
             this.EmployeeAttendanceData["UpdatedDate"] = new Date();
             this.EmployeeAttendanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            console.log("EmployeeAttendanceData",this.EmployeeAttendanceData);
             this.update(row);
           }
           row.Action = false;
@@ -439,7 +444,7 @@ export interface IEmployeeAttendance {
   AttendanceStatus: number;
   AttendanceDate: Date;
   Remarks: string;
-  ReportedTo: string;
+  ReportedTo: number;
   Approved: boolean;
   ApprovedBy: string;
   Action: boolean

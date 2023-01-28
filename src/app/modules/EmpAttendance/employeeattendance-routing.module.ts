@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { EmployeeAttendanceComponent } from './employeeattendance/employeeattendance.component';
 import { EmployeeattendanceboardComponent } from './employeeattendanceboard/employeeattendanceboard.component';
+import { EmployeeAttendanceReportComponent } from './employeeattendancereport/employeeattendancereport.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
 export class EmployeeattendanceRoutingModule { }
 export const EmployeeAttendanceComponents = [
   EmployeeAttendanceComponent,
-  EmployeeattendanceboardComponent
+  EmployeeattendanceboardComponent,
+  EmployeeAttendanceReportComponent
 
 ]

@@ -2,13 +2,8 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewCon
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AbsentListComponent } from '../../attendance/absentlist/absentlist.component';
-import { AttendanceCountComponent } from '../../attendance/attendancecount/attendancecount.component';
-import { AttendancepercentComponent } from '../../attendance/attendancepercent/attendancepercent.component';
-import { DefaulterComponent } from '../../attendance/defaulter/defaulter.component';
-import { StudentAttendanceComponent } from '../../attendance/studentattendance/studentattendance.component';
-import { EmployeeAttendanceComponents } from '../employeeattendance-routing.module';
 import { EmployeeAttendanceComponent } from '../employeeattendance/employeeattendance.component';
+import { EmployeeAttendanceReportComponent } from '../employeeattendancereport/employeeattendancereport.component';
 //import { EmployeeAttendanceComponent } from '../../employeeattendance/employeeattendance.component';
 
 @Component({
@@ -18,12 +13,13 @@ import { EmployeeAttendanceComponent } from '../employeeattendance/employeeatten
 })
 export class EmployeeattendanceboardComponent implements AfterViewInit {
   components: any = [
-    EmployeeAttendanceComponent
+    EmployeeAttendanceComponent,
+    EmployeeAttendanceReportComponent
   ];
   SelectedAppName = '';
   tabNames = [
     { label: 'Attendance', faIcon: '' },
-    // { label: 'Attendance', faIcon: '' },
+    { label: 'Attendance', faIcon: '' },
     // { label: 'Attendance', faIcon: '' },
     // { label: 'Attendance', faIcon: '' },
     // { label: 'Attendance', faIcon: '' },
@@ -60,12 +56,9 @@ export class EmployeeattendanceboardComponent implements AfterViewInit {
 
     }
 
-
-    // var comindx = this.components.indexOf(AbsentListComponent);
-    // if (comindx > -1) {
-    //   this.components.splice(comindx, 1);
-    //   this.tabNames.splice(comindx, 1);
-    // }
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employeeattendance.ATTENDANCEREPORT)
+    var comindx = this.components.indexOf(EmployeeAttendanceReportComponent);
+    this.AddRemoveComponent(perObj,comindx);
     // var comindx = this.components.indexOf(AttendancepercentComponent);
     // if (comindx > -1) {
     //   this.components.splice(comindx, 1);

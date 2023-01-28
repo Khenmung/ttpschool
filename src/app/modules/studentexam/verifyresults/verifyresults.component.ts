@@ -377,7 +377,10 @@ export class VerifyResultsComponent implements OnInit {
       this.VerifiedResult.ExamStudentResult.push({
         "ExamStudentResultId": 0,
         "ExamId": this.searchForm.get("searchExamId").value,
+        "ClassId": this.searchForm.get("searchClassId").value,
+        "SectionId": this.searchForm.get("searchSectionId").value,
         "StudentClassId": d["StudentClassId"],
+        "StudentId": d["StudentId"],
         "Rank": d["Rank"],
         "Division": d["Division"],
         "MarkPercent": +d["Percentage"],
@@ -613,10 +616,11 @@ export class VerifyResultsComponent implements OnInit {
           if (stud.length > 0) {
             var _lastname = stud[0].LastName == null ? '' : " " + stud[0].LastName;
             f.Student = stud[0].StudentClasses[0].RollNo + "-" + stud[0].FirstName + _lastname + "-" + f.Section;
+            f.StudentId = stud[0].StudentId;
           }
         })
 
-        var filteredIndividualStud = alasql("select distinct Student,StudentClassId,FullMark from ? ", [StudentOwnSubjects]);
+        var filteredIndividualStud = alasql("select distinct Student,StudentId,StudentClassId,FullMark from ? ", [StudentOwnSubjects]);
         var _subjectCategoryName = '';
         this.VerifiedResult.ExamResultSubjectMark = [];
         var errormessageforEachSubject = [];
@@ -655,6 +659,7 @@ export class VerifyResultsComponent implements OnInit {
           }
           ForNonGrading = {
             "StudentClassId": ss.StudentClassId,
+            "StudentId":ss.StudentId,
             "Student": ss.Student,
             "Total Marks": 0,
             "Total Percent": 0,

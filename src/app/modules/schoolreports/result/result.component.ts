@@ -256,10 +256,12 @@ export class ResultComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "StudentId,ClassId,SectionId,RollNo"
+      //"StudentId,ClassId,SectionId,RollNo"
+    "ExamStudentResultId,ExamId,ClassId,SectionId,StudentClassId,TotalMarks,Division,MarkPercent,Rank,Active"
     ];
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["ExamStudentResults($filter=ExamId eq " + _examId + ";$select=ExamStudentResultId,ExamId,StudentClassId,TotalMarks,Division,MarkPercent,Rank,Active)"];
+    //list.PageName = "StudentClasses";
+    list.PageName = "ExamStudentResults";
+    //list.lookupFields = ["ExamStudentResults($filter=ExamId eq " + _examId + ";$select=ExamStudentResultId,ExamId,StudentClassId,TotalMarks,Division,MarkPercent,Rank,Active)"];
     list.filter = [filterstr + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -272,25 +274,25 @@ export class ResultComponent implements OnInit {
         //  console.log("data.value",data.value)
         this.ExamStudentResult = [];
         data.value.forEach(studcls => {
-          var stud = _students.filter(s => s.StudentId == studcls.StudentId)
-          studcls.ExamStudentResults.forEach(res => {
+          var stud = _students.filter(st => st.StudentClasses.length>0 && st.StudentClasses[0].StudentClassId == studcls.StudentClassId)
+          //studcls.forEach(res => {
             this.ExamStudentResult.push({
-              ExamStudentResultId: res.ExamStudentResultId,
-              ExamId: res.ExamId,
+              ExamStudentResultId: studcls.ExamStudentResultId,
+              ExamId: studcls.ExamId,
               StudentClassId: studcls.StudentClassId,
               Student: stud[0].FirstName + " " + (stud[0].LastName == null ? '' : stud[0].LastName),
               SectionId:studcls.SectionId,
-              RollNo:studcls.RollNo,
-              TotalMarks: res.TotalMarks,
-              Division: res.Division,
-              MarkPercent: res.MarkPercent,
-              Rank: res.Rank,
-              Active: res.Active,
+              RollNo:stud[0].StudentClasses[0].RollNo,
+              TotalMarks: studcls.TotalMarks,
+              Division: studcls.Division,
+              MarkPercent: studcls.MarkPercent,
+              Rank: studcls.Rank,
+              Active: studcls.Active,
               StudentClass: "",
               GradeId: 0,
               GradeType: ''
             })
-          })
+          //})
         })
 
         //console.log("this.ExamStudentResult",this.ExamStudentResult);

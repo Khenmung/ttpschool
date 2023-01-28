@@ -231,7 +231,7 @@ export class ClassdetailComponent implements OnInit {
           this.ClassMasterData.StudyModeId = row.StudyModeId;
           this.ClassMasterData.Confidential = row.Confidential;
           this.ClassMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
-          //this.ClassMasterData.BatchId = this.SelectedBatchId;
+          this.ClassMasterData.BatchId = this.SelectedBatchId;
 
           this.ClassMasterData.Active = row.Active;
           ////console.log('exam slot', this.ClassMasterData)

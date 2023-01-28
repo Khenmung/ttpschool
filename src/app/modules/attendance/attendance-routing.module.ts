@@ -9,6 +9,8 @@ import { StudentAttendanceComponent } from './studentattendance/studentattendanc
 import { StudenttotalattendanceComponent } from './studenttotalattendance/studenttotalattendance.component';
 //import { EmployeeAttendanceComponent } from '../EmployeeAttendance/employeeattendance/employeeattendance.component';
 import { AttendancepercentComponent } from './attendancepercent/attendancepercent.component';
+import { StudentattendancereportComponent } from '../attendance/studentattendancereport/studentattendancereport.component';
+import { DefaulterComponent } from './defaulter/defaulter.component';
 
 const routes: Routes = [
   {path:'',component:HomeComponent,
@@ -27,12 +29,12 @@ export class AttendanceRoutingModule { }
 export const AttendanceComponents=[
   AttendanceboardComponent,
   StudentAttendanceComponent,
-  //EmployeeAttendanceComponent,
+  StudentattendancereportComponent,
   AttendanceboardComponent, 
   StudenttotalattendanceComponent, 
-  //EmployeetotalattendanceComponent,
   AttendanceCountComponent,
   AbsentListComponent,
-  AttendancepercentComponent
+  AttendancepercentComponent,
+  DefaulterComponent
 ]
 

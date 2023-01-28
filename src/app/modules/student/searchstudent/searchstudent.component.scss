@@ -38,9 +38,12 @@ mat-header-cell{
 }
 .mat-column-PID,.mat-column-Active{
     justify-content: center;
-    flex:1 0 70px;
+    flex:1 0 60px;
 }
-.mat-column-FatherName,.mat-column-MotherName,.mat-column-Name,
+.mat-column-Name{
+    flex:1 0 160px;
+}
+.mat-column-FatherName,.mat-column-MotherName,
 .mat-column-Remarks
 {
     flex: 1 0 120px;

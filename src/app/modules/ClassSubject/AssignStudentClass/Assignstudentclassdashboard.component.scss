@@ -19,7 +19,7 @@ mat-form-field{
     flex:1 1 100px;
 }
 
-.mat-column-StudentName,.mat-column-FeeTypeId,.mat-column-Remarks{
+.mat-column-ExamStatus, .mat-column-StudentName,.mat-column-FeeTypeId,.mat-column-Remarks{
     flex:1 1 150px;
 }
 mat-cell:first-of-type{

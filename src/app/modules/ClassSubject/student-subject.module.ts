@@ -8,6 +8,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
+import { NgxPrintModule } from 'ngx-print';
 
 @NgModule({
   declarations: [StudentSubjectComponents],
@@ -20,6 +21,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MaterialModule,
     MatDialogModule,
     FlexLayoutModule,
+    NgxPrintModule,
     StudentSubjectRoutingModule,
     
     MatDatepickerModule
