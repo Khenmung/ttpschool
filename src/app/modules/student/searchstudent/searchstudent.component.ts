@@ -67,7 +67,7 @@ export class searchstudentComponent implements OnInit {
   Siblings = [];
   SelectedApplicationId = 0;
   SelectedBatchId = 0;
-  SelectedBatchStudentIDRollNo = [];
+  //SelectedBatchStudentIDRollNo = [];
   Clubs = [];
   StudentClassId = 0;
   StudentId = 0;
@@ -270,7 +270,7 @@ export class searchstudentComponent implements OnInit {
     this.shareddata.ChangeUploadType(this.UploadTypes);
 
     this.loading = false; this.PageLoading = false;
-    this.getSelectedBatchStudentIDRollNo();
+    //this.getSelectedBatchStudentIDRollNo();
     this.GetStudents();
     //this.GetStudentClasses();
     var searchObj = this.StudentSearch.filter(f => f.Text == 'ClassId');
@@ -332,7 +332,8 @@ export class searchstudentComponent implements OnInit {
     debugger;
     let StudentName = element.Name;
 
-    let studentclass: any = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
+    //let studentclass: any = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
+    let studentclass: any = this.Students.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0) {
       var _clsName = '';
       var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
@@ -396,7 +397,7 @@ export class searchstudentComponent implements OnInit {
   generateDetail(element) {
     let StudentName = element.PID + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
 
-    let studentclass = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
+    let studentclass = this.Students.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0) {
       var _clsName = '';
       var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
@@ -444,20 +445,20 @@ export class searchstudentComponent implements OnInit {
     }));
     TableUtil.exportArrayToExcel(datatoExport, "ExampleArray");
   }
-  getSelectedBatchStudentIDRollNo() {
-    let list: List = new List();
-    list.fields = ["StudentId", "RollNo", "SectionId", "StudentClassId", "ClassId"];
-    list.PageName = "StudentClasses";
-    list.filter = [this.filterOrgIdNBatchId];
+  // getSelectedBatchStudentIDRollNo() {
+  //   let list: List = new List();
+  //   list.fields = ["StudentId", "RollNo", "SectionId", "StudentClassId", "ClassId"];
+  //   list.PageName = "StudentClasses";
+  //   list.filter = [this.filterOrgIdNBatchId];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        if (data.value.length > 0) {
-          this.SelectedBatchStudentIDRollNo = [...data.value];
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       if (data.value.length > 0) {
+  //         this.SelectedBatchStudentIDRollNo = [...data.value];
 
-        }
-      })
-  }
+  //       }
+  //     })
+  // }
   GetFeeTypes() {
     debugger;
     this.loading = true;

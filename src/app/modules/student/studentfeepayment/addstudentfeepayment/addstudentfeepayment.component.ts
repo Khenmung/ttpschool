@@ -221,6 +221,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
     if (this.studentInfoTodisplay.StudentId > 0)
       this.nav.navigate(['/edu/addstudent/' + this.studentInfoTodisplay.StudentId]);
   }
+  admission(){
+    this.nav.navigate(['/edu/Admission']);
+  }
   PageLoad() {
     debugger;
     this.shareddata.CurrentFeeDefinitions.subscribe(fy => (this.FeeDefinitions = fy));

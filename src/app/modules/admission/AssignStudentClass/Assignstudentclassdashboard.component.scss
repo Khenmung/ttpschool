@@ -6,12 +6,19 @@ mat-form-field{
    
     flex:1 1 100px;
 }
-.mat-column-GenderName,
+.mat-column-GenderName{
+    justify-content: center;
+    flex:1 0 60px;
+}
 .mat-column-RollNo,
 .mat-column-SectionId{
     flex:1 0 60px;
 }
-.mat-column-Active,
+.mat-column-Active
+{
+    justify-content: center;
+    flex:1 1 80px;
+}
 .mat-column-Action,
 .mat-column-ClassId,
 .mat-column-Remark{

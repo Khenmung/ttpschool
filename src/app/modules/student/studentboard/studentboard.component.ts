@@ -160,6 +160,7 @@ export class StudentboardComponent implements AfterViewInit {
     this.nav.navigate(['/edu/feepayment'])
     //http://localhost:4200/#/edu/addstudent/1044
   }
+  
   back() {
     this.nav.navigate(['/edu']);
   }

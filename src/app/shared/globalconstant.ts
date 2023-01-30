@@ -155,6 +155,11 @@ export class globalconstants {
                 }
             },
             "edu": {
+                'Admission':{
+                    'ADMISSION':'Admission',
+                    'PROMOTESTUDENT': 'Promote Student',
+                    'AssignClass':'Assign Class'
+                },
                 'STUDENT': {
                     'STUDENT': 'student',
                     'SEARCHSTUDENT': 'search student',
@@ -217,7 +222,7 @@ export class globalconstants {
                     'CLASSSTUDENT': 'class student',
                     'SUBJECTTYPE': 'subject type',
                     'TEACHERSUBJECT': 'teacher subject',
-                    'PROMOTESTUDENT': 'Promote Student'
+                    
                 },
                 'TIMETABLE': {
                     'TIMETABLE': 'time table',

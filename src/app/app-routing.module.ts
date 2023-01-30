@@ -92,6 +92,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/frontoffice/misc.module').then(m => m.MiscModule)
   },
   {
+    path: 'edu/Admission',
+    loadChildren: () => import('./modules/admission/admission.module').then(m=>m.AdmissionModule)
+  },
+  {
     path: 'edu/specialfeature',
     loadChildren: () => import('./modules/specialfeature/studentactivity.module').then(m => m.StudentactivityModule)
   },

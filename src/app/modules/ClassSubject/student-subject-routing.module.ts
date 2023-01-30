@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AssignStudentclassdashboardComponent } from './AssignStudentClass/Assignstudentclassdashboard.component';
 import { ClassSubjectDetailComponent } from './classsubjectdetail/classsubjectdetail.component';
 import { StudentSubjectMarkCompComponent } from './student-subject-mark-comp/student-subject-mark-comp.component';
 import { studentsubjectdashboardComponent } from './studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from './subject-types/subject-types.component';
 import { SubjectBoardComponent } from './subjectboard/subjectboard.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { PromoteclassComponent } from './promoteclass/promoteclass.component';
 import { StudentSubjectReportComponent } from './studentsubjectreport/studentsubjectreport.component';
 
 const routes: Routes = [
@@ -36,7 +34,5 @@ export const StudentSubjectComponents = [
   SubjectTypesComponent,
   StudentSubjectMarkCompComponent,
   SubjectBoardComponent,
-  AssignStudentclassdashboardComponent,
-  PromoteclassComponent,
   StudentSubjectReportComponent
 ]

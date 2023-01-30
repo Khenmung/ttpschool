@@ -1,14 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort } from '@angular/material/sort';
+import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import alasql from 'alasql';
-import { Observable } from 'rxjs';
-import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -16,16 +9,22 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import alasql from 'alasql';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-AssignStudentclassdashboard',
-  templateUrl: './Assignstudentclassdashboard.component.html',
-  styleUrls: ['./Assignstudentclassdashboard.component.scss']
+  selector: 'app-promoteclass',
+  templateUrl: './promoteclass.component.html',
+  styleUrls: ['./promoteclass.component.scss']
 })
-export class AssignStudentclassdashboardComponent implements OnInit {
+export class PromoteclassComponent implements OnInit {
   PageLoading = true;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  //@ViewChild(MatPaginator) paginator: MatPaginator;
+  //@ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   RowsToUpdate = -1;
@@ -68,6 +67,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   PreviousBatchId = 0;
   NextBatchId = 0;
   Batches = [];
+  filteredStudents: Observable<IStudent[]>;
   StudentClassList: IStudentClass[] = [];
   dataSource: MatTableDataSource<IStudentClass>;
   allMasterData = [];
@@ -85,6 +85,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     SectionId: 0,
     FeeTypeId: 0,
     AdmissionNo: '',
+    AdmissionDate: '',
     Remarks: '',
     Active: 1
   };
@@ -92,14 +93,14 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     'StudentName',
     'GenderName',
     'Remark',
-    'AdmissionNo',
-    'ClassId',
     'SectionId',
     'RollNo',
     'FeeTypeId',
+    'ClassId',
+    'ExamStatus',
+    'AdmitTo',
     'Remarks',
     'Active',
-    'ExamStatus',
     'Action'
   ];
   nameFilter = new UntypedFormControl('');
@@ -118,8 +119,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
-    private route: ActivatedRoute,
+    private route: Router,
     private nav: Router,
     private shareddata: SharedataService,
   ) { }
@@ -134,13 +134,15 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     })
     this.searchForm = this.fb.group({
       searchExamId: [0],
-      searchFeeTypeId: [0],
-      searchSectionId: [0],
-      searchClassId: [0],
-      searchRemarkId: [0],
-      searchGenderAscDesc: [''],
-      searchNameAscDesc: ['']
+      searchPID: [0],
+      searchStudentName: [0],
     });
+    this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(Name => Name ? this._filter(Name) : this.Students.slice())
+      );
     this.nameFilter.valueChanges
       .subscribe(
         name => {
@@ -217,7 +219,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       else {
         this.loading = false; this.PageLoading = false;
       }
-      //this.GetStudents();
+      this.GetStudents();
     }
   }
   createFilter(): (data: any, filter: string) => boolean {
@@ -284,9 +286,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         studcls.Action = true;
       })
       this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      this.dataSource.filterPredicate = this.createFilter();
+      //this.dataSource.paginator = this.paginator;
+      //this.dataSource.sort = this.sort;
+      //this.dataSource.filterPredicate = this.createFilter();
     }
     else {
       this.loading = false; this.PageLoading = false;
@@ -366,6 +368,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             StudentClassId: stud.StudentClassId,
             //AdmissionNo:stud.AdmissionNo,
             ClassId: stud.ClassId,
+            AdmitTo: stud.ClassId,
             StudentId: stud.StudentId,
             StudentName: stud.Student.FirstName + " " + stud.Student.LastName,
             ClassName: this.Classes.filter(c => c.ClassId == stud.ClassId)[0].ClassName,
@@ -429,9 +432,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.contentservice.openSnackBar("New Roll Nos. has been generated. Please confirm and save it all.", globalconstants.ActionText, globalconstants.RedBackground);
 
           this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.filterPredicate = this.createFilter();
+          //this.dataSource.sort = this.sort;
+          //this.dataSource.paginator = this.paginator;
+          //this.dataSource.filterPredicate = this.createFilter();
           this.loading = false; this.PageLoading = false;
         }
       })
@@ -512,183 +515,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
-  CopyFromSameClassPreviousBatch() {
-    var _classId = this.searchForm.get("searchClassId").value;
-    if ( _classId == 0) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (this.PreviousBatchId == -1) {
-      this.StudentClassList = [];
-      this.dataSource = new MatTableDataSource<IStudentClass>();
-      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-    }
-    else {
-      var SameClassPreviousBatchData = [];
-      var ExistingData = [];
-      this.StudentClassList = [];
-      this.HeaderTitle = this.SameClassPreviousBatchLabel;
-      this.GetStudentClasses(this.SameClassPreviousBatch)
-        .subscribe((data: any) => {
-          //SameClassPreviousBatchData = [...data.value];
-          var result;
-          result = [...data.value];
 
-          this.GetExamResult(this.PreviousBatchId,_classId)
-            .subscribe((examresult: any) => {
-              //var _classId = this.searchForm.get("searchClassId").value
-             
-              var _defaultTypeId = 0;
-              var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
-              if (defaultFeeTypeObj.length > 0)
-                _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
-              result.forEach(s => {
-                var _genderName = '';
-                var _examStatus = '';
-                var objExam = examresult.value.filter(st => st.StudentId == s.StudentId)
-                if (objExam.length > 0)
-                  _examStatus = objExam[0].Division;
-                var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.GenderId);
-                if (genderObj.length > 0)
-                  _genderName = genderObj[0].MasterDataName;
-                var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
-                var _feetype = ''
-                if (feetype.length > 0)
-                  _feetype = feetype[0].FeeTypeName;
-                var _lastname = s.Student.LastName == null ? '' : " " + s.Student.LastName;
-                SameClassPreviousBatchData.push({
-                  StudentClassId: 0,
-                  ClassId: s.ClassId,
-                  StudentId: s.StudentId,
-                  StudentName: s.Student.FirstName + _lastname,
-                  ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
-                  FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
-                  FeeType: _feetype,
-                  RollNo: s.RollNo,
-                  SectionId: s.SectionId,
-                  Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
-                  Active: 0,
-                  Promote: 0,
-                  Remarks: '',
-                  GenderName: _genderName,
-                  ExamStatus: _examStatus,
-                  Action: false
-                });
-              })
 
-              this.GetStudentClasses('')
-                .subscribe((data: any) => {
-                  ExistingData = [...data.value];
-                  SameClassPreviousBatchData.forEach(spb => {
-                    var promoted = ExistingData.filter(f => f.StudentId == spb.StudentId);
-                    if (promoted.length == 0) {
-                      this.StudentClassList.push(spb);
-                    }
-                  })
-                  if (this.StudentClassList.length == 0) {
-                    this.contentservice.openSnackBar("No data from " + this.HeaderTitle, globalconstants.ActionText, globalconstants.RedBackground);
-                  }
-                  this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
-                  this.dataSource.sort = this.sort;
-                  this.dataSource.paginator = this.paginator;
-                  this.dataSource.filterPredicate = this.createFilter();
-                  this.loading = false; this.PageLoading = false;
-
-                })
-            })
-        });
-    }
-  }
-  CopyFromPreviousClassAndBatch() {
-    debugger;
-    var _classId = this.searchForm.get("searchClassId").value;
-    if (_classId == 0) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (this.PreviousBatchId == -1) {
-      this.StudentClassList = [];
-      this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
-      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-
-    } else {
-      this.HeaderTitle = this.PreviousClassPreviousBatchLabel;
-      var PreviousClassAndPreviousBatchData = [];
-      this.StudentClassList = [];
-      var ExistingData = [];
-      this.GetStudentClasses(this.PreviousClassPreviousBatch)
-        .subscribe((data: any) => {
-
-          var result;
-          result = [...data.value];
-
-          this.GetExamResult(this.PreviousBatchId,this.PreviousClassId)
-            .subscribe((examresult: any) => {
-
-              //console.log('result',result)
-              var _defaultTypeId = 0;
-              var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
-              if (defaultFeeTypeObj.length > 0)
-                _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
-              var _examStatus = '';
-              result.forEach(s => {
-                _examStatus = '';
-                var objExam = examresult.value.filter(st => st.StudentId == s.StudentId)
-                if (objExam.length > 0)
-                  _examStatus = objExam[0].Division;
-                var _genderName = '';
-                var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.GenderId);
-                if (genderObj.length > 0)
-                  _genderName = genderObj[0].MasterDataName;
-                var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
-                var _feetype = ''
-                if (feetype.length > 0)
-                  _feetype = feetype[0].FeeTypeName;
-                var _lastname = s.Student.LastName == null ? '' : " " + s.Student.LastName;
-                PreviousClassAndPreviousBatchData.push({
-                  StudentClassId: 0,
-                  ClassId: s.ClassId,
-                  StudentId: s.StudentId,
-                  StudentName: s.Student.FirstName + _lastname,
-                  ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
-                  FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
-                  FeeType: _feetype,
-                  RollNo: s.RollNo,
-                  SectionId: s.SectionId,
-                  Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
-                  Active: 0,
-                  Promote: 0,
-                  Remarks: '',
-                  GenderName: _genderName,
-                  ExamStatus: _examStatus,
-                  Action: false
-                });
-              })
-
-              this.GetStudentClasses('')
-                .subscribe((data: any) => {
-                  ExistingData = [...data.value]
-                  PreviousClassAndPreviousBatchData.forEach(spb => {
-                    var promoted = ExistingData.filter(f => f.StudentId == spb.StudentId);
-                    if (promoted.length == 0) {
-                      this.StudentClassList.push(spb);
-                    }
-                  })
-                  if (this.StudentClassList.length == 0) {
-                    this.contentservice.openSnackBar("No data from " + this.HeaderTitle + " or all students have been promoted.", globalconstants.ActionText, globalconstants.RedBackground);
-                  }
-                  this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
-                  this.dataSource.sort = this.sort;
-                  this.dataSource.paginator = this.paginator;
-                  this.dataSource.filterPredicate = this.createFilter();
-                  this.loading = false; this.PageLoading = false;
-                })
-            })
-        })
-    }
-  }
   SetLabel() {
     let _classId = this.searchForm.get("searchClassId").value;
     let _previousBathId = +this.tokenstorage.getPreviousBatchId();
@@ -750,7 +578,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     else if (previousbatch == this.PreviousClassPreviousBatch) {
 
       filterStr = this.StandardFilterWithPreviousBatchId;
-      this.PreviousClassId =0;
+      this.PreviousClassId = 0;
       if (classIdIndex > 0)//means not if first element
       {
         this.PreviousClassId = this.Classes[classIdIndex - 1]["ClassId"];
@@ -806,80 +634,113 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       return this.dataservice.get(list);
     }
   }
-  GetData(previousbatch) {
+  AdmitToClasses = [];
+  GetData() {
     this.HeaderTitle = '';
-    this.GetStudentClasses('')
-      .subscribe((StudentClassesdb: any) => {
-        var _classId = this.searchForm.get("searchClassId").value;
-        this.GetExamResult(this.SelectedBatchId,_classId)
-          .subscribe((examresult: any) => {
+    //this.GetStudentClasses('')
+    //.subscribe((StudentClassesdb: any) => {
+    var _StudentId = this.searchForm.get("searchStudentName").value.StudentId;
+    var _PId = this.searchForm.get("searchPID").value;
+    var _examId = this.searchForm.get("searchExamId").value;
+    if (_StudentId == undefined && _PId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_examId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_PId > 0) {
+      let studId = this.Students.filter(s => s["PID"] == _PId)
+      _StudentId = studId[0].StudentId;
+    }
 
-            var result;
-            var _RemarkId = this.searchForm.get("searchRemarkId").value;
-            if (_RemarkId > 0)
-              result = StudentClassesdb.value.filter(f => f.Student.RemarkId == _RemarkId);
-            else
-              result = [...StudentClassesdb.value];
+    this.GetExamResult(this.PreviousBatchId, _StudentId)
+      .subscribe((examresult: any) => {
 
-            var _defaultTypeId = 0;
-            var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
-            if (defaultFeeTypeObj.length > 0)
-              _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
-            result.forEach(s => {
-              var obj = this.Remarks.filter(f => f.MasterDataId == s.Student.RemarkId);
-              var _remark = '';
-              var _examStatus = '';
-              var objexam = examresult.value.filter(ex => ex.StudentId == s.StudentId)
-              if (objexam.length > 0)
-                _examStatus = objexam[0].Division;
-              if (obj.length > 0)
-                _remark = obj[0].MasterDataName
-
-              var _genderName = '';
-              var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.GenderId);
-              if (genderObj.length > 0)
-                _genderName = genderObj[0].MasterDataName;
-              var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
-              var _feetype = ''
-              if (feetype.length > 0)
-                _feetype = feetype[0].FeeTypeName;
-              var _lastname = s.Student.LastName == null ? '' : " " + s.Student.LastName;
-              this.StudentClassList.push({
-                PID: s.Student.PID,
-                StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
-                AdmissionNo: s.AdmissionNo,
-                AdmissionDate: s.AdmissionDate,
-                ClassId: s.ClassId,
-                StudentId: s.StudentId,
-                StudentName: s.Student.FirstName + _lastname,
-                ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
-                FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
-                FeeType: _feetype,
-                RollNo: s.RollNo,
-                SectionId: s.SectionId,
-                Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
-                Active: previousbatch == '' ? s.Active : 0,
-                Promote: 0,
-                Remark: _remark,
-                Remarks: s.Remarks,
-                GenderName: _genderName,
-                ExamStatus: _examStatus,
-                Action: false
-              });
-            })
-
-            if (this.StudentClassList.length == 0) {
-              this.HeaderTitle = '';
-              this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
+        this.StudentClassList = [];
+        var _defaultTypeId = 0;
+        var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
+        if (defaultFeeTypeObj.length > 0)
+          _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
+        var _Student: any = this.Students.filter(studnt => studnt.StudentId == _StudentId)
+        //this.Students.forEach((s:any) => {
+        if (_Student.length > 0) {
+          var _examStatus = '';
+          var objexam = examresult.value.filter(ex => ex.StudentId == _Student[0].StudentId)
+          if (objexam.length > 0) {
+            _examStatus = objexam[0].Division;
+            var currentClassIndex = this.Classes.findIndex(i => i.ClassId == objexam[0].StudentClass.ClassId);
+            var _admitToClassId = 0;
+            if (_examStatus.includes("fail")) {
+              _admitToClassId = this.Classes[currentClassIndex].ClassId;
+              this.AdmitToClasses = this.Classes.filter(c => c.ClassId == _admitToClassId);
+            }
+            else {
+              _admitToClassId = this.Classes[currentClassIndex + 1].ClassId;
+              this.AdmitToClasses = this.Classes.filter(c => c.ClassId == _admitToClassId);
             }
 
-            this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
-            this.dataSource.sort = this.sort;
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.filterPredicate = this.createFilter();
-            this.loading = false; this.PageLoading = false;
-          })
+            let _studentClassId = 0;
+            let _admissionDate = new Date();
+            let _admissionStatus = 0;
+
+            if (_Student[0].StudentClasses.length > 0) {
+              _admissionDate = _Student[0].StudentClasses[0].AdmissionDate;
+              _studentClassId = _Student[0].StudentClasses[0].StudentClassId;
+              _admissionStatus = 1;
+            }
+            var _genderName = '';
+            var genderObj = this.Genders.filter(f => f.MasterDataId == _Student[0].GenderId);
+            if (genderObj.length > 0)
+              _genderName = genderObj[0].MasterDataName;
+            var feetype = this.FeeTypes.filter(t => t.FeeTypeId == objexam[0].StudentClass.FeeTypeId);
+
+            var _feetype = ''
+            if (feetype.length > 0)
+              _feetype = feetype[0].FeeTypeName;
+            //var _lastname = _Student[0].Student.LastName == null ? '' : " " + _Student[0].Student.LastName;
+            this.StudentClassList.push({
+              PID: _Student[0].PID,
+              StudentClassId: _studentClassId,
+              AdmissionDate: _admissionDate,
+              ClassId: objexam[0].StudentClass.ClassId,
+              AdmitTo: _admitToClassId,
+              StudentId: _Student[0].StudentId,
+              StudentName: _Student[0].Name,
+              ClassName: this.Classes.filter(c => c.ClassId == objexam[0].StudentClass.ClassId)[0].ClassName,
+              FeeTypeId: (objexam[0].StudentClass.FeeTypeId == 0 || objexam[0].StudentClass.FeeTypeId == null) ? _defaultTypeId : objexam[0].StudentClass.FeeTypeId,
+              FeeType: _feetype,
+              RollNo: objexam[0].StudentClass.RollNo,
+              SectionId: objexam[0].StudentClass.SectionId,
+              Section: objexam[0].StudentClass.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == objexam[0].StudentClass.SectionId)[0].MasterDataName : '',
+              Active: _admissionStatus,
+              Promote: 0,
+              Remarks: _Student[0].Remarks,
+              GenderName: _genderName,
+              ExamStatus: _examStatus,
+              Action: false
+            });
+          }
+          else {
+            this.loading = false;
+            this.contentservice.openSnackBar("No exam result found for this student!", globalconstants.ActionText, globalconstants.RedBackground);
+          }
+        }
+        else if (this.StudentClassList.length == 0) {
+          this.HeaderTitle = '';
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
+        }
+        //console.log("classid",this.StudentClassList)
+        this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
+        //this.dataSource.sort = this.sort;
+        //this.dataSource.paginator = this.paginator;
+        //this.dataSource.filterPredicate = this.createFilter();
+        this.loading = false; this.PageLoading = false;
       })
+    //})
   }
   clear() {
     this.searchForm.patchValue({
@@ -898,6 +759,55 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         f.Active = 0;
         f.Action = true;
       })
+  }
+  feepayment(element) {
+    this.generateDetail(element);
+
+  }
+  StudentId = 0;
+  StudentClassId = 0;
+  SaveIds(element) {
+    debugger;
+    var _ClassId = 0;
+    //if (element.StudentClasses.length > 0) {
+    if (element.StudentClassId != undefined && element.StudentClassId > 0) {
+      this.StudentClassId = element.StudentClassId;
+      _ClassId = element.ClassId;
+    }
+
+    this.StudentId = element.StudentId;
+    this.tokenstorage.saveStudentClassId(this.StudentClassId + "");
+    this.tokenstorage.saveClassId(_ClassId + "");
+    this.tokenstorage.saveStudentId(this.StudentId + "");
+
+  }
+  generateDetail(element) {
+
+
+    let studentclass: any = this.Students.filter(sid => sid.StudentId == element.StudentId);
+    let StudentName = studentclass[0].Name + ', ' + studentclass[0].FatherName + ', ' + studentclass[0].MotherName + ', ';
+    if (studentclass.length > 0) {
+      var _clsName = '';
+      var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].StudentClasses[0].ClassId);
+      if (objcls.length > 0)
+        _clsName = objcls[0].ClassName
+
+      var _sectionName = '';
+      var sectionObj = this.Sections.filter(f => f.MasterDataId == studentclass[0].StudentClasses[0].SectionId)
+      if (sectionObj.length > 0)
+        _sectionName = sectionObj[0].MasterDataName;
+      this.StudentClassId = studentclass[0].StudentClasses[0].StudentClassId
+      StudentName += _clsName + "-" + _sectionName + "-" + studentclass[0].StudentClasses[0].RollNo;
+    }
+
+    this.shareddata.ChangeStudentName(StudentName);
+
+    //this.shareddata.ChangeStudentClassId(this.StudentClassId);
+    this.tokenstorage.saveStudentClassId(this.StudentClassId.toString());
+    this.tokenstorage.saveStudentId(element.StudentId);
+    //this.shareddata.ChangeStudentId(element.StudentId);
+    this.SaveIds(element);
+    this.route.navigate(['/edu/feepayment']);
   }
   updateActive(row, value) {
 
@@ -970,23 +880,24 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.StudentClassData.Active = row.Active;
               this.StudentClassData.StudentClassId = row.StudentClassId;
               this.StudentClassData.StudentId = row.StudentId;
-              this.StudentClassData.ClassId = row.ClassId;
+              this.StudentClassData.ClassId = row.AdmitTo;
               this.StudentClassData.FeeTypeId = row.FeeTypeId;
               this.StudentClassData.RollNo = row.RollNo;
               this.StudentClassData.SectionId = row.SectionId;
               this.StudentClassData.Remarks = row.Remarks;
               this.StudentClassData.AdmissionNo = row.AdmissionNo;
+              this.StudentClassData.AdmissionDate = row.AdmissionDate;
 
               this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
               this.StudentClassData.BatchId = this.SelectedBatchId;
               if (this.StudentClassData.StudentClassId == 0) {
                 this.StudentClassData.AdmissionNo = _year + ClassStrength;
-                this.StudentClassData["AdmissionDate"] = new Date();
+                //this.StudentClassData["AdmissionDate"] = new Date();
                 this.StudentClassData["CreatedDate"] = new Date();
                 this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
                 delete this.StudentClassData["UpdatedDate"];
                 delete this.StudentClassData["UpdatedBy"];
-                //console.log('to insert', this.StudentClassData)
+                console.log('to insert', this.StudentClassData)
                 this.insert(row);
               }
               else {
@@ -994,6 +905,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
                 delete this.StudentClassData["CreatedBy"];
                 this.StudentClassData["UpdatedDate"] = new Date();
                 this.StudentClassData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+                console.log('to update', this.StudentClassData)
                 this.update(row);
               }
             });
@@ -1008,13 +920,24 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false; this.PageLoading = false;
-          row.ClassName = this.Classes.filter(c => c.ClassId == data.ClassId)[0].ClassName,
-            row.StudentClassId = data.StudentClassId;
-
+          row.ClassName = this.Classes.filter(c => c.ClassId == data.ClassId)[0].ClassName;
+          row.StudentClassId = data.StudentClassId;
+          var newStudentDetail: any = this.Students.filter(st => st.StudentId == this.StudentClassData.StudentId);
+          newStudentDetail[0].StudentClasses.push({
+            StudentClassId: data.StudentClassId,
+            ClassId: this.StudentClassData.ClassId,
+            FeeTypeId: this.StudentClassData.FeeTypeId,
+            RollNo: this.StudentClassData.RollNo,
+            SectionId: this.StudentClassData.SectionId,
+            Remarks: this.StudentClassData.Remarks,
+            AdmissionNo: data.AdmissionNo,
+            AdmissionDate: data.AdmissionDate
+          })
           row.Action = false;
 
           this.RowsToUpdate--;
           if (this.RowsToUpdate == 0) {
+            this.CreateInvoice(row);
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.RowsToUpdate = -1;
           }
@@ -1105,21 +1028,28 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
   ExamStatuses = [];
-  GetExamResult(pBatchId,pClassId) {
+  GetExamResult(pBatchId, pStudentId) {
     var _examId = this.searchForm.get("searchExamId").value;
+    var _PId = this.searchForm.get("searchPID").value;
+
     //var _classId = this.searchForm.get("searchClassId").value;
-    var _sectionId = this.searchForm.get("searchSectionId").value;
+    //var _sectionId = this.searchForm.get("searchSectionId").value;
     let filterstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ExamId eq " + _examId +
-      " and ClassId eq " + pClassId +
       " and BatchId eq " + pBatchId;
-    if (_sectionId > 0)
-      filterstr += " and SectionId eq " + _sectionId;
+    if (pStudentId != undefined) {
+      filterstr += " and StudentId eq " + pStudentId;
+    }
+    if (_PId > 0) {
+      let studId = this.Students.filter(s => s["PID"] == _PId)
+      filterstr += " and StudentId eq " + studId[0].StudentId;
+    }
 
     let list: List = new List();
-    list.fields = ["Division", "StudentClassId","StudentId"];
+    list.fields = ["Division", "StudentClassId", "StudentId"];
     //list.PageName = "StudentClasses";
     list.PageName = "ExamStudentResults";
+    list.lookupFields = ["StudentClass($select=ClassId,FeeTypeId,SectionId,RollNo)"];
     list.filter = [filterstr];
     return this.dataservice.get(list)
 
@@ -1146,10 +1076,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     _students = _students.filter(a => a.Active == 1);
     this.Students = _students.map(student => {
       var _lastname = student.LastName == null ? '' : " " + student.LastName;
-      return {
-        StudentId: student.StudentId,
-        Name: student.PID + '-' + student.FirstName + _lastname
-      }
+      //student.StudentId
+      //  StudentId: student.StudentId,
+      student.Name = student.PID + '-' + student.FirstName + _lastname;
+      return student;
+      //}
     })
     this.loading = false;
     this.PageLoading = false;
@@ -1194,8 +1125,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 export interface IStudentClass {
   PID: number;
   StudentClassId: number;
-  AdmissionNo: string;
   AdmissionDate: Date;
+  AdmitTo: number;
   ClassId: number;
   ClassName: string;
   StudentId: number;
@@ -1208,7 +1139,6 @@ export interface IStudentClass {
   Promote: number;
   ExamStatus: string;
   GenderName: string;
-  Remark: string;
   Remarks: string;
   Active: number;
   Action: boolean

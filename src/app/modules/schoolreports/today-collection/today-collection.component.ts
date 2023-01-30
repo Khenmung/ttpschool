@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
-import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
+import { IStudent } from '../../admission/AssignStudentClass/Assignstudentclassdashboard.component';
 import { SwUpdate } from '@angular/service-worker';
 
 @Component({

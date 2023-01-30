@@ -38,6 +38,14 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            <mat-form-field appearance="outline" style="width:150px">
+                <mat-label>Status from</mat-label>
+                <mat-select formControlName="searchExamId">
+                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                        {{item.ExamName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
             <button [disabled]="loading" style="margin-right: 10px;" mat-raised-button color="accent"
                 (click)="GetData('')">
                 <mat-icon>search</mat-icon>
@@ -46,32 +54,29 @@
                 </mat-icon>
             </button>
         </div>
-        <div style="margin-top:15px; display:flex;border: 1px solid lightgray;padding:10px 0px 10px 15px;">
-            <div *ngIf="PreviousClassPreviousBatchLabel.length>0 || SameClassPreviousBatchLabel.length>0">
-                <mat-form-field appearance="outline" style="width:150px">
-                    <mat-label>Status from</mat-label>
-                    <mat-select formControlName="searchExamId">
-                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
-                            {{item.ExamName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
+        <!-- <div *ngIf="PreviousClassPreviousBatchLabel.length>0 || SameClassPreviousBatchLabel.length>0">
+            <div
+                style="margin-top:15px; display:flex;border: 1px solid lightgray;flex-direction: column; padding:10px 0px 10px 15px;">
+                Promote from previous batch.
+                <div style="display:flex">
+                    <div style="margin-right:15px;padding:15px;border:1px solid lawngreen"
+                        *ngIf="PreviousClassPreviousBatchLabel.length>0">
+                        <span style="margin-right: 15px;">{{PreviousClassPreviousBatchLabel}}&nbsp;</span>
+                        <button [disabled]="loading" style="margin-right: 10px;" class="mat-raised-button"
+                            (click)="CopyFromPreviousClassAndBatch()">
+                            <mat-icon>arrow_back_ios</mat-icon>
+                        </button>
+                    </div>
+                    <div style="padding:15px;border:1px solid lawngreen" *ngIf="SameClassPreviousBatchLabel.length>0">
+                        <span style="margin-right: 15px;">{{SameClassPreviousBatchLabel}}&nbsp;</span>
+                        <button [disabled]="loading" class="mat-raised-button"
+                            (click)="CopyFromSameClassPreviousBatch()">
+                            <mat-icon>skip_previous</mat-icon>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div style="margin-right:15px;padding:15px;border:1px solid lawngreen"
-                *ngIf="PreviousClassPreviousBatchLabel.length>0">
-                <span style="margin-right: 15px;">{{PreviousClassPreviousBatchLabel}}&nbsp;</span>
-                <button [disabled]="loading" style="margin-right: 10px;" class="mat-raised-button"
-                    (click)="CopyFromPreviousClassAndBatch()">
-                    <mat-icon>arrow_back_ios</mat-icon>
-                </button>
-            </div>
-            <div style="padding:15px;border:1px solid lawngreen" *ngIf="SameClassPreviousBatchLabel.length>0">
-                <span style="margin-right: 15px;">{{SameClassPreviousBatchLabel}}&nbsp;</span>
-                <button [disabled]="loading" class="mat-raised-button" (click)="CopyFromSameClassPreviousBatch()">
-                    <mat-icon>skip_previous</mat-icon>
-                </button>
-            </div>
-        </div>
+        </div> -->
     </div>
     <mat-divider style="position:relative; margin-top:10px;margin-bottom: 15px;"></mat-divider>
     <div *ngIf="StudentClassList.length>0" style="padding-top:10px;border:1px solid lightgray">
@@ -98,7 +103,7 @@
 </form>
 <div style="font-size: medium;padding: 15px 0px 15px 0px;font-weight: bold;color:darkgreen">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
-   
+
     <ng-container matColumnDef="StudentName">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
             <span style="display: flex;flex-direction: column;justify-content: start;">

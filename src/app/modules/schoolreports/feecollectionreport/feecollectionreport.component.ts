@@ -13,7 +13,7 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
-import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
+import { IStudent } from '../../admission/AssignStudentClass/Assignstudentclassdashboard.component';
 import { SwUpdate } from '@angular/service-worker';
 
 @Component({
