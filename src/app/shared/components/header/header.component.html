@@ -1,39 +1,41 @@
 <mat-toolbar>
-    <mat-toolbar-row class="width100 mat-elevation-z4" fxLayout="row" fxLayoutAlign="space-between center">
-        <div style="margin:10px 10px 10px 15px;" fxLayout="row" fxLayoutAlign="start center">
-            <a [routerLink]="['/']"><img style="border-radius: 20px;" src="{{logoPath}}" alt="{{OrganizationName}}"
-                    width="60px" /></a>
-            <span>{{SelectedApplicationName}}</span>
-        </div>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-            <div style="font-size: medium;margin-right: 15px;">{{userName}}</div>
-            <!-- <span class="rightside" *ngIf="!deviceXs && !loggedIn">
+    <mat-toolbar-row class="width100 mat-elevation-z4" style="padding:0px; display:flex;flex-direction: column;justify-content: space-between;">
+        <div style="display:flex;justify-content: space-between;width:100%">
+            <div style="margin:10px 10px 10px 15px;" fxLayout="row" fxLayoutAlign="start center">
+                <a [routerLink]="['/']"><img src="{{logoPath}}" alt="{{OrganizationName}}" width="60px" /></a>
+                <span>{{SelectedApplicationName}}</span>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+                <div style="font-size: medium;margin-right: 15px;">{{userName}}</div>
+                <!-- <span class="rightside" *ngIf="!deviceXs && !loggedIn">
                 <button [disabled]="loading" mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
                 </button>
             </span> -->
-            <button [disabled]="loading" class="rightside" fxHide.xs mat-icon-button [matMenuTriggerFor]="menu"
-                matTooltip="login">
-                <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
-                <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>
-            </button>
+                <button [disabled]="loading" class="rightside" fxHide.xs mat-icon-button [matMenuTriggerFor]="menu"
+                    matTooltip="login">
+                    <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
+                    <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>
+                </button>
 
-            <mat-menu #menu="matMenu">
-                <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
-                    <mat-icon>login</mat-icon>login
-                </button>
-                <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="createlogin()">
-                    <mat-icon>create</mat-icon>Sign Up
-                </button>
-                <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="changepassword()">
-                    <mat-icon>change_circle</mat-icon>Change password
-                </button>
-                <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="logout()">
-                    <mat-icon>logout</mat-icon>logout
-                </button>
-            </mat-menu>
+                <mat-menu #menu="matMenu">
+                    <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
+                        <mat-icon>login</mat-icon>login
+                    </button>
+                    <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="createlogin()">
+                        <mat-icon>create</mat-icon>Sign Up
+                    </button>
+                    <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="changepassword()">
+                        <mat-icon>change_circle</mat-icon>Change password
+                    </button>
+                    <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>logout
+                    </button>
+                </mat-menu>
+            </div>
         </div>
-    </mat-toolbar-row>    
+        <div style="background-color:green;height:11px;width:100%"> </div>
+    </mat-toolbar-row>
     <mat-toolbar-row fxShow.gt-xs fxHide.gt-xs
         style="height: 70px !important;box-shadow: 3px 3px 3px var(--maincolor2);" fxLayout="row wrap"
         fxLayoutAlign="space-between center">

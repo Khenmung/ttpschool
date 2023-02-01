@@ -71,7 +71,7 @@ export class AddstudentclassComponent implements OnInit {
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
     var today = new Date();
     this.studentclassForm = this.fb.group({
-      //AdmissionNo: [{ value: '', disabled: true }],
+      AdmissionNo: [''],
       StudentName: [{ value: this.StudentName, disabled: true }],
       ClassId: [0, [Validators.required]],
       SectionId: [0],
@@ -323,7 +323,7 @@ export class AddstudentclassComponent implements OnInit {
         (data: any) => {
           this.loading = false; this.PageLoading = false;
           this.StudentClassId = data.StudentClassId;
-          this.studentclassForm.patchValue({"AdmissionNo": this.studentclassData.AdmissionNo })
+          this.studentclassForm.patchValue({ "AdmissionNo": this.studentclassData.AdmissionNo })
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
           this.CreateInvoice();
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -336,7 +336,11 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.CreateInvoice();
-          this.studentclassForm.patchValue({"AdmissionNo": this.studentclassData.AdmissionNo })
+          this.studentclassForm.patchValue({ "AdmissionNo": this.studentclassData.AdmissionNo })
+        }, error => {
+          var msg = globalconstants.formatError(error);
+          this.contentservice.openSnackBar(msg, globalconstants.ActionText, globalconstants.RedBackground);
+          this.loading = false;
         });
   }
   CreateInvoice() {

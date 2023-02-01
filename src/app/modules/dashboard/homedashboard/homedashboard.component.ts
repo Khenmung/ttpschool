@@ -410,7 +410,7 @@ export class HomeDashboardComponent implements OnInit {
     var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
-      "StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks"
+      "StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active"
     ];
     if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
       standardfilter += " and StudentId eq " + localStorage.getItem("studentId");

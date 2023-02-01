@@ -41,7 +41,7 @@
                     {{element[disCol]}}
                 </mat-cell>
             </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-header-row *matHeaderRowDef="displayedColumns;sticky:true"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 40px;"></mat-row>
         </mat-table>
     </div>

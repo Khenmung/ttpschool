@@ -233,9 +233,16 @@
             </button> -->
         </mat-header-cell>
         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-            <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-raised-button
-                color="accent" (click)="SaveRow(element)">
+            <button style="margin-right: 15px;" [disabled]="loading || !element.Action || Permission=='read'"
+                matTooltip="save" mat-mini-fab color="accent" (click)="SaveRow(element)">
                 <mat-icon>save</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+            <button [disabled]="loading || !element.Action || Permission!='rwd'" matTooltip="delete" mat-mini-fab
+                color="accent" (click)="Delete(element)">
+                <mat-icon>delete</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
                 </mat-icon>

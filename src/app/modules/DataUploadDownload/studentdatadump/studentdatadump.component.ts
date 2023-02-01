@@ -713,7 +713,7 @@ export class StudentDatadumpComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
-        var nottoinclude = ['StudentId', 'StudentClassId', 'StudentClasses', 'CreatedBy', 'UpdatedBy']
+        var nottoinclude = ['StudentClasses', 'CreatedBy', 'UpdatedBy']
         Object.keys(this.ELEMENT_DATA[0]).forEach(studproperty => {
           if (!this.displayedColumns.includes(studproperty) && !nottoinclude.includes(studproperty)) {
             this.displayedColumns.push(studproperty);

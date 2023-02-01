@@ -24,7 +24,7 @@
                     <input type="text" matInput formControlName="searchUserName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                         <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                            {{option.UserName}}
+                            {{option.FirstName}}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
@@ -49,12 +49,12 @@
                     </button>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="UserName">
+            <ng-container matColumnDef="FirstName">
                 <mat-header-cell *matHeaderCellDef> Name</mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <input matInput [value]="element.UserName" (blur)="onBlur(element)"
-                            [(ngModel)]="element.UserName" autocomplete="Off" [maxlength]="100">
+                        <input matInput [value]="element.FirstName" (blur)="onBlur(element)"
+                            [(ngModel)]="element.FirstName" autocomplete="Off" [maxlength]="100">
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
@@ -86,7 +86,7 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Valid From </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <input matInput [value]="element.ValidFrom" [matDatepicker]="ValidFrom"
+                        <input [disabled]="true" matInput [value]="element.ValidFrom" [matDatepicker]="ValidFrom"
                             [(ngModel)]="element.ValidFrom" autocomplete="Off">
                         <mat-datepicker-toggle matSuffix [for]="ValidFrom"></mat-datepicker-toggle>
                         <mat-datepicker #ValidFrom></mat-datepicker>

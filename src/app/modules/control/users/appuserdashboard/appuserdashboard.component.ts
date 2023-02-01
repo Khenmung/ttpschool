@@ -57,7 +57,7 @@ export class AppuserdashboardComponent implements OnInit {
   expandedElement: any;
   datasource: MatTableDataSource<IAppUser>;
   displayedColumns = [
-    'UserName',
+    'FirstName',
     'EmailAddress',
     //'PhoneNumber',
     'ValidFrom',
@@ -104,20 +104,20 @@ export class AppuserdashboardComponent implements OnInit {
     this.filteredOptions = this.searchForm.get("searchUserName").valueChanges
       .pipe(
         startWith(''),
-        map(value => typeof value === 'string' ? value : value.UserName),
-        map(username => username ? this._filter(username) : this.Users.slice())
+        map(value => typeof value === 'string' ? value : value.FirstName),
+        map(FirstName => FirstName ? this._filter(FirstName) : this.Users.slice())
       );
     this.OrgIdAndBatchIdFilter = globalconstants.getStandardFilterWithBatchId(this.tokenStorage);
     this.PageLoad();
   }
-  private _filter(name: string): IUser[] {
+  private _filter(FirstName: string): IUser[] {
 
-    const filterValue = name.toLowerCase();
-    return this.Users.filter(option => option.UserName.toLowerCase().includes(filterValue));
+    const filterValue = FirstName.toLowerCase();
+    return this.Users.filter(option => option.FirstName.toLowerCase().includes(filterValue));
 
   }
   displayFn(user: IUser): string {
-    return user && user.UserName ? user.UserName : '';
+    return user && user.FirstName ? user.FirstName : '';
   }
   PageLoad() {
     debugger;
@@ -247,6 +247,7 @@ export class AppuserdashboardComponent implements OnInit {
                 {
                   Id: existinglogin[0].Id,
                   UserName: existinglogin[0].UserName,
+                  FirstName:userdetail.FirstName,
                   Email: existinglogin[0].Email,
                   Active: existinglogin[0].Active
                 }
@@ -257,6 +258,7 @@ export class AppuserdashboardComponent implements OnInit {
                 {
                   Id: '',
                   UserName: userdetail.FirstName.replaceAll(' ', ''),
+                  FirstName:userdetail.FirstName,
                   Email: userdetail.EmailAddress,
                   Active: 0
                 }
@@ -417,11 +419,12 @@ export class AppuserdashboardComponent implements OnInit {
         //var _UserName ='';
         if (data.length > 0) {
           this.UserDetail.forEach(filteredstudent => {
-            var exist = data.filter(d => d.UserName == filteredstudent.FirstName);
+            var exist = data.filter(d => d.UserName == filteredstudent.FirstName.replaceAll(" ",""));
             if (exist.length > 0) {
               this.AppUsers.push({
                 "Id": exist[0].Id,
                 "UserName": exist[0].UserName,
+                "FirstName":filteredstudent.FirstName,
                 "EmailAddress": exist[0].Email,
                 "PhoneNumber": exist[0].PhoneNumber,
                 "OrgId": exist[0].OrgId,
@@ -441,6 +444,7 @@ export class AppuserdashboardComponent implements OnInit {
             this.AppUsers.push({
               "Id": "",
               "UserName": login.FirstName.replaceAll(' ', ''),
+              "FirstName":login.FirstName,
               "EmailAddress": login.EmailAddress,
               "PhoneNumber": login.ContactNo,
               "OrgId": login.OrgId,
@@ -591,7 +595,7 @@ export class AppuserdashboardComponent implements OnInit {
     //   ErrorMessage += "Please select contact.<br>";
     // }
     if (row.UserName.length == 0) {
-      ErrorMessage += "User name is required.\n";
+      ErrorMessage += "Name is required.\n";
     }
     if (row.EmailAddress.length == 0) {
       ErrorMessage += "Email is required.\n";
@@ -685,6 +689,7 @@ export interface IAppUser {
 export interface IUser {
   Id: string;
   UserName: string;
+  FirstName:string;
   Email: string;
   Active: number;
   //Action:boolean;

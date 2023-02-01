@@ -230,33 +230,33 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     }
     return filterFunction;
   }
-  openDialog() {
-    debugger;
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        message: 'Are you sure want to delete?',
-        buttonText: {
-          ok: 'Save',
-          cancel: 'No'
-        }
-      }
-    });
-    const snack = this.snackBar.open('Snack bar open before dialog');
+  // openDialog() {
+  //   debugger;
+  //   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+  //     data: {
+  //       message: 'Are you sure want to delete?',
+  //       buttonText: {
+  //         ok: 'Save',
+  //         cancel: 'No'
+  //       }
+  //     }
+  //   });
+  //   const snack = this.snackBar.open('Snack bar open before dialog');
 
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        //this.GenerateRollNo();
-        snack.dismiss();
-        const a = document.createElement('a');
-        a.click();
-        a.remove();
-        snack.dismiss();
-        this.snackBar.open('Closing snack bar in a few seconds', 'Fechar', {
-          duration: 2000,
-        });
-      }
-    });
-  }
+  //   dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+  //     if (confirmed) {
+  //       //this.GenerateRollNo();
+  //       snack.dismiss();
+  //       const a = document.createElement('a');
+  //       a.click();
+  //       a.remove();
+  //       snack.dismiss();
+  //       this.snackBar.open('Closing snack bar in a few seconds', 'Fechar', {
+  //         duration: 2000,
+  //       });
+  //     }
+  //   });
+  // }
   GenerateRollNoOnList() {
     debugger;
     var _gendersort = this.searchForm.get("searchGenderAscDesc").value;
@@ -514,7 +514,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   CopyFromSameClassPreviousBatch() {
     var _classId = this.searchForm.get("searchClassId").value;
-    if ( _classId == 0) {
+    if (_classId == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -535,10 +535,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           var result;
           result = [...data.value];
 
-          this.GetExamResult(this.PreviousBatchId,_classId)
+          this.GetExamResult(this.PreviousBatchId, _classId)
             .subscribe((examresult: any) => {
               //var _classId = this.searchForm.get("searchClassId").value
-             
+
               var _defaultTypeId = 0;
               var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
               if (defaultFeeTypeObj.length > 0)
@@ -624,7 +624,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           var result;
           result = [...data.value];
 
-          this.GetExamResult(this.PreviousBatchId,this.PreviousClassId)
+          this.GetExamResult(this.PreviousBatchId, this.PreviousClassId)
             .subscribe((examresult: any) => {
 
               //console.log('result',result)
@@ -750,7 +750,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     else if (previousbatch == this.PreviousClassPreviousBatch) {
 
       filterStr = this.StandardFilterWithPreviousBatchId;
-      this.PreviousClassId =0;
+      this.PreviousClassId = 0;
       if (classIdIndex > 0)//means not if first element
       {
         this.PreviousClassId = this.Classes[classIdIndex - 1]["ClassId"];
@@ -811,7 +811,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.GetStudentClasses('')
       .subscribe((StudentClassesdb: any) => {
         var _classId = this.searchForm.get("searchClassId").value;
-        this.GetExamResult(this.SelectedBatchId,_classId)
+        this.GetExamResult(this.SelectedBatchId, _classId)
           .subscribe((examresult: any) => {
 
             var result;
@@ -1008,9 +1008,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false; this.PageLoading = false;
-          row.ClassName = this.Classes.filter(c => c.ClassId == data.ClassId)[0].ClassName,
-            row.StudentClassId = data.StudentClassId;
-
+          row.ClassName = this.Classes.filter(c => c.ClassId == data.ClassId)[0].ClassName
+          row.StudentClassId = data.StudentClassId;
+          this.StudentClassData.StudentClassId = data.StudentClassId;
           row.Action = false;
 
           this.RowsToUpdate--;
@@ -1035,12 +1035,63 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             this.CreateInvoice(row);
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
-        },error=>{
-          var msg=globalconstants.formatError(error);
-          this.contentservice.openSnackBar(msg,globalconstants.ActionText,globalconstants.RedBackground);
-          this.loading=false;
+        }, error => {
+          var msg = globalconstants.formatError(error);
+          this.contentservice.openSnackBar(msg, globalconstants.ActionText, globalconstants.RedBackground);
+          this.loading = false;
         });
   }
+  Delete(row) {
+
+    this.openDialog(row)
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch('StudentClasses', toUpdate, row.StudentClassId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false; this.PageLoading = false;
+        var idx = this.StudentClassList.findIndex(x => x.StudentClassId == row.StudentClassId)
+        this.StudentClassList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.StudentClassList);
+        this.dataSource.filterPredicate = this.createFilter();
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
+  // createFilter(): (data: any, filter: string) => boolean {
+  //   let filterFunction = function (data, filter): boolean {
+  //     let searchTerms = JSON.parse(filter);
+  //     return data.MasterDataName.toLowerCase().indexOf(searchTerms.MasterDataName) !== -1
+  //   }
+  //   return filterFunction;
+  // }
   CreateInvoice(row) {
     debugger;
     this.loading = true;
@@ -1109,7 +1160,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
   ExamStatuses = [];
-  GetExamResult(pBatchId,pClassId) {
+  GetExamResult(pBatchId, pClassId) {
     var _examId = this.searchForm.get("searchExamId").value;
     //var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
@@ -1121,7 +1172,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       filterstr += " and SectionId eq " + _sectionId;
 
     let list: List = new List();
-    list.fields = ["Division", "StudentClassId","StudentId"];
+    list.fields = ["Division", "StudentClassId", "StudentId"];
     //list.PageName = "StudentClasses";
     list.PageName = "ExamStudentResults";
     list.filter = [filterstr];

@@ -152,7 +152,7 @@ export class StudentAttendanceComponent implements OnInit {
     //this.StudentAttendanceList=[];
     //this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
 
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //' and StudentClassId eq ' + this.StudentClassId;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId == 0) {
@@ -261,7 +261,10 @@ export class StudentAttendanceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
         var studentCls = this.Students.filter(f => f.StudentClasses
-          && f.StudentClasses.length > 0 && f.StudentClasses[0].ClassId == _classId && f.StudentClasses[0].SectionId == _sectionId);
+          && f.StudentClasses.length > 0 
+          && f.StudentClasses[0].ClassId == _classId 
+          && f.StudentClasses[0].SectionId == _sectionId
+          && f.StudentClasses[0].Active ==1);
 
         studentCls.forEach(sc => {
           var studName = sc.StudentClasses[0].RollNo + "-" + sc.FirstName + (sc.LastName ? " " + sc.LastName : "");

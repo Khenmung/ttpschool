@@ -39,7 +39,7 @@ export class ExcelDataManagementComponent implements OnInit {
   NoOfStudent = 0;
   NoOfStudentInPlan = 0;
   UploadType = {
-    CLASSROLLNOMAPPING: 'rollno class mapping',
+    CLASSROLLNOMAPPING: 'student class upload',
     STUDENTDATA: 'student upload',
     STUDENTPROFILE: 'student profile',
     EMPLOYEEDETAIL: 'employee upload'
@@ -233,7 +233,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "House",
         "Remarks",
         "BoardRegistrationNo",
-        "IdentificationMark"        
+        "IdentificationMark"
       ];
     }
     //  this.readExcel();
@@ -746,27 +746,27 @@ export class ExcelDataManagementComponent implements OnInit {
       else {
         element.Section = sectionFilter[0].MasterDataId;
       }
-      let classFilter = this.Classes.filter(g => g.MasterDataName == element.Class);
-      if (classFilter.length == 0)
-        this.ErrorMessage += "Invalid Class at row " + slno + ":" + element.Class + "<br>";
-      else {
-        element.ClassId = classFilter[0].MasterDataId;
-        var _studentclass = this.StudentClassList.filter(f => f.ClassId == classFilter[0].MasterDataId && f.StudentId == element.StudentId);
+      // let classFilter = this.Classes.filter(g => g.MasterDataName == element.Class);
+      // if (classFilter.length == 0)
+      //   this.ErrorMessage += "Invalid Class at row " + slno + ":" + element.Class + "<br>";
+      // else {
+      //   element.ClassId = classFilter[0].MasterDataId;
+        var _studentclass = this.StudentClassList.filter(f => f.StudentId == element.StudentId);
         if (_studentclass.length > 0)
           element.StudentClassId = _studentclass[0].StudentClassId
         else
           element.StudentClassId = 0;
-      }
-      var _regularFeeTypeIds = this.FeeTypes.filter(f => f.MasterDataName.toLowerCase() == 'regular');
+      //}
+      var _regularFeeTypeIds = this.FeeTypes.filter(f => f.FeeTypeName.toLowerCase() == 'regular');
       var _regularFeeTypeId = 0;
       if (_regularFeeTypeIds.length > 0)
-        _regularFeeTypeId = _regularFeeTypeIds[0].MasterDataId;
+        _regularFeeTypeId = _regularFeeTypeIds[0].FeeTypeId;
 
       //if (this.ErrorMessage.length == 0) {
       this.ELEMENT_DATA.push({
         StudentId: +element.StudentId,
-        ClassId: element.ClassId,
-        Section: element.Section,
+        //ClassId: element.ClassId,
+        SectionId: element.Section,
         RollNo: element.RollNo,
         StudentClassId: element.StudentClassId,
         FeeTypeId: _regularFeeTypeId,
@@ -777,7 +777,7 @@ export class ExcelDataManagementComponent implements OnInit {
     });
     ////console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
   }
-  
+
   ValidateStudentData() {
     let slno: any = 0;
     debugger;
@@ -789,9 +789,8 @@ export class ExcelDataManagementComponent implements OnInit {
       //   element.DOB = new Date(element.DOB);
       // else
       //   element.DOB = new Date();
-      if(isNaN(new Date(element.DOB).getTime()))
-      {
-        this.ErrorMessage +="Invalid date at row : " + indx;
+      if (isNaN(new Date(element.DOB).getTime())) {
+        this.ErrorMessage += "Invalid date at row : " + indx;
       }
 
       if (element.CreatedDate != undefined && element.CreatedDate != '')
@@ -1101,9 +1100,9 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'AdmissionNo should not be greater than 15 characters.';
       }
       if (element.Active == undefined) {
-        element.Active =1;
+        element.Active = 1;
       }
-    
+
       element.StudentId = +element.StudentId;
 
       element.OrgId = this.loginDetail[0]["orgId"];
@@ -1133,14 +1132,17 @@ export class ExcelDataManagementComponent implements OnInit {
     const data: Blob = new Blob([this.csvData], { type: 'text/csv;charset=utf-8;' });
     FileSaver.saveAs(data, "CSVFile" + new Date().getTime() + '.csv');
   }
+  toUpdate=0;
   readAsJson() {
     try {
       this.loading = true;
-      let datalength = this.ELEMENT_DATA.length;
+      this.toUpdate = this.ELEMENT_DATA.length;
       if (this.ErrorMessage.length == 0) {
 
         if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.CLASSROLLNOMAPPING)) {
+          
           this.ELEMENT_DATA.forEach((element, indx) => {
+            this.toUpdate -=1;
             this.studentData = [];
             if (element["Active"] == undefined || element["Active"] == null || element["Active"] == '')
               element["Active"] = 0;
@@ -1148,14 +1150,17 @@ export class ExcelDataManagementComponent implements OnInit {
             if (element.StudentClassId > 0) {
               element.UpdatedDate = new Date();
               element.UpdatedBy = this.loginDetail[0]["userId"];
-              element.Prmoted = 0;
-              this.studentData.push({ element });
+              element.Promoted = 0;
+              element.Active = 1;
+              element.Deleted = false;
+              //delete element.PID;
+              this.studentData.push(element);
               this.updateStudentClass();
             }
             else {
               element.CreatedDate = new Date();
               element.CreatedBy = this.loginDetail[0]["userId"];
-              element.Prmoted = 0;
+              element.Promoted = 0;
               this.studentData.push({ element });
               this.saveStudentClass();
             }
@@ -1307,8 +1312,14 @@ export class ExcelDataManagementComponent implements OnInit {
       });
   }
   updateStudentClass() {
-    this.dataservice.postPatch('StudentClasses', this.studentData[0].element, this.studentData[0].element.StudentClassId, 'patch')
+console.log("update",this.studentData);
+    this.dataservice.postPatch('StudentClasses', this.studentData[0], this.studentData[0].StudentClassId, 'patch')
       .subscribe((result: any) => {
+        if(this.toUpdate==0)
+        {
+          this.loading=false;
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+        }
       }, error => console.log(error))
   }
   saveStudentClass() {
@@ -1383,7 +1394,7 @@ export class ExcelDataManagementComponent implements OnInit {
     //   .subscribe((data: any) => {
     var _students: any = this.tokenservice.getStudents();
     this.StudentList = _students.filter(s => s.Active == 1);
-    this.StudentList = this.StudentList.sort((a,b)=>a.ParentId - b.ParentId);
+    this.StudentList = this.StudentList.sort((a, b) => a.ParentId - b.ParentId);
     this.NoOfStudent = this.StudentList.length;
     this.GetStudentClasses();
 
