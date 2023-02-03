@@ -448,8 +448,8 @@ export class studentprimaryinfoComponent implements OnInit {
       IdentificationMark: this.studentForm.get("IdentificationMark").value,
       BoardRegistrationNo: this.studentForm.get("BoardRegistrationNo").value,
       Height: this.studentForm.get("Height").value,
-      Weight: this.studentForm.get("Weight").value,
-      BatchId: this.tokenService.getSelectedBatchId()
+      Weight: this.studentForm.get("Weight").value
+      
     });
     //debugger;
     //console.log("studentData", this.studentData)
@@ -472,7 +472,7 @@ export class studentprimaryinfoComponent implements OnInit {
         _MaxPID = +data.value[0].PID + 1;
       }
       this.studentData[0].PID = _MaxPID;
-
+      this.studentData[0].BatchId= this.SelectedBatchId;
       this.dataservice.postPatch('Students', this.studentData, 0, 'post')
         .subscribe((result: any) => {
           debugger;
@@ -486,10 +486,11 @@ export class studentprimaryinfoComponent implements OnInit {
             // else
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
-            //this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
+            this.StudentClassId = result.StudentClassId;
             this.loading = false; this.PageLoading = false;
             this.tokenService.saveStudentId(this.StudentId + "")
-            //this.tokenService.saveStudentClassId(this.StudentClassId + "");
+            this.tokenService.saveStudentClassId(this.StudentClassId + "");
+            
             this.CreateInvoice();
             this.GetStudent();
             this.Edited = false;

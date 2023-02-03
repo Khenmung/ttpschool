@@ -219,16 +219,17 @@ export class AttendancepercentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
         var _AllStudents: any = this.tokenstorage.getStudents();
-        if (_classId == 0 && _sectionId == 0)
-          _AllStudents = _AllStudents.filter(all => all.StudentClasses && all.StudentClasses.length > 0);
-        else if (_classId > 0 && _sectionId == 0)
-          _AllStudents = _AllStudents.filter(all => all.StudentClasses
-            && all.StudentClasses.length > 0
-            && all.StudentClasses[0].ClassId == _classId);
+        _AllStudents = _AllStudents.filter(all => all.StudentClasses 
+          && all.StudentClasses.length > 0 
+          && all.StudentClasses[0].Active==1)
+        //if (_classId == 0 && _sectionId == 0)
+        //  _AllStudents = _AllStudents.filter(all => all.StudentClasses && all.StudentClasses.length > 0);
+        //else 
+        if (_classId > 0 && _sectionId == 0)
+          _AllStudents = _AllStudents.filter(all =>
+            all.StudentClasses[0].ClassId == _classId);
         else if (_classId > 0 && _sectionId > 0)
-          _AllStudents = _AllStudents.filter(all => all.StudentClasses
-            && all.StudentClasses.length > 0
-            && all.StudentClasses[0].ClassId == _classId
+          _AllStudents = _AllStudents.filter(all => all.StudentClasses[0].ClassId == _classId
             && all.StudentClasses[0].SectionId == _sectionId);
 
         attendance.value.forEach(sc => {

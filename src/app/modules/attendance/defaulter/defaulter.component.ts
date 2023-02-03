@@ -286,13 +286,15 @@ export class DefaulterComponent implements OnInit {
       .subscribe((attendance: any) => {
         var _students = [];
         if (_classId == 0 && _sectionId == 0)
-          _students = this.Students.filter(f => f.StudentClasses && f.StudentClasses.length > 0)
+          _students = this.Students.filter(f => f.StudentClasses && f.StudentClasses.length > 0 && f.StudentClasses[0].Active==1)
         else if (_classId > 0 && _sectionId == 0)
           _students = this.Students.filter(f => f.StudentClasses
+            && f.StudentClasses[0].Active==1
             && f.StudentClasses.length > 0
             && f.StudentClasses[0].ClassId == _classId);
         if (_classId > 0 && _sectionId > 0)
           _students = this.Students.filter(f => f.StudentClasses
+            && f.StudentClasses[0].Active==1
             && f.StudentClasses.length > 0
             && f.StudentClasses[0].ClassId == _classId
             && f.StudentClasses[0].SectionId == _sectionId);

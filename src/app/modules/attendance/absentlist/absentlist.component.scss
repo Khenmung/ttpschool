@@ -29,11 +29,15 @@ mat-header-cell {
 }
 .mat-column-ClassSubject,
 .mat-column-ClassName{
-    flex: 1 1 100px;
+    flex: 1 1 80px;
 }
-.mat-column-AttendanceDate,
+.mat-column-AttendanceDate{
+    flex: 1 1 90px;
+}
+.mat-column-StudentRollNo{
+    flex: 1 1 140px;
+}
 .mat-column-ApprovedByName,
-.mat-column-StudentRollNo,
 .mat-column-PersonalNo,
 .mat-column-Remarks,
 .mat-column-ReportedTo {

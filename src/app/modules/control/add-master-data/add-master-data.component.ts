@@ -142,7 +142,7 @@ export class AddMasterDataComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
 
-        
+
         this.OrgId = this.UserDetails[0]["orgId"];
         this.searchForm.patchValue({ "OrgId": this.OrgId });
         this.GetMastersForAutoComplete();
@@ -533,13 +533,16 @@ export class AddMasterDataComponent implements OnInit {
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
       //mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
-      console.log("kjhk", mastertoUpdate)
+      //console.log("kjhk", mastertoUpdate)
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
         .subscribe((res: any) => {
           if (res != undefined) {
             row.MasterDataId = res.MasterDataId;
             row.Action = false;
-
+            this.MasterList = this.tokenStorage.getMasterData();
+            mastertoUpdate.MasterDataId = res.MasterDataId;
+            this.MasterList.push(mastertoUpdate)
+            this.tokenStorage.saveMasterData(this.MasterList);
             if (this.DataToSaveCount == 0) {
               this.loading = false;
               this.PageLoading = false;
@@ -555,10 +558,13 @@ export class AddMasterDataComponent implements OnInit {
         });
     }
     else {
-      console.log('data to update', mastertoUpdate);
+      //console.log('data to update', mastertoUpdate);
       this.dataservice.postPatch('MasterItems', mastertoUpdate, row.MasterDataId, 'patch')
         .subscribe(res => {
           row.Action = false;
+          this.MasterList = this.tokenStorage.getMasterData();
+          this.MasterList.push(mastertoUpdate)
+            this.tokenStorage.saveMasterData(this.MasterList);
           if (this.DataToSaveCount == 0) {
             this.loading = false;
             this.PageLoading = false;

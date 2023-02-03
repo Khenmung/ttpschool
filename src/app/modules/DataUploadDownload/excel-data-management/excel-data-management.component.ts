@@ -751,11 +751,11 @@ export class ExcelDataManagementComponent implements OnInit {
       //   this.ErrorMessage += "Invalid Class at row " + slno + ":" + element.Class + "<br>";
       // else {
       //   element.ClassId = classFilter[0].MasterDataId;
-        var _studentclass = this.StudentClassList.filter(f => f.StudentId == element.StudentId);
-        if (_studentclass.length > 0)
-          element.StudentClassId = _studentclass[0].StudentClassId
-        else
-          element.StudentClassId = 0;
+      var _studentclass = this.StudentClassList.filter(f => f.StudentId == element.StudentId);
+      if (_studentclass.length > 0)
+        element.StudentClassId = _studentclass[0].StudentClassId
+      else
+        element.StudentClassId = 0;
       //}
       var _regularFeeTypeIds = this.FeeTypes.filter(f => f.FeeTypeName.toLowerCase() == 'regular');
       var _regularFeeTypeId = 0;
@@ -1132,7 +1132,7 @@ export class ExcelDataManagementComponent implements OnInit {
     const data: Blob = new Blob([this.csvData], { type: 'text/csv;charset=utf-8;' });
     FileSaver.saveAs(data, "CSVFile" + new Date().getTime() + '.csv');
   }
-  toUpdate=0;
+  toUpdate = 0;
   readAsJson() {
     try {
       this.loading = true;
@@ -1140,9 +1140,9 @@ export class ExcelDataManagementComponent implements OnInit {
       if (this.ErrorMessage.length == 0) {
 
         if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.CLASSROLLNOMAPPING)) {
-          
+
           this.ELEMENT_DATA.forEach((element, indx) => {
-            this.toUpdate -=1;
+            this.toUpdate -= 1;
             this.studentData = [];
             if (element["Active"] == undefined || element["Active"] == null || element["Active"] == '')
               element["Active"] = 0;
@@ -1312,13 +1312,12 @@ export class ExcelDataManagementComponent implements OnInit {
       });
   }
   updateStudentClass() {
-console.log("update",this.studentData);
+    //console.log("update", this.studentData);
     this.dataservice.postPatch('StudentClasses', this.studentData[0], this.studentData[0].StudentClassId, 'patch')
       .subscribe((result: any) => {
-        if(this.toUpdate==0)
-        {
-          this.loading=false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+        if (this.toUpdate == 0) {
+          this.loading = false;
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
       }, error => console.log(error))
   }

@@ -233,7 +233,9 @@ export class StudentattendancereportComponent implements OnInit {
         }
         let absent = 0, Present = 0;
         this.displayedColumns = ["Student"];
-        this.StudentAttendanceList = this.Students.filter(s => s.ClassId == SelectedClassId && s.SectionId == SelectedSectionId);
+        this.StudentAttendanceList = this.Students.filter(s => s.ClassId == SelectedClassId 
+          
+          && s.SectionId == SelectedSectionId);
 
         this.StudentAttendanceList.forEach(stud => {
           absent = 0;
@@ -332,7 +334,7 @@ export class StudentattendancereportComponent implements OnInit {
       var _studentClassId = 0;
       //var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
       //if (studentclassobj.length > 0) {
-      if (student.StudentClasses && student.StudentClasses.length > 0) {
+      if (student.StudentClasses && student.StudentClasses.length > 0 && student.StudentClasses[0].Active==1) {
         _studentClassId = student.StudentClasses[0].StudentClassId;
         var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
 

@@ -227,7 +227,7 @@ export class AbsentListComponent implements OnInit {
     if (_classSubjectId != undefined && _classSubjectId > 0) {
       datefilterStr += " and ClassSubjectId eq " + _classSubjectId;
     }
-    
+
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -253,68 +253,6 @@ export class AbsentListComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
 
-        // if (studentclass.value.length == 0) {
-        //   this.loading = false; this.PageLoading = false;
-        //   this.contentservice.openSnackBar("No student exist in this class/section!", globalconstants.ActionText, globalconstants.RedBackground);
-        //   return;
-        // }
-        // var _AllStudents:any = this.tokenstorage.getStudents();
-
-        // studentclass.value.forEach(item => {
-        //   var _student = _AllStudents.filter(a=>a.StudentId == item.StudentId);
-
-        //   var _lastname = _student[0].LastName == null || _student[0].LastName == '' ? '' : " " + _student[0].LastName;
-        //   var _Classobj = this.Classes.filter(s => s.ClassId == item.ClassId);
-        //   var _Class = '';
-        //   if (_Classobj.length > 0) {
-        //     _Class = _Classobj[0].ClassName;
-
-        //     var _sectionobj = this.Sections.filter(s => s.MasterDataId == item.SectionId);
-        //     var _section = '';
-        //     if (_sectionobj.length > 0) {
-        //       _section = "-" + _sectionobj[0].MasterDataName;
-        //     }
-
-        //     this.StudentClassList.push({
-        //       StudentClassId: item.StudentClassId,
-        //       Active: item.Active,
-        //       ClassId: item.ClassId,
-        //       ClassName: _Class,
-        //       RollNo: item.RollNo,
-        //       ClassSequence: _Classobj[0].Sequence,
-        //       Student: item.Student.FirstName + _lastname,
-        //       StudentRollNo: item.Student.FirstName + _lastname + _section + "-" + item.RollNo,
-        //       ContactNo: item.Student.ContactNo
-        //     });
-        //   }
-        // })
-        //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-        // var datefilterStr = ' and AttendanceDate ge ' + moment(this.searchForm.get("searchAttendanceDate").value).format('yyyy-MM-DD')
-        // datefilterStr += ' and AttendanceDate lt ' + moment(this.searchForm.get("searchAttendanceDate").value).add(1, 'day').format('yyyy-MM-DD')
-        // datefilterStr += ' and StudentClassId gt 0'
-        // datefilterStr += ' and AttendanceStatus eq 0'
-
-        // let list: List = new List();
-        // list.fields = [
-        //   "AttendanceId",
-        //   "StudentClassId",
-        //   "AttendanceDate",
-        //   "AttendanceStatus",
-        //   "ClassSubjectId",
-        //   "Remarks",
-        //   "Approved",
-        //   "ReportedTo",
-        //   "ApprovedBy",
-        //   "OrgId",
-        //   "BatchId"
-        // ];
-        // list.PageName = "Attendances";
-        // //list.lookupFields = ["StudentClass"];
-        // list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-        //   datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
-
-        // this.dataservice.get(list)
-        //   .subscribe((attendance: any) => {
         var _AllStudents: any = this.tokenstorage.getStudents();
         if (_classId > 0 && _sectionId > 0) {
           _AllStudents = _AllStudents.filter(stud => stud.StudentClasses &&
@@ -330,55 +268,57 @@ export class AbsentListComponent implements OnInit {
           _AllStudents = _AllStudents.filter(stud => stud.StudentClasses &&
             stud.StudentClasses.length > 0)
         }
+        _AllStudents = _AllStudents.filter(f => f.StudentClasses.length > 0 && f.StudentClasses[0].Active == 1);
         // studentclass.value.forEach(item => {
         //   var _student = _AllStudents.filter(a=>a.StudentId == item.StudentId);
 
         attendance.value.forEach(sc => {
           let _student = _AllStudents.filter(a => a.StudentClasses[0].StudentClassId == sc.StudentClassId);
           //sc.Attendances.forEach(att => {
-          var _subjName = '';
-          if (sc.ClassSubjectId > 0) {
-            var obj = this.ClassSubjects.filter(s => s.ClassSubjectId == sc.ClassSubjectId);
-            if (obj.length > 0)
-              _subjName = obj[0].ClassSubject;
-          }
-          var _approvedByName = ''
-          if (sc.Approved) {
-            var objApproved = this.Teachers.filter(t => t.UserId == sc.ApprovedBy)
-            if (objApproved.length > 0)
-              _approvedByName = objApproved[0].TeacherName;
-          }
-          var _Classobj = this.Classes.filter(s => s.ClassId == sc.ClassId);
-          var _Class = '';
-          if (_Classobj.length > 0) {
-            _Class = _Classobj[0].ClassName;
-
-            var _sectionobj = this.Sections.filter(s => s.MasterDataId == sc.SectionId);
-            var _section = '';
-            if (_sectionobj.length > 0) {
-              _section = "-" + _sectionobj[0].MasterDataName;
+          if (_student.length > 0) {
+            var _subjName = '';
+            if (sc.ClassSubjectId > 0) {
+              var obj = this.ClassSubjects.filter(s => s.ClassSubjectId == sc.ClassSubjectId);
+              if (obj.length > 0)
+                _subjName = obj[0].ClassSubject;
             }
-            this.StudentAttendanceList.push({
-              AttendanceId: sc.AttendanceId,
-              StudentClassId: sc.StudentClassId,
-              AttendanceStatus: sc.AttendanceStatus,
-              AttendanceDate: sc.AttendanceDate,
-              ClassSubjectId: sc.ClassSubjectId,
-              Approved: sc.Approved,
-              ReportedTo: sc.ReportedTo,
-              ApprovedBy: sc.ApprovedBy,
-              ApprovedByName: _approvedByName,
-              ClassName: _Class,
-              ClassSubject: _subjName,
-              Remarks: sc.Remarks,
-              RollNo: _student[0].StudentClasses[0].RollNo,
-              StudentRollNo: _student[0].StudentClasses[0].RollNo + "-" + _student[0].FirstName + " " + (_student[0].LastName == null ? '' : _student[0].LastName) + _section,
-              PersonalNo: _student[0].PersonalNo,
-              ClassSequence: sc.ClassSequence
-            });
+            var _approvedByName = ''
+            if (sc.Approved) {
+              var objApproved = this.Teachers.filter(t => t.UserId == sc.ApprovedBy)
+              if (objApproved.length > 0)
+                _approvedByName = objApproved[0].TeacherName;
+            }
+            var _Classobj = this.Classes.filter(s => s.ClassId == sc.ClassId);
+            var _Class = '';
+            if (_Classobj.length > 0) {
+              _Class = _Classobj[0].ClassName;
 
+              var _sectionobj = this.Sections.filter(s => s.MasterDataId == sc.SectionId);
+              var _section = '';
+              if (_sectionobj.length > 0) {
+                _section = "-" + _sectionobj[0].MasterDataName;
+              }
+              this.StudentAttendanceList.push({
+                AttendanceId: sc.AttendanceId,
+                StudentClassId: sc.StudentClassId,
+                AttendanceStatus: sc.AttendanceStatus,
+                AttendanceDate: sc.AttendanceDate,
+                ClassSubjectId: sc.ClassSubjectId,
+                Approved: sc.Approved,
+                ReportedTo: sc.ReportedTo,
+                ApprovedBy: sc.ApprovedBy,
+                ApprovedByName: _approvedByName,
+                ClassName: _Class,
+                ClassSubject: _subjName,
+                Remarks: sc.Remarks,
+                RollNo: _student[0].StudentClasses[0].RollNo,
+                StudentRollNo: _student[0].StudentClasses[0].RollNo + "-" + _student[0].FirstName + " " + (_student[0].LastName == null ? '' : _student[0].LastName) + _section,
+                PersonalNo: _student[0].PersonalNo,
+                ClassSequence: sc.ClassSequence
+              });
+
+            }
           }
-          //})
         })
         if (this.StudentAttendanceList.length == 0)
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);

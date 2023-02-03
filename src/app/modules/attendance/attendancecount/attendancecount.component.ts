@@ -66,16 +66,14 @@ export class AttendanceCountComponent implements OnInit {
   SelectedApplicationId = 0;
   TotalPresent = 0;
   TotalAbsent = 0;
+  Students = [];
   constructor(private servicework: SwUpdate,
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
-    private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
-    private datepipe: DatePipe
   ) { }
 
   ngOnInit(): void {
@@ -87,6 +85,7 @@ export class AttendanceCountComponent implements OnInit {
       })
     })
     debugger;
+
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.StudentClassId = 0;
@@ -94,6 +93,7 @@ export class AttendanceCountComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.Students = this.tokenstorage.getStudents();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -156,10 +156,10 @@ export class AttendanceCountComponent implements OnInit {
     var today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    
+
     var _toDate = new Date(this.searchForm.get("searchToDate").value)
     var _fromDate = new Date(this.searchForm.get("searchToDate").value);
-    _toDate.setDate(_toDate.getDate()+1);
+    _toDate.setDate(_toDate.getDate() + 1);
     var _subjectwise = this.searchForm.get("searchSubjectWise").value;
     //_fromDate.setHours(0, 0, 0, 0);
     _toDate.setHours(0, 0, 0, 0);
@@ -169,7 +169,7 @@ export class AttendanceCountComponent implements OnInit {
     this.StudentAttendanceList = [];
 
     var datefilterStr = ' and AttendanceDate ge ' + moment(_fromDate).format('yyyy-MM-DD')
-    datefilterStr += ' and AttendanceDate le ' + moment(_toDate).format('yyyy-MM-DD')
+    datefilterStr += ' and AttendanceDate lt ' + moment(_toDate).format('yyyy-MM-DD')
     datefilterStr += ' and StudentClassId gt 0'
 
     datefilterStr += ' and BatchId eq ' + this.SelectedBatchId;
@@ -200,7 +200,13 @@ export class AttendanceCountComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
-        attendance.value.forEach(sc => {
+
+        var _attendanceTotal = attendance.value.filter(att => this.Students.filter(s => s.StudentClasses.length > 0
+          && s.StudentClasses[0].Active==1
+          && s.StudentClasses[0].StudentClassId == att.StudentClassId).length > 0)
+        
+          _attendanceTotal.forEach(sc => {
+
           var _className = '', _sectionName = '';
           var clsObj = this.Classes.filter(c => c.ClassId == sc.ClassId);
           if (clsObj.length > 0) {
