@@ -467,23 +467,15 @@ export class StudentAttendanceComponent implements OnInit {
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        this.ClassSubjects = data.value.map(item => {
-          // var _classname = ''
-          // var objCls = this.Classes.filter(f => f.ClassId == item.ClassId)
-          // if (objCls.length > 0)
-          //   _classname = objCls[0].ClassName;
-
-          var _subjectName = '';
+        this.ClassSubjects = [];
+        data.value.forEach(item => {
           var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
-          if (objsubject.length > 0)
-            _subjectName = objsubject[0].MasterDataName;
-
-          return {
-            ClassSubjectId: item.ClassSubjectId,
-            ClassSubject: _subjectName,
-            ClassId: item.ClassId
+          if (objsubject.length > 0) {
+            this.ClassSubjects.push({
+              ClassSubjectId: item.ClassSubjectId,
+              ClassSubject: objsubject[0].MasterDataName,
+              ClassId: item.ClassId
+            })
           }
         })
       })

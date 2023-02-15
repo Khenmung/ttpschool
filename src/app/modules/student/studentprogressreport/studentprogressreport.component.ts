@@ -301,7 +301,7 @@ export class StudentprogressreportComponent implements OnInit {
       })
   }
   GetStudentSubject() {
-debugger;
+    debugger;
     let filterStr = 'Active eq 1 and StudentClassId eq ' + this.StudentClassId;
 
     let list: List = new List();
@@ -319,11 +319,16 @@ debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        this.StudentSubjects = data.value.map(ss => {
-          ss.Subject = this.Subjects.filter(s => s.MasterDataId == ss.SubjectId)[0].MasterDataName;
-          ss.SubjectCategoryId = ss.ClassSubject.SubjectCategoryId;
-          ss.ClassId = ss.ClassSubject.ClassId;
-          return ss;
+        this.StudentSubjects = [];
+        data.value.forEach(ss => {
+
+          var obj = this.Subjects.filter(s => s.MasterDataId == ss.SubjectId);
+          if (obj.length > 0) {
+            ss.Subject = obj[0].MasterDataName;
+            ss.SubjectCategoryId = ss.ClassSubject.SubjectCategoryId;
+            ss.ClassId = ss.ClassSubject.ClassId;
+            this.StudentSubjects.push(ss);
+          }
         })
         if (this.StudentSubjects.length > 0)
           this.CurrentStudentClassGroups = this.ClassGroupMappings.filter(f => f.ClassId == this.StudentSubjects[0].ClassId);
@@ -464,7 +469,7 @@ debugger;
           var _studentClassGroupObj = this.ClassGroupMappings.filter(m => m.ClassId == _classId)
           var _classGroupId = 0;
           if (_studentClassGroupObj.length > 0) {
-            var obj = this.ExamClassGroups.filter(ex => _studentClassGroupObj.findIndex(fi=> fi.ClassGroupId == ex.ClassGroupId) >-1 &&
+            var obj = this.ExamClassGroups.filter(ex => _studentClassGroupObj.findIndex(fi => fi.ClassGroupId == ex.ClassGroupId) > -1 &&
               ex.ExamId == objExam["ExamId"]);
             if (obj.length > 0)
               _classGroupId = obj[0].ClassGroupId;
@@ -477,7 +482,7 @@ debugger;
               if (_studentClassGroupObj.length > 0) {
                 var currentExamStudentGrades = this.StudentGrades.filter(s => s.ClassGroupId == _classGroupId
                   && s.SubjectCategoryId == _gradingSubjectCategoryId
-                  && s.ExamId ==objExam["ExamId"]);
+                  && s.ExamId == objExam["ExamId"]);
 
                 this.GradedMarksResults.forEach(subj => {
                   var objgradepoint = currentExamStudentGrades.filter(c => c.GradeName == subj[exam]);
@@ -516,116 +521,116 @@ debugger;
     this.GetExamGrandTotal();
 
   }
-  GetStudentSubjectResults_old() {
-    debugger;
+  // GetStudentSubjectResults_old() {
+  //   debugger;
 
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+  //   //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+  //   let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    filterStr += ' and StudentClassId eq ' + this.StudentClassId;
+  //   filterStr += ' and StudentClassId eq ' + this.StudentClassId;
 
-    let list: List = new List();
-    list.fields = [
-      "ExamStudentSubjectResultId",
-      "ExamId",
-      "StudentClassSubjectId",
-      "StudentClassId",
-      "ClassSubjectMarkComponentId",
-      "Marks",
-      "ExamStatus",
-      "Active"
-    ];
+  //   let list: List = new List();
+  //   list.fields = [
+  //     "ExamStudentSubjectResultId",
+  //     "ExamId",
+  //     "StudentClassSubjectId",
+  //     "StudentClassId",
+  //     "ClassSubjectMarkComponentId",
+  //     "Marks",
+  //     "ExamStatus",
+  //     "Active"
+  //   ];
 
-    list.PageName = "ExamStudentSubjectResults";
-    list.lookupFields = [
-      "StudentClassSubject($select=SubjectId,ClassSubjectId,StudentClassId;$expand=StudentClass($select=ClassId,StudentId,RollNo,SectionId))"];
-    list.filter = [filterStr];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //console.log("data", data)
-        var _class = '';
-        var _subject = '';
-        var _section = '';
-        var _Mark = '';
-        this.ExamStudentSubjectResult = data.value.map(s => {
-          _class = '';
-          _subject = '';
-          _Mark = '';
-          let _stdClass = this.Classes.filter(c => c.ClassId == s.StudentClassSubject.StudentClass.ClassId);
-          if (_stdClass.length > 0)
-            _class = _stdClass[0].ClassName;
+  //   list.PageName = "ExamStudentSubjectResults";
+  //   list.lookupFields = [
+  //     "StudentClassSubject($select=SubjectId,ClassSubjectId,StudentClassId;$expand=StudentClass($select=ClassId,StudentId,RollNo,SectionId))"];
+  //   list.filter = [filterStr];
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       //console.log("data", data)
+  //       var _class = '';
+  //       var _subject = '';
+  //       var _section = '';
+  //       var _Mark = '';
+  //       this.ExamStudentSubjectResult = data.value.map(s => {
+  //         _class = '';
+  //         _subject = '';
+  //         _Mark = '';
+  //         let _stdClass = this.Classes.filter(c => c.ClassId == s.StudentClassSubject.StudentClass.ClassId);
+  //         if (_stdClass.length > 0)
+  //           _class = _stdClass[0].ClassName;
 
-          let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.StudentClassSubject.SubjectId);
-          if (_stdSubject.length > 0)
-            _subject = _stdSubject[0].MasterDataName;
+  //         let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.StudentClassSubject.SubjectId);
+  //         if (_stdSubject.length > 0)
+  //           _subject = _stdSubject[0].MasterDataName;
 
-          let _stdSection = this.Sections.filter(c => c.MasterDataId == s.StudentClassSubject.StudentClass.SectionId);
-          if (_stdSection.length > 0)
-            _section = _stdSection[0].MasterDataName;
-          var _ExamName = '';
-          var examobj = this.Exams.filter(f => f.ExamId == s.ExamId)
-          if (examobj.length > 0)
-            _ExamName = examobj[0].ExamName;
+  //         let _stdSection = this.Sections.filter(c => c.MasterDataId == s.StudentClassSubject.StudentClass.SectionId);
+  //         if (_stdSection.length > 0)
+  //           _section = _stdSection[0].MasterDataName;
+  //         var _ExamName = '';
+  //         var examobj = this.Exams.filter(f => f.ExamId == s.ExamId)
+  //         if (examobj.length > 0)
+  //           _ExamName = examobj[0].ExamName;
 
-          return {
-            StudentClassSubjectId: s.StudentClassSubjectId,
-            ClassSubjectId: s.StudentClassSubject.ClassSubjectId,
-            StudentClassId: s.StudentClassId,
-            Student: s.StudentClassSubject.StudentClass.RollNo,
-            SubjectId: s.StudentClassSubject.SubjectId,
-            Subject: _subject,
-            ClassId: s.StudentClassSubject.StudentClass.ClassId,
-            StudentId: s.StudentClassSubject.StudentClass.StudentId,
-            SectionId: s.StudentClassSubject.StudentClass.SectionId,
-            Mark: s.Marks,
-            ExamStatus: s.ExamStatus,
-            ExamName: _ExamName
-          }
-        })
-        var marksum = alasql("select SubjectId,Subject,ExamName,sum(Mark) Mark from ? group by SubjectId,Subject,ExamName", [this.ExamStudentSubjectResult])
+  //         return {
+  //           StudentClassSubjectId: s.StudentClassSubjectId,
+  //           ClassSubjectId: s.StudentClassSubject.ClassSubjectId,
+  //           StudentClassId: s.StudentClassId,
+  //           Student: s.StudentClassSubject.StudentClass.RollNo,
+  //           SubjectId: s.StudentClassSubject.SubjectId,
+  //           Subject: _subject,
+  //           ClassId: s.StudentClassSubject.StudentClass.ClassId,
+  //           StudentId: s.StudentClassSubject.StudentClass.StudentId,
+  //           SectionId: s.StudentClassSubject.StudentClass.SectionId,
+  //           Mark: s.Marks,
+  //           ExamStatus: s.ExamStatus,
+  //           ExamName: _ExamName
+  //         }
+  //       })
+  //       var marksum = alasql("select SubjectId,Subject,ExamName,sum(Mark) Mark from ? group by SubjectId,Subject,ExamName", [this.ExamStudentSubjectResult])
 
-        var progressreport = [];
-        var examEolumns = [];
-        this.Exams.forEach(e => {
-          examEolumns.push(e.ExamName)
-        })
+  //       var progressreport = [];
+  //       var examEolumns = [];
+  //       this.Exams.forEach(e => {
+  //         examEolumns.push(e.ExamName)
+  //       })
 
-        //progressreport.push(JSON.parse(columns));
+  //       //progressreport.push(JSON.parse(columns));
 
-        this.StudentSubjects.forEach((ss) => {
-          progressreport.push({
-            "Subject": ss.Subject,
-            "SubjectId": ss.SubjectId
-          });
-        })
-        progressreport.forEach((subject) => {
-          examEolumns.forEach(exam => {
-            //subject["'"+exam + "'"] = ''
-            subject[exam] = ''
-            // if (this.DisplayColumns.indexOf(exam) == -1)
-            //   this.DisplayColumns.push(exam)
-          })
-        })
+  //       this.StudentSubjects.forEach((ss) => {
+  //         progressreport.push({
+  //           "Subject": ss.Subject,
+  //           "SubjectId": ss.SubjectId
+  //         });
+  //       })
+  //       progressreport.forEach((subject) => {
+  //         examEolumns.forEach(exam => {
+  //           //subject["'"+exam + "'"] = ''
+  //           subject[exam] = ''
+  //           // if (this.DisplayColumns.indexOf(exam) == -1)
+  //           //   this.DisplayColumns.push(exam)
+  //         })
+  //       })
 
-        progressreport.forEach(report => {
+  //       progressreport.forEach(report => {
 
-          var current = marksum.filter(c => c.SubjectId == report.SubjectId);
-          current.forEach(exam => {
-            if (exam.ExamName.length > 0 && this.DisplayColumns.indexOf(exam.ExamName) == -1)
-              this.DisplayColumns.push(exam.ExamName)
-            report[exam.ExamName] = exam.Mark
-          })
-        })
+  //         var current = marksum.filter(c => c.SubjectId == report.SubjectId);
+  //         current.forEach(exam => {
+  //           if (exam.ExamName.length > 0 && this.DisplayColumns.indexOf(exam.ExamName) == -1)
+  //             this.DisplayColumns.push(exam.ExamName)
+  //           report[exam.ExamName] = exam.Mark
+  //         })
+  //       })
 
-        //console.log("this.DisplayColumns", this.DisplayColumns);
-        //console.log("shd", progressreport);
+  //       //console.log("this.DisplayColumns", this.DisplayColumns);
+  //       //console.log("shd", progressreport);
 
-        this.dataSource = new MatTableDataSource<any>(progressreport);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-        this.loading = false; this.PageLoading = false;
-      });
-  }
+  //       this.dataSource = new MatTableDataSource<any>(progressreport);
+  //       this.dataSource.sort = this.sort;
+  //       this.dataSource.paginator = this.paginator;
+  //       this.loading = false; this.PageLoading = false;
+  //     });
+  // }
 
   GetMasterData() {
     debugger;

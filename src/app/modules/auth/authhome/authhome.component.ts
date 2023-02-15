@@ -24,13 +24,13 @@ export class AuthHomeComponent implements OnInit { PageLoading=true;
     private mediaObserver: MediaObserver) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.mediaSub = this.mediaObserver.asObservable().subscribe((result: MediaChange[]) => {
       this.deviceXs = result[0].mqAlias === "xs" ? true : false;
       ////console.log("auth",this.deviceXs);

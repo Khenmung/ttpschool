@@ -189,7 +189,7 @@ export class VerifyResultsComponent implements OnInit {
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
@@ -500,35 +500,38 @@ export class VerifyResultsComponent implements OnInit {
           var _activeStudents = this.Students.filter(a => a.StudentClasses[0].StudentClassId == s.StudentClassId)
           if (_activeStudents.length > 0) {
             let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassId);
-            if (_stdClass.length > 0)
+            if (_stdClass.length > 0) {
               _class = _stdClass[0].ClassName;
-            var _subjectIdObj = this.ClassSubjects.filter(p => p.ClassSubjectId == s.ClassSubjectId)
-            if (_subjectIdObj.length > 0) {
-              let _stdSubject = this.Subjects.filter(c => c.MasterDataId == _subjectIdObj[0].SubjectId);
-              if (_stdSubject.length > 0)
-                _subject = _stdSubject[0].MasterDataName;
+              var _subjectIdObj = this.ClassSubjects.filter(p => p.ClassSubjectId == s.ClassSubjectId)
+              if (_subjectIdObj.length > 0) {
+                let _stdSubject = this.Subjects.filter(c => c.MasterDataId == _subjectIdObj[0].SubjectId);
+                if (_stdSubject.length > 0) {
 
-              let _stdSection = this.Sections.filter(c => c.MasterDataId == s.SectionId);
-              if (_stdSection.length > 0)
-                _section = _stdSection[0].MasterDataName;
+                  _subject = _stdSubject[0].MasterDataName;
 
-              this.StudentSubjects.push({
-                StudentClassSubjectId: s.StudentClassSubjectId,
-                ClassSubjectId: _subjectIdObj[0].ClassSubjectId,
-                StudentClassId: s.StudentClassId,
-                RollNo: s.RollNo,
-                SubjectId: _subjectIdObj[0].SubjectId,
-                Subject: _subject,
-                Section: _section,
-                ClassId: s.ClassId,
-                StudentId: s.StudentId,
-                SectionId: s.SectionId,
-                SubjectTypeId: _subjectIdObj[0].SubjectTypeId,
-                SubjectType: _subjectIdObj[0].SubjectType,
-                SelectHowMany: _subjectIdObj[0].SelectHowMany,
-                SubjectCategoryId: _subjectIdObj[0].SubjectCategoryId,
-                Active: s.Active
-              });
+                  let _stdSection = this.Sections.filter(c => c.MasterDataId == s.SectionId);
+                  if (_stdSection.length > 0)
+                    _section = _stdSection[0].MasterDataName;
+
+                  this.StudentSubjects.push({
+                    StudentClassSubjectId: s.StudentClassSubjectId,
+                    ClassSubjectId: _subjectIdObj[0].ClassSubjectId,
+                    StudentClassId: s.StudentClassId,
+                    RollNo: s.RollNo,
+                    SubjectId: _subjectIdObj[0].SubjectId,
+                    Subject: _subject,
+                    Section: _section,
+                    ClassId: s.ClassId,
+                    StudentId: s.StudentId,
+                    SectionId: s.SectionId,
+                    SubjectTypeId: _subjectIdObj[0].SubjectTypeId,
+                    SubjectType: _subjectIdObj[0].SubjectType,
+                    SelectHowMany: _subjectIdObj[0].SelectHowMany,
+                    SubjectCategoryId: _subjectIdObj[0].SubjectCategoryId,
+                    Active: s.Active
+                  });
+                }
+              }
             }
           }
           //})
@@ -659,7 +662,7 @@ export class VerifyResultsComponent implements OnInit {
           }
           ForNonGrading = {
             "StudentClassId": ss.StudentClassId,
-            "StudentId":ss.StudentId,
+            "StudentId": ss.StudentId,
             "Student": ss.Student,
             "Total Marks": 0,
             "Total Percent": 0,
@@ -756,6 +759,8 @@ export class VerifyResultsComponent implements OnInit {
               var ExamResultSubjectMarkData = {
                 ExamResultSubjectMarkId: 0,
                 StudentClassId: 0,
+                ClassId:0,
+                SectionId:0,
                 ExamId: 0,
                 StudentClassSubjectId: 0,
                 Marks: 0,
@@ -775,6 +780,8 @@ export class VerifyResultsComponent implements OnInit {
                 ExamResultSubjectMarkData.ActualMarks = markObtained[0].Marks;
                 ExamResultSubjectMarkData.OrgId = this.LoginUserDetail[0]['orgId'];
                 ExamResultSubjectMarkData.StudentClassId = ss.StudentClassId;
+                ExamResultSubjectMarkData.ClassId = pClassId;
+                ExamResultSubjectMarkData.SectionId = pSectionId;
                 ExamResultSubjectMarkData.StudentClassSubjectId = eachsubj.StudentClassSubjectId;
                 ExamResultSubjectMarkData.Grade = '';
 
@@ -838,6 +845,8 @@ export class VerifyResultsComponent implements OnInit {
                 ExamResultSubjectMarkData.ActualMarks = 0;
                 ExamResultSubjectMarkData.OrgId = this.LoginUserDetail[0]['orgId'];
                 ExamResultSubjectMarkData.StudentClassId = ss.StudentClassId;
+                ExamResultSubjectMarkData.ClassId = pClassId;
+                ExamResultSubjectMarkData.SectionId = pSectionId;
                 ExamResultSubjectMarkData.StudentClassSubjectId = eachsubj.StudentClassSubjectId;
                 ExamResultSubjectMarkData.Grade = '';
                 ForNonGrading[eachsubj.Subject] = 0;

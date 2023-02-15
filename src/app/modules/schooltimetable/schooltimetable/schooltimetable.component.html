@@ -75,8 +75,13 @@
                 <mat-row *matRowDef="let row; columns: PeriodStatisticDisplay;" class="element-row"></mat-row>
             </mat-table>
         </div>
-        <div style="overflow: auto;height: 430px; width: auto;">
-            <span style="font-weight: bold;">Time Table</span>
+        <div style="overflow: auto;width: auto;">
+            <div style="font-weight: bold;margin-bottom: 15px;">Time Table
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </div>
+            <div style="font-weight: bold;color:crimson">{{ErrorMessage}}</div>
             <mat-table #table [dataSource]="dataSource" *ngIf="SchoolTimeTableList.length>0">
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
@@ -99,6 +104,7 @@
                                 <mat-label>{{disCol}}</mat-label>
                                 <mat-select (selectionChange)="onBlur(element,$event,disCol)"
                                     [(ngModel)]="element[disCol]" [value]="element[disCol]">
+                                    <mat-option value="0">select</mat-option>
                                     <mat-option *ngFor="let item of ClassWiseSubjects" [value]="item.TeacherSubjectId">
                                         {{item.SubjectName}}
                                     </mat-option>
@@ -117,7 +123,7 @@
                             =='Day'?element[disCol]:''}}</span>
                     </mat-cell>
                 </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-header-row *matHeaderRowDef="displayedColumns;sticky:true"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 40px;"></mat-row>
             </mat-table>
         </div>

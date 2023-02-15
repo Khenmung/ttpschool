@@ -116,8 +116,8 @@ export class studentsubjectdashboardComponent implements OnInit {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
-          
-        });       
+
+        });
         this.GetMasterData();
       }
       else {
@@ -282,10 +282,10 @@ export class studentsubjectdashboardComponent implements OnInit {
           //for all student in student class table for the selected class.
           this.displayedColumns = ["Student"];
           //console.log("ClassSubjectList",this.ClassSubjectList)
-          this.StudentSubjectList =[];
+          this.StudentSubjectList = [];
           _filteredStudent.forEach(cs => {
-            var lastName = (cs.LastName) ?" " + cs.LastName : "";
-            cs.Student = cs.StudentClasses[0].RollNo +"-"+ cs.FirstName + lastName;
+            var lastName = (cs.LastName) ? " " + cs.LastName : "";
+            cs.Student = cs.StudentClasses[0].RollNo + "-" + cs.FirstName + lastName;
             //var _filteredStudentClassSubjectlist = this.StudentClassSubjects.filter(c => c.StudentClassId == cs.StudentClassId);
             if (cs.StudentClasses[0].RollNo == null || cs.StudentClasses[0].RollNo == '') {
               this.contentservice.openSnackBar("Please assign roll no. for " + cs.StudentClasses[0].Student, globalconstants.ActionText, globalconstants.RedBackground);
@@ -379,8 +379,9 @@ export class studentsubjectdashboardComponent implements OnInit {
     //var subjectTypes = [];
 
     topush = this.StudentDetail;
-
-    _subjectName = this.Subjects.filter(s => s.MasterDataId == clssubject.SubjectId)[0].MasterDataName;
+    let obj = this.Subjects.filter(s => s.MasterDataId == clssubject.SubjectId)
+    if (obj.length > 0)
+      _subjectName = obj[0].MasterDataName;
     if (this.displayedColumns.indexOf(_subjectName) == -1)
       this.displayedColumns.push(_subjectName);
 
@@ -615,7 +616,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          console.log("row.ClassSubjectId",row.ClassSubjectId)
+          console.log("row.ClassSubjectId", row.ClassSubjectId)
           this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
@@ -659,7 +660,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.edited = false;
-          this.rowCount+=1;
+          this.rowCount += 1;
           row.StudentClassSubjectId = data.StudentClassSubjectId;
 
           if (this.rowCount == Object.keys(row).length - 3) {
@@ -676,7 +677,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         (data: any) => {
           this.edited = false;
 
-          this.rowCount+=1;
+          this.rowCount += 1;
           if (this.rowCount == Object.keys(row).length - 3) {
             element.Action = false;
             this.loading = false; this.PageLoading = false;
@@ -694,7 +695,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
 
   GetMasterData() {
-debugger;
+    debugger;
     this.allMasterData = this.tokenstorage.getMasterData();
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

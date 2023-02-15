@@ -406,8 +406,13 @@ export class TeacherperiodComponent implements OnInit {
         var periodmatch = _forCurrentTeacher.filter(f => f.Period == col && f.Day == weekday.MasterDataName);
         periodmatch.forEach(eachperiod => {
           var row = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName && s.TeacherName.trim() == this.TeacherName);
-          if (row.length > 0)
-            row[0][col] = eachperiod.SubjectNClass;
+          if (row.length > 0) {
+            var multipletime = '';
+            row.forEach(r => {
+              multipletime += eachperiod.SubjectNClass + ',';
+            })
+            row[0][col] = multipletime;
+          }
           else {
             var _data = { TeacherName: this.TeacherName, TeacherId: _teacherId, Day: weekday.MasterDataName, [col]: eachperiod.SubjectNClass }
             this.PeriodStatistics.push(_data);
@@ -565,7 +570,7 @@ export class TeacherperiodComponent implements OnInit {
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     //+ ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();

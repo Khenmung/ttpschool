@@ -490,15 +490,15 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        this.ClassSubjects = data.value.map(item => {
-          var _classname = this.Classes.filter(f => f.ClassId == item.ClassId)[0].ClassName;
-          var _subjectName = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)[0].MasterDataName;
-
-          return {
-            ClassSubjectId: item.ClassSubjectId,
-            ClassSubject: _classname + "-" + _subjectName
+        this.ClassSubjects = [];
+        data.value.forEach(item => {
+          var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
+          if (objsubject.length > 0) {
+            this.ClassSubjects.push({
+              ClassSubjectId: item.ClassSubjectId,
+              ClassSubject: objsubject[0].MasterDataName,
+              ClassId: item.ClassId
+            })
           }
         })
       })

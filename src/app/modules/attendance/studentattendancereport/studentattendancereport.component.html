@@ -39,7 +39,7 @@
         <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                 <mat-header-cell *matHeaderCellDef
-                    [ngStyle]="{'background-color':disCol.includes('Sun') || disCol.includes('Sat')?'lightgray':''}"
+                    [ngStyle]="{'background-color':disCol.includes('Sun') || disCol.includes('Sat')?'#ffffe8':''}"
                     style="display:flex;justify-content:center;padding: 0px 2px 0px 3px;">
                     <!-- <div style="justify-content: flex-start;margin-bottom: 10px;display:flex;flex-direction: column;"> -->
                     <!-- <div style="display: flex;flex-direction: column;"> -->
@@ -48,7 +48,7 @@
                     <!-- </div> -->
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="padding: 0px 2px 0px 3px"
-                    [ngStyle]="{'background-color':disCol.includes('Sun') || disCol.includes('Sat')?'lightgray':''}">
+                    [ngStyle]="{'background-color':disCol.includes('Sun') || disCol.includes('Sat')?'#ffffe8':''}">
                     <!-- <mat-checkbox style="margin-left:10px;margin-right:15px" matTooltip="{{disCol}}"
                         *ngIf="disCol !='Student' && disCol !='Ab' && disCol !='Pre'" [disabled]="true" (click)="$event.stopPropagation()"
                         [checked]="element[disCol]=='1'?true:false">

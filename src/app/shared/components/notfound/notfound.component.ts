@@ -14,13 +14,13 @@ loading=false;
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
   }
   home() {
     this.route.navigate(['/home']);

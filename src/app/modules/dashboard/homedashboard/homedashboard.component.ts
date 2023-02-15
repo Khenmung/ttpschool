@@ -103,7 +103,7 @@ export class HomeDashboardComponent implements OnInit {
             //else {
             debugger;
             this.loading = true;
-            this.userName = localStorage.getItem('userName');
+            this.userName = localStorage.getItem('username');
             var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
 
             if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {

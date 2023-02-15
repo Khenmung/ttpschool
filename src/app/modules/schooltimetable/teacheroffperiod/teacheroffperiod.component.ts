@@ -387,6 +387,7 @@ export class TeacheroffperiodComponent implements OnInit {
 
   }
   GetPeriodStatistic() {
+      console.log("this.DataForAllClasses",this.DataForAllClasses)
     this.loading = true;
     this.PeriodStatistics = [];
     this.WeekDays.forEach(weekday => {

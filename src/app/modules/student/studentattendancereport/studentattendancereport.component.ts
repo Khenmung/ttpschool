@@ -20,7 +20,7 @@ import { SwUpdate } from '@angular/service-worker';
   styleUrls: ['./studentattendancereport.component.scss']
 })
 export class StudentattendancereportComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -251,21 +251,25 @@ export class StudentattendancereportComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
-        this.ClassSubjects = data.value.map(item => {
+        this.ClassSubjects = [];
+        data.value.forEach(item => {
           var _classname = ''
           var objCls = this.Classes.filter(f => f.ClassId == item.ClassId)
-          if (objCls.length > 0)
+          if (objCls.length > 0) {
             _classname = objCls[0].ClassName;
 
-          var _subjectName = '';
-          var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
-          if (objsubject.length > 0)
-            _subjectName = objsubject[0].MasterDataName;
+            var _subjectName = '';
+            var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
+            if (objsubject.length > 0) {
 
-          return {
-            ClassSubjectId: item.ClassSubjectId,
-            ClassSubject: _classname + "-" + _subjectName,
-            ClassId: item.ClassId
+              _subjectName = objsubject[0].MasterDataName;
+              this.ClassSubjects.push({
+                ClassSubjectId: item.ClassSubjectId,
+                ClassSubject: _classname + "-" + _subjectName,
+                ClassId: item.ClassId
+              })
+
+            }
           }
         })
       })

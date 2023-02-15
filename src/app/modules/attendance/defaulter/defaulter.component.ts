@@ -489,16 +489,15 @@ export class DefaulterComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.ClassSubjects = data.value.map(item => {
-          var _subjectName = '';
+        this.ClassSubjects = [];
+        data.value.forEach(item => {
           var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
-          if (objsubject.length > 0)
-            _subjectName = objsubject[0].MasterDataName;
-
-          return {
-            ClassSubjectId: item.ClassSubjectId,
-            ClassSubject: _subjectName,
-            ClassId: item.ClassId
+          if (objsubject.length > 0) {
+            this.ClassSubjects.push({
+              ClassSubjectId: item.ClassSubjectId,
+              ClassSubject: objsubject[0].MasterDataName,
+              ClassId: item.ClassId
+            })
           }
         })
       })

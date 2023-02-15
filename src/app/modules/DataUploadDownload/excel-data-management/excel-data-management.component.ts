@@ -1140,7 +1140,13 @@ export class ExcelDataManagementComponent implements OnInit {
       if (this.ErrorMessage.length == 0) {
 
         if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.CLASSROLLNOMAPPING)) {
-
+          var noOfStudent = this.ELEMENT_DATA.length;
+          if(noOfStudent>100)
+          {
+            this.loading=false;
+            this.contentservice.openSnackBar("Max. no. of students is 100.",globalconstants.ActionText,globalconstants.RedBackground);
+            return;
+          }
           this.ELEMENT_DATA.forEach((element, indx) => {
             this.toUpdate -= 1;
             this.studentData = [];

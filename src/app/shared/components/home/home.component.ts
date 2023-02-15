@@ -55,13 +55,14 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    debugger;
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
       ////console.log('result',result);
       this.deviceXs = result[0].mqAlias === "xs" ? true : false;

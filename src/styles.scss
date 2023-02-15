@@ -64,7 +64,9 @@ mat-card {
     //min-height : 100vh;
 
 }
-
+.mat-ink-bar{
+    background-color: lightgreen;
+}
 @media only screen and (max-width: 768px) {
     mat-card {
         margin-left : 0px;

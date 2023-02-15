@@ -292,7 +292,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-    let filterStr  = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
@@ -305,25 +305,27 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.ClassSubjects = data.value.map(cs => {
-          var _class = '';
-          var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId)
-          if (objclass.length > 0)
-            _class = objclass[0].ClassName;
+        this.ClassSubjects =
+          data.value.forEach(cs => {
+            var _class = '';
+            var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId)
+            if (objclass.length > 0)
+              _class = objclass[0].ClassName;
 
-          var _subject = ''
-          var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)
-          if (objsubject.length > 0)
-            _subject = objsubject[0].MasterDataName;
-          return {
-            ClassSubjectId: cs.ClassSubjectId,
-            Active: cs.Active,
-            SubjectId: cs.SubjectId,
-            ClassId: cs.ClassId,
-            ClassSubject: _class + ' - ' + _subject,
-            SubjectName: _subject
-          }
-        })
+            var _subject = ''
+            var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)
+            if (objsubject.length > 0) {
+              _subject = objsubject[0].MasterDataName;
+              this.ClassSubjects.push({
+                ClassSubjectId: cs.ClassSubjectId,
+                Active: cs.Active,
+                SubjectId: cs.SubjectId,
+                ClassId: cs.ClassId,
+                ClassSubject: _class + ' - ' + _subject,
+                SubjectName: _subject
+              })
+            }
+          })
         this.MergeSubjectnComponents();
       })
   }

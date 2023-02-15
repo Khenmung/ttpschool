@@ -82,7 +82,7 @@ export class TeachersubjectComponent implements OnInit {
     private tokenstorage: TokenStorageService,
     private nav: Router,
     private shareddata: SharedataService,
-    private dialog:MatDialog
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -124,11 +124,7 @@ export class TeachersubjectComponent implements OnInit {
         this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
         this.GetMasterData();
-        if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.Classes = [...data.value];
-          });
-        }
+
       }
     }
   }
@@ -176,7 +172,7 @@ export class TeachersubjectComponent implements OnInit {
           })
           if (startMonth == 11) {
             startMonth = -1;
-            _Year+=1;
+            _Year += 1;
           }
         }
       }
@@ -517,7 +513,7 @@ export class TeachersubjectComponent implements OnInit {
 
       })
   }
-  TeachingEmployees=[];
+  TeachingEmployees = [];
   GetTeachingEmployees() {
 
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -554,7 +550,11 @@ export class TeachersubjectComponent implements OnInit {
     this.shareddata.ChangeSubjects(this.Subjects);
     this.GetTeachers();
     //this.GetTeachingEmployees();
-    this.GetClassSubject();
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.GetClassSubject();
+    });
+
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
@@ -608,7 +608,7 @@ export class TeachersubjectComponent implements OnInit {
     this.dataservice.postPatch(this.TeacherSubjectListName, toUpdate, row.TeacherSubjectId, 'patch')
       .subscribe(res => {
         row.Action = false;
-        this.loading = false; 
+        this.loading = false;
         this.PageLoading = false;
         var idx = this.TeacherSubjectList.findIndex(x => x.TeacherSubjectId == row.TeacherSubjectId)
         this.TeacherSubjectList.splice(idx, 1);
@@ -618,7 +618,7 @@ export class TeachersubjectComponent implements OnInit {
 
       });
   }
-  
+
 }
 export interface ITeacherSubject {
   TeacherSubjectId: number;
