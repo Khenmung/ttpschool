@@ -80,13 +80,13 @@ export class StudentfamilynfriendComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     //debugger;
     this.searchForm = this.fb.group({
       FatherName: [0],
@@ -204,11 +204,11 @@ export class StudentfamilynfriendComponent implements OnInit {
       this.contentservice.openSnackBar("Please select siblings or friend.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (siblingNamefromOthers.length > 0 && this.searchForm.get("searchContactNo").value == '') {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please enter contact number..", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // if (siblingNamefromOthers.length > 0 && this.searchForm.get("searchContactNo").value == '') {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please enter contact number..", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     var _relationship = 0;
     if (this.searchForm.get("searchRelationshipId").value != '') {
       _relationship = this.searchForm.get("searchRelationshipId").value;
@@ -290,12 +290,12 @@ export class StudentfamilynfriendComponent implements OnInit {
       this.contentservice.openSnackBar("Please select relationship..", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    var relationship = this.FamilyRelationship.filter(f => f.MasterDataId == row.RelationshipId)[0].MasterDataName;
-    if (relationship.toLowerCase() == 'friend' && row.ContactNo.length == 0) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please enter friend's contact no..", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    //var relationship = this.FamilyRelationship.filter(f => f.MasterDataId == row.RelationshipId)[0].MasterDataName;
+    // if (relationship.toLowerCase() == 'friend' && row.ContactNo.length == 0) {
+    //   this.loading = false; this.PageLoading = false;
+    //   this.contentservice.openSnackBar("Please enter friend's contact no..", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
 
     let checkFilterString = "";// "StudentFamilyNFriendId eq " + row.StudentFamilyNFriendId
     if (row.StudentId > 0)
@@ -554,7 +554,7 @@ export class StudentfamilynfriendComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        if (data.value.length > 0) {
+        //if (data.value.length > 0) {
           var _students: any = this.tokenstorage.getStudents();
           _students.forEach(student => {
             var _RollNo = '';
@@ -604,7 +604,7 @@ export class StudentfamilynfriendComponent implements OnInit {
           //this.UniqueFathers = [...new Set(this.Students.map((item) => item.FatherName))];
           //this.UniqueMothers = [...new Set(this.Students.map((item) => item.MotherName))];
         
-        }
+        //}
         this.loading = false; this.PageLoading = false;
       })
   }

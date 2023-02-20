@@ -191,6 +191,7 @@ export class studentprimaryinfoComponent implements OnInit {
       AdmissionDate: [new Date()],
       House: [0],
       Remarks: [0],
+      Notes: [''],
       IdentificationMark: [''],
       BoardRegistrationNo:[''],
       Weight: [0],
@@ -225,10 +226,6 @@ export class studentprimaryinfoComponent implements OnInit {
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
         this.GetMasterData();
         
-        
-
-        
-
       }
     }
   }
@@ -440,7 +437,7 @@ export class studentprimaryinfoComponent implements OnInit {
       RemarkId: this.studentForm.get("Remarks").value,
       AdmissionStatusId: this.studentForm.get("AdmissionStatus").value,
       AdmissionDate: this.studentForm.get("AdmissionDate").value,
-      //Remarks: this.studentForm.get("Remarks").value,
+      Notes: this.studentForm.get("Notes").value,
       EmailAddress: _email,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeaving").value,
@@ -641,6 +638,7 @@ export class studentprimaryinfoComponent implements OnInit {
               AdmissionStatus: stud.AdmissionStatusId,
               AdmissionDate: stud.AdmissionDate,
               Remarks: stud.RemarkId,
+              Notes: stud.Notes,
               Active: stud.Active,
               ReasonForLeaving: stud.ReasonForLeavingId,
               IdentificationMark: stud.IdentificationMark,

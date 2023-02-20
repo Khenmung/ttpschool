@@ -165,7 +165,7 @@ export class DemoComponent implements OnInit { PageLoading=true;
       })
     })
     //console.log("events", this.events);
-    var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.DATA.DOWNLOAD);
+    var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.common.misc.CALENDAR);
     if (perObj.length > 0) {
       this.Permission = perObj[0].permission;
     }

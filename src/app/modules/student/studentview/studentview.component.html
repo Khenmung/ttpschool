@@ -26,6 +26,8 @@
         <span style="color:red;" *ngIf="message">{{message}}</span>
         <div style="padding:5px;margin: 15px;">
             <img [src]="imgURL" height="150px" *ngIf="imgURL">
+            <!-- <img crossorigin="anonymous" src="https://drive.google.com/file/d/1XBTLzqEmJyM91q8-dg7235aIqBDaEjYV/view" height="150px"> -->
+            
         </div>
         <mat-table [dataSource]="datasourceContact" style="margin: 15px;">
             <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">

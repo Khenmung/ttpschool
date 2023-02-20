@@ -529,21 +529,32 @@ export class searchstudentComponent implements OnInit {
       filteredStudents = filteredStudents.filter(fromallstud => fromallstud.MotherName.includes(_mothername))
     }
 
-    if (_remarkId > 0) {
-      var obj = [];
-      this.Groups.forEach(f => {
-        var check = f.group.filter(h => h.MasterDataId == _remarkId);
-        if (check.length > 0)
-          obj.push(check[0]);
-      });
-      this.StudentSearch.push({ Text: obj[0].type, Value: _remarkId });
-      //checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
-      filteredStudents = filteredStudents.filter(fromallstud => fromallstud[obj[0].type] == _remarkId)
-    }
+
     var classfilter = '';
     if (_ClassId > 0) {
       this.StudentSearch.push({ Text: "ClassId", Value: _ClassId });
-      classfilter = ' and ClassId eq ' + _ClassId;
+
+    }
+    if (_studentId == 0 && _PID == 0) {
+      if (_ClassId == 0) {
+        this.loading = false;
+        this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+      }
+      else
+        classfilter = ' and ClassId eq ' + _ClassId;
+      if (_sectionId > 0)
+        classfilter += ' and SectionId eq ' + _sectionId;
+      if (_remarkId > 0) {
+        var obj = [];
+        this.Groups.forEach(f => {
+          var check = f.group.filter(h => h.MasterDataId == _remarkId);
+          if (check.length > 0)
+            obj.push(check[0]);
+        });
+        this.StudentSearch.push({ Text: obj[0].type, Value: _remarkId });
+        //checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
+        filteredStudents = filteredStudents.filter(fromallstud => fromallstud[obj[0].type] == _remarkId)
+      }
     }
     if (_searchAdmissionNo > 0) {
       classfilter += " and AdmissionNo eq '" + _searchAdmissionNo + "'"
@@ -551,7 +562,7 @@ export class searchstudentComponent implements OnInit {
 
     if (_sectionId > 0) {
       this.StudentSearch.push({ Text: "SectionId", Value: _sectionId });
-      classfilter += ' and SectionId eq ' + _sectionId
+
     }
 
 
@@ -767,7 +778,7 @@ export class searchstudentComponent implements OnInit {
       if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
         var _students = [];
         _tempStudent.forEach(student => {
-          if (student.StudentFamilyNFriends.length > 0) {
+          if (student.StudentFamilyNFriends) {
             var indx = student.StudentFamilyNFriends.findIndex(sibling => sibling.StudentId == student.StudentId)
             if (indx > -1) {
               _students.push(student);

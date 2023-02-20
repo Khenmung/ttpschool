@@ -17,6 +17,7 @@ import { AddstudentclassComponent } from '../addstudentclass/addstudentclass.com
 import { AddstudentfeepaymentComponent } from '../studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from '../studentfeepayment/feereceipt/feereceipt.component';
 import { SwUpdate } from '@angular/service-worker';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-studentview',
   templateUrl: './studentview.component.html',
@@ -143,6 +144,7 @@ export class StudentviewComponent implements OnInit {
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private tokenService: TokenStorageService,
+    private sanitizer: DomSanitizer
 
   ) {
 
@@ -175,7 +177,7 @@ export class StudentviewComponent implements OnInit {
         //this.GetEvaluationNames();
         this.GetMasterData();
         this.GetFeeTypes();
-        this.GetStudentAttendance();        
+        this.GetStudentAttendance();
         this.GetAchievementAndPoint();
         this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -399,7 +401,7 @@ export class StudentviewComponent implements OnInit {
     this.SportsResultList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-         data.value.forEach(m => {
+        data.value.forEach(m => {
           var objachievement = this.AchievementAndPoints.filter(a => a.AchievementAndPointId == m.RankId);
           if (objachievement.length > 0) {
             m.Rank = objachievement[0].Rank;
@@ -434,7 +436,7 @@ export class StudentviewComponent implements OnInit {
       .subscribe((data: any) => {
         this.AchievementAndPoints = [...data.value];
         this.GetSportsResult();
-      })      
+      })
   }
   StudentFamilyNFriendList = [];
   StudentFamilyNFriendListName = 'StudentFamilyNFriends';
@@ -509,7 +511,7 @@ export class StudentviewComponent implements OnInit {
         this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
         this.AdmissionStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.ADMISSIONSTATUS);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.ActivityNames= this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
+        this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
         this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "other")[0].MasterDataId;
@@ -627,7 +629,7 @@ export class StudentviewComponent implements OnInit {
       DOB: this.adjustDateForTimeOffset(this.studentForm.get("DOB").value),
       BloodgroupId: this.studentForm.get("Bloodgroup").value,
       CategoryId: this.studentForm.get("Category").value,
-      AccountHolderName:this.studentForm.get("AccountHolderName").value,
+      AccountHolderName: this.studentForm.get("AccountHolderName").value,
       BankAccountNo: this.studentForm.get("BankAccountNo").value,
       IFSCCode: this.studentForm.get("IFSCCode").value,
       MICRNo: this.studentForm.get("MICRNo").value,
@@ -900,6 +902,7 @@ export class StudentviewComponent implements OnInit {
               { Text: 'Blood group', Value: _bloodGroup },
               { Text: 'Category', Value: _category },
               { Text: 'Religion', Value: _religion },
+
             ];
 
             var BankAccountInfo = [
@@ -931,11 +934,12 @@ export class StudentviewComponent implements OnInit {
               { Text: 'Admission Status', Value: _admissionStatus },
               { Text: 'Admission Date', Value: moment(stud.AdmissionDate).format('DD/MM/YYYY') },
               { Text: 'Remarks', Value: _remark },
-              { Text: 'Active', Value: stud.Active == 1 ? 'Yes' : 'No' },
               { Text: 'Reason For Leaving', Value: _reasonForLeaving },
               { Text: 'Identification Mark', Value: stud.IdentificationMark },
               { Text: 'Weight', Value: stud.Weight },
-              { Text: 'Height', Value: stud.Height }
+              { Text: 'Height', Value: stud.Height },
+              { Text: 'Notes', Value: stud.Notes },
+              { Text: 'Active', Value: stud.Active == 1 ? 'Yes' : 'No' }
             ]
             this.datasourcePrimaryInfo = new MatTableDataSource<any>(Primary);
             this.datasourceContact = new MatTableDataSource<any>(ContactInfo);
@@ -953,6 +957,8 @@ export class StudentviewComponent implements OnInit {
             }
             else if (this.StudentId > 0)
               this.imgURL = 'assets/images/emptyimageholder.jpg'
+
+            this.imgURL = this.sanitizer.bypassSecurityTrustResourceUrl("https://drive.google.com/file/d/1XBTLzqEmJyM91q8-dg7235aIqBDaEjYV/view");
           })
         }
         else {

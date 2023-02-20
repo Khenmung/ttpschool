@@ -181,7 +181,7 @@
                             <mat-datepicker #AdmissionDate></mat-datepicker>
                         </mat-form-field>
                     </mat-grid-tile>
-                    
+
                 </mat-grid-list>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
@@ -326,11 +326,11 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>IFSC</mat-label>
-                    <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="10">
+                    <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="15">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>MICR No.</mat-label>
-                    <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="10">
+                    <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="15">
                 </mat-form-field>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
@@ -411,7 +411,7 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-
+                    
                     <mat-form-field appearance="outline">
                         <mat-label>Identification Mark</mat-label>
                         <input formControlName="IdentificationMark" (blur)="OnBlur()" autocomplete="Off" matInput
@@ -422,7 +422,11 @@
                         <input formControlName="BoardRegistrationNo" (blur)="OnBlur()" autocomplete="Off" matInput
                             [maxlength]="15">
                     </mat-form-field>
-
+                    <mat-form-field appearance="outline">
+                        <mat-label>Notes</mat-label>
+                        <textarea rows="4" cols="20" (blur)="OnBlur()" [maxlength]="50" matInput autocomplete="Off"
+                            formControlName="Notes"></textarea>
+                    </mat-form-field>
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active
                     <mat-form-field *ngIf="StudentLeaving" appearance="outline">

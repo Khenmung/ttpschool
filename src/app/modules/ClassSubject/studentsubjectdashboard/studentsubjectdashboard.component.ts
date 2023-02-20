@@ -397,6 +397,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       "Subject": _subjectName,
       "ClassSubjectId": clssubject.ClassSubjectId,
       "ClassId": clssubject.ClassId,
+      "SectionId": clssubject.SectionId,
       "ClassName": this.Classes.filter(c => c.ClassId == clssubject.ClassId)[0].ClassName,
       "Action": false,
       "Active": clssubject.Active,
@@ -567,7 +568,9 @@ export class studentsubjectdashboardComponent implements OnInit {
       return;
     }
     else {
+      this.rowCount = Object.keys(element).length - 4;
       for (var prop in element) {
+
         var row: any = StudentSubjects.filter(s => s.Subject == prop);
 
         if (row.length > 0 && prop != 'Student' && prop != 'Action') {
@@ -576,11 +579,14 @@ export class studentsubjectdashboardComponent implements OnInit {
             StudentClassSubjectId: row[0].StudentClassSubjectId,
             StudentClassId: row[0].StudentClassId,
             ClassSubjectId: row[0].ClassSubjectId,
-            SubjectId: row[0].SubjectId
+            SubjectId: row[0].SubjectId,
+            ClassId: row[0].ClassId,
+            SectionId: row[0].SectionId
           }
           ////console.log('data to update',data)
-          if (row.length > 0)
+          if (row.length > 0) {
             this.UpdateOrSave(data, element);
+          }
         }
       }
     }
@@ -598,7 +604,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         });
   }
   UpdateOrSave(row, element) {
-    //debugger;
+    //debugger; 
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
       " and StudentClassId eq " + row.StudentClassId +
       " and BatchId eq " + this.SelectedBatchId
@@ -660,11 +666,12 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.edited = false;
-          this.rowCount += 1;
+          //this.rowCount += 1;
           row.StudentClassSubjectId = data.StudentClassSubjectId;
-
-          if (this.rowCount == Object.keys(row).length - 3) {
-            this.loading = false; this.PageLoading = false;
+          this.rowCount--;
+          if (this.rowCount == 0) {
+            this.loading = false;
+            this.PageLoading = false;
             element.Action = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -676,12 +683,11 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.edited = false;
-
-          this.rowCount += 1;
-          if (this.rowCount == Object.keys(row).length - 3) {
+          this.rowCount--;
+          if (this.rowCount == 0) {
             element.Action = false;
-            this.loading = false; this.PageLoading = false;
-            //this.GetStudentClassSubject();
+            this.loading = false;
+            this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);

@@ -11,6 +11,7 @@ import { TodayCollectionComponent } from '../today-collection/today-collection.c
 import { StudentprofilereportComponent } from '../studentprofilereport/studentprofilereport.component';
 
 import {SwUpdate} from '@angular/service-worker';
+import { PrintprogressreportComponent } from '../printprogressreport/printprogressreport.component';
 @Component({
   selector: 'app-reportboard',
   templateUrl: './reportboard.component.html',
@@ -25,6 +26,7 @@ export class ReportboardComponent implements AfterViewInit {
     ResultComponent,
     ExamtimetableComponent,
     StudentprofilereportComponent,
+    PrintprogressreportComponent
   ];
 
   tabNames = [
@@ -34,6 +36,7 @@ export class ReportboardComponent implements AfterViewInit {
     { 'label': '1Date Wise Collection', 'faIcon': '' },
     { 'label': '1Date Wise Collection', 'faIcon': '' },
     { 'label': '1Date Wise Collection', 'faIcon': '' },
+    { 'label': '1Date Wise Collection', 'faIcon': '' }
   ];
 
   Permissions =
@@ -45,6 +48,7 @@ export class ReportboardComponent implements AfterViewInit {
       DatewisePermission: '',
       ChartPermission: '',
       StudentProfileReportPermission: '',
+      PrintProgressReportPermission: '',
     };
   LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -55,7 +59,7 @@ export class ReportboardComponent implements AfterViewInit {
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private contentservice: ContentService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    ) {
   }
 
   public ngAfterViewInit(): void {
@@ -91,6 +95,10 @@ export class ReportboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.STUDENTPROFILEREPORT)
     var comindx = this.components.indexOf(StudentprofilereportComponent);
+    this.AddRemoveComponent(perObj, comindx);
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.PRINTPROGRESSREPORT)
+    var comindx = this.components.indexOf(PrintprogressreportComponent);
     this.AddRemoveComponent(perObj, comindx);
 
 

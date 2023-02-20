@@ -254,6 +254,7 @@ export class StudentEvaluationComponent implements OnInit {
 
     debugger;
     this.loading = true;
+    var _sectionId= this.searchForm.get("searchSectionId").value;
     let checkFilterString = "ClassEvaluationId eq " + row.ClassEvaluationId;
     if (!row.Updatable) {
       checkFilterString += " and EvaluationExamMapId eq " + row.EvaluationExamMapId +
@@ -317,6 +318,7 @@ export class StudentEvaluationComponent implements OnInit {
               StudentClassId: _studentClassId,
               StudentId: row.StudentId,
               ClassId: this.ClassId,
+              SectionId:_sectionId,
               ClassEvaluationId: row.ClassEvaluationId,
               AnswerText: _answerText,
               History: _history,
@@ -333,11 +335,11 @@ export class StudentEvaluationComponent implements OnInit {
             this.StudentEvaluationForUpdate[_lastIndex]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentEvaluationForUpdate[_lastIndex]["UpdatedDate"];
             delete this.StudentEvaluationForUpdate[_lastIndex]["UpdatedBy"];
-            console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
+            //console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
             //this.insert(row);
           }
           else {
-            console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
+            //console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
             this.StudentEvaluationForUpdate[_lastIndex]["UpdatedDate"] = new Date();
             this.StudentEvaluationForUpdate[_lastIndex]["UpdatedBy"];
             delete this.StudentEvaluationForUpdate[_lastIndex]["CreatedDate"];

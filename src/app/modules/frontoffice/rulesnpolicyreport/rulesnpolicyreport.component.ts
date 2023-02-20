@@ -95,7 +95,7 @@ export class RulesnpolicyreportComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.CREATEHTMLPAGE);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.RULESORPOLICYREPORT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }

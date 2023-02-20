@@ -13,12 +13,10 @@ import { MatTableModule } from '@angular/material/table';
 import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
 import { NgxPrintModule } from 'ngx-print';
 import { ChartsModule } from 'ng2-charts';
-//import { MyFilterPipe } from 'src/app/shared/FilterPipe';
-//import { DailytimetablereportComponent } from '../schooltimetable/dailytimetablereport/dailytimetablereport.component';
 
 @NgModule({
   declarations: [
-    SchoolReportsComponents
+    SchoolReportsComponents    
   ],
   imports: [
     CommonModule,

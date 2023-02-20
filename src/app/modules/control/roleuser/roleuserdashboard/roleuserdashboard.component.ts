@@ -116,7 +116,7 @@ export class roleuserdashboardComponent implements OnInit {
     }
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.ROLEUSER);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {

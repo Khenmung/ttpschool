@@ -94,7 +94,7 @@ export class DailytimetablereportComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.TIMETABLE.CLASSTIMETABLE)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.TIMETABLE.DAILYTIMETABLEREPORT)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
@@ -254,7 +254,7 @@ export class DailytimetablereportComponent implements OnInit {
             this.TeacherSubjectList.push(teachersubject);
           });
         })
-        console.log("this.TeacherSubjectList", this.TeacherSubjectList);
+        //console.log("this.TeacherSubjectList", this.TeacherSubjectList);
         this.loading = false;
         this.PageLoading = false;
       });
@@ -406,8 +406,12 @@ export class DailytimetablereportComponent implements OnInit {
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
 
-        this.loading = false; this.PageLoading = false;
+        this.loading = false; 
+        this.PageLoading = false;
         //console.log("this.AllClassPeriods", this.AllClassPeriods);
+      },error=>{
+        this.loading = false; 
+        this.PageLoading = false;
       })
   }
   GetClassSubject() {
@@ -450,7 +454,8 @@ export class DailytimetablereportComponent implements OnInit {
           }
         })
         this.GetTeacherSubject();
-        this.loading = false; this.PageLoading = false;
+        this.loading = false; 
+        this.PageLoading = false;
       })
   }
 

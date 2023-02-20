@@ -1,88 +1,54 @@
-<div style="display:flex;justify-content:space-between">
-    <div style="margin: 15px;display:flex;justify-content:space-between">
-      <!-- <div class="btn-group"> -->
-        <div style="margin-right: 10px;"
-          class="mat-raised-button"
-          mwlCalendarPreviousView
-          [view]="view"
-          [(viewDate)]="viewDate"
-          (viewDateChange)="closeOpenMonthViewDay()">
-          Previous
-        </div>
-        <div style="margin-right: 10px;"
-          class="btn btn-outline-secondary"
-          mwlCalendarToday
-          [(viewDate)]="viewDate">
-          Today
-        </div>
-        <div style="margin-right: 10px;"
-          class="mat-raised-button"
-          mwlCalendarNextView
-          [view]="view"
-          [(viewDate)]="viewDate"
-          (viewDateChange)="closeOpenMonthViewDay()">
-          Next
-        </div>
-      <!-- </div> -->
+<div style="display:flex;justify-content:space-between;width:650px">
+  <div style="margin: 15px;display:flex;justify-content:space-between">
+    <!-- <div class="btn-group"> -->
+    <div style="margin-right: 10px;" class="mat-raised-button" mwlCalendarPreviousView [view]="view"
+      [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">
+      Previous
     </div>
-    <div style="margin: 15px;">
-      <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+    <div style="margin-right: 10px;" class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">
+      Today
     </div>
-    <div style="margin: 15px;">
-      <div class="btn-group">
-        <div style="margin-right: 10px;"
-          class="mat-raised-button"
-          (click)="setView(CalendarView.Month)"
-          [class.active]="view === CalendarView.Month">
-          Month
-        </div>
-        <div style="margin-right: 10px;"
-          class="mat-raised-button"
-          (click)="setView(CalendarView.Week)"
-          [class.active]="view === CalendarView.Week">
-          Week
-        </div>
-        <div style="margin-right: 10px;"
-          class="mat-raised-button"
-          (click)="setView(CalendarView.Day)"
-          [class.active]="view === CalendarView.Day">
-          Day
-        </div>
+    <div style="margin-right: 10px;" class="mat-raised-button" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
+      (viewDateChange)="closeOpenMonthViewDay()">
+      Next
+    </div>
+    <!-- </div> -->
+  </div>
+  <div style="margin: 15px;">
+    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+  </div>
+  <div style="margin: 15px;">
+    <div class="btn-group">
+      <div style="margin-right: 10px;" class="mat-raised-button" (click)="setView(CalendarView.Month)"
+        [class.active]="view === CalendarView.Month">
+        Month
+      </div>
+      <div style="margin-right: 10px;" class="mat-raised-button" (click)="setView(CalendarView.Week)"
+        [class.active]="view === CalendarView.Week">
+        Week
+      </div>
+      <div style="margin-right: 10px;" class="mat-raised-button" (click)="setView(CalendarView.Day)"
+        [class.active]="view === CalendarView.Day">
+        Day
       </div>
     </div>
   </div>
-  <br />
-  <div [ngSwitch]="view">
-    <mwl-calendar-month-view
-      *ngSwitchCase="CalendarView.Month"
-      [viewDate]="viewDate"
-      [events]="events"
-      [refresh]="refresh"
-      [activeDayIsOpen]="activeDayIsOpen"
-      (dayClicked)="dayClicked($event.day)"
-      (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)">
-    </mwl-calendar-month-view>
-    <mwl-calendar-week-view
-      *ngSwitchCase="CalendarView.Week"
-      [viewDate]="viewDate"
-      [events]="events"
-      [refresh]="refresh"
-      (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)">
-    </mwl-calendar-week-view>
-    <mwl-calendar-day-view
-      *ngSwitchCase="CalendarView.Day"
-      [viewDate]="viewDate"
-      [events]="events"
-      [refresh]="refresh"
-      (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
-    >
-    </mwl-calendar-day-view>
-  </div>
-  
-  <!-- Everything you see below is just for the demo, you don't need to include it in your app -->
+</div>
+<br />
+<div [ngSwitch]="view" style="width:650px">
+  <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
+    [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)"
+    (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+  </mwl-calendar-month-view>
+  <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
+    (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+  </mwl-calendar-week-view>
+  <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
+    (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+  </mwl-calendar-day-view>
+</div>
+
+<!-- Everything you see below is just for the demo, you don't need to include it in your app -->
 <!--   
   <br /><br /><br />
   
@@ -194,4 +160,3 @@
       </button>
     </div>
   </ng-template> -->
-  
