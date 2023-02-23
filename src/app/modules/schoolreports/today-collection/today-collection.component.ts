@@ -54,8 +54,8 @@ export class TodayCollectionComponent implements OnInit {
   DisplayColumns = [
     "ReceiptNo",
     "ReceiptDate",
-    "Student",
-    "ClassName",
+    "Name",
+    //"ClassName",
     "PaymentType",
     "Status",
     "TotalAmount"
@@ -81,13 +81,13 @@ export class TodayCollectionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.SearchForm = this.fb.group({
       searchClassId: [0],
       searchStudentName: [0],
@@ -153,20 +153,25 @@ export class TodayCollectionComponent implements OnInit {
 
     if (this.SearchForm.get("searchStudentName").value.StudentClassId > 0)
       filterstring += " and StudentClassId eq " + this.SearchForm.get("searchStudentName").value.StudentClassId;
+    if (_classId > 0) {
+      filterstring += " and ClassId eq " + _classId;
+    }
 
     let list: List = new List();
     list.fields = [
       'ReceiptDate',
       'ReceiptNo',
+      'StudentClassId',
       'TotalAmount',
       'PaymentTypeId',
       'Active'
     ];
     list.PageName = "StudentFeeReceipts";
     list.lookupFields = [
-      "AccountingVouchers($filter=ClassFeeId gt 0 and FeeReceiptId gt 0;$select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId,ClassId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
-
+      //"AccountingVouchers($filter=ClassFeeId gt 0 and FeeReceiptId gt 0;$select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId,ClassId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
+      "AccountingVouchers($filter=ClassFeeId gt 0 and FeeReceiptId gt 0;$select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId)))"
     ]
+    //,StudentClass($select=StudentId,ClassId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
     list.filter = [filterstring];
 
     this.dataservice.get(list)
@@ -174,14 +179,21 @@ export class TodayCollectionComponent implements OnInit {
         //debugger;
         //console.log('paymentd ata', data.value);
         var result = [];
+        var _students = [];
         if (_classId > 0)
-          data.value.forEach(f => {
-            if (f.StudentClass.ClassId == _classId)
-              result.push(f);
-
-          })
+          _students = this.Students.filter(s => s.StudentClasses && s.StudentClasses.length > 0 && s.StudentClasses.findIndex(d => d.ClassId == _classId) > -1);
         else
-          result = [...data.value];
+          _students = [...this.Students];
+
+        data.value.forEach(db => {
+
+          var studcls = _students.filter(s => s.StudentClasses && s.StudentClasses.length > 0 && s.StudentClasses.findIndex(d => d.StudentClassId == db.StudentClassId) > -1);
+          if (studcls.length > 0) {
+            db.StudentClasses = studcls;
+            result.push(db);
+          }
+          //return db;
+        });
 
 
         var activebill = result.filter(f => f.Active == 1);
@@ -191,9 +203,9 @@ export class TodayCollectionComponent implements OnInit {
         this.CancelledAmount = cancelledBill.reduce((acc, current) => acc + current.TotalAmount, 0);
 
         this.DateWiseCollection = result.map(d => {
-          var _lastname = d.StudentClass.Student.LastName == null ? '' : " " + d.StudentClass.Student.LastName;
-          d.Student = d.StudentClass.Student.FirstName + _lastname;
-          d.ClassName = d.StudentClass.Class.ClassName
+          //var _lastname = d.StudentClass.Student.LastName == null ? '' : " " + d.StudentClass.Student.LastName;
+          d.Name = d.StudentClasses[0].Name;
+          d.ClassName = d.StudentClasses[0].ClassName
           d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
           d.Status = d.Active == 0 ? 'Cancelled' : 'Active';
           //d.ReceiptDate = this.datepipe.transform(d.ReceiptDate,'dd/MM/yyyy') 
@@ -203,7 +215,7 @@ export class TodayCollectionComponent implements OnInit {
 
         var groupbyPaymentType = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType", [this.DateWiseCollection]);
 
-        result.forEach(d => {
+        activebill.forEach(d => {
           d.AccountingVouchers.forEach(v => {
             var _feeCategoryName = '';
             if (v.ClassFee != null) {
@@ -211,13 +223,14 @@ export class TodayCollectionComponent implements OnInit {
               var objCategory = this.FeeCategories.filter(f => f.MasterDataId == _feeCategoryId)
               if (objCategory.length > 0)
                 _feeCategoryName = objCategory[0].MasterDataName;
-              var _lastname = d.StudentClass.Student.LastName == null ? '' : " " + d.StudentClass.Student.LastName;
+              //var _lastname = d.StudentClass.Student.LastName == null ? '' : " " + d.StudentClass.Student.LastName;
               this.HeadsWiseCollection.push({
                 ClassFeeId: v.ClassFeeId,
                 Amount: v.Amount,
                 PaymentType: this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName,
-                Student: d.StudentClass.Student.FirstName + _lastname,
-                ClassName: d.StudentClass.Class.ClassName,
+                Student: d.StudentClasses[0].Name, //d.StudentClass.Student.FirstName + _lastname,
+                //ClassName: d.StudentClass.Class.ClassName,
+                ClassName: d.ClassName,
                 FeeCategoryId: _feeCategoryId,
                 FeeCategory: _feeCategoryName,
               })
@@ -264,50 +277,52 @@ export class TodayCollectionComponent implements OnInit {
   }
   GetStudents() {
 
-    let list: List = new List();
-    list.fields = [
-      'StudentClassId',
-      'StudentId',
-      'ClassId',
-      'RollNo',
-      'SectionId'
-    ];
+    // let list: List = new List();
+    // list.fields = [
+    //   'StudentClassId',
+    //   'StudentId',
+    //   'ClassId',
+    //   'RollNo',
+    //   'SectionId'
+    // ];
 
-    list.PageName = "StudentClasses";
-    //list.lookupFields = ["Student($select=FirstName,LastName)"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId];
+    // list.PageName = "StudentClasses";
+    // //list.lookupFields = ["Student($select=FirstName,LastName)"]
+    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
         var _students: any = this.tokenStorage.getStudents();
-        var _filteredStudents = _students.filter(s => data.value.findIndex(fi => fi.StudentId == s.StudentId) > -1)
-        if (data.value.length > 0) {
-          this.Students = data.value.map(studentcls => {
-            var matchstudent = _filteredStudents.filter(stud => stud.StudentId == studentcls.StudentId)
-            var _classNameobj = this.Classes.filter(c => c.ClassId == studentcls.ClassId);
-            var _className = '';
-            if (_classNameobj.length > 0)
-              _className = _classNameobj[0].ClassName;
+        this.Students =[..._students];
+        // var _filteredStudents = _students.filter(s => data.value.findIndex(fi => fi.StudentId == s.StudentId) > -1)
+        // if (data.value.length > 0) {
+        //   this.Students = data.value.map(studentcls => {
+        //     var matchstudent = _filteredStudents.filter(stud => stud.StudentId == studentcls.StudentId)
+        //     var _classNameobj = this.Classes.filter(c => c.ClassId == studentcls.ClassId);
+        //     var _className = '';
+        //     if (_classNameobj.length > 0)
+        //       _className = _classNameobj[0].ClassName;
 
-            var _Section = '';
-            var _sectionobj = this.Sections.filter(f => f.MasterDataId == studentcls.SectionId);
-            if (_sectionobj.length > 0)
-              _Section = _sectionobj[0].MasterDataName;
-            var _lastname = matchstudent[0].LastName == null ? '' : " " + matchstudent[0].LastName;
-            var _RollNo = studentcls.RollNo;
-            var _name = matchstudent[0].FirstName + _lastname;
-            var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
-            return {
-              StudentClassId: studentcls.StudentClassId,
-              StudentId: studentcls.StudentId,
-              Name: _fullDescription
-            }
-          })
-        }
+        //     var _Section = '';
+        //     var _sectionobj = this.Sections.filter(f => f.MasterDataId == studentcls.SectionId);
+        //     if (_sectionobj.length > 0)
+        //       _Section = _sectionobj[0].MasterDataName;
+        //     var _lastname = matchstudent[0].LastName == null ? '' : " " + matchstudent[0].LastName;
+        //     var _RollNo = studentcls.RollNo;
+        //     var _name = matchstudent[0].FirstName + _lastname;
+        //     var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
+        //     return {
+        //       StudentClassId: studentcls.StudentClassId,
+        //       StudentId: studentcls.StudentId,
+        //       ClassName: _className,
+        //       Name: _fullDescription
+        //     }
+        //   })
+        // }
         this.loading = false; this.PageLoading = false;
-      })
+      //})
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);

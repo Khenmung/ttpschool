@@ -97,13 +97,13 @@ export class searchstudentComponent implements OnInit {
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
@@ -652,7 +652,7 @@ export class searchstudentComponent implements OnInit {
         this.ELEMENT_DATA = [];
         formattedData.forEach(item => {
           var _lastname = item.LastName == null ? '' : " " + item.LastName;
-          item.Name = item.FirstName + _lastname;
+          item.Name = item.FirstName + _lastname + "-" + item.RollNo;
           var _remark = '';
           var objremark = this.Remarks.filter(f => f.MasterDataId == item.RemarkId);
           if (objremark.length > 0) {

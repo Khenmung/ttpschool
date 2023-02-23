@@ -40,7 +40,7 @@
             <div style="border:1px solid lightgray;padding-bottom: 15px;" class="divCls" id="printSection">
                 <div fxLayout="column" fxLayoutAlign="space-around center">
                     <div *ngFor="let item of ReceiptHeading;let i=index">
-                        <span [ngStyle]="item.Logic" [innerHTML]="item.Description"></span>
+                        <span [ngStyle]="item.Description" [innerHTML]="item.MasterDataName"></span>
                     </div>
                 </div>
                 <br>
@@ -73,6 +73,7 @@
                             <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
                             <mat-cell *matCellDef="let element;let i = index;"> {{i+1}} </mat-cell>
                             <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="FeeName">
                             <mat-header-cell *matHeaderCellDef> Particulars </mat-header-cell>
@@ -80,12 +81,17 @@
                             <mat-footer-cell *matFooterCellDef>
                                 <b>Total:</b>
                             </mat-footer-cell>
+                            <mat-footer-cell>
+                                <b>Payment Type:</b>
+                            </mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="BaseAmount">
                             <mat-header-cell *matHeaderCellDef style="display:flex;justify-content:center"> Fee &#x20b9;
                             </mat-header-cell>
                             <mat-cell *matCellDef="let element"> {{element.BaseAmount}} </mat-cell>
                             <mat-footer-cell *matFooterCellDef>
+                            </mat-footer-cell>
+                            <mat-footer-cell>
                             </mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="Amount">
@@ -96,6 +102,9 @@
                             <mat-footer-cell *matFooterCellDef>
                                 <b>{{TotalAmount}}</b>
                             </mat-footer-cell>
+                            <mat-footer-cell>
+                                <b>ff</b>
+                            </mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="Balance">
                             <mat-header-cell *matHeaderCellDef> Balance &#x20b9;</mat-header-cell>
@@ -105,17 +114,28 @@
                             <mat-footer-cell *matFooterCellDef style="justify-content:flex-end;">
                                 <b>{{Balance}}</b>
                             </mat-footer-cell>
+                            <mat-footer-cell>
+
+                            </mat-footer-cell>
                         </ng-container>
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                         <mat-row *matRowDef="let row; columns: displayedColumns;let i=index;" class="element-row">
                         </mat-row>
                         <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
                         </mat-footer-row>
+                        <!-- <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
+                        </mat-footer-row> -->
                     </mat-table>
-                    <div
-                        style="display: flex;justify-content: flex-end;height: 100px;align-items:flex-end;padding: 10px;">
+                    <div style="display:flex;margin:15px">
+                        <div><b>Payment Type:</b></div>
+                        <div style="margin-left:15px">{{PaymentType}}</div>
+                    </div>
+                    <div style="display: flex;justify-content: flex-end; padding: 30px;margin-right:20px;margin-top: 60px;">
                         <div>Accountant</div>
                     </div>
+                </div>
+                <div style="margin:15px;justify-content: center;width: 100%;display: flex;">
+                    <div>This is a computer-generated document. No signature is required.</div>
                 </div>
             </div>
             <hr>

@@ -313,7 +313,7 @@ export class TeacheroffperiodComponent implements OnInit {
 
           var forSelectedClsPeriods;
           forSelectedClsPeriods = filterPeriods.sort((a, b) => a.Sequence - b.Sequence);
-          debugger;
+          //debugger;
           this.WeekDays.sort((a, b) => a.Sequence - b.Sequence).forEach(p => {
             if (!this.DayStatisticDisplay.includes(p.MasterDataName))
               this.DayStatisticDisplay.push(p.MasterDataName)
@@ -365,6 +365,7 @@ export class TeacheroffperiodComponent implements OnInit {
                   "SectionId": clsperiod.PeriodId,
                   "SchoolClassPeriodId": clsperiod.SchoolClassPeriodId,
                   "TeacherSubjectId": 0,
+                  "ClassSubjectId": 0,
                   "TeacherId": 0,
                   "SubjectNClass": '',
                   "Sequence": clsperiod.Sequence,
@@ -387,22 +388,51 @@ export class TeacheroffperiodComponent implements OnInit {
 
   }
   GetPeriodStatistic() {
-      console.log("this.DataForAllClasses",this.DataForAllClasses)
+    console.log("this.DataForAllClasses", this.DataForAllClasses)
     this.loading = true;
     this.PeriodStatistics = [];
+    var groupbySubjects = alasql("select ClassSubjectId,Count(1) TeacherCount from ? group by ClassSubjectId", [this.TeacherSubjectList]);
+    var filterSubjectMorethanOneTeacher = groupbySubjects.filter(s => s.TeacherCount > 1);
+    var ClassSubjectIdWithTeacherId = this.TeacherSubjectList.filter(t=>filterSubjectMorethanOneTeacher.findIndex(s=>s.ClassSubjectId== t.ClassSubjectId)>-1)
+    
     this.WeekDays.forEach(weekday => {
+
       this.PeriodStatisticDisplay.forEach(period => {
         if (period != 'Day') {
+
           this.Teachers.forEach(teacher => {
+            if (weekday.MasterDataName == 'Tue' && period == '7th' && teacher.TeacherId == 849) {
+              debugger;
+            }
             var row = this.DataForAllClasses.filter(f => f.TeacherId == teacher.TeacherId &&
               f.Period == period && f.Day == weekday.MasterDataName);
-            if (row.length == 0) {
-              var datarow = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName);
-              if (datarow.length > 0)
-                datarow[0][period] = datarow[0][period] != null ? datarow[0][period] + ",<br>" + teacher.TeacherName : teacher.TeacherName;
+            if (row.length == 0) {//current teacher does not have class in current period
+              var rowSubjectOfThisPeriod = this.DataForAllClasses.filter(f => f.Period == period && f.Day == weekday.MasterDataName);
+
+              //if this period contains subject more than one teacher
+              if (ClassSubjectIdWithTeacherId.length > 0) {
+                var filtered = ClassSubjectIdWithTeacherId.filter(sub => rowSubjectOfThisPeriod.findIndex(ind => ind.ClassSubjectId == sub.ClassSubjectId 
+                                                            && sub.EmployeeId == teacher.TeacherId) > -1)
+                if (filtered.length == 0) {
+
+                  var datarow = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName);
+                  if (datarow.length > 0)
+                    datarow[0][period] = datarow[0][period] != null ? datarow[0][period] + ",<br>" + teacher.TeacherName : teacher.TeacherName;
+                  else {
+                    var _data = { Day: weekday.MasterDataName, [period]: teacher.TeacherName }
+                    this.PeriodStatistics.push(_data);
+                  }
+
+                }
+              }
               else {
-                var _data = { Day: weekday.MasterDataName, [period]: teacher.TeacherName }
-                this.PeriodStatistics.push(_data);
+                var datarow = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName);
+                if (datarow.length > 0)
+                  datarow[0][period] = datarow[0][period] != null ? datarow[0][period] + ",<br>" + teacher.TeacherName : teacher.TeacherName;
+                else {
+                  var _data = { Day: weekday.MasterDataName, [period]: teacher.TeacherName }
+                  this.PeriodStatistics.push(_data);
+                }
               }
             }
           });
@@ -461,6 +491,7 @@ export class TeacheroffperiodComponent implements OnInit {
             f.Period = this.AllClassPeriods.filter(p => p.PeriodId == f.SchoolClassPeriod.PeriodId)[0].Period;
             f.TeacherId = _teacherId;
             f.Subject = objTeachersubj[0].SubjectName;
+            f.ClassSubjectId = objTeachersubj[0].ClassSubjectId;
             this.AllTimeTable.push(f);
           }
         })
@@ -560,7 +591,7 @@ export class TeacheroffperiodComponent implements OnInit {
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
     //+ ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();

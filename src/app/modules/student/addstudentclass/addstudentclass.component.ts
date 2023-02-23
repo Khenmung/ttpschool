@@ -61,13 +61,13 @@ export class AddstudentclassComponent implements OnInit {
     private shareddata: SharedataService) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
     var today = new Date();
     this.studentclassForm = this.fb.group({

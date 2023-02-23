@@ -958,7 +958,7 @@ export class StudentviewComponent implements OnInit {
             else if (this.StudentId > 0)
               this.imgURL = 'assets/images/emptyimageholder.jpg'
 
-            this.imgURL = this.sanitizer.bypassSecurityTrustResourceUrl("https://drive.google.com/file/d/1XBTLzqEmJyM91q8-dg7235aIqBDaEjYV/view");
+            //this.imgURL = this.sanitizer.bypassSecurityTrustResourceUrl("https://drive.google.com/file/d/1XBTLzqEmJyM91q8-dg7235aIqBDaEjYV/view");
           })
         }
         else {

@@ -186,7 +186,7 @@ export class SchooltimetableComponent implements OnInit {
       this.insert(element, row);
     }
     else {
-     
+
       delete this.SchoolTimeTableData["CreatedDate"];
       delete this.SchoolTimeTableData["CreatedBy"];
       this.SchoolTimeTableData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
@@ -280,7 +280,8 @@ export class SchooltimetableComponent implements OnInit {
   DayStatistics = [];
   PeriodStatistics = [];
   GetSchoolTimeTable() {
-    debugger;
+    //debugger;
+    this.ErrorMessage='';
     this.DayStatistics = [];
     this.PeriodStatistics = [];
     this.dataSourceDayStatistic = new MatTableDataSource<any>(this.DayStatistics);
@@ -479,7 +480,7 @@ export class SchooltimetableComponent implements OnInit {
     })
 
     //console.log("PeriodStatisticDisplay", this.PeriodStatisticDisplay);
-    console.log("this.PeriodStatistics", this.PeriodStatistics);
+    //console.log("this.PeriodStatistics", this.PeriodStatistics);
 
     this.dataSourcePeriodStatistic = new MatTableDataSource<any>(this.PeriodStatistics);
   }
@@ -741,9 +742,14 @@ export class SchooltimetableComponent implements OnInit {
       record.Action = !record.Action;
     })
   }
-  ErrorMessage='';
+  ErrorMessage = '';
   onBlur(element, event, columnName) {
     debugger;
+    var groupbySubjects = alasql("select ClassSubjectId,Count(1) TeacherCount from ? group by ClassSubjectId", [this.TeacherSubjectList]);
+    var filterSubjectMorethanOneTeacher = groupbySubjects.filter(s => s.TeacherCount > 1);
+    var ClassSubjectIdWithTeacherId = this.TeacherSubjectList.filter(t => filterSubjectMorethanOneTeacher.findIndex(s => s.ClassSubjectId == t.ClassSubjectId) > -1)
+
+
     var obj = this.ClassWiseSubjects.filter(f => f.TeacherSubjectId == event.value);
     var _teacherId = 0;
     this.DayStatistics = [];
@@ -751,6 +757,8 @@ export class SchooltimetableComponent implements OnInit {
     //this.DataForAllClasses=[];
     if (obj.length > 0) {
       _teacherId = obj[0].EmployeeId;
+      var engagedInOneSubjMoreThanOneTeacher = ClassSubjectIdWithTeacherId.filter(morethanone => morethanone.EmployeeId == _teacherId);
+
 
       var _classId = this.searchForm.get("searchClassId").value;
       var _sectionId = this.searchForm.get("searchSectionId").value;
@@ -802,47 +810,80 @@ export class SchooltimetableComponent implements OnInit {
         this.ErrorMessage = obj[0].TeacherName + " is already engaged for the same period of " + _engagedIn;
       }
       else {
-        this.ErrorMessage ="";
-        var rowStoredForUpdate = this.StoredForUpdate.filter(s => s.TimeTableId == currentTimeTableId);
-        if (rowStoredForUpdate.length > 0) {
-          rowStoredForUpdate[0]["TeacherSubjectId"] = event.value;
-          rowStoredForUpdate[0]["Action"] = true;
-          rowStoredForUpdate[0]["Active"] = 1;
-          rowStoredForUpdate[0]["TeacherId"] = _teacherId;
-        }
-
-        if (rowDataForAllClasses.length > 0) {
-          rowDataForAllClasses[0]["TeacherSubjectId"] = event.value;
-          rowDataForAllClasses[0]["Action"] = true;
-          rowDataForAllClasses[0]["Active"] = 1;
-          rowDataForAllClasses[0]["TeacherId"] = _teacherId;
-          //objcurrent[0]["TimeTableId"] = currentTimeTableId;
-          this.rowCount = 0;
-          this.UpdateOrSave(element, rowDataForAllClasses[0]);
-        }
-        else {
-          var _data = {
-            TeacherName: obj[0].TeacherName,
-            TeacherId: _teacherId,
-            TimeTableId: 0,
-            Day: element.Day,
-            DayId: element.DayId,
-            ClassId: obj[0].ClassId,
-            SectionId: _sectionId,
-            Period: columnName,
-            TeacherSubjectId: event.value,
-            //SchoolClassPeriodId:
-            Active: 1,
-            Action: true
+        //checking whether engaged in one subject multiple teacher.
+        if (engagedInOneSubjMoreThanOneTeacher.length > 0) {
+          if (currentTimeTableId > 0) {
+            IsTeacherAlreadyEngagedInAnotherClass = this.DataForAllClasses.filter(s => {
+              return s.Period == columnName
+                && s.Day == element.Day
+                && currentTimeTableId > 0
+                && s.TimeTableId != currentTimeTableId
+                && engagedInOneSubjMoreThanOneTeacher.findIndex(f => f.ClassSubjectId == s.ClassSubjectId) > -1
+            });
           }
-          this.DataForAllClasses.push(_data);
-          this.rowCount = 0;
-          this.UpdateOrSave(element, _data);
-        }
+          else {
+            IsTeacherAlreadyEngagedInAnotherClass = this.DataForAllClasses.filter(s => {
+              return s.Period == columnName
+                && s.Day == element.Day
+                && engagedInOneSubjMoreThanOneTeacher.findIndex(f => f.ClassSubjectId == s.ClassSubjectId) > -1
+            });
+          }
+          if (IsTeacherAlreadyEngagedInAnotherClass.length > 0) {
+            var _engagedIn = "";
+            IsTeacherAlreadyEngagedInAnotherClass.forEach(e => {
+              _engagedIn += this.Classes.filter(c => c.ClassId == IsTeacherAlreadyEngagedInAnotherClass[0].ClassId)[0].ClassName + "-";
+              _engagedIn += this.Sections.filter(c => c.MasterDataId == IsTeacherAlreadyEngagedInAnotherClass[0].SectionId)[0].MasterDataName + "-" + columnName + ", ";
 
-        this.GetPeriodStatistic(_teacherId, element.Day);
-        element.Action = true;
-        this.GetStatistic();
+            })
+            this.loading = false;
+            element.Action = false;
+            element[columnName] = 0;
+            this.ErrorMessage = obj[0].TeacherName + " is already engaged for the same period of " + _engagedIn;
+          }
+        }//end checking whether engaged in one subject multiple teacher.
+        else {
+          this.ErrorMessage = "";
+          var rowStoredForUpdate = this.StoredForUpdate.filter(s => s.TimeTableId == currentTimeTableId);
+          if (rowStoredForUpdate.length > 0) {
+            rowStoredForUpdate[0]["TeacherSubjectId"] = event.value;
+            rowStoredForUpdate[0]["Action"] = true;
+            rowStoredForUpdate[0]["Active"] = 1;
+            rowStoredForUpdate[0]["TeacherId"] = _teacherId;
+          }
+
+          if (rowDataForAllClasses.length > 0) {
+            rowDataForAllClasses[0]["TeacherSubjectId"] = event.value;
+            rowDataForAllClasses[0]["Action"] = true;
+            rowDataForAllClasses[0]["Active"] = 1;
+            rowDataForAllClasses[0]["TeacherId"] = _teacherId;
+            //objcurrent[0]["TimeTableId"] = currentTimeTableId;
+            this.rowCount = 0;
+            this.UpdateOrSave(element, rowDataForAllClasses[0]);
+          }
+          else {
+            var _data = {
+              TeacherName: obj[0].TeacherName,
+              TeacherId: _teacherId,
+              TimeTableId: 0,
+              Day: element.Day,
+              DayId: element.DayId,
+              ClassId: obj[0].ClassId,
+              SectionId: _sectionId,
+              Period: columnName,
+              TeacherSubjectId: event.value,
+              //SchoolClassPeriodId:
+              Active: 1,
+              Action: true
+            }
+            this.DataForAllClasses.push(_data);
+            this.rowCount = 0;
+            this.UpdateOrSave(element, _data);
+          }
+
+          //this.GetPeriodStatistic(_teacherId, element.Day);
+          element.Action = true;
+          this.GetStatistic();
+        }
       }
     }
   }

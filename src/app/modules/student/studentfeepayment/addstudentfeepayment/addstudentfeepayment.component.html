@@ -78,7 +78,7 @@
                                     <mat-cell *matCellDef="let element">
                                         <mat-checkbox [disabled]="loading || element.Balance1==0 || Permission=='read'"
                                             mat-mini-fab (change)="SelectRow(element,$event)"
-                                            [checked]="element.Action">
+                                            [checked]="element.Balance1==0">
                                         </mat-checkbox>
                                     </mat-cell>
                                 </ng-container>

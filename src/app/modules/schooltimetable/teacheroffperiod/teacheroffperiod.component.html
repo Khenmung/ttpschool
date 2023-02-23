@@ -37,7 +37,7 @@
 
                     </mat-cell>
                 </ng-container>
-                <mat-header-row *matHeaderRowDef="PeriodStatisticDisplay"></mat-header-row>
+                <mat-header-row *matHeaderRowDef="PeriodStatisticDisplay;sticky:true"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: PeriodStatisticDisplay;" class="element-row"></mat-row>
             </mat-table>
             <div style="display:flex;justify-content:center">

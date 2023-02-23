@@ -48,7 +48,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   PaymentTypes = [];
   FeeCategories = [];
   OffLineReceiptNo = '';
-  CashAmount =0;
+  CashAmount = 0;
   PaymentTypeId = 0;
   StudentLedgerId = 0;
   GeneralLedgerAccountId = 0;
@@ -72,6 +72,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     Formula: '',
     StudentId: 0,
     ClassId: 0,
+    SectionId: 0,
     SectionName: '',
     PayAmount: 0,
     StudentClassId: 0,
@@ -111,6 +112,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
   StudentReceiptData = {
     StudentFeeReceiptId: 0,
     StudentClassId: 0,
+    ClassId: 0,
+    SectionId: 0,
     TotalAmount: 0,
     Balance: 0,
     ReceiptNo: 0,
@@ -180,13 +183,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
   filteredLedgerAccounts: Observable<IGeneralLedger[]>;
   paymentform: UntypedFormGroup;
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.paymentform = this.fb.group({
       GeneralLedgerAccountId: [0]
     })
@@ -221,7 +224,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     if (this.studentInfoTodisplay.StudentId > 0)
       this.nav.navigate(['/edu/addstudent/' + this.studentInfoTodisplay.StudentId]);
   }
-  admission(){
+  admission() {
     this.nav.navigate(['/edu/Admission']);
   }
   PageLoad() {
@@ -406,6 +409,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               var _lastname = data.value[0].Student.LastName == null || data.value[0].Student.LastName == '' ? '' : " " + data.value[0].Student.LastName;
               this.studentInfoTodisplay.AdmissionNo = data.value[0].AdmissionNo
               this.studentInfoTodisplay.ClassId = data.value[0].ClassId
+              this.studentInfoTodisplay.SectionId = data.value[0].SectionId
               this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
               this.studentInfoTodisplay.FeeType = data.value[0].FeeType.FeeTypeName;
               this.studentInfoTodisplay.Formula = data.value[0].FeeType.Formula;
@@ -617,7 +621,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
       //var _generalAccountObj = this.GeneralLedgerAccounts.filter(f => f.StudentClassId == this.studentInfoTodisplay.StudentClassId)
       var _generalAccountObj = this.GeneralLedgerAccounts.filter(f => f.GeneralLedgerName.toLowerCase() == "tuition fee")
-      
+
       if (_generalAccountObj.length > 0)
         this.StudentLedgerId = _generalAccountObj[0].GeneralLedgerId;
       // .GeneralLedgerAccountId =_discountAccountId;
@@ -676,7 +680,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
           this.VariableObjList.splice(this.VariableObjList.indexOf(f), 1);
           AmountAfterFormulaApplied = evaluate(formula);
-          _newCount+=1;
+          _newCount += 1;
           this.MonthlyDueDetail.push({
             SlNo: _newCount,
             AccountingVoucherId: 0,
@@ -768,22 +772,32 @@ export class AddstudentfeepaymentComponent implements OnInit {
     var maxMonth = Math.max.apply(Math, this.MonthlyDueDetail.map(function (o) { return o.Month; }));
     this.StudentLedgerData.LedgerId = 0;
     var previousBalanceMonthObj = [];
+    var sortedbyMonth = this.MonthlyDueDetail.sort((a, b) => a.SlNo - b.SlNo);
 
-    previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < maxMonth && +f.Balance1 > 0);
-    var MonthSelected = [];
-    if (previousBalanceMonthObj.length > 0) {
-      previousBalanceMonthObj.forEach(p => {
-        MonthSelected = this.MonthlyDueDetail.filter(f => f.Month == p.Month)
-        if (MonthSelected.length == 0)//means not selected yet
-          error.push(1);
-      })
+    for (var i = 0; i < sortedbyMonth.length; i++) {
+      if (sortedbyMonth[i].Balance > 0) {
+        var Unpaid = sortedbyMonth.filter(f => f.Amount!=0 && f.SlNo > sortedbyMonth[i].SlNo)
+        if (Unpaid.length>0) {
+          error.push({"FeeName":sortedbyMonth[i].FeeName,"Next":Unpaid[0].FeeName});
+          break;
+        }
+      }
     }
+    // previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < maxMonth && +f.Balance1 > 0);
+    // var MonthSelected = [];
+    // if (previousBalanceMonthObj.length > 0) {
+    //   previousBalanceMonthObj.forEach(p => {
+    //     MonthSelected = this.MonthlyDueDetail.filter(f => f.Month == p.Month)
+    //     if (MonthSelected.length == 0)//means not selected yet
+    //       error.push(1);
+    //   })
+    // }
     if (this.PaymentTypeId == 0) {
       this.contentservice.openSnackBar("Please select payment type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (error.length > 0) {
-      this.contentservice.openSnackBar("Previous balance must be cleared first.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Previous "+ error[0].FeeName + " must be cleared first before paying "+ error[0].Next +".", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
@@ -791,7 +805,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       //var monthgreaterthanOne = howmanymonthSelected.filter(f=>f.Count>1);
 
       if (howmanymonthSelected.length > 1 && this.Balance > 0) {
-        this.contentservice.openSnackBar("Previous balance must be cleared first before the next fee payment.", globalconstants.ActionText, globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Previous balance must be cleared first before the next month fee payment.", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
       else {
@@ -824,6 +838,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.StudentReceiptData.BatchId = this.SelectedBatchId;
     this.StudentReceiptData.OrgId = this.LoginUserDetail[0]["orgId"];
     this.StudentReceiptData.StudentClassId = this.studentInfoTodisplay.StudentClassId;
+    this.StudentReceiptData.ClassId = this.studentInfoTodisplay.ClassId;
+    this.StudentReceiptData.SectionId = this.studentInfoTodisplay.SectionId;
+
     this.StudentReceiptData.Balance = this.Balance;
     this.StudentReceiptData.Active = 1;
     this.StudentReceiptData.OffLineReceiptNo = this.OffLineReceiptNo;

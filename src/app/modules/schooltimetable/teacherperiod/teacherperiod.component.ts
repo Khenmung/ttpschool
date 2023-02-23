@@ -391,6 +391,10 @@ export class TeacherperiodComponent implements OnInit {
 
   GetPeriodStatistic() {
     debugger;
+    var groupbySubjects = alasql("select ClassSubjectId,Count(1) TeacherCount from ? group by ClassSubjectId", [this.TeacherSubjectList]);
+    var filterSubjectMorethanOneTeacher = groupbySubjects.filter(s => s.TeacherCount > 1);
+    var ClassSubjectIdWithTeacherId = this.TeacherSubjectList.filter(t => filterSubjectMorethanOneTeacher.findIndex(s => s.ClassSubjectId == t.ClassSubjectId) > -1)
+
     var _teacherId = this.searchForm.get("searchEmployeeId").value;
     this.TeacherName = '';
     var obj = this.Teachers.filter(f => f.TeacherId == _teacherId);
@@ -403,22 +407,36 @@ export class TeacherperiodComponent implements OnInit {
     //var _eachPeriod = alasql("select Period,SubjectName from ?", [_forCurrentTeacher]);
     this.WeekDays.forEach(weekday => {
       this.PeriodStatisticDisplay.forEach(col => {
+
         var periodmatch = _forCurrentTeacher.filter(f => f.Period == col && f.Day == weekday.MasterDataName);
-        periodmatch.forEach(eachperiod => {
-          var row = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName && s.TeacherName.trim() == this.TeacherName);
-          if (row.length > 0) {
-            var multipletime = '';
-            row.forEach(r => {
-              multipletime += eachperiod.SubjectNClass + ',';
-            })
-            row[0][col] = multipletime;
-          }
-          else {
-            var _data = { TeacherName: this.TeacherName, TeacherId: _teacherId, Day: weekday.MasterDataName, [col]: eachperiod.SubjectNClass }
-            this.PeriodStatistics.push(_data);
-          }
-        });
+        if (periodmatch.length > 0) {
+          periodmatch.forEach(eachperiod => {
+            var row = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName && s.TeacherName.trim() == this.TeacherName);
+            if (row.length > 0) {
+              var multipletime = '';
+              row.forEach(r => {
+                multipletime += eachperiod.SubjectNClass + ',';
+              })
+              row[0][col] = multipletime;
+            }
+            else {
+              var _data = { TeacherName: this.TeacherName, TeacherId: _teacherId, Day: weekday.MasterDataName, [col]: eachperiod.SubjectNClass }
+              this.PeriodStatistics.push(_data);
+            }
+          });
+        }
+        else {
+          //for one subject multiple teacher;
+          var subjectWithMultiTeacher = this.DataForAllClasses.filter(f => ClassSubjectIdWithTeacherId.findIndex(d => d.ClassSubjectId == f.ClassSubjectId) > -1
+            && f.Period == col && f.Day == weekday.MasterDataName);
+            if(subjectWithMultiTeacher.length>0)
+            {
+              var _data = { TeacherName: this.TeacherName, TeacherId: _teacherId, Day: weekday.MasterDataName, [col]: subjectWithMultiTeacher[0].SubjectNClass }
+              this.PeriodStatistics.push(_data);
+            }
+        }
       })
+
     });
     //});
     //console.log("PeriodStatisticDisplay", this.PeriodStatisticDisplay);

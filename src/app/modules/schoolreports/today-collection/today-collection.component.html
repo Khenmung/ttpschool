@@ -45,14 +45,14 @@
 <!-- <div *ngIf="DateWiseCollection.length>0"> -->
 <div id="printSection" style="overflow: auto;">
     <mat-table #table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="Student">
-            <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.Student}} </mat-cell>
+        <ng-container matColumnDef="Name">
+            <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.Name}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="ClassName">
+        <!-- <ng-container matColumnDef="ClassName">
             <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.ClassName}} </mat-cell>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="ReceiptDate">
             <mat-header-cell *matHeaderCellDef> Receipt Date </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.ReceiptDate|date:'dd/MM/yyyy'}} </mat-cell>
@@ -132,16 +132,18 @@
                 <div style="width:100%;">Cancelled</div>
                 <div style="width:100%;display: flex;justify-content: end;">&#x20b9; {{CancelledAmount}}</div>
             </div>
+            <hr/>
+            <div style="padding: 0px 15px 0px 20px; min-width:450px;display: flex;flex-direction: row;justify-content: center;align-items: center;">
+                <div *ngIf="GrandTotalAmount>0" style="width:100%;"><strong>Total Collection</strong></div>
+                <div style="width:100%;display: flex;justify-content: end;">&#x20b9; {{GrandTotalAmount}}</div>
+                <span *ngIf="ErrorMessage.length>0" style="width:100%;display: flex;justify-content: end;">{{ErrorMessage}}</span>
+            </div>
         </div>
     </div>
     <mat-divider style="width: 100%;"></mat-divider>
 
-    <div fxLayout="row" fxLayoutAlign="end center" style="padding: 15px 15px 0px 20px; width:600px;">
-        <div *ngIf="GrandTotalAmount>0" style="width:100%;"><strong>Total Collection</strong></div>
-        <div style="width:100%;align-items: flex-end;">&#x20b9; {{GrandTotalAmount}}</div>
-        <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
-    </div>
-    <hr style="color:lightgrey;">
+    
+    <!-- <hr style="color:lightgrey;"> -->
 
 </div>
 <div style="display: flex;flex-direction: row;justify-content: space-between;">

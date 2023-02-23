@@ -133,11 +133,13 @@ export class HomeDashboardComponent implements OnInit {
                 this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
                 this.SelectedAppName = this.tokenStorage.getSelectedAppName();
                 this.getBatches();
+                if (this.SelectedAppId > 0)
+                  this.GetMasterData(this.SelectedAppId, this.SelectedAppName);
                 //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-                if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
-                  let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
-                  this.GetStudentClass(this.SelectedAppId, obj);
-                }
+                // if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
+                //   let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+                //   this.GetStudentClass(this.SelectedAppId, obj);
+                // }
                 if (this.SelectedAppId > 0) {
                   this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
                     .subscribe((data: any) => {
@@ -264,7 +266,7 @@ export class HomeDashboardComponent implements OnInit {
     this.ValueChanged = true;
   }
   submit() {
-    this.Submitted=true;
+    this.Submitted = true;
     this.SelectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     if (this.SelectedBatchId > 0)
@@ -289,9 +291,9 @@ export class HomeDashboardComponent implements OnInit {
       //////for local storage
 
       this.GetMenuData(SelectedAppId);
-      if (selectedApp[0].applicationName.toLowerCase() == 'education management')
-        this.GetStudentClass(SelectedAppId, selectedApp[0]);
-      else
+      // if (selectedApp[0].applicationName.toLowerCase() == 'education management')
+      //   this.GetStudentClass(SelectedAppId, selectedApp[0]);
+      // else
         this.GetMasterData(SelectedAppId, selectedApp[0]);
 
     }
@@ -301,10 +303,25 @@ export class HomeDashboardComponent implements OnInit {
       return;
     }
   }
+  allMasterData = [];
+  Sections = [];
+  Classes = [];
   GetMasterData(SelectedAppId, selectedApp) {
     this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], SelectedAppId)
       .subscribe((data: any) => {
         this.tokenStorage.saveMasterData([...data.value]);
+        ///
+        this.allMasterData = [...data.value];
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+          if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
+            let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+            this.GetStudentClass(this.SelectedAppId, obj);
+          }
+        });
+        ///
 
         this.tokenStorage.saveSelectedAppName(selectedApp.applicationName);
         this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
@@ -334,6 +351,9 @@ export class HomeDashboardComponent implements OnInit {
               this.route.navigate(['/', selectedApp.appShortName]);
           });
       })
+  }
+  getDropDownData(dropdowntype) {
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
   SaveBatchIds(selectedBatchId) {
     debugger;
@@ -460,20 +480,43 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.loading = true;
-        this.Students = data.value.map(d => {
-          d.StudentClasses = this.StudentClasses.filter(f => f.StudentId == d.StudentId);
-          return d;
+        var _classNameobj = [];
+        var _className = '';
+        data.value.forEach(d => {
+          _classNameobj = [];
+          _className = '';
+          var studcls = this.StudentClasses.filter(f => f.StudentId == d.StudentId);
+          if (studcls.length > 0) {
+            _classNameobj = this.Classes.filter(c => c.ClassId == studcls[0].ClassId);
+            if (_classNameobj.length > 0)
+              _className = _classNameobj[0].ClassName;
+
+            var _Section = '';
+            var _sectionobj = this.Sections.filter(f => f.MasterDataId == studcls[0].SectionId);
+            if (_sectionobj.length > 0)
+              _Section = _sectionobj[0].MasterDataName;
+            var _lastname = d.LastName == null ? '' : " " + d.LastName;
+            var _RollNo = studcls[0].RollNo;
+            var _name = d.FirstName + _lastname;
+            var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
+            d.StudentClassId = studcls[0].StudentClassId;
+            d.Name = _fullDescription;
+            d.ClassName = _className;
+            d.Section = _Section;
+            d.StudentClasses = studcls;
+            this.Students.push(d);
+          }
         })
         this.tokenStorage.saveStudents(this.Students);
-        this.GetMasterData(SelectedAppId, selectedApp);
+        //this.GetMasterData(SelectedAppId, selectedApp);
         this.loading = false;
         this.PageLoading = false;
       })
   }
   sendmessage() {
     var api = "https://graph.facebook.com/v15.0/107273275514184/messages";
-    var data={ "messaging_product": "whatsapp", "to": "918974098031", "type": "template", "template": { "name": "hello_world", "language": { "code": "en_US" } } }
-    
+    var data = { "messaging_product": "whatsapp", "to": "918974098031", "type": "template", "template": { "name": "hello_world", "language": { "code": "en_US" } } }
+
     // var data = {
     //   "phone": "918974098031",
     //   "body": "WhatsApp API on Chat API from TTP again"

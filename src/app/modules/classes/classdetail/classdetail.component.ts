@@ -68,8 +68,8 @@ export class ClassdetailComponent implements OnInit {
     "MaxStudent",
     "StartDate",
     "EndDate",
-    "StudyAreaId",
-    "StudyModeId",
+   //"StudyAreaId",
+   // "StudyModeId",
     "Confidential",
     "Active",
     "Action"

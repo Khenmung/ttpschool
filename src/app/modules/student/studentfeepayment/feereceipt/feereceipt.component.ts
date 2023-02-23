@@ -8,7 +8,7 @@ import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
 import { List } from '../../../../shared/interface';
 import { SharedataService } from '../../../../shared/sharedata.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-feereceipt',
@@ -76,20 +76,20 @@ export class FeereceiptComponent implements OnInit {
   TotalAmount = 0;
   Balance = 0;
 
-  constructor(private servicework: SwUpdate,private dataservice: NaomitsuService,
+  constructor(private servicework: SwUpdate, private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService,
 
     private shareddata: SharedataService,
     private contentservice: ContentService) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
 
   }
 
@@ -163,6 +163,7 @@ export class FeereceiptComponent implements OnInit {
     this.studentInfoTodisplay.StudentFeeReceiptId = row.StudentFeeReceiptId;
     this.studentInfoTodisplay.ReceiptNo = row.ReceiptNo;
     this.studentInfoTodisplay.OffLineReceiptNo = row.OffLineReceiptNo;
+    this.PaymentType = row.PaymentType;
     this.TotalAmount = row.TotalAmount;
     this.Balance = row.Balance == null ? 0 : row.Balance;
     this.BillStatus = row.Active;
@@ -197,7 +198,7 @@ export class FeereceiptComponent implements OnInit {
     this.CancelReceiptMode = false;
 
   }
-
+  PaymentType = '';
   GetBills() {
     this.loading = true;
     let list: List = new List();
@@ -208,6 +209,7 @@ export class FeereceiptComponent implements OnInit {
       "Balance",
       "ReceiptNo",
       "OffLineReceiptNo",
+      "PaymentTypeId",
       "ReceiptDate",
       "Discount",
       "Active"
@@ -238,13 +240,19 @@ export class FeereceiptComponent implements OnInit {
             }
             else
               k.FeeName = '';
+
+
             //k.BaseAmount = k.BaseAmount;
             this.StudentFeePaymentList.push(k)
           })
+          var paymentobj = this.PaymentTypes.filter(p => p.MasterDataId == f.PaymentTypeId);
+          if (paymentobj.length > 0) {
+            f.PaymentType = paymentobj[0].MasterDataName;
+          }
         })
         this.calculateTotal();
         console.log("this.FeeReceipt", this.FeeReceipt)
-        this.StudentFeePaymentList = this.StudentFeePaymentList.sort((a,b)=>a.indx - b.indx);
+        this.StudentFeePaymentList = this.StudentFeePaymentList.sort((a, b) => a.indx - b.indx);
         this.dataReceiptSource = new MatTableDataSource<any>(this.FeeReceipt);
         this.dataReceiptSource.sort = this.sort;
         var latestReceipt = this.FeeReceipt.sort((a, b) => b.ReceiptNo - a.ReceiptNo);
@@ -255,28 +263,31 @@ export class FeereceiptComponent implements OnInit {
 
       })
   }
+  PaymentTypes = [];
   GetMasterData() {
     this.loading = true;
-    let list: List = new List();
-    list.fields = [
-      "MasterDataId",
-      "MasterDataName",
-      "Logic",
-      "ParentId",
-      "Description"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (MasterDataName eq 'Receipt Heading' or OrgId eq 1)"];
+    // let list: List = new List();
+    // list.fields = [
+    //   "MasterDataId",
+    //   "MasterDataName",
+    //   "Logic",
+    //   "ParentId",
+    //   "Description"];
+    // list.PageName = "MasterItems";
+    // list.filter = ["Active eq 1 and (MasterDataName eq 'Receipt Heading' or OrgId eq "+this.LoginUserDetail[0]["orgId"] + ")"];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        this.allMasterData = [...data.value];
-        this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.RECEIPTHEADING);
-        this.ReceiptHeading.forEach(f => {
-          f.Logic = f.Logic != null ? JSON.parse("{" + f.Logic + "}") : ''
-        })
-        this.loading = false; this.PageLoading = false;
-      });
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    //debugger;
+    this.allMasterData = this.tokenservice.getMasterData();
+    this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.RECEIPTHEADING);
+    this.ReceiptHeading.forEach(f => {
+      f.Description =  f.Description ? JSON.parse("{" + f.Description + "}") : ''
+    })
+    //console.log("this.ReceiptHeading",this.ReceiptHeading);
+    this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
+    this.loading = false; this.PageLoading = false;
+    //});
 
   }
   getDropDownData(dropdowntype) {

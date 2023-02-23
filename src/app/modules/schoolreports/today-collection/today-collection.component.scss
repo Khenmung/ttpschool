@@ -26,12 +26,21 @@
 .element-row.expanded {
     border-bottom-color: transparent;
 }
-.mat-column-ReceiptNo,.mat-column-Status,.mat-column-TotalAmount{
+.mat-column-ReceiptNo
+{
+    flex:1 1 60px;
+}
+.mat-column-Status,.mat-column-TotalAmount{
     flex:1 1 100px;
 }
-.mat-column-ReceiptDate,
-.mat-column-Student,
-.mat-column-ClassName,
+.mat-column-ReceiptDate{
+    flex:1 1 110px;
+}
+.mat-column-Name
+{
+    flex:1 1 250px;
+}
+//.mat-column-ClassName,
 .mat-column-PaymentType{
     flex:1 1 150px;
 }
