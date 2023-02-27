@@ -37,13 +37,13 @@ export class ResetpasswordComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.aroute.queryParamMap.subscribe(param=>{
       this.Code = param.get("code");
       this.UserId = param.get("userid");

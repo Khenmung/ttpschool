@@ -3,8 +3,6 @@ import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -79,13 +77,13 @@ export class LedgerAccountComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     //debugger;
     this.searchForm = this.fb.group({
       searchLedgerName: [0],
@@ -197,9 +195,9 @@ export class LedgerAccountComponent implements OnInit {
       this.contentservice.openSnackBar("Please select account group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else {
-      checkFilterString += ' and AccountGroupId eq ' + row.AccountGroupId;
-    }
+    // else {
+    //   checkFilterString += ' and AccountGroupId eq ' + row.AccountGroupId;
+    // }
     if (row.GeneralLedgerName.length == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter account name.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -208,9 +206,9 @@ export class LedgerAccountComponent implements OnInit {
     else {
       checkFilterString += " and GeneralLedgerName eq '" + row.GeneralLedgerName + "'";
     }
-    if (row.AccountSubGroupId > 0) {
-      checkFilterString += " and AccountSubGroupId eq " + row.AccountSubGroupId;
-    }
+    // if (row.AccountSubGroupId > 0) {
+    //   checkFilterString += " and AccountSubGroupId eq " + row.AccountSubGroupId;
+    // }
 
     if (row.GeneralLedgerId > 0)
       checkFilterString += " and GeneralLedgerId ne " + row.GeneralLedgerId;

@@ -78,13 +78,13 @@ export class QuestionandexamreportComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     debugger;
     this.imgURL = '';
     this.StudentClassId = this.tokenstorage.getStudentClassId();

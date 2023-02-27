@@ -36,7 +36,7 @@
             <b>Only for subject wise attendance.</b>
             <mat-form-field appearance="outline">
                 <mat-label>Subject</mat-label>
-                <mat-select formControlName="searchClassSubjectId">
+                <mat-select formControlName="searchClassSubjectId" (selectionChange)="GetExistingStudentClassSubjects()">
                     <mat-option>--select--</mat-option>
                     <mat-option *ngFor="let item of FilteredClassSubjects"
                         [value]="item.ClassSubjectId">{{item.ClassSubject}}

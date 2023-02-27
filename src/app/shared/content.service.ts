@@ -158,15 +158,12 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list);
   }
   GetClassFeeWithFeeDefinition(pOrgId, pMonth, pBatchId) {
-    var filter = "Active eq 1 and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
-    //var Months = pMonthArray.map(m=> m.val)
-    // var maxMonth = Math.max(...Months);
-    // var minMonth = Math.min(...Months);
+    var filter = "OrgId eq " + pOrgId + " and BatchId eq " + pBatchId + ' and Active eq 1';
 
     if (pMonth > 0)
       filter += ' and Month eq ' + pMonth;
     else
-      filter += ' and Month gt ' + pMonth;
+      filter += ' and Month ge ' + pMonth;
     // else
     //   filter += ' and Month ge ' + minMonth + ' and Month le ' + maxMonth ;
 
@@ -547,13 +544,17 @@ export class ContentService implements OnInit {
     return this.authservice.CallAPI(OrgIdAndbatchId, _function);
   }
 
-  getStudentClassWithFeeType(pOrgId, pBatchId, pStudentClassId) {
+  getStudentClassWithFeeType(pOrgId, pBatchId,pClassId, pStudentClassId,pFeeTypeId) {
 
     var filterstr = '';
     filterstr = "Active eq 1 and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
 
     if (pStudentClassId > 0)
       filterstr += " and StudentClassId eq " + pStudentClassId;
+    if (pClassId > 0)
+      filterstr += " and ClassId eq " + pClassId;
+    if (pFeeTypeId > 0)
+      filterstr += " and FeeTypeId eq " + pFeeTypeId;
 
     let list: List = new List();
     list.fields = [

@@ -38,13 +38,13 @@ export class FiledragAndDropComponent implements OnInit {
     private contentservice: ContentService) { }
   Permission = '';
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail.length != 0) {
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.COLLECTION.UPLOADIMAGE);

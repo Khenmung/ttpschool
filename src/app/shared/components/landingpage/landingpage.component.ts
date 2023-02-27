@@ -19,13 +19,13 @@ export class LandingpageComponent implements OnInit { PageLoading=true;
     private dataStorage:TokenStorageService) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
   }
   getRandomDisplayPhotoes() {
     let list: List = new List();

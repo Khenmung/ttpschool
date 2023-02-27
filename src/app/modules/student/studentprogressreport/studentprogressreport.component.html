@@ -14,10 +14,14 @@
     <mat-card-content>
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <div id="printSection">
-            <div style="margin-right:0px;margin-left:0px;width: 100%;box-sizing: border-box;padding: 15px; border: 1px solid lightgray; display: flex; justify-content: center;flex-direction: column;">
-                <div style="display: flex;justify-content: center;width:100%;flex-direction: column;">
-                    <div *ngFor="let item of CommonHeader" [innerHTML]="item.Description|encodeHTML"
-                        style="display: flex;justify-content: center;">
+            <div
+                style="margin-right:0px;margin-left:0px;width: 100%;box-sizing: border-box;padding: 15px; border: 1px solid lightgray; display: flex; justify-content: center;flex-direction: column;">
+                <div style="display:flex;justify-content: center;">
+                    <div style="margin-right: 15px;" *ngIf="logourl.length>0" [innerHTML]="logourl"></div>
+                    <div style="display: flex;justify-content: center;flex-direction: column;">
+                        <div *ngFor="let item of CommonHeader" [innerHTML]="item.Description|encodeHTML"
+                            style="display: flex;justify-content: center;">
+                        </div>
                     </div>
                 </div>
                 <div *ngFor="let item of StudentName"
@@ -124,8 +128,8 @@
         </div>
         <div style="display:flex;justify-content:center;width:100%;margin:5px">
             <button *ngIf="NonGradedMarkResults.length>0 || GradedMarksResults.length>0" [disabled]="loading"
-                matTooltip="print" printSectionId="printSection" [useExistingCss]="true" ngxPrint
-                mat-raised-button color="accent">
+                matTooltip="print" printSectionId="printSection" [useExistingCss]="true" ngxPrint mat-raised-button
+                color="accent">
                 <mat-icon>print</mat-icon>
             </button>
             <!-- <button [disabled]="loading || Permission=='read'" matTooltip="print"

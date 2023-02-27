@@ -24,13 +24,13 @@ export class ConfirmemailComponent implements OnInit { PageLoading=true;
   }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     //this.aroute.queryParamMap.subscribe(qparam => {
     this.loading = true;
 

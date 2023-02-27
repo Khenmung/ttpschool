@@ -99,13 +99,13 @@ export class StudentprogressreportComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.PageLoad();
   }
   StudentName = [];
@@ -198,6 +198,7 @@ export class StudentprogressreportComponent implements OnInit {
     );
     popupWin.document.close();
   }
+  logourl="";
   CommonHeader = [];
   Organization = [];
   GetOrganization() {
@@ -269,8 +270,15 @@ export class StudentprogressreportComponent implements OnInit {
           ]
         })
         //console.log("this.Organization",this.Organization);
-        //console.log("this.CommonHeader.",this.CommonHeader);
-
+       
+        
+        var imgobj= this.CommonHeader.filter(f=>f.MasterDataName=='img');
+        if(imgobj.length>0)
+        {
+          this.logourl = imgobj[0].Description;
+        }
+        this.CommonHeader = this.CommonHeader.filter(f=>f.MasterDataName!='img');
+        //console.log("this.commonheadersetting.",commonheadersetting);
         this.CommonHeader.forEach(header => {
           this.Organization[0].forEach(orgdet => {
             header.Description = header.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);

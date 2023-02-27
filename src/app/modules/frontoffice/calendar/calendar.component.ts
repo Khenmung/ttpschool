@@ -157,13 +157,13 @@ export class DemoComponent implements OnInit { PageLoading=true;
     this.GetEvents();
   }
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     //console.log("events", this.events);
     var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.common.misc.CALENDAR);
     if (perObj.length > 0) {

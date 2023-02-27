@@ -62,13 +62,13 @@ export class RegisterComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     this.RegistrationForm = this.fb.group({
       UserName: ['', Validators.required],
       ContactNo: ['', Validators.required],

@@ -183,10 +183,11 @@ export class FeereceiptComponent implements OnInit {
             this.loading = false; this.PageLoading = false;
             this.TotalAmount = 0;
             this.Balance = 0;
-            this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
-            this.CancelReceiptMode = false;
-            this.BillDetail = [];
-            this.dataSource = new MatTableDataSource<any>(this.BillDetail);
+            this.CreateInvoice(this.studentInfoTodisplay.StudentClassId);
+            // this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+            // this.CancelReceiptMode = false;
+            // this.BillDetail = [];
+            // this.dataSource = new MatTableDataSource<any>(this.BillDetail);
           });
     }, 500)
   }
@@ -196,6 +197,78 @@ export class FeereceiptComponent implements OnInit {
   }
   done() {
     this.CancelReceiptMode = false;
+
+  }
+  CreateInvoice(pStudentClassId) {
+    debugger;
+    this.loading = true;
+    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+      .subscribe((datacls: any) => {
+
+        var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
+
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0,pStudentClassId,0)
+          .subscribe((data: any) => {
+            var studentfeedetail = [];
+            data.value.forEach(studcls => {
+              var _feeName = '';
+              var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
+              var _className = '';
+              var obj = this.Classes.filter(c => c.ClassId == studcls.ClassId);
+              if (obj.length > 0)
+                _className = obj[0].ClassName;
+
+              objClassFee.forEach(clsfee => {
+                var _category = '';
+                var _subCategory = '';
+
+                var objcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeCategoryId);
+                if (objcat.length > 0)
+                  _category = objcat[0].MasterDataName;
+
+                var objsubcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeSubCategoryId);
+                if (objsubcat.length > 0)
+                  _subCategory = objsubcat[0].MasterDataName;
+
+                var _formula = studcls.FeeType.Active == 1 ? studcls.FeeType.Formula : '';
+
+                if (_formula.length > 0) {
+                  _feeName = clsfee.FeeDefinition.FeeName;
+                  studentfeedetail.push({
+                    Month: clsfee.Month,
+                    Amount: clsfee.Amount,
+                    Formula: _formula,
+                    FeeName: _feeName,
+                    StudentClassId: studcls.StudentClassId,
+                    FeeCategory: _category,
+                    FeeSubCategory: _subCategory,
+                    FeeTypeId: studcls.FeeTypeId,
+                    SectionId: studcls.SectionId,
+                    RollNo: studcls.RollNo,
+                    ClassName: _className
+                  });
+                }
+
+              })
+            })
+            //console.log("studentfeedetailxxxx", studentfeedetail)
+            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+              .subscribe((data: any) => {
+                this.loading = false;
+
+                this.CancelReceiptMode = false;
+                this.BillDetail = [];
+                this.dataSource = new MatTableDataSource<any>(this.BillDetail);
+                this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+                //    this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+              },
+                error => {
+                  this.loading = false;
+                  console.log("create invoice error", error);
+                  this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+                })
+          })
+      });
 
   }
   PaymentType = '';
@@ -216,7 +289,8 @@ export class FeereceiptComponent implements OnInit {
     ];
 
     list.PageName = "StudentFeeReceipts";
-    list.lookupFields = ["AccountingVouchers($filter=LedgerId gt 0 and ClassFeeId gt 0;$select=Reference,BaseAmount,Balance,AccountingVoucherId,ShortText,LedgerId,FeeReceiptId,Amount,ClassFeeId)"];
+    //list.lookupFields = ["AccountingVouchers($filter=FeeReceiptId eq 0 and LedgerId gt 0 and ClassFeeId gt 0;$select=Reference,BaseAmount,Balance,AccountingVoucherId,ShortText,LedgerId,FeeReceiptId,Amount,ClassFeeId)"];
+    list.lookupFields = ["AccountingVouchers($filter=FeeReceiptId gt 0 and LedgerId gt 0 and ClassFeeId gt 0;$select=Reference,BaseAmount,Balance,AccountingVoucherId,ShortText,LedgerId,FeeReceiptId,Amount,ClassFeeId)"];
     list.filter = ["StudentClassId eq " + this.studentInfoTodisplay.StudentClassId];
 
     this.dataservice.get(list)
@@ -236,7 +310,6 @@ export class FeereceiptComponent implements OnInit {
                 k.indx = 1
               else
                 k.indx = 0
-
             }
             else
               k.FeeName = '';
@@ -264,6 +337,7 @@ export class FeereceiptComponent implements OnInit {
       })
   }
   PaymentTypes = [];
+  FeeCategories=[];
   GetMasterData() {
     this.loading = true;
     // let list: List = new List();
@@ -280,9 +354,11 @@ export class FeereceiptComponent implements OnInit {
     //   .subscribe((data: any) => {
     //debugger;
     this.allMasterData = this.tokenservice.getMasterData();
+    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
     this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.RECEIPTHEADING);
+    
     this.ReceiptHeading.forEach(f => {
-      f.Description =  f.Description ? JSON.parse("{" + f.Description + "}") : ''
+      f.Description = f.Description ? JSON.parse("{" + f.Description + "}") : ''
     })
     //console.log("this.ReceiptHeading",this.ReceiptHeading);
     this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
@@ -290,6 +366,7 @@ export class FeereceiptComponent implements OnInit {
     //});
 
   }
+
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenservice, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {

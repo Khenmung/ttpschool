@@ -136,10 +136,11 @@ export class HomeDashboardComponent implements OnInit {
                 if (this.SelectedAppId > 0)
                   this.GetMasterData(this.SelectedAppId, this.SelectedAppName);
                 //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-                // if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
-                //   let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
-                //   this.GetStudentClass(this.SelectedAppId, obj);
-                // }
+                if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
+                  let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+                  this.GetStudentClass(obj);
+                }
+
                 if (this.SelectedAppId > 0) {
                   this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
                     .subscribe((data: any) => {
@@ -294,7 +295,7 @@ export class HomeDashboardComponent implements OnInit {
       // if (selectedApp[0].applicationName.toLowerCase() == 'education management')
       //   this.GetStudentClass(SelectedAppId, selectedApp[0]);
       // else
-        this.GetMasterData(SelectedAppId, selectedApp[0]);
+      this.GetMasterData(SelectedAppId, selectedApp[0]);
 
     }
     else {
@@ -313,14 +314,14 @@ export class HomeDashboardComponent implements OnInit {
         ///
         this.allMasterData = [...data.value];
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
-            let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
-            this.GetStudentClass(this.SelectedAppId, obj);
-          }
-        });
+
+        //   else {
+        //   ///
+
+
+        //   ///
+        // }
+        // });
         ///
 
         this.tokenStorage.saveSelectedAppName(selectedApp.applicationName);
@@ -347,8 +348,20 @@ export class HomeDashboardComponent implements OnInit {
             this.tokenStorage.saveUserdetail(this.loginUserDetail);
             this.tokenStorage.saveCustomFeature(data.value);
             this.SelectedAppName = selectedApp.applicationName;
-            if (this.Submitted)
-              this.route.navigate(['/', selectedApp.appShortName]);
+
+            if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
+              this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+              this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+                this.Classes = [...data.value];
+
+                let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+                this.GetStudentClass(obj);
+              })
+            }
+            else {
+              if (this.Submitted)
+                this.route.navigate(['/', selectedApp.appShortName]);
+            }
           });
       })
   }
@@ -426,7 +439,7 @@ export class HomeDashboardComponent implements OnInit {
   }
   Students = [];
   StudentClasses = [];
-  GetStudentClass(SelectedAppId, selectedApp) {
+  GetStudentClass(selectedApp) {
     var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
@@ -444,11 +457,12 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentClasses = [...data.value];
-        this.GetStudents(SelectedAppId, selectedApp);
+        this.GetStudents(selectedApp);
       })
   }
 
-  GetStudents(SelectedAppId, selectedApp) {
+  GetStudents(selectedApp) {
+    this.Students=[];
     let list: List = new List();
     list.fields = [
       'StudentId',
@@ -511,6 +525,8 @@ export class HomeDashboardComponent implements OnInit {
         //this.GetMasterData(SelectedAppId, selectedApp);
         this.loading = false;
         this.PageLoading = false;
+        if (this.Submitted)
+          this.route.navigate(['/', selectedApp.appShortName]);
       })
   }
   sendmessage() {

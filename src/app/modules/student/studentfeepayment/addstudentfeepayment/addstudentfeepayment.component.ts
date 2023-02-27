@@ -285,7 +285,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
       return;
     }
     row.Amount = row.Amount == null ? 0 : +row.Amount;
-    row.Balance = row.BaseAmountForCalc - +row.Amount;
+    if (row.BaseAmountForCalc > 0)
+      row.Balance = row.BaseAmountForCalc - +row.Amount;
     this.calculateTotal();
   }
   public calculateTotal() {
@@ -321,15 +322,20 @@ export class AddstudentfeepaymentComponent implements OnInit {
   // }
   GetMasterData() {
     this.allMasterData = this.tokenstorage.getMasterData();
-    this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
-      this.FeeDefinitions = [...f];
-      if (this.FeeDefinitions.length == 0) {
-        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
-          this.FeeDefinitions = [...d.value];
-        })
-      }
+    //this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
+    //  this.FeeDefinitions = [...f];
+    //  if (this.FeeDefinitions.length == 0) {
+    this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
+      this.FeeDefinitions = [...d.value];
+      this.FeeDefinitions.forEach(feedefn => {
+        var indx = this.Months.findIndex(m => m.MonthName == feedefn.FeeName);
+        if (indx == -1)
+          this.Months.push({ "MonthName": feedefn.FeeName, "val": feedefn.FeeDefinitionId });
+      })
     })
-    this.Batches = this.tokenstorage.getBatches()
+    //  }
+    //})
+    this.Batches = this.tokenstorage.getBatches();
     this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
@@ -508,14 +514,16 @@ export class AddstudentfeepaymentComponent implements OnInit {
     ];
     list.PageName = "ClassFees";
     list.lookupFields = ["FeeDefinition($select=FeeCategoryId,FeeName,AmountEditable)"];
-    list.orderBy = "Month";
+    //list.orderBy = "Month";
     list.filter = [filterstr];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+
         if (data.value.length > 0) {
-          this.StudentClassFees = data.value.map(studclsfee => {
+          var result = data.value.sort((a, b) => a.Month - b.Month);
+          this.StudentClassFees = result.map(studclsfee => {
             //f.FeeName = this.FeeDefinitions.filter(n => n.FeeDefinitionId == f.FeeDefinitionId)[0].FeeName;
             var catObj = this.FeeCategories.filter(cat => cat.MasterDataId == studclsfee.FeeDefinition.FeeCategoryId);
             var subcatObj = this.allMasterData.filter(cat => cat.MasterDataId == studclsfee.FeeDefinition.FeeSubCategoryId);
@@ -535,11 +543,15 @@ export class AddstudentfeepaymentComponent implements OnInit {
             studclsfee.FeeSubCategory = subcatName;
             studclsfee.FeeName = studclsfee.FeeDefinition.FeeName;
             studclsfee.AmountEditable = studclsfee.FeeDefinition.AmountEditable;
-            var _monthObj = this.Months.filter(m => m.val == studclsfee.Month)
-            if (_monthObj.length > 0)
-              studclsfee.MonthName = _monthObj[0].MonthName;
-            else
-              studclsfee.MonthName = '';
+            if (studclsfee.Month == 0)
+              studclsfee.MonthName = studclsfee.FeeName;
+            else {
+              var _monthObj = this.Months.filter(m => m.val == studclsfee.Month)
+              if (_monthObj.length > 0)
+                studclsfee.MonthName = _monthObj[0].MonthName;
+              else
+                studclsfee.MonthName = '';
+            }
             return studclsfee;
           }).sort((a, b) => a.FeeCategoryId - b.FeeCategoryId);
 
@@ -570,13 +582,14 @@ export class AddstudentfeepaymentComponent implements OnInit {
                   })
                 })
             }
+
           })
         }
         else {
           this.StudentLedgerList = [];
           this.contentservice.openSnackBar("Fees not defined for this class", globalconstants.ActionText, globalconstants.RedBackground);
         }
-
+        this.StudentLedgerList = this.StudentLedgerList.filter(f => f.MonthName != 'Discount')
         this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
         //console.log("this.StudentLedgerList", this.StudentLedgerList)
         this.dataSource = new MatTableDataSource<ILedger>(this.StudentLedgerList);
@@ -685,7 +698,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             SlNo: _newCount,
             AccountingVoucherId: 0,
             PostingDate: new Date(),
-            Reference: '',
+            Reference: row.Reference,
             LedgerId: row.LedgerId,
             GeneralLedgerAccountId: this.StudentLedgerId,
             Debit: false,
@@ -769,35 +782,36 @@ export class AddstudentfeepaymentComponent implements OnInit {
   billpayment() {
     //debugger;
     var error = [];
-    var maxMonth = Math.max.apply(Math, this.MonthlyDueDetail.map(function (o) { return o.Month; }));
+    
     this.StudentLedgerData.LedgerId = 0;
-    var previousBalanceMonthObj = [];
     var sortedbyMonth = this.MonthlyDueDetail.sort((a, b) => a.SlNo - b.SlNo);
 
     for (var i = 0; i < sortedbyMonth.length; i++) {
       if (sortedbyMonth[i].Balance > 0) {
-        var Unpaid = sortedbyMonth.filter(f => f.Amount!=0 && f.SlNo > sortedbyMonth[i].SlNo)
-        if (Unpaid.length>0) {
-          error.push({"FeeName":sortedbyMonth[i].FeeName,"Next":Unpaid[0].FeeName});
+        var Unpaid = sortedbyMonth.filter(f => f.Amount != 0 && f.SlNo > sortedbyMonth[i].SlNo)
+        if (Unpaid.length > 0) {
+          error.push({ "FeeName": sortedbyMonth[i].FeeName, "Next": Unpaid[0].FeeName });
           break;
         }
       }
     }
-    // previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < maxMonth && +f.Balance1 > 0);
-    // var MonthSelected = [];
-    // if (previousBalanceMonthObj.length > 0) {
-    //   previousBalanceMonthObj.forEach(p => {
-    //     MonthSelected = this.MonthlyDueDetail.filter(f => f.Month == p.Month)
-    //     if (MonthSelected.length == 0)//means not selected yet
-    //       error.push(1);
-    //   })
-    // }
+    var maxMonth = Math.max.apply(Math, this.MonthlyDueDetail.map(function (o) { return o.Month; }));
+    var previousBalanceMonthObj = [];
+    previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < maxMonth && +f.Balance1 > 0);
+    var MonthSelected = [];
+    if (previousBalanceMonthObj.length > 0) {
+      previousBalanceMonthObj.forEach(p => {
+        MonthSelected = this.MonthlyDueDetail.filter(f => f.Month == p.Month)
+        if (MonthSelected.length == 0)//means not selected yet
+          error.push({ "FeeName": p.MonthName,"Next":''});
+      })
+    }
     if (this.PaymentTypeId == 0) {
       this.contentservice.openSnackBar("Please select payment type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (error.length > 0) {
-      this.contentservice.openSnackBar("Previous "+ error[0].FeeName + " must be cleared first before paying "+ error[0].Next +".", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Previous " + error[0].FeeName + " must be cleared first before paying " + error[0].Next + ".", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
@@ -826,7 +840,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
 
   insert() {
-
+    debugger;
     var list = new List();
     list.fields = ["ReceiptNo"];
     list.PageName = this.FeeReceiptListName;
@@ -893,6 +907,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             "GeneralLedgerAccountId": paydetail.GeneralLedgerAccountId,
             "LedgerId": selectedMonthrowFromLedger.LedgerId,
             "ShortText": paydetail.ShortText,
+            "Reference":paydetail.Reference,
             "Active": 1,
             "OrgId": this.LoginUserDetail[0]["orgId"],
             "CreatedDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
@@ -915,6 +930,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               "Debit": paydetail.BalancePayment ? false : true,
               "GeneralLedgerAccountId": _AccountReceivableId,
               "LedgerId": 0,
+              "Reference":paydetail.Reference,
               "ShortText": "Balance",
               "Active": 1,
               "OrgId": this.LoginUserDetail[0]["orgId"],
@@ -924,7 +940,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               "CreatedBy": this.LoginUserDetail[0]["userId"],
             });
         }
-        //console.log("this.FeePayment.AccountingVoucher", this.FeePayment.AccountingVoucher);
+      //console.log("this.FeePayment.AccountingVoucher", this.FeePayment);
       });
     })
 

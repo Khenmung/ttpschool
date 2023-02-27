@@ -60,13 +60,13 @@ export class AssetVendorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     debugger;
 
     this.searchForm = this.fb.group({
@@ -142,9 +142,9 @@ export class AssetVendorComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter rank.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
+
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    let checkFilterString ="CategoryId eq " + row.CategoryId + " and Rank eq '" + row.Rank + "'"
+    let checkFilterString = "CategoryId eq " + row.CategoryId + " and Rank eq '" + row.Rank + "'"
     this.RowsToUpdate = 0;
 
     if (row.AchievementAndPointId > 0)
@@ -218,7 +218,7 @@ export class AssetVendorComponent implements OnInit {
         });
   }
   update(row) {
-    console.log("updating",this.AchievementAndPointForUpdate[0]);
+    console.log("updating", this.AchievementAndPointForUpdate[0]);
     this.dataservice.postPatch('AchievementAndPoints', this.AchievementAndPointForUpdate[0], this.AchievementAndPointForUpdate[0].AchievementAndPointId, 'patch')
       .subscribe(
         (data: any) => {
@@ -278,12 +278,12 @@ export class AssetVendorComponent implements OnInit {
   GetMasterData() {
 
     this.allMasterData = this.tokenstorage.getMasterData();
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);       
-      this.PageLoading=false;
-      this.loading=false;
-      });
+    this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
+    this.PageLoading = false;
+    this.loading = false;
+
   }
-  
+
   AddNew() {
     debugger;
     var newdata = {

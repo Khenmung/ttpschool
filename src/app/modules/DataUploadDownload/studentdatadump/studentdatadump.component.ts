@@ -82,13 +82,13 @@ export class StudentDatadumpComponent implements OnInit {
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
 
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();

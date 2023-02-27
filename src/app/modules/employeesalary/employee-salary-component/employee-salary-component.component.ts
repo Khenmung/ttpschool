@@ -103,13 +103,13 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     //debugger;
     var thisyear = new Date().getFullYear();
     this.searchForm = this.fb.group({

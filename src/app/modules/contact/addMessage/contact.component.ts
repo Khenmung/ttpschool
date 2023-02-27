@@ -39,13 +39,13 @@ export class ContactComponent implements OnInit { PageLoading=true;
   }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     if (this.Id > 0) {
       this.title = "Message";
       this.GetContactEntry();

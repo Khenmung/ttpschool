@@ -565,9 +565,6 @@ export class searchstudentComponent implements OnInit {
 
     }
 
-
-
-
     if (this.StudentSearch.length > 0)
       this.token.saveStudentSearch(this.StudentSearch);
     else
@@ -827,6 +824,7 @@ export class searchstudentComponent implements OnInit {
     //})
   }
   AssignNameClassSection(pStudents) {
+    this.Students=[];
     pStudents.forEach(student => {
       var _RollNo = '';
       var _name = '';

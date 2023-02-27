@@ -72,13 +72,13 @@ export class DashboardclassfeeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
 
     this.searchForm = this.fb.group({
       ClassId: [0],
@@ -190,8 +190,8 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe((datacls: any) => {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
-
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
+        var _classId=this.searchForm.get("searchClassId").value;
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,_classId ,0,0)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
@@ -229,13 +229,13 @@ export class DashboardclassfeeComponent implements OnInit {
                     FeeTypeId: studcls.FeeTypeId,
                     SectionId: studcls.SectionId,
                     RollNo: studcls.RollNo,
-                    ClassName:_className
+                    ClassName: _className
                   });
                 }
 
               })
             })
-            console.log("studentfeedetailxxxx", studentfeedetail)
+            //console.log("studentfeedetailxxxx", studentfeedetail)
             this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
               .subscribe((data: any) => {
                 this.loading = false;
@@ -485,6 +485,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var _classFee = [...data.value];
+
         if (previousbatch == 1) {
           this.DataFromPreviousBatch = 'Data From Previous Batch'
           if (_classFee.length == 0) {
@@ -509,8 +510,13 @@ export class DashboardclassfeeComponent implements OnInit {
   ProcessClassFee(classFee, previousbatch) {
     if (classFee.length > 0) {
       this.FeeDefinitions.forEach((mainFeeName, indx) => {
+        var indx = this.Months.findIndex(m => m.MonthName == mainFeeName.FeeName);
+        if (indx == -1)
+          this.Months.push({ "MonthName": mainFeeName.FeeName, "val": mainFeeName.FeeDefinitionId });
+
         let existing = classFee.filter(fromdb => fromdb.FeeDefinitionId == mainFeeName.FeeDefinitionId)
         if (existing.length > 0) {
+          
           existing[0].SlNo = indx + 1;
           existing[0].FeeName = mainFeeName.FeeName;
           existing[0].Action = false;

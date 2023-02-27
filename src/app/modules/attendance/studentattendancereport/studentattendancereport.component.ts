@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormControl, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormControl, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -48,9 +48,6 @@ export class StudentattendancereportComponent implements OnInit {
   //StudentSubjectList: IStudentSubject[] = [];
   dataSource: MatTableDataSource<IStudentAttendance>;
   allMasterData = [];
-  searchForm = this.fb.group({
-    searchMonth: [0],
-  });
 
   nameFilter = new UntypedFormControl('');
   filterValues = {
@@ -61,7 +58,12 @@ export class StudentattendancereportComponent implements OnInit {
   displayedColumns = [
     "Student"
   ];
-
+  searchForm = this.fb.group({
+    searchClassId: [0],
+    searchSectionId: [0],
+    searchMonth: [0],
+    searchClassSubjectId: [0]
+  })
   constructor(
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
@@ -73,7 +75,6 @@ export class StudentattendancereportComponent implements OnInit {
     private shareddata: SharedataService,
   ) { }
   Months = [];
-  //Employees = [];
   ngOnInit(): void {
 
     this.nameFilter.valueChanges
@@ -83,11 +84,7 @@ export class StudentattendancereportComponent implements OnInit {
           this.dataSource.filter = JSON.stringify(this.filterValues);
         }
       )
-    this.searchForm = this.fb.group({
-      searchClassId: [0],
-      searchSectionId: [0],
-      searchMonth: [0]
-    })
+
     this.PageLoad();
   }
   WeekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -109,7 +106,8 @@ export class StudentattendancereportComponent implements OnInit {
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.GetMasterData();
-        this.GetClassSubject();
+        //this.SubjectTypes();
+        //this.GetClassSubject();
         this.GetHoliday();
       }
       else {
@@ -133,6 +131,7 @@ export class StudentattendancereportComponent implements OnInit {
       'ClassSubjectId',
       'SubjectId',
       'ClassId',
+      'SubjectTypeId'
     ];
 
     list.PageName = "ClassSubjects";
@@ -146,11 +145,14 @@ export class StudentattendancereportComponent implements OnInit {
         data.value.forEach(item => {
           var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
           if (objsubject.length > 0) {
-            this.ClassSubjects.push({
-              ClassSubjectId: item.ClassSubjectId,
-              ClassSubject: objsubject[0].MasterDataName,
-              ClassId: item.ClassId
-            })
+            var type = this.SubjectTypes.filter(s => s.SubjectTypeId == item.SubjectTypeId && s.SelectHowMany != 0);
+            if (type.length > 0) {
+              this.ClassSubjects.push({
+                ClassSubjectId: item.ClassSubjectId,
+                ClassSubject: objsubject[0].MasterDataName,
+                ClassId: item.ClassId
+              })
+            }
           }
         })
       })
@@ -161,6 +163,7 @@ export class StudentattendancereportComponent implements OnInit {
     var SelectedMonth = this.searchForm.get("searchMonth").value;
     var SelectedClassId = this.searchForm.get("searchClassId").value;
     var SelectedSectionId = this.searchForm.get("searchSectionId").value;
+    var SelectedClassSubjectId = this.searchForm.get("searchClassSubjectId").value;
 
     if (SelectedMonth == 0) {
       this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -191,11 +194,13 @@ export class StudentattendancereportComponent implements OnInit {
     this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
     SelectedMonth = SelectedMonth + "";
     var fromDate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 5), 1);
-    var toDate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 5), 0);
+    var toDate = new Date(SelectedMonth.substr(0, 4), +SelectedMonth.substr(4, 5) + 1, 1);
 
     var datefilterStr = filterStr + ' and AttendanceDate ge ' + moment(fromDate).format('yyyy-MM-DD')
-    datefilterStr += ' and AttendanceDate le ' + moment(fromDate).endOf('month').format('yyyy-MM-DD')
+    datefilterStr += ' and AttendanceDate lt ' + moment(toDate).format('yyyy-MM-DD')
     datefilterStr += " and ClassId eq " + SelectedClassId + " and SectionId eq " + SelectedSectionId;
+    if (SelectedClassSubjectId > 0)
+      datefilterStr += " and ClassSubjectId eq " + SelectedClassSubjectId;
 
     let list: List = new List();
     list.fields = [
@@ -225,13 +230,15 @@ export class StudentattendancereportComponent implements OnInit {
         }
         let absent = 0, Present = 0;
         this.displayedColumns = ["Student"];
-        this.StudentAttendanceList = this.Students.filter(s => s.ClassId == SelectedClassId 
-          
+        this.StudentAttendanceList = this.Students.filter(s => s.ClassId == SelectedClassId
           && s.SectionId == SelectedSectionId);
 
+        debugger;
+        if (SelectedClassSubjectId > 0)
+          this.StudentAttendanceList = this.StudentAttendanceList.filter(s => this.StudentClassSubjects.findIndex(d => d.StudentClassId == s.StudentClassId) > -1);
         this.StudentAttendanceList.forEach(stud => {
           absent = 0;
-          Present=0;
+          Present = 0;
           var dayHead = '';
           let existing = StudentAttendance.value.filter(db => db.StudentClassId == stud.StudentClassId);
           if (existing.length > 0) {
@@ -247,8 +254,8 @@ export class StudentattendancereportComponent implements OnInit {
 
               var dayattendance = existing.filter(e => new Date(e.AttendanceDate).getDate() == day);
               if (dayattendance.length > 0) {
-                stud[dayHead] = dayattendance[0].AttendanceStatus==1?'P':dayattendance[0].Approved?'L':'-';
-                if (dayattendance[0].AttendanceStatus == 0 || dayattendance[0].AttendanceStatus==null)
+                stud[dayHead] = dayattendance[0].AttendanceStatus == 1 ? 'P' : dayattendance[0].Approved ? 'L' : '-';
+                if (dayattendance[0].AttendanceStatus == 0 || dayattendance[0].AttendanceStatus == null)
                   absent += 1;
                 else
                   Present += 1;
@@ -260,16 +267,34 @@ export class StudentattendancereportComponent implements OnInit {
             }
           }
           else {
-            for (let day = 1; day <= lastDateOfMonth; day++) {
-              tempdate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 2), day);
-              var wd = tempdate.getDay();
-              dayHead = day + " " + this.WeekDays[wd];
-              if (this.displayedColumns.indexOf(dayHead) == -1) {
-                this.displayedColumns.push(dayHead);
-              }
+            if (SelectedClassSubjectId > 0) {
+              var indx = this.StudentClassSubjects.findIndex(f => f.StudentClassId == stud.StudentClassId);
+              if (indx > -1) {
+                for (let day = 1; day <= lastDateOfMonth; day++) {
+                  tempdate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 2), day);
+                  var wd = tempdate.getDay();
+                  dayHead = day + " " + this.WeekDays[wd];
+                  if (this.displayedColumns.indexOf(dayHead) == -1) {
+                    this.displayedColumns.push(dayHead);
+                  }
 
-              stud[dayHead] = '-';
-              absent += 1;
+                  stud[dayHead] = '-';
+                  absent += 1;
+                }
+              }
+            }
+            else {
+              for (let day = 1; day <= lastDateOfMonth; day++) {
+                tempdate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 2), day);
+                var wd = tempdate.getDay();
+                dayHead = day + " " + this.WeekDays[wd];
+                if (this.displayedColumns.indexOf(dayHead) == -1) {
+                  this.displayedColumns.push(dayHead);
+                }
+
+                stud[dayHead] = '-';
+                absent += 1;
+              }
             }
           }
           if (this.displayedColumns.indexOf("Pre") == -1)
@@ -314,8 +339,43 @@ export class StudentattendancereportComponent implements OnInit {
       });
 
   }
+  GetExistingStudentClassSubjects() {
+    this.loading = true;
+    var clssubjectid = this.searchForm.get("searchClassSubjectId").value;
+    var orgIdSearchstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    var _classId = this.searchForm.get("searchClassId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
+
+    if (_classId > 0 && clssubjectid > 0 && _sectionId > 0) {
+
+      orgIdSearchstr += ' and ClassSubjectId eq ' + clssubjectid;
+      orgIdSearchstr += ' and ClassId eq ' + _classId;
+      orgIdSearchstr += ' and SectionId eq ' + _sectionId + " and Active eq 1";
+
+      let list: List = new List();
+
+      list.fields = [
+        "ClassSubjectId",
+        "StudentClassId",
+      ];
+      list.PageName = "StudentClassSubjects";
+      list.filter = [orgIdSearchstr];
+      //list.orderBy = "ParentId";
+      debugger;
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          this.StudentClassSubjects = [...data.value];
+          this.loading = false;
+        })
+    }
+    else {
+      this.loading = false;
+      if (clssubjectid > 0)
+        this.contentservice.openSnackBar("Please select class, section, subject.", globalconstants.ActionText, globalconstants.RedBackground);
+    }
+  }
   AssignNameClassSection(pStudents) {
-    this.Students=[];
+    this.Students = [];
     pStudents.forEach(student => {
       var _RollNo = '';
       var _name = '';
@@ -326,7 +386,7 @@ export class StudentattendancereportComponent implements OnInit {
       var _studentClassId = 0;
       //var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
       //if (studentclassobj.length > 0) {
-      if (student.StudentClasses && student.StudentClasses.length > 0 && student.StudentClasses[0].Active==1) {
+      if (student.StudentClasses && student.StudentClasses.length > 0 && student.StudentClasses[0].Active == 1) {
         _studentClassId = student.StudentClasses[0].StudentClassId;
         var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
 
@@ -631,7 +691,24 @@ export class StudentattendancereportComponent implements OnInit {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
+  SubjectTypes = [];
+  GetSubjectTypes() {
 
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and Active eq 1';
+
+    let list: List = new List();
+
+    list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
+    list.PageName = "SubjectTypes";
+    list.filter = [orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.SubjectTypes = [...data.value];
+        this.GetClassSubject();
+      })
+  }
 
   GetMasterData() {
     debugger;
@@ -643,7 +720,7 @@ export class StudentattendancereportComponent implements OnInit {
       this.Students = this.tokenstorage.getStudents();
       this.AssignNameClassSection(this.Students);
     })
-
+    this.GetSubjectTypes();
     this.loading = false;
     this.PageLoading = false;
   }

@@ -27,6 +27,15 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
+    <mat-form-field appearance="outline" [style.width.px]="150">
+        <mat-label>Subject</mat-label>
+        <mat-select formControlName="searchClassSubjectId" (selectionChange)="GetExistingStudentClassSubjects()">
+            <mat-option>--select--</mat-option>
+            <mat-option *ngFor="let item of FilteredClassSubjects"
+                [value]="item.ClassSubjectId">{{item.ClassSubject}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
     <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentAttendance()">
         <mat-icon>search</mat-icon>
         <mat-icon *ngIf="loading">

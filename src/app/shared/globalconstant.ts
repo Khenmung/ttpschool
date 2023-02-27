@@ -22,7 +22,7 @@ export class globalconstants {
     public static RecordAlreadyExistMessage = 'Record already exists!';
     public static NoRecordFoundMessage = 'No record found!';
     public static NoEvaluationRecordFoundMessage = 'No evaluation record found!';
-    public static UserLoginCreated = 'User login created! Please check your email for email verification.';
+    public static UserLoginCreated = 'User login created! Please check your email for email verification.'; 
     public static TechnicalIssueMessage = 'There is a technical issue! Please contact your administrator.';
     public static PermissionDeniedMessage = 'Permission Denied!';
     public static ActionText = 'X';

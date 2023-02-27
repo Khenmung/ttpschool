@@ -83,13 +83,13 @@ export class TrialBalanceComponent implements OnInit {
   ) { }
   MinDate :Date;
   ngOnInit(): void {
-    this.servicework.activateUpdate().then(() => {
-      this.servicework.checkForUpdate().then((value) => {
-        if (value) {
-          location.reload();
-        }
-      })
-    })
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
     var FinancialStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
     this.MinDate = FinancialStartEnd.StartDate;
     this.searchForm = this.fb.group({
