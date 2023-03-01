@@ -10,10 +10,11 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ErrorStateMatcher, MAT_DATE_LOCALE } from '@angular/material/core';
 import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
+import { ProfitandlossComponent } from './profitandloss/profitandloss.component';
 
 
 @NgModule({
-  declarations: [AccountingComponents],
+  declarations: [AccountingComponents, ProfitandlossComponent],
   imports: [
     CommonModule,
     AccountingRoutingModule,

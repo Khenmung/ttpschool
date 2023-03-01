@@ -219,7 +219,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentClassSubjects = [];
-        var filteredClassSubjects = this.ClassSubjectList.filter(clssubj => clssubj.ClassId == _classId);
+        var filteredClassSubjects = this.ClassSubjectList.filter(clssubj => clssubj.ClassId == _classId && clssubj.SelectHowMany>0);
         filteredClassSubjects.forEach(clssubj => {
           var existing = data.value.filter(db => db.ClassSubjectId == clssubj.ClassSubjectId);
           if (existing.length > 0) {
@@ -247,37 +247,14 @@ export class studentsubjectdashboardComponent implements OnInit {
             })
           }
         })
-        // data.value.forEach(m => {
-        //   if (m.StudentClassSubjects.length > 0) {
-        //     m.StudentClassSubjects.forEach(n => {
-        //       this.StudentClassSubjects.push({
-        //         'StudentClassSubjectId': n.StudentClassSubjectId,
-        //         'StudentClassId': n.StudentClassId,
-        //         'ClassSubjectId': n.ClassSubjectId,
-        //         'Active': n.Active,
-        //         'ClassId': m.ClassId,
-        //         'SubjectId': m.SubjectId
-        //       })
-        //     })
-        //   }
-        //   else {
-        //     this.StudentClassSubjects.push({
-        //       'StudentClassSubjectId': 0,
-        //       'StudentClassId': 0,
-        //       'ClassSubjectId': m.ClassSubjectId,
-        //       'Active': 0,
-        //       'ClassId': m.ClassId,
-        //       'SubjectId': m.SubjectId
-        //     })
-        //   }
-        // })
-        //console.log("this.StudentClassSubjects", this.StudentClassSubjects);
+     
 
         //////////////
         //var _studentDetail: any = {};
         this.StoreForUpdate = [];
         var _students: any = this.tokenstorage.getStudents();
-        var _filteredStudent = _students.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId && s.StudentClasses[0].SectionId == _sectionId);
+        var _filteredStudent = _students.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId 
+          && s.StudentClasses[0].SectionId == _sectionId);
         if (_filteredStudent.length > 0) {
           //for all student in student class table for the selected class.
           this.displayedColumns = ["Student"];
@@ -300,7 +277,7 @@ export class studentsubjectdashboardComponent implements OnInit {
               }
 
               var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClasses[0].StudentClassId);
-              var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
+              var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value && f.SelectHowMany>0)
               //console.log("specificclasssubjects",specificclasssubjects)
               specificclasssubjects.forEach((subjectTypes, indx) => {
                 var clssubject = takensubjects.filter(c => c.ClassSubjectId == subjectTypes.ClassSubjectId)
@@ -437,6 +414,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             'SelectHowMany': fromdb.SubjectType.SelectHowMany
           })
         })
+        this.ClassSubjectList = this.ClassSubjectList.sort((a,b)=>a.SubjectTypeId-b.SubjectTypeId);
         //console.log("this.ClassSubjectList", this.ClassSubjectList)
       });
 

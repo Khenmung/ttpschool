@@ -24,7 +24,7 @@ import { SidenavService } from './shared/sidenav.service';
     NotfoundComponent
   ],
   imports: [
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
+    //ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     RouterModule,
     BrowserModule,
     BrowserAnimationsModule,
@@ -34,7 +34,7 @@ import { SidenavService } from './shared/sidenav.service';
     MaterialModule,
     ChartsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: true,
+      enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'

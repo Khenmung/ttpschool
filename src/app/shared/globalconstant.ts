@@ -291,7 +291,8 @@ export class globalconstants {
                 "TRIALBALANCE": "trial balance",
                 "LEDGERACCOUNT": "ledger account",
                 "LEDGERBALANCE": "ledger balance",
-                "ACCOUNTNATURE": "account nature"
+                "ACCOUNTNATURE": "account nature",
+                "INCOMESTATEMENT": "income statement"
             }
         }
 

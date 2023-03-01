@@ -31,7 +31,7 @@
         <mat-icon>clear_all</mat-icon>
     </button>
 </form>
-Subject can be assigned to student defined in student class.
+
 <div style="margin-right: 15px;">
     <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
@@ -97,6 +97,7 @@ Subject can be assigned to student defined in student class.
     </span>
     <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
         <ul>
+            <li>Subjects can be assigned to students defined in student class.</li>
             <li>
                 <div><b>Class Subject Detail</b> must be defined before <b>Student Subject</b> can be defined.
                 </div>

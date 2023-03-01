@@ -277,7 +277,8 @@ export class StudentSubjectReportComponent implements OnInit {
   }
   SelectClassSubject() {
     debugger;
-    this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
+    this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value 
+    && f.SelectHowMany>0);
     //this.GetSpecificStudentGrades();
   }
   GetStudents() {
@@ -314,6 +315,7 @@ export class StudentSubjectReportComponent implements OnInit {
       "Confidential"
     ];
     list.PageName = "ClassSubjects";
+    list.lookupFields = ["SubjectType($select=SubjectTypeName,SelectHowMany)"];
     list.filter = [filterStr];
 
     this.dataservice.get(list)
@@ -338,7 +340,10 @@ export class StudentSubjectReportComponent implements OnInit {
               Confidential: cs.Confidential,
               ClassSubject: _class + '-' + _subject,
               SubjectName: _subject,
-              SubjectCategoryId: cs.SubjectCategoryId
+              SubjectCategoryId: cs.SubjectCategoryId,
+              SubjectTypeId: cs.SubjectTypeId,
+              SubjectTypeName: cs.SubjectType.SubjectTypeName,
+              SelectHowMany: cs.SubjectType.SelectHowMany
             })
           }
         })

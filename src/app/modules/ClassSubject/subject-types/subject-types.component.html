@@ -3,7 +3,7 @@
         <div><strong>Subject Types</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <i>For "Compulsory", no. of subjects to select should be 1.</i>
+    
     <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="SubjectTypeId">
             <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Id
@@ -63,4 +63,21 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
     </mat-table>
+    <div style="margin-top:30px;" data-expand="false" #expandWrap>
+        <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+            <mat-icon>info</mat-icon>
+            Guides..
+        </span>
+        <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+            <!-- <b>Settings required before student can be added.</b> -->
+            <ol>
+                <li>
+                    For "Compulsory", number of subjects to select should be 1.                    
+                </li>
+                <li>
+                    If <b>SelectHowMany</b> =0, the subjects which are assigned to this subject type will not be available to select in student subject.
+                </li>    
+            </ol>
+        </span>
+    </div>
 <!-- </div> -->

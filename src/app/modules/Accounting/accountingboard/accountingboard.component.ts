@@ -7,6 +7,7 @@ import { AccountNatureComponent } from '../accountnature/accountnature.component
 import { JournalEntryComponent } from '../JournalEntry/JournalEntry.component';
 import { LedgerAccountComponent } from '../ledgeraccount/ledgeraccount.component';
 import { LedgerBalanceComponent } from '../ledgerbalance/ledgerbalance.component';
+import { ProfitandlossComponent } from '../profitandloss/profitandloss.component';
 import { TrialBalanceComponent } from '../trial-balance/trial-balance.component';
 
 @Component({
@@ -20,7 +21,8 @@ export class AccountingboardComponent implements AfterViewInit {
     LedgerAccountComponent,
     JournalEntryComponent,
     LedgerBalanceComponent,
-    TrialBalanceComponent
+    TrialBalanceComponent,
+    ProfitandlossComponent
   ];
   LoginUserDetail=[];
   tabNames = [
@@ -28,7 +30,8 @@ export class AccountingboardComponent implements AfterViewInit {
     { 'label': 'Plan Feature', 'faIcon': '' },  
     { 'label': 'Plan Feature', 'faIcon': '' },    
     { 'label': 'Plan Feature', 'faIcon': '' },    
-    { 'label': 'Plan Feature', 'faIcon': '' }    
+    { 'label': 'Plan Feature', 'faIcon': '' }, 
+    { 'label': 'Plan Feature', 'faIcon': '' } 
   ];
 
   Permissions =
@@ -79,6 +82,10 @@ export class AccountingboardComponent implements AfterViewInit {
     
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.LEDGERBALANCE)
     var comindx = this.components.indexOf(LedgerBalanceComponent);
+    this.GetComponents(perObj,comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.INCOMESTATEMENT)
+    var comindx = this.components.indexOf(ProfitandlossComponent);
     this.GetComponents(perObj,comindx)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
