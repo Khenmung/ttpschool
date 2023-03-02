@@ -21,6 +21,10 @@ mat-form-field {
     flex: 1 0 70px;
 }
 .mat-column-Active,
-.mat-column-Action{
+.mat-column-Action,
+.mat-column-IncomeStatementPlus,
+.mat-column-IncomeStatementSequence,
+.mat-column-BalanceSheetPlus,
+.mat-column-BalanceSheetSequence{
     flex: 1 0 100px;
 }

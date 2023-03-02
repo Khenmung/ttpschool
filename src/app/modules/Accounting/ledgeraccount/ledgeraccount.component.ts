@@ -10,6 +10,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-ledgeraccount',
@@ -18,6 +19,7 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class LedgerAccountComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -33,7 +35,7 @@ export class LedgerAccountComponent implements OnInit {
   AccountGroups = [];
   GeneralLedgerAutoComplete = [];
   AccountNatureList = [];
-  filteredOptions=[];
+  filteredOptions = [];
   dataSource: MatTableDataSource<IGeneralLedger>;
   allMasterData = [];
 
@@ -48,22 +50,30 @@ export class LedgerAccountComponent implements OnInit {
     AccountNatureId: 0,
     AccountGroupId: 0,
     AccountSubGroupId: 0,
+    IncomeStatementSequence: 0,
+    BalanceSheetSequence: 0,
+    IncomeStatementPlus: true,
+    BalanceSheetPlus: true,
     OrgId: 0,
     Active: 0
   };
   GeneralLedgerForUpdate = [];
   displayedColumns = [
     'Action',
-    'Active',
-    'GeneralLedgerId',
+    'Active',    
     'GeneralLedgerName',
     'AccountNatureId',
     'AccountGroupId',
-    'AccountSubGroupId',
+    //'AccountSubGroupId',
+    'IncomeStatementSequence',
+    'BalanceSheetSequence',
+    'IncomeStatementPlus',
+    'BalanceSheetPlus',
     'ContactNo',
     'ContactName',
     'Email',
-    'Address'
+    'Address',
+    'GeneralLedgerId'
   ];
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
@@ -136,13 +146,13 @@ export class LedgerAccountComponent implements OnInit {
     var _groupId = this.searchForm.get("searchAccountGroupId").value;
     if (_groupId > 0) {
       this.AccountSubGroups = this.AccountNatures.filter(f => f.ParentId == _groupId)
-      this.filteredOptions = this.GeneralLedgerAutoComplete.filter(x=>x.AccountGroupId ==_groupId)
+      this.filteredOptions = this.GeneralLedgerAutoComplete.filter(x => x.AccountGroupId == _groupId)
     }
 
   }
-  GetSubGroupAccounts(){
+  GetSubGroupAccounts() {
     var _subgroupId = this.searchForm.get("searchAccountSubGroupId").value;
-    this.filteredOptions = this.GeneralLedgerAutoComplete.filter(x=>x.AccountGroupId ==_subgroupId)
+    this.filteredOptions = this.GeneralLedgerAutoComplete.filter(x => x.AccountGroupId == _subgroupId)
   }
   delete(element) {
     let toupdate = {
@@ -165,6 +175,10 @@ export class LedgerAccountComponent implements OnInit {
       AccountGroupId: this.searchForm.get("searchAccountGroupId").value,
       AccountSubGroupId: subgroupId,
       AccountGroups: this.AccountGroups,
+      IncomeStatementSequence: 0,
+      BalanceSheetSequence: 0,
+      IncomeStatementPlus: true,
+      BalanceSheetPlus: true,
       ContactNo: '',
       ContactName: '',
       Email: '',
@@ -231,6 +245,10 @@ export class LedgerAccountComponent implements OnInit {
           this.GeneralLedgerData.GeneralLedgerId = row.GeneralLedgerId;
           this.GeneralLedgerData.AccountNatureId = row.AccountNatureId;
           this.GeneralLedgerData.AccountGroupId = row.AccountGroupId;
+          this.GeneralLedgerData.IncomeStatementPlus = row.IncomeStatementPlus;
+          this.GeneralLedgerData.BalanceSheetPlus = row.BalanceSheetPlus;
+          this.GeneralLedgerData.IncomeStatementSequence = row.IncomeStatementSequence;
+          this.GeneralLedgerData.BalanceSheetSequence = row.BalanceSheetSequence;
           this.GeneralLedgerData.AccountSubGroupId = row.AccountSubGroupId == null ? 0 : row.AccountSubGroupId;
           this.GeneralLedgerData.GeneralLedgerName = row.GeneralLedgerName;
           this.GeneralLedgerData.ContactNo = row.ContactNo;
@@ -370,6 +388,10 @@ export class LedgerAccountComponent implements OnInit {
     list.fields = [
       'GeneralLedgerId',
       'GeneralLedgerName',
+      'IncomeStatementSequence',
+      'IncomeStatementPlus',
+      'BalanceSheetPlus',
+      'BalanceSheetSequence',
       'AccountSubGroupId',
       'AccountNatureId',
       'AccountGroupId',
@@ -400,6 +422,7 @@ export class LedgerAccountComponent implements OnInit {
         }
         this.dataSource = new MatTableDataSource<IGeneralLedger>(this.GeneralLedgerList);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loadingFalse();
       });
 
@@ -427,7 +450,16 @@ export class LedgerAccountComponent implements OnInit {
       this.AccountGroups = this.AccountNatures.filter(f => f.ParentId == natureId);
   }
   UpdateActive(row, event) {
-    row.Active = event.checked ? 1 : 0;
+    row.Active = event.checked?1:0;
+    row.Action = true;
+  }
+  UpdateBS(row, event) {
+    debugger;
+    row.BalanceSheetPlus = event.checked;
+    row.Action = true;
+  }
+  UpdatePnL(row, event) {
+    row.IncomeStatementPlus = event.checked;
     row.Action = true;
   }
   getDropDownData(dropdowntype) {

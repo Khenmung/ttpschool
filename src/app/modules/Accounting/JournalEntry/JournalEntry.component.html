@@ -19,7 +19,7 @@
     <mat-form-field appearance="outline" [style.width.px]="350">
         <mat-label>Account</mat-label>
         <input type="text" matInput formControlName="searchGeneralLedgerId" [matAutocomplete]="auto">
-        <mat-autocomplete (optionSelected)="ClearShorttext()" #auto="matAutocomplete" [displayWith]="displayFn">
+        <mat-autocomplete (optionSelected)="BindReference()" #auto="matAutocomplete" [displayWith]="displayFn">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
                 {{option.GeneralLedgerName}}
             </mat-option>
@@ -27,7 +27,11 @@
     </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="150">
         <mat-label>Reference</mat-label>
-        <input type="text" matInput formControlName="searchReference" [maxlength]="50" autocomplete="Off">
+        <mat-select formControlName="searchReference">
+            <mat-option *ngFor="let option of FilteredGeneralLedger" [value]="option.Reference">
+                {{option.Reference}}
+            </mat-option>
+        </mat-select>
     </mat-form-field>
     <button [disabled]="loading" style="margin-right:15px" mat-raised-button color="accent"
         (click)="GetAccountingVoucher()">
@@ -75,8 +79,8 @@
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <mat-label>description</mat-label>
-                <input matInput [maxlength]="256" autocomplete="Off" [(ngModel)]="element.ShortText"
-                    [value]="element.ShortText">
+                <input matInput [maxlength]="256" (blur)="SetReference(element)" autocomplete="Off"
+                    [(ngModel)]="element.ShortText" [value]="element.ShortText">
             </mat-form-field>
         </mat-cell>
     </ng-container>
@@ -85,7 +89,7 @@
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <mat-label>Reference</mat-label>
-                <input [disabled]="!TransactionMode" matInput [maxlength]="30" autocomplete="Off"
+                <input [disabled]="true" matInput [maxlength]="30" autocomplete="Off"
                     [(ngModel)]="element.Reference" [value]="element.Reference">
             </mat-form-field>
         </mat-cell>

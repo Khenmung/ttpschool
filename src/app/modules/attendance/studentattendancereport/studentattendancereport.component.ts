@@ -199,8 +199,8 @@ export class StudentattendancereportComponent implements OnInit {
     var datefilterStr = filterStr + ' and AttendanceDate ge ' + moment(fromDate).format('yyyy-MM-DD')
     datefilterStr += ' and AttendanceDate lt ' + moment(toDate).format('yyyy-MM-DD')
     datefilterStr += " and ClassId eq " + SelectedClassId + " and SectionId eq " + SelectedSectionId;
-    if (SelectedClassSubjectId > 0)
-      datefilterStr += " and ClassSubjectId eq " + SelectedClassSubjectId;
+    //if (SelectedClassSubjectId > 0)
+    datefilterStr += " and ClassSubjectId eq " + SelectedClassSubjectId;
 
     let list: List = new List();
     list.fields = [

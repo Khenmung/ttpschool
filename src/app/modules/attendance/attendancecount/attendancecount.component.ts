@@ -55,7 +55,7 @@ export class AttendanceCountComponent implements OnInit {
   searchForm = this.fb.group({
     searchFromDate: [new Date()],
     searchToDate: [new Date()],
-    searchSubjectWise: [false]
+    searchClassSubjectId: [0]
   });
   StudentClassSubjectId = 0;
   displayedColumns = [
@@ -132,25 +132,9 @@ export class AttendanceCountComponent implements OnInit {
 
   GetStudentAttendance() {
     debugger;
-    //this.StudentAttendanceList=[];
-    //this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-    //' and StudentClassId eq ' + this.StudentClassId;
-    // if (this.searchForm.get("searchClassId").value == 0) {
-    //   this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
-    // else {
-    //   filterStr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
-    // }
     var filterStrClsSub = '';
-    // var _sectionId = this.searchForm.get("searchSectionId").value;
-    // var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
-    // if (_sectionId == 0 && _classSubjectId == 0) {
-    //   this.contentservice.openSnackBar("Please select either section or subject.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
 
     this.loading = true;
     var today = new Date();
@@ -160,11 +144,8 @@ export class AttendanceCountComponent implements OnInit {
     var _toDate = new Date(this.searchForm.get("searchToDate").value)
     var _fromDate = new Date(this.searchForm.get("searchToDate").value);
     _toDate.setDate(_toDate.getDate() + 1);
-    var _subjectwise = this.searchForm.get("searchSubjectWise").value;
-    //_fromDate.setHours(0, 0, 0, 0);
+    var _ClassSubjectId = this.searchForm.get("searchClassSubjectId").value;
     _toDate.setHours(0, 0, 0, 0);
-
-
 
     this.StudentAttendanceList = [];
 
@@ -173,12 +154,7 @@ export class AttendanceCountComponent implements OnInit {
     datefilterStr += ' and StudentClassId gt 0'
 
     datefilterStr += ' and BatchId eq ' + this.SelectedBatchId;
-    if (_subjectwise) {
-      datefilterStr += ' and ClassSubjectId gt 0';
-    }
-    else
-      datefilterStr += ' and ClassSubjectId eq 0';
-
+    datefilterStr += ' and ClassSubjectId eq 0';// + _ClassSubjectId;
 
     let list: List = new List();
     list.fields = [
@@ -194,7 +170,6 @@ export class AttendanceCountComponent implements OnInit {
       "BatchId"
     ];
     list.PageName = "Attendances";
-    //list.lookupFields = ["StudentClass($select=ClassId,StudentClassId,SectionId)"];
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
@@ -202,10 +177,10 @@ export class AttendanceCountComponent implements OnInit {
       .subscribe((attendance: any) => {
 
         var _attendanceTotal = attendance.value.filter(att => this.Students.filter(s => s.StudentClasses.length > 0
-          && s.StudentClasses[0].Active==1
+          && s.StudentClasses[0].Active == 1
           && s.StudentClasses[0].StudentClassId == att.StudentClassId).length > 0)
-        
-          _attendanceTotal.forEach(sc => {
+
+        _attendanceTotal.forEach(sc => {
 
           var _className = '', _sectionName = '';
           var clsObj = this.Classes.filter(c => c.ClassId == sc.ClassId);
@@ -227,7 +202,6 @@ export class AttendanceCountComponent implements OnInit {
         var _data = [];
         var sumOfAttendance = alasql("select sum(1) PresentAbsent,ClassName,AttendanceStatus,Sequence from ? group by ClassName,AttendanceStatus,Sequence",
           [this.StudentAttendanceList]);
-        //console.log("sumOfAttendance", sumOfAttendance)
         sumOfAttendance.forEach(att => {
           var existing = _data.filter(f => f.ClassName == att.ClassName);
           if (existing.length > 0) {

@@ -65,6 +65,44 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
+            <ng-container matColumnDef="BalanceSheetSequence">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>BS Sequence
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput autocomplete="Off" [max]="255" (blur)="onBlur(element)"
+                            [value]="element.BalanceSheetSequence" [(ngModel)]="element.BalanceSheetSequence">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="IncomeStatementSequence">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>P&L Sequence
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
+                            [value]="element.IncomeStatementSequence" [(ngModel)]="element.IncomeStatementSequence">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="IncomeStatementPlus">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>P&L Plus
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" style="justify-content: center;">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdatePnL(element,$event)"
+                        [checked]="element.IncomeStatementPlus">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="BalanceSheetPlus">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>BS Plus
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" style="justify-content: center;">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateBS(element,$event)"
+                        [checked]="element.BalanceSheetPlus">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="AccountNatureId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Account Nature
                 </mat-header-cell>
@@ -72,7 +110,7 @@
                     <mat-form-field appearance="outline">
                         <mat-select (selectionChange)="AccountNatureChanged(element)"
                             [(ngModel)]="element.AccountNatureId" [value]="element.AccountNatureId">
-                            <mat-option *ngFor="let item of AccountNatures" [value]="item.AccountNatureId">
+                            <mat-option *ngFor="let item of TopAccountNatures" [value]="item.AccountNatureId">
                                 {{item.AccountName}}</mat-option>
                         </mat-select>
                     </mat-form-field>

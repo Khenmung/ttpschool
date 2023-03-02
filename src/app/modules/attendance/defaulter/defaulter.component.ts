@@ -194,13 +194,13 @@ export class DefaulterComponent implements OnInit {
     // }
 
     this.loading = true;
-   
+
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;
     }
-    if (_classSubjectId > 0) {
-      filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
-    }
+    //if (_classSubjectId > 0) {
+    filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
+    //}
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     //filterStr += ' and AttendanceStatus eq 0';
@@ -286,15 +286,15 @@ export class DefaulterComponent implements OnInit {
       .subscribe((attendance: any) => {
         var _students = [];
         if (_classId == 0 && _sectionId == 0)
-          _students = this.Students.filter(f => f.StudentClasses && f.StudentClasses.length > 0 && f.StudentClasses[0].Active==1)
+          _students = this.Students.filter(f => f.StudentClasses && f.StudentClasses.length > 0 && f.StudentClasses[0].Active == 1)
         else if (_classId > 0 && _sectionId == 0)
           _students = this.Students.filter(f => f.StudentClasses
-            && f.StudentClasses[0].Active==1
+            && f.StudentClasses[0].Active == 1
             && f.StudentClasses.length > 0
             && f.StudentClasses[0].ClassId == _classId);
         if (_classId > 0 && _sectionId > 0)
           _students = this.Students.filter(f => f.StudentClasses
-            && f.StudentClasses[0].Active==1
+            && f.StudentClasses[0].Active == 1
             && f.StudentClasses.length > 0
             && f.StudentClasses[0].ClassId == _classId
             && f.StudentClasses[0].SectionId == _sectionId);
@@ -303,7 +303,7 @@ export class DefaulterComponent implements OnInit {
         _students.forEach(sc => {
 
           let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClasses[0].StudentClassId);
-          var _className = this.Classes.filter(c=>c.ClassId == sc.StudentClasses[0].ClassId)[0].ClassName;
+          var _className = this.Classes.filter(c => c.ClassId == sc.StudentClasses[0].ClassId)[0].ClassName;
           existing.forEach(ex => {
             var _subjName = '';
             if (existing[0].ClassSubjectId > 0) {

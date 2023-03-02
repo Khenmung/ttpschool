@@ -213,20 +213,16 @@ export class AbsentListComponent implements OnInit {
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;
     }
-    // if (_classSubjectId != undefined && _classSubjectId > 0) {
-    //   filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
-    // }
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-    //filterStr += ' and AttendanceStatus eq 0';
 
     var datefilterStr = " and AttendanceDate ge " + moment(this.searchForm.get("searchAttendanceFromDate").value).format('yyyy-MM-DD')
     datefilterStr += ' and AttendanceDate lt ' + moment(this.searchForm.get("searchAttendanceDate").value).add(1, 'day').format('yyyy-MM-DD')
     datefilterStr += ' and StudentClassId gt 0'
     datefilterStr += ' and AttendanceStatus eq 0'
-    if (_classSubjectId != undefined && _classSubjectId > 0) {
-      datefilterStr += " and ClassSubjectId eq " + _classSubjectId;
-    }
+    //if (_classSubjectId != undefined && _classSubjectId > 0) {
+    datefilterStr += " and ClassSubjectId eq " + _classSubjectId;
+    //}
 
 
     if (filterStr.length == 0) {
@@ -487,7 +483,7 @@ export class AbsentListComponent implements OnInit {
           //var _subjectName = '';
           var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
           if (objsubject.length > 0) {
-           // _subjectName = objsubject[0].MasterDataName;
+            // _subjectName = objsubject[0].MasterDataName;
             this.ClassSubjects.push({
               ClassSubjectId: item.ClassSubjectId,
               ClassSubject: objsubject[0].MasterDataName,

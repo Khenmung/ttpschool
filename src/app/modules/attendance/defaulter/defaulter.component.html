@@ -16,6 +16,14 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
+    <mat-form-field appearance="outline" [style.width.px]="150">
+        <mat-label>Subject</mat-label>
+        <mat-select formControlName="searchClassSubjectId">
+            <mat-option value="0">--select--</mat-option>
+            <mat-option *ngFor="let item of FilteredClassSubjects" [value]="item.ClassSubjectId">{{item.ClassSubject}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Absence not approved days or more</mat-label>
         <input matInput formControlName="searchAbsentCount" autocomplete="Off" type="number">           
@@ -75,7 +83,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>reported to</mat-label>
                 <mat-select [(ngModel)]="element.ReportedTo" [value]="element.ReportedTo">
-                    <mat-option>--select--</mat-option>
+                    <mat-option value="0">--select--</mat-option>
                     <mat-option *ngFor="let item of Teachers" [value]="item.TeacherId">{{item.TeacherName}}
                     </mat-option>
                 </mat-select>

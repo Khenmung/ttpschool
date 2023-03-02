@@ -115,7 +115,6 @@ export class AttendancepercentComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
-
       }
     }
 
@@ -183,13 +182,9 @@ export class AttendancepercentComponent implements OnInit {
       this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (_classSubjectId > 0) {
-      filterStr += " and ClassSubjectId eq " + _classSubjectId;
-    }
 
+    filterStr += " and ClassSubjectId eq " + _classSubjectId;
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-    //filterStr += ' and AttendanceStatus eq 0';
-
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);

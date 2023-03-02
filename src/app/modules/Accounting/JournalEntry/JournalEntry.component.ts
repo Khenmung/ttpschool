@@ -13,6 +13,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IGeneralLedger } from '../ledgeraccount/ledgeraccount.component';
 import { SwUpdate } from '@angular/service-worker';
 import { MatPaginator } from '@angular/material/paginator';
+import * as moment from 'moment';
+import alasql from 'alasql';
 
 @Component({
   selector: 'app-JournalEntry',
@@ -125,9 +127,11 @@ export class JournalEntryComponent implements OnInit {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.JOURNALENTRY);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
-
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.GetGeneralLedgerAutoComplete();
+      if (this.Permission && this.Permission != 'denied') {
+        this.GetAllAccountingVoucher();
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.GetGeneralLedgerAutoComplete();
+      }
     }
   }
   private _filter(name: string): IAccountingVoucher[] {
@@ -142,35 +146,77 @@ export class JournalEntryComponent implements OnInit {
 
   TransactionMode = true;
   addnew(mode) {
-    this.TransactionMode = mode;
-    if (this.TransactionMode) {
+    //this.TransactionMode = mode;
+    if (mode) {
+      this.AccountingVoucherList = [];
       this.reference = ''
     }
-
     //var debitcredit = debit == 'debit' ? 0 : 1
-    var newdata = {
-      AccountingVoucherId: 0,
-      DocDate: new Date(),
-      PostingDate: new Date(),
-      Reference: this.reference,
-      FeeReceiptId: 0,
-      ParentId: 0,
-      ClassFeeId: 0,
-      LedgerId: 0,
-      GeneralLedgerName: '',
-      GeneralLedgerAccountId: this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId,
-      Debit: false,
-      BaseAmount: 0,
-      Amount: 0,
-      ShortText: '',
-      Active: 0,
-      Action: true
-    }
-    this.AccountingVoucherList = [];
-    this.AccountingVoucherList.push(newdata);
-    this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
-  }
+    if (this.reference.length > 0 || mode) {
+      var newdata = {
+        AccountingVoucherId: 0,
+        DocDate: new Date(),
+        PostingDate: new Date(),
+        Reference: this.reference,
+        FeeReceiptId: 0,
+        ParentId: 0,
+        ClassFeeId: 0,
+        LedgerId: 0,
+        GeneralLedgerName: '',
+        GeneralLedgerAccountId: this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId,
+        Debit: false,
+        BaseAmount: 0,
+        Amount: 0,
+        ShortText: '',
+        Active: 0,
+        Action: true
+      }
 
+      this.AccountingVoucherList.push(newdata);
+      this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
+    }
+  }
+  SetReference(row) {
+    debugger;
+    if (row.Reference.length == 0) {
+      var matches = row.ShortText.match(/\b(\w)/g);
+      this.reference = matches.join('') + moment(new Date()).format('YYYYMMDDHHmmss');
+      row.Reference = this.reference;
+    }
+  }
+  FilteredGeneralLedger = [];
+  BindReference() {
+    this.FilteredGeneralLedger = [];
+    var GeneralLedgerId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
+    this.FilteredGeneralLedger = this.AllAccountingVouchers.filter(f => f.GeneralLedgerAccountId == GeneralLedgerId);
+  }
+  AllAccountingVouchers = [];
+  GetAllAccountingVoucher() {
+    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    debugger;
+    this.loading = true;
+    var FinancialStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
+    filterStr += " and PostingDate ge " + this.datepipe.transform(FinancialStartEnd.StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
+      " and  PostingDate le " + this.datepipe.transform(FinancialStartEnd.EndDate, 'yyyy-MM-dd');//T00:00:00.000Z
+
+    let list: List = new List();
+    list.fields = [
+      "GeneralLedgerAccountId",
+      "Reference",
+    ];
+
+    list.PageName = this.AccountingVoucherListName;
+    //list.limitTo = 50;
+    //list.orderBy = "ShortText";
+    //list.lookupFields = ["AccountingLedgerTrialBalance"];
+    list.filter = ["GeneralLedgerAccountId ne null and " + filterStr];
+    this.AllAccountingVouchers = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.AllAccountingVouchers = alasql("select distinct GeneralLedgerAccountId,Reference from ?", [data.value]);
+        console.log("allaccountingvouchers",this.AllAccountingVouchers);
+      })
+  }
   GetAccountingVoucher() {
     let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
@@ -179,16 +225,9 @@ export class JournalEntryComponent implements OnInit {
     filterStr += " and PostingDate ge " + this.datepipe.transform(FinancialStartEnd.StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
       " and  PostingDate le " + this.datepipe.transform(FinancialStartEnd.EndDate, 'yyyy-MM-dd');//T00:00:00.000Z
 
-    var AccountId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId == undefined ? 0 : this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
-    if (AccountId != 0) {
-      filterStr += " and GeneralLedgerAccountId eq " + AccountId
-    }
-    // var referenceId = this.searchForm.get("searchReferenceId").value;
-    // if (referenceId != null && referenceId != "") {
-    //   filterStr += " and Reference eq '" + referenceId + "'"
-    // }
     var searchReference = this.searchForm.get("searchReference").value;
     if (searchReference != "") {
+      this.reference = searchReference;
       filterStr += " and Reference eq '" + searchReference + "'"
     }
 
@@ -241,7 +280,7 @@ export class JournalEntryComponent implements OnInit {
         //   this.searchForm.patchValue({
         //     searchReferenceId: this.AccountingVoucherList[0].Reference
         //   });
-        console.log("AccountingVoucherList",this.AccountingVoucherList);
+        console.log("AccountingVoucherList", this.AccountingVoucherList);
         if (this.AccountingVoucherList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
@@ -382,6 +421,11 @@ export class JournalEntryComponent implements OnInit {
         (data: any) => {
           this.loading = false; this.PageLoading = false;
           row.AccountingVoucherId = data.AccountingVoucherId;
+          var indx = this.AllAccountingVouchers.findIndex(f => f.GeneralLedgerAccountId == this.AccountingVoucherData.GeneralLedgerAccountId
+            && f.Reference == this.reference);
+          if (indx > -1) {
+            this.AllAccountingVouchers.push({ "GeneralLedgerAccountId": this.AccountingVoucherData.GeneralLedgerAccountId, "Reference": this.reference });
+          }
           this.ParentId = data.ParentId;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });

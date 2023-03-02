@@ -8,7 +8,7 @@
             <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>class</mat-label>
                 <mat-select formControlName="searchClassId" (selectionChange)="SelectSubject()">
-                    <mat-option>select</mat-option>
+                    <mat-option value="0">select</mat-option>
                     <mat-option *ngFor="let item of Classes" [value]="item.ClassId">{{item.ClassName}}
                     </mat-option>
                 </mat-select>
