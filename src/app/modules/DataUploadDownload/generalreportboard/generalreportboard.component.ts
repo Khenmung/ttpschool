@@ -38,13 +38,14 @@ export class GeneralReportboardComponent implements AfterViewInit {
     private contentservice: ContentService,
     private shareddata: SharedataService,
   ) {
+    this.SelectedAppName = this.tokenStorage.getSelectedAppName();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
   }
   SelectedAppName = '';
   public ngAfterViewInit(): void {
     debugger
-    this.SelectedAppName = this.tokenStorage.getSelectedAppName();
-    this.LoginUserDetail = this.tokenStorage.getUserDetail();
-    this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
+
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.DATA)
     if (perObj.length > 0) {
@@ -68,11 +69,9 @@ export class GeneralReportboardComponent implements AfterViewInit {
         this.tabNames.splice(comindx, 1);
       }
     }
-    else
-    {
+    else {
       var comindx = this.components.indexOf(StudentDatadumpComponent);
-      if(comindx>-1)
-      {
+      if (comindx > -1) {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }

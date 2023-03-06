@@ -185,70 +185,79 @@ export class DashboardclassfeeComponent implements OnInit {
 
   CreateInvoice() {
     debugger;
-    this.loading = true;
-    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
-      .subscribe((datacls: any) => {
+    var _classId = this.searchForm.get("ClassId").value;
+    //var _selectedMonth = this.searchForm.get("searchMonth").value;
+    if (_classId == 0) {
+      this.contentservice.openSnackBar("Please select a class.", globalconstants.ActionText, globalconstants.RedBackground);
+    }
+    // else if (_selectedMonth == 0) {
+    //   this.contentservice.openSnackBar("Please select a class.", globalconstants.ActionText, globalconstants.RedBackground);
+    // }
+    else {
+      this.loading = true;
+      this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+        .subscribe((datacls: any) => {
 
-        var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
-        var _classId=this.searchForm.get("searchClassId").value;
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,_classId ,0,0)
-          .subscribe((data: any) => {
-            var studentfeedetail = [];
-            data.value.forEach(studcls => {
-              var _feeName = '';
-              var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
-              var _className = '';
-              var obj = this.Classes.filter(c => c.ClassId == studcls.ClassId);
-              if (obj.length > 0)
-                _className = obj[0].ClassName;
+          var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-              objClassFee.forEach(clsfee => {
-                var _category = '';
-                var _subCategory = '';
+          this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, _classId, 0, 0)
+            .subscribe((data: any) => {
+              var studentfeedetail = [];
+              data.value.forEach(studcls => {
+                var _feeName = '';
+                var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
+                var _className = '';
+                var obj = this.Classes.filter(c => c.ClassId == studcls.ClassId);
+                if (obj.length > 0)
+                  _className = obj[0].ClassName;
 
-                var objcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeCategoryId);
-                if (objcat.length > 0)
-                  _category = objcat[0].MasterDataName;
+                objClassFee.forEach(clsfee => {
+                  var _category = '';
+                  var _subCategory = '';
 
-                var objsubcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeSubCategoryId);
-                if (objsubcat.length > 0)
-                  _subCategory = objsubcat[0].MasterDataName;
+                  var objcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeCategoryId);
+                  if (objcat.length > 0)
+                    _category = objcat[0].MasterDataName;
 
-                var _formula = studcls.FeeType.Active == 1 ? studcls.FeeType.Formula : '';
+                  var objsubcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeSubCategoryId);
+                  if (objsubcat.length > 0)
+                    _subCategory = objsubcat[0].MasterDataName;
 
-                if (_formula.length > 0) {
-                  _feeName = clsfee.FeeDefinition.FeeName;
-                  studentfeedetail.push({
-                    Month: clsfee.Month,
-                    Amount: clsfee.Amount,
-                    Formula: _formula,
-                    FeeName: _feeName,
-                    StudentClassId: studcls.StudentClassId,
-                    FeeCategory: _category,
-                    FeeSubCategory: _subCategory,
-                    FeeTypeId: studcls.FeeTypeId,
-                    SectionId: studcls.SectionId,
-                    RollNo: studcls.RollNo,
-                    ClassName: _className
-                  });
-                }
+                  var _formula = studcls.FeeType.Active == 1 ? studcls.FeeType.Formula : '';
 
-              })
-            })
-            //console.log("studentfeedetailxxxx", studentfeedetail)
-            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
-              .subscribe((data: any) => {
-                this.loading = false;
-                this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
-              },
-                error => {
-                  this.loading = false;
-                  console.log("create invoice error", error);
-                  this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+                  if (_formula.length > 0) {
+                    _feeName = clsfee.FeeDefinition.FeeName;
+                    studentfeedetail.push({
+                      Month: clsfee.Month,
+                      Amount: clsfee.Amount,
+                      Formula: _formula,
+                      FeeName: _feeName,
+                      StudentClassId: studcls.StudentClassId,
+                      FeeCategory: _category,
+                      FeeSubCategory: _subCategory,
+                      FeeTypeId: studcls.FeeTypeId,
+                      SectionId: studcls.SectionId,
+                      RollNo: studcls.RollNo,
+                      ClassName: _className
+                    });
+                  }
+
                 })
-          })
-      });
-
+              })
+              //console.log("studentfeedetailxxxx", studentfeedetail)
+              this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+                .subscribe((data: any) => {
+                  this.loading = false;
+                  this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+                },
+                  error => {
+                    this.loading = false;
+                    console.log("create invoice error", error);
+                    this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+                  })
+            })
+        });
+    }
   }
   ApplyVariables(formula) {
     var filledVar = formula;
@@ -322,7 +331,7 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   UpdateOrSave(row) {
     debugger;
-    var objDiscount = this.ELEMENT_DATA.filter(f => f.FeeName == 'Discount' && f.Active == 1);
+    var objDiscount = this.ELEMENT_DATA.filter(f => f.FeeName == 'Discount');
     if (objDiscount.length == 0) {
       this.contentservice.openSnackBar("Discount should be activated and saved.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -371,24 +380,40 @@ export class DashboardclassfeeComponent implements OnInit {
           this.classFeeData.LocationId = +row.LocationId;
           this.classFeeData.Month = row.Month;
           this.classFeeData.OrgId = this.LoginUserDetail[0]["orgId"];
+          if (objDiscount[0].ClassFeeId == 0) {
+            var insert = [];
+            insert.push({
+              Active: 1,
+              Amount: objDiscount[0].Amount,
+              BatchId: objDiscount[0].BatchId,
+              ClassFeeId: objDiscount[0].ClassFeeId,
+              ClassId: objDiscount[0].ClassId,
+              FeeDefinitionId: objDiscount[0].FeeDefinitionId,
+              LocationId: 0,
+              Month: objDiscount[0].Month,
+              OrgId: this.LoginUserDetail[0]["orgId"]
+            })
+            this.insert(row, insert[0]);
+          }
           //console.log("dataclassfee", this.classFeeData);
           if (this.classFeeData.ClassFeeId == 0)
-            this.insert(row);
+            this.insert(row, this.classFeeData);
           else
             this.update(row);
         }
       });
   }
 
-  insert(row) {
+  insert(row, item) {
 
     //debugger;
-    this.dataservice.postPatch('ClassFees', this.classFeeData, 0, 'post')
+    this.dataservice.postPatch('ClassFees', item, 0, 'post')
       .subscribe(
         (data: any) => {
           row.Action = false;
           this.loading = false; this.PageLoading = false;
           row.ClassFeeId = data.ClassFeeId;
+          item.ClassFeeId = data.ClassFeeId;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -516,7 +541,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
         let existing = classFee.filter(fromdb => fromdb.FeeDefinitionId == mainFeeName.FeeDefinitionId)
         if (existing.length > 0) {
-          
+
           existing[0].SlNo = indx + 1;
           existing[0].FeeName = mainFeeName.FeeName;
           existing[0].Action = false;
@@ -538,7 +563,7 @@ export class DashboardclassfeeComponent implements OnInit {
             "Amount": 0,
             "Month": 0,
             "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
-            "Active": 0,
+            "Active": mainFeeName.FeeName.toLowerCase() == 'discount' ? 1 : 0,
             "Action": false
           });
       })

@@ -299,13 +299,14 @@ export class FeereceiptComponent implements OnInit {
         this.StudentFeePaymentList = [];
         this.FeeReceipt.forEach(f => {
           f.AccountingVouchers.forEach(k => {
-            var _Reference = '';
-            if (k.Reference != null && k.Reference.length > 0) {
-              _Reference = " (" + k.Reference + ")"
-            }
+            var _ShortText = '';
+            
             var feeObj = this.StudentClassFees.filter(f => f.ClassFeeId == k.ClassFeeId);
             if (feeObj.length > 0) {
-              k.FeeName = feeObj[0].FeeName + _Reference;
+              if (k.ShortText && k.ShortText.length > 0 && feeObj[0].AmountEditable) {
+                _ShortText = " (" + k.ShortText + ")"
+              }  
+              k.FeeName = feeObj[0].FeeName + _ShortText;
               if (k.FeeName == 'Discount')
                 k.indx = 1
               else
@@ -324,7 +325,7 @@ export class FeereceiptComponent implements OnInit {
           }
         })
         this.calculateTotal();
-        console.log("this.FeeReceipt", this.FeeReceipt)
+        //console.log("this.FeeReceipt", this.FeeReceipt)
         this.StudentFeePaymentList = this.StudentFeePaymentList.sort((a, b) => a.indx - b.indx);
         this.dataReceiptSource = new MatTableDataSource<any>(this.FeeReceipt);
         this.dataReceiptSource.sort = this.sort;

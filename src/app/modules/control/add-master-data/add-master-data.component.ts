@@ -165,41 +165,46 @@ export class AddMasterDataComponent implements OnInit {
   GetMastersForAutoComplete() {
     debugger;
     var apps = this.tokenStorage.getPermittedApplications();
-    var commonAppId = apps.filter(f => f.appShortName == 'common')[0].applicationId;
+    
+    var objcommon = apps.filter(f => f.appShortName == 'common')
+    if (objcommon.length == 0) {
+      this.contentservice.openSnackBar("User needs common panel access.", globalconstants.ActionText, globalconstants.RedBackground);
+    }
+    else {
+      var commonAppId = objcommon[0].applicationId;
+      var applicationFilter = '';
+      //applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"]
+      var applicationFilter = "(OrgId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] +
+        ") and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
+      let list: List = new List();
+      list.fields = [
+        "MasterDataId,ParentId,MasterDataName,Description,ApplicationId,OrgId,Confidential"
+      ];
+      list.PageName = "MasterItems";
+      //list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq " + this.UserDetails[0]["planId"] + ";$select=MasterDataId,PlanAndMasterDataId)"];
 
-    var applicationFilter = '';
-    //applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"]
-    var applicationFilter = "(OrgId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] +
-      ") and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
-    let list: List = new List();
-    list.fields = [
-      "MasterDataId,ParentId,MasterDataName,Description,ApplicationId,OrgId,Confidential"
-    ];
-    list.PageName = "MasterItems";
-    //list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq " + this.UserDetails[0]["planId"] + ";$select=MasterDataId,PlanAndMasterDataId)"];
+      list.filter = [applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
+      //debugger;
+      //console.log("GetMastersForAutoComplete",this.SelectedApplicationId)  
+      this.dataservice.get(list).subscribe((data: any) => {
+        var result = [];
+        data.value.forEach(d => {
+          var description = d.Description == null || d.Description == '' ? "" : "-" + d.Description
+          result.push({
+            MasterDataId: d.MasterDataId,
+            MasterDataName: d.MasterDataName + description,
+            ParentId: d.ParentId,
+            ApplicationId: d.ApplicationId,
+            Description: d.Description,
+            Confidential: d.Confidential,
+            OrgId: d.OrgId,
+          });
+          //}
+        })
 
-    list.filter = [applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
-    //debugger;
-    //console.log("GetMastersForAutoComplete",this.SelectedApplicationId)  
-    this.dataservice.get(list).subscribe((data: any) => {
-      var result = [];
-      data.value.forEach(d => {
-        var description = d.Description == null || d.Description == '' ? "" : "-" + d.Description
-        result.push({
-          MasterDataId: d.MasterDataId,
-          MasterDataName: d.MasterDataName + description,
-          ParentId: d.ParentId,
-          ApplicationId: d.ApplicationId,
-          Description: d.Description,
-          Confidential: d.Confidential,
-          OrgId: d.OrgId,
-        });
-        //}
+        this.MasterData = result.sort((a, b) => a.ParentId - b.ParentId);
       })
-
-      this.MasterData = result.sort((a, b) => a.ParentId - b.ParentId);
-    })
-
+    }
   }
   emptyresult() {
     this.MasterList = [];
@@ -564,7 +569,7 @@ export class AddMasterDataComponent implements OnInit {
           row.Action = false;
           this.MasterList = this.tokenStorage.getMasterData();
           this.MasterList.push(mastertoUpdate)
-            this.tokenStorage.saveMasterData(this.MasterList);
+          this.tokenStorage.saveMasterData(this.MasterList);
           if (this.DataToSaveCount == 0) {
             this.loading = false;
             this.PageLoading = false;

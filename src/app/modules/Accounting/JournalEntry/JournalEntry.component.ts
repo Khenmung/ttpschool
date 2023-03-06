@@ -179,13 +179,14 @@ export class JournalEntryComponent implements OnInit {
   SetReference(row) {
     debugger;
     if (row.Reference.length == 0) {
-      var matches = row.ShortText.match(/\b(\w)/g);
+      var matches = row.ShortText.replaceAll(' ','').substr(0,10) //.match(/\b(\w)/g);
       this.reference = matches.join('') + moment(new Date()).format('YYYYMMDDHHmmss');
       row.Reference = this.reference;
     }
   }
   FilteredGeneralLedger = [];
   BindReference() {
+    debugger;
     this.FilteredGeneralLedger = [];
     var GeneralLedgerId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
     this.FilteredGeneralLedger = this.AllAccountingVouchers.filter(f => f.GeneralLedgerAccountId == GeneralLedgerId);
@@ -214,7 +215,7 @@ export class JournalEntryComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllAccountingVouchers = alasql("select distinct GeneralLedgerAccountId,Reference from ?", [data.value]);
-        console.log("allaccountingvouchers",this.AllAccountingVouchers);
+        //console.log("allaccountingvouchers",this.AllAccountingVouchers);
       })
   }
   GetAccountingVoucher() {
@@ -267,20 +268,8 @@ export class JournalEntryComponent implements OnInit {
             m.GeneralLedgerName = '';
           return m;
         });
-        // if (this.AccountingVoucherList.length == 0) {
-        //   this.addnew(true);
-        // }
-        // else {
-        //var shorttext = this.searchForm.get("searchShortText").value;
-        // if (searchReference == '')
-        //   this.searchForm.patchValue({
-        //     searchShortText: this.AccountingVoucherList[0].ShortText
-        //   });
-        // if (referenceId == '')
-        //   this.searchForm.patchValue({
-        //     searchReferenceId: this.AccountingVoucherList[0].Reference
-        //   });
-        console.log("AccountingVoucherList", this.AccountingVoucherList);
+
+        //        console.log("AccountingVoucherList", this.AccountingVoucherList);
         if (this.AccountingVoucherList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }

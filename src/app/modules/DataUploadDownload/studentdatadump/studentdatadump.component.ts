@@ -370,7 +370,7 @@ export class StudentDatadumpComponent implements OnInit {
   GetStudent() {
     debugger;
     this.loading = true;
-    let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
+    //let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var _ClassGroupId = this.studentSearchForm.get("searchGroupId").value;
     var _classes = this.ClassGroupMapping.filter(c => c.ClassGroupId == _ClassGroupId);
 
@@ -381,16 +381,16 @@ export class StudentDatadumpComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (_remarkId > 0) {
-      var obj = [];
-      this.Groups.forEach(f => {
-        var check = f.group.filter(h => h.MasterDataId == _remarkId);
-        if (check.length > 0)
-          obj.push(check[0]);
-      });
-      checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
-      //checkFilterString += " and RemarkId eq " + _remarkId;
-    }
+    // if (_remarkId > 0) {
+    //   var obj = [];
+    //   this.Groups.forEach(f => {
+    //     var check = f.group.filter(h => h.MasterDataId == _remarkId);
+    //     if (check.length > 0)
+    //       obj.push(check[0]);
+    //   });
+    //   checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
+    //   //checkFilterString += " and RemarkId eq " + _remarkId;
+    // }
     var classfilter = '';
     if (_classes.length > 0) {
       _classes.forEach(c => {
@@ -400,14 +400,16 @@ export class StudentDatadumpComponent implements OnInit {
           classfilter += ' or ClassId eq ' + c.ClassId
       })
     }
-
-    classfilter = classfilter.length > 0 ? classfilter + ") and BatchId eq " + this.SelectedBatchId : "BatchId eq " + this.SelectedBatchId;
+    if (classfilter.length > 0)
+      classfilter = classfilter + ") and BatchId eq " + this.SelectedBatchId
+    else
+      classfilter = "BatchId eq " + this.SelectedBatchId;
 
     let list: List = new List();
-    list.fields = ["*"];
-    list.lookupFields = ["StudentClasses($filter=" + classfilter + ";$select=Remarks,StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId)"];
-    list.PageName = "Students";
-    list.filter = [this.filterOrgIdOnly + checkFilterString];
+    list.fields = ["Remarks,StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId"];
+    list.lookupFields = ["Student($select=*)"];
+    list.PageName = "StudentClasses";
+    list.filter = [this.filterOrgIdOnly + " and " + classfilter];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -417,27 +419,29 @@ export class StudentDatadumpComponent implements OnInit {
           var formattedData = [];
           //formattedData = [...data.value];
           data.value.filter(sc => {
-            let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
-            if (sc.StudentClasses.length > 0) {
-              var obj = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId);
-              if (obj.length > 0) {
-                sc.FeeType = obj[0].FeeTypeName
-              }
-              else
-                sc.FeeType = '';
-
-              delete sc.FeeTypeId;
-              delete sc.ReasonForLeavingId;
-              sc.Notes = sc.StudentClasses[0].Remarks;
-              sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
-              formattedData.push(sc);
+            let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.Student.ReasonForLeavingId)
+            //if (sc.StudentClasses.length > 0) {
+            var obj = this.FeeType.filter(f => f.FeeTypeId == sc.FeeTypeId);
+            if (obj.length > 0) {
+              sc.FeeType = obj[0].FeeTypeName
             }
+            else
+              sc.FeeType = '';
+
+            delete sc.FeeTypeId;
+            delete sc.ReasonForLeavingId;
+            sc.Notes = sc.Remarks;
+            sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
+            formattedData.push(sc);
+            //}
           });
           this.ELEMENT_DATA = formattedData.map(element => {
-            var _lastname = element.LastName == null ? '' : " " + element.LastName;
-            element.Name = element.FirstName + _lastname;
+
+
+            var _lastname = element.Student.LastName == null ? '' : " " + element.Student.LastName;
+            element.Name = element.Student.FirstName + _lastname;
             if (element.RemarkId > 0) {
-              var obj = this.Remarks.filter(f => f.MasterDataId == element.RemarkId);
+              var obj = this.Remarks.filter(f => f.MasterDataId == element.Student.RemarkId);
               if (obj.length > 0)
                 element.Remarks = obj[0].MasterDataName;
               else
@@ -447,49 +451,47 @@ export class StudentDatadumpComponent implements OnInit {
               element.Remarks = '';
             delete element.RemarkId;
 
-            if (element.StudentClasses.length == 0) {
-              //item.Remarks = '';
-              element.ClassName = '';
+            // if (element.StudentClasses.length == 0) {
+            //   //item.Remarks = '';
+            //   element.ClassName = '';
+            // }
+            // else {
+            //element.StudentClasses.forEach(studcls => {
+            if (element.SectionId > 0) {
+              let SectionFilter = this.Sections.filter(g => g.MasterDataId == element.SectionId);
+              if (SectionFilter.length == 0)
+                element.Section = '';
+              else
+                element.Section = SectionFilter[0].MasterDataName;
             }
-            else {
-              element.StudentClasses.forEach(studcls => {
-                if (studcls.SectionId > 0) {
-                  let SectionFilter = this.Sections.filter(g => g.MasterDataId == studcls.SectionId);
-                  if (SectionFilter.length == 0)
-                    element.Section = '';
-                  else
-                    element.Section = SectionFilter[0].MasterDataName;
-                }
-                else
-                  element.Section = '';
-                delete studcls.SectionId;
+            else
+              element.Section = '';
+            delete element.SectionId;
 
-                var clsobj = this.Classes.filter(cls => {
-                  return cls.ClassId == element.StudentClasses[0].ClassId
-                })
-                if (clsobj.length > 0)
-                  element.ClassName = clsobj[0].ClassName;
-                else
-                  element.ClassName = '';
-                element.RollNo = studcls.RollNo;
-                element.StudentClassId = studcls.StudentClassId;
-              })
-              //delete element.ClassId;
-            }
+            var clsobj = this.Classes.filter(cls => cls.ClassId == element.ClassId);
+            if (clsobj.length > 0)
+              element.ClassName = clsobj[0].ClassName;
+            else
+              element.ClassName = '';
+            //element.RollNo = element.RollNo;
+            //element.StudentClassId = element.StudentClassId;
+            //})
+            //delete element.ClassId;
+            //}
 
             /////////////////
-            if (element.GenderId > 0) {
-              let GenderFilter = this.Genders.filter(g => g.MasterDataId == element.GenderId);
+            if (element.Student.GenderId > 0) {
+              let GenderFilter = this.Genders.filter(g => g.MasterDataId == element.Student.GenderId);
               if (GenderFilter.length == 0)
                 element.Gender = '';
               else
                 element.Gender = GenderFilter[0].MasterDataName;
             }
             else
-              element.Gender = '';
-            delete element.GenderId;
-            if (element.HouseId > 0) {
-              let houseFilter = this.Houses.filter(g => g.MasterDataId == element.HouseId);
+              element.Student.Gender = '';
+            delete element.Student.GenderId;
+            if (element.Student.HouseId > 0) {
+              let houseFilter = this.Houses.filter(g => g.MasterDataId == element.Student.HouseId);
               if (houseFilter.length == 0)
                 element.House = '';
               else
@@ -497,10 +499,10 @@ export class StudentDatadumpComponent implements OnInit {
             }
             else
               element.House = '';
-            delete element.HouseId;
+            delete element.Student.HouseId;
 
-            if (element.BloodgroupId > 0) {
-              let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataId == element.BloodgroupId);
+            if (element.Student.BloodgroupId > 0) {
+              let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataId == element.Student.BloodgroupId);
               if (BloodgroupFilter.length == 0)
                 element.Bloodgroup = '';
               else
@@ -508,12 +510,12 @@ export class StudentDatadumpComponent implements OnInit {
             }
             else
               element.Bloodgroup = '';
-            delete element.BloodgroupId;
+            delete element.Student.BloodgroupId;
 
 
 
-            if (element.CategoryId > 0) {
-              let Categoryfilter = this.Category.filter(g => g.MasterDataId == element.CategoryId);
+            if (element.Student.CategoryId > 0) {
+              let Categoryfilter = this.Category.filter(g => g.MasterDataId == element.Student.CategoryId);
               if (Categoryfilter.length == 0)
                 element.Category = '';
               else
@@ -521,10 +523,10 @@ export class StudentDatadumpComponent implements OnInit {
             }
             else
               element.Category = '';
-            delete element.CategoryId;
+            delete element.Student.CategoryId;
 
-            if (element.ReligionId > 0) {
-              let ReligionFilter = this.Religion.filter(g => g.MasterDataId == element.ReligionId);
+            if (element.Student.ReligionId > 0) {
+              let ReligionFilter = this.Religion.filter(g => g.MasterDataId == element.Student.ReligionId);
               if (ReligionFilter.length == 0)
                 element.Religion = '';
               else
@@ -532,10 +534,10 @@ export class StudentDatadumpComponent implements OnInit {
             }
             else
               element.Religion = '';
-            delete element.ReligionId;
+            delete element.Student.ReligionId;
 
-            if (element.AdmissionStatusId > 0) {
-              let AdmissionStatusFilter = this.AdmissionStatus.filter(g => g.MasterDataId == element.AdmissionStatusId);
+            if (element.Student.AdmissionStatusId > 0) {
+              let AdmissionStatusFilter = this.AdmissionStatus.filter(g => g.MasterDataId == element.Student.AdmissionStatusId);
               if (AdmissionStatusFilter.length == 0)
                 element.AdmissionStatus = '';
               else
@@ -545,8 +547,8 @@ export class StudentDatadumpComponent implements OnInit {
               element.AdmissionStatus = '';
             delete element.AdmissionStatusId;
 
-            if (element.PrimaryContactFatherOrMother > 0) {
-              let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataId == element.PrimaryContactFatherOrMother);
+            if (element.Student.PrimaryContactFatherOrMother > 0) {
+              let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataId == element.Student.PrimaryContactFatherOrMother);
               if (PrimaryContactFatherOrMotherFilter.length == 0)
                 element.PrimaryContactFatherOrMother = ''
               else
@@ -555,8 +557,8 @@ export class StudentDatadumpComponent implements OnInit {
             else
               element.PrimaryContactFatherOrMother = '';
 
-            if (element.ClassAdmissionSought > 0) {
-              let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.ClassId == element.ClassAdmissionSought);
+            if (element.Student.ClassAdmissionSought > 0) {
+              let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.ClassId == element.Student.ClassAdmissionSought);
               if (ClassAdmissionSoughtFilter.length == 0)
                 element.ClassAdmissionSought = '';
               else
@@ -566,8 +568,8 @@ export class StudentDatadumpComponent implements OnInit {
               element.ClassAdmissionSought = '';
 
 
-            if (element.ClubId > 0) {
-              let ClubObj = this.Clubs.filter(g => g.MasterDataId == element.ClubId);
+            if (element.Student.ClubId > 0) {
+              let ClubObj = this.Clubs.filter(g => g.MasterDataId == element.Student.ClubId);
               if (ClubObj.length == 0)
                 element.Club = '';
               else
@@ -575,7 +577,7 @@ export class StudentDatadumpComponent implements OnInit {
             }
             else
               element.Club = '';
-            delete element.ClubId;
+            delete element.Student.ClubId;
 
             // if (element.HouseId >0) {
             //   let houseObj = this.Houses.filter(g => g.MasterDataId == element.HouseId);
@@ -587,33 +589,33 @@ export class StudentDatadumpComponent implements OnInit {
             // else
             //   element.House = '';
 
-            if (element.RemarkId > 0) {
-              let remarkObj = this.Remarks.filter(g => g.MasterDataId == element.RemarkId);
+            if (element.Student.RemarkId > 0) {
+              let remarkObj = this.Remarks.filter(g => g.MasterDataId == element.Student.RemarkId);
               if (remarkObj.length == 0)
                 element.Remarks = '';
               else
                 element.Remarks = remarkObj[0].MasterDataName;
             }
             else
-              element.RemarkId = 0;
-            delete element.RemarkId;
+              element.RemarkId = '';
+            delete element.Student.RemarkId;
 
-            if (element.PermanentAddressCountryId > 0) {
-              let CountryObj = this.allMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressCountryId);
+            if (element.Student.PermanentAddressCountryId > 0) {
+              let CountryObj = this.allMasterData.filter(g => g.MasterDataName.toLowerCase() == element.Student.PermanentAddressCountryId);
               if (CountryObj.length == 0)
                 element.PermanentAddressCountry = '';
               else {
                 element.PermanentAddressCountry = CountryObj[0].MasterDataName;
-                if (element.PermanentAddressStateId > 0) {
-                  let stateObj = this.allMasterData.filter(g => g.MasterDataId == element.PermanentAddressStateId
-                    && g.ParentId == element.PermanentAddressCountryId);
+                if (element.Student.PermanentAddressStateId > 0) {
+                  let stateObj = this.allMasterData.filter(g => g.MasterDataId == element.Student.PermanentAddressStateId
+                    && g.ParentId == element.Student.PermanentAddressCountryId);
                   if (stateObj.length == 0)
                     element.PermanentAddressState = '';
                   else {
                     element.PermanentAddressState = stateObj[0].MasterDataName;
-                    if (element.PermanentAddressCityId > 0) {
-                      let CityObj = this.allMasterData.filter(g => g.MasterDataId == element.PermanentAddressCityId
-                        && g.ParentId == element.PermanentAddressStateId);
+                    if (element.Student.PermanentAddressCityId > 0) {
+                      let CityObj = this.allMasterData.filter(g => g.MasterDataId == element.Student.PermanentAddressCityId
+                        && g.ParentId == element.Student.PermanentAddressStateId);
                       if (CityObj.length == 0)
                         element.PermanentAddressCity = '';
                       else
@@ -635,26 +637,26 @@ export class StudentDatadumpComponent implements OnInit {
               element.PermanentAddressCity = '';
 
             }
-            delete element.PermanentAddressCountryId;
-            delete element.PermanentAddressStateId;
-            delete element.PermanentAddressCityId;
+            delete element.Student.PermanentAddressCountryId;
+            delete element.Student.PermanentAddressStateId;
+            delete element.Student.PermanentAddressCityId;
 
-            if (element.PresentAddressCountryId > 0) {
-              let CountryObj = this.allMasterData.filter(g => g.MasterDataId == element.PresentAddressCountryId);
+            if (element.Student.PresentAddressCountryId > 0) {
+              let CountryObj = this.allMasterData.filter(g => g.MasterDataId == element.Student.PresentAddressCountryId);
               if (CountryObj.length == 0)
                 element.PresentAddressCountry = '';
               else {
                 element.PresentAddressCountry = CountryObj[0].MasterDataName;
-                if (element.PresentAddressStateId > 0) {
-                  let stateObj = this.allMasterData.filter(g => g.MasterDataId == element.PresentAddressStateId
-                    && g.ParentId == element.PresentAddressCountryId);
+                if (element.Student.PresentAddressStateId > 0) {
+                  let stateObj = this.allMasterData.filter(g => g.MasterDataId == element.Student.PresentAddressStateId
+                    && g.ParentId == element.Student.PresentAddressCountryId);
                   if (stateObj.length == 0)
                     element.PresentAddressState = '';
                   else {
                     element.PresentAddressState = stateObj[0].MasterDataName;
-                    if (element.PresentAddressCityId > 0) {
-                      let CityObj = this.allMasterData.filter(g => g.MasterDataId == element.PresentAddressCityId
-                        && g.ParentId == element.PresentAddressStateId);
+                    if (element.Student.PresentAddressCityId > 0) {
+                      let CityObj = this.allMasterData.filter(g => g.MasterDataId == element.Student.PresentAddressCityId
+                        && g.ParentId == element.Student.PresentAddressStateId);
                       if (CityObj.length == 0)
                         element.PresentAddressCity = '';
                       else
@@ -675,29 +677,44 @@ export class StudentDatadumpComponent implements OnInit {
               element.PresentAddressState = '';
               element.PresentAddressCity = '';
             }
-            if (element.AdmissionDate != null) {
-              element.AdmissionDate = moment(element.AdmissionDate).format('DD/MM/YYYY');
+            if (element.Student.AdmissionDate) {
+              element.AdmissionDate = moment(element.Student.AdmissionDate).format('DD/MM/YYYY');
             }
-            if (element.CreatedDate != null) {
-              element.CreatedDate = moment(element.CreatedDate).format('DD/MM/YYYY');
+            if (element.Student.CreatedDate) {
+              element.CreatedDate = moment(element.Student.CreatedDate).format('DD/MM/YYYY');
             }
-            if (element.UpdatedDate != null) {
-              element.UpdatedDate = moment(element.UpdatedDate).format('DD/MM/YYYY');
+            if (element.Student.UpdatedDate) {
+              element.UpdatedDate = moment(element.Student.UpdatedDate).format('DD/MM/YYYY');
             }
-            if (element.DOB != null) {
-              element.DOB = moment(element.DOB).format('DD/MM/YYYY');
+            if (element.Student.DOB) {
+              element.DOB = moment(element.Student.DOB).format('DD/MM/YYYY');
             }
-            delete element.PresentAddressCountryId;
-            delete element.PresentAddressStateId;
-            delete element.PresentAddressCityId;
-            delete element.OrgId;
-            delete element.UserId;
+            var batch = this.Batches.filter(b => b.BatchId == element.BatchId);
+            if (batch.length > 0) {
+              element.Batch = batch[0].BatchName;
+            }
+            Object.keys(element.Student).forEach(o => {
+              if (!element[o])
+                element[o] = element.Student[o];
+            })
+            delete element.Student;
+            delete element.HouseId;
             delete element.SectionId;
+            delete element.ClassId;
+            delete element.BatchId;
+            delete element.userId;
+            delete element.OrgId;
+            delete element.Deleted;
+            delete element.ReasonForLeavingId;
+            delete element.AdmissionStatusId;
+
             ///////////////
 
 
             return element;
           })
+          //this.ELEMENT_DATA.
+          //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
           if (this.ELEMENT_DATA.length == 0) {
             this.loading = false;
             this.PageLoading = false;

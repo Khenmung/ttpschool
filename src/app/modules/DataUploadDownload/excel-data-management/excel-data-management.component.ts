@@ -737,21 +737,27 @@ export class ExcelDataManagementComponent implements OnInit {
     this.jsonData.forEach((element, indx) => {
       slno = parseInt(indx) + 1;
 
-      let studentFilter = this.StudentList.filter(g => g.StudentId == element.StudentId);
+      let studentFilter = this.StudentList.filter(g => g.PID == element.PID);
       if (studentFilter.length == 0)
-        this.ErrorMessage += "Invalid StudentId at row " + slno + ":" + element.StudentId + "<br>";
-      let sectionFilter = this.Sections.filter(g => g.MasterDataName.toUpperCase() == element.Section.trim().toUpperCase());
-      if (sectionFilter.length == 0)
-        this.ErrorMessage += "Invalid section at row " + slno + ":" + element.Section + "<br>";
-      else {
-        element.Section = sectionFilter[0].MasterDataId;
+        this.ErrorMessage += "Invalid PID at row " + slno + ":" + element.PID + "<br>";
+      if (element.Section) {
+        let sectionFilter = this.Sections.filter(g => g.MasterDataName.toUpperCase() == element.Section.trim().toUpperCase());
+        if (sectionFilter.length == 0)
+          this.ErrorMessage += "Invalid section at row " + slno + ":" + element.Section + "<br>";
+        else {
+          element.Section = sectionFilter[0].MasterDataId;
+        }
       }
-      // let classFilter = this.Classes.filter(g => g.MasterDataName == element.Class);
-      // if (classFilter.length == 0)
-      //   this.ErrorMessage += "Invalid Class at row " + slno + ":" + element.Class + "<br>";
-      // else {
-      //   element.ClassId = classFilter[0].MasterDataId;
-      var _studentclass = this.StudentClassList.filter(f => f.StudentId == element.StudentId);
+      else
+        element.Section = 0;
+
+      let classFilter = this.Classes.filter(g => g.ClassName == element.ClassName);
+      if (classFilter.length == 0)
+        this.ErrorMessage += "Invalid Class at row " + slno + ":" + element.ClassName + "<br>";
+      else
+        element.ClassId = classFilter[0].ClassId;
+
+      var _studentclass = this.StudentClassList.filter(f => f.StudentId == studentFilter[0].StudentId);
       if (_studentclass.length > 0)
         element.StudentClassId = _studentclass[0].StudentClassId
       else
@@ -762,18 +768,32 @@ export class ExcelDataManagementComponent implements OnInit {
       if (_regularFeeTypeIds.length > 0)
         _regularFeeTypeId = _regularFeeTypeIds[0].FeeTypeId;
 
-      //if (this.ErrorMessage.length == 0) {
-      this.ELEMENT_DATA.push({
-        StudentId: +element.StudentId,
-        //ClassId: element.ClassId,
-        SectionId: element.Section,
-        RollNo: element.RollNo,
-        StudentClassId: element.StudentClassId,
-        FeeTypeId: _regularFeeTypeId,
-        BatchId: this.SelectedBatchId,
-        OrgId: this.loginDetail[0]["orgId"]
-      });
-      //}
+      if (this.ErrorMessage.length == 0) {
+        if (element.StudentClassId > 0) {
+          this.ELEMENT_DATA.push({
+            StudentId: +studentFilter[0].StudentId,
+            ClassId: element.ClassId,
+            SectionId: element.Section,
+            RollNo: element.RollNo ? element.RollNo : '',
+            StudentClassId: element.StudentClassId,
+            FeeTypeId: _regularFeeTypeId,
+            BatchId: this.SelectedBatchId,
+            OrgId: this.loginDetail[0]["orgId"]
+          });
+        }
+        else {
+          //without classId. dont update class.
+          this.ELEMENT_DATA.push({
+            StudentId: +studentFilter[0].StudentId,
+            SectionId: element.Section,
+            RollNo: element.RollNo ? element.RollNo : '',
+            StudentClassId: element.StudentClassId,
+            FeeTypeId: _regularFeeTypeId,
+            BatchId: this.SelectedBatchId,
+            OrgId: this.loginDetail[0]["orgId"]
+          });
+        }
+      }
     });
     ////console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
   }
@@ -1133,6 +1153,7 @@ export class ExcelDataManagementComponent implements OnInit {
     FileSaver.saveAs(data, "CSVFile" + new Date().getTime() + '.csv');
   }
   toUpdate = 0;
+  ErrorCount = 0;
   readAsJson() {
     try {
       this.loading = true;
@@ -1141,36 +1162,38 @@ export class ExcelDataManagementComponent implements OnInit {
 
         if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.CLASSROLLNOMAPPING)) {
           var noOfStudent = this.ELEMENT_DATA.length;
-          if(noOfStudent>300)
-          {
-            this.loading=false;
-            this.contentservice.openSnackBar("Max. no. of students is 300.",globalconstants.ActionText,globalconstants.RedBackground);
+          if (noOfStudent > 300) {
+            this.loading = false;
+            this.contentservice.openSnackBar("Max. no. of students is 300.", globalconstants.ActionText, globalconstants.RedBackground);
             return;
           }
-          this.ELEMENT_DATA.forEach((element, indx) => {
-            this.toUpdate -= 1;
-            this.studentData = [];
-            if (element["Active"] == undefined || element["Active"] == null || element["Active"] == '')
-              element["Active"] = 0;
+          else {
+            this.ELEMENT_DATA.forEach((element, indx) => {
+              this.toUpdate -= 1;
+              this.studentData = [];
+              if (!element["Active"])
+                element["Active"] = 0;
 
-            if (element.StudentClassId > 0) {
-              element.UpdatedDate = new Date();
-              element.UpdatedBy = this.loginDetail[0]["userId"];
-              element.Promoted = 0;
-              element.Active = 1;
-              element.Deleted = false;
-              //delete element.PID;
-              this.studentData.push(element);
-              this.updateStudentClass();
-            }
-            else {
-              element.CreatedDate = new Date();
-              element.CreatedBy = this.loginDetail[0]["userId"];
-              element.Promoted = 0;
-              this.studentData.push({ element });
-              this.saveStudentClass();
-            }
-          });
+              if (element.StudentClassId > 0) {
+                element.UpdatedDate = new Date();
+                element.UpdatedBy = this.loginDetail[0]["userId"];
+                element.Promoted = 0;
+                element.Active = 1;
+                element.Deleted = false;
+                //delete element.PID;
+                this.studentData.push(element);
+                this.updateStudentClass();
+              }
+              else {
+                element.CreatedDate = new Date();
+                element.CreatedBy = this.loginDetail[0]["userId"];
+                element.Promoted = 0;
+                this.studentData.push(element);
+                //console.log("student insert",this.studentData)
+                this.saveStudentClass();
+              }
+            });
+          }
         }
         else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTDATA)) {
           this.save();
@@ -1329,10 +1352,23 @@ export class ExcelDataManagementComponent implements OnInit {
   }
   saveStudentClass() {
     //console.log('data to save', this.studentData[0].element)
-    this.dataservice.postPatch('StudentClasses', this.studentData[0].element, 0, 'post')
+    this.dataservice.postPatch('StudentClasses', this.studentData[0], 0, 'post')
       .subscribe((result: any) => {
         //console.log('inserted');
-      }, error => console.log(error))
+        if (this.toUpdate == 0 && this.ErrorCount == 0) {
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          this.loading = false;
+        }
+        else if (this.toUpdate == 0 && this.ErrorCount > 0) {
+          this.contentservice.openSnackBar("Some items are not added due to error.", globalconstants.ActionText, globalconstants.BlueBackground);
+          this.loading = false;
+        }
+      },
+        error => {
+          console.log(error);
+          this.ErrorCount += 1;
+
+        })
   }
   GetStudentClasses() {
     this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenservice);
@@ -1348,9 +1384,9 @@ export class ExcelDataManagementComponent implements OnInit {
         if (data.value.length > 0) {
           this.StudentClassList = [...data.value];
         }
-        else {
-          this.contentservice.openSnackBar("No class student found.", globalconstants.ActionText, globalconstants.RedBackground);
-        }
+        // else {
+        //   this.contentservice.openSnackBar("No class student found.", globalconstants.ActionText, globalconstants.RedBackground);
+        // }
 
         this.loading = false; this.PageLoading = false;
       })
@@ -1389,21 +1425,21 @@ export class ExcelDataManagementComponent implements OnInit {
   }
   GetStudents() {
 
-    // let list: List = new List();
-    // list.fields = ["StudentId", "FirstName", "LastName", "Active"];
-    // list.PageName = "Students";
-    // list.filter = ["Active eq 1 and " + this.filterOrgId];
-    // //list.orderBy = "ParentId";
+    let list: List = new List();
+    list.fields = ["PID,StudentId", "FirstName", "LastName", "Active"];
+    list.PageName = "Students";
+    list.filter = ["Active eq 1 and " + this.filterOrgId];
+    //list.orderBy = "ParentId";
 
-    // this.dataservice.get(list)
-    //   .subscribe((data: any) => {
-    var _students: any = this.tokenservice.getStudents();
-    this.StudentList = _students.filter(s => s.Active == 1);
-    this.StudentList = this.StudentList.sort((a, b) => a.ParentId - b.ParentId);
-    this.NoOfStudent = this.StudentList.length;
-    this.GetStudentClasses();
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        var _students: any = [...data.value];// this.tokenservice.getStudents();
+        this.StudentList = _students.filter(s => s.Active == 1);
+        this.StudentList = this.StudentList.sort((a, b) => a.ParentId - b.ParentId);
+        this.NoOfStudent = this.StudentList.length;
+        this.GetStudentClasses();
 
-    //  })
+      })
   }
   SelectedApplicationName = '';
   GetMasterData() {

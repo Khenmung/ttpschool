@@ -62,7 +62,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Amount"
+                    <input [disabled]="element.FeeName=='Discount'" matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Amount"
                         [value]="element.Amount" autocomplete="Off">
                 </mat-form-field>
             </mat-cell>
@@ -72,7 +72,7 @@
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline" style="width: 200px;">
                     <mat-label>Month Year</mat-label>
-                    <mat-select [(ngModel)]="element.Month" 
+                    <mat-select [(ngModel)]="element.Month" [disabled]="element.FeeName=='Discount'"
                     (selectionChange)="UpdateActive(element,$event)">                
                         <mat-option [value]="0">select</mat-option>
                         <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
@@ -88,7 +88,7 @@
                 Active
             </mat-header-cell>
             <mat-cell *matCellDef="let element" style="justify-content: center;">
-                <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()"
+                <mat-checkbox [disabled]="element.FeeName=='Discount'" [checked]="element.Active" (click)="$event.stopPropagation()"
                     (change)="updateActive(element,$event)">
                 </mat-checkbox>
             </mat-cell>
@@ -115,7 +115,7 @@
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" style="display: flex;justify-content:baseline">
+        <mat-row *matRowDef="let row; columns: displayedColumns;" style="display: flex;align-items: baseline;">
         </mat-row>
     </mat-table>
     <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>

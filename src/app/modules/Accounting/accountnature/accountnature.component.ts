@@ -53,6 +53,8 @@ export class AccountNatureComponent implements OnInit {
     AccountName: '',
     ParentId: 0,
     DebitType: false,
+    BalanceSheetSequence:0,
+    IncomeStatementSequence:0,
     OrgId: 0,
     Active: 0,
   };
@@ -62,6 +64,8 @@ export class AccountNatureComponent implements OnInit {
     "AccountName",
     "ParentId",
     "DebitType",
+    "IncomeStatementSequence",
+    "BalanceSheetSequence",
     "Active",
     "Action",
   ];
@@ -147,6 +151,8 @@ export class AccountNatureComponent implements OnInit {
       AccountNatureId: 0,
       AccountName: '',
       DebitType: false,
+      IncomeStatementSequence:0,
+      BalanceSheetSequence:0,
       ParentId: 0,
       Active: 0,
       Action: true
@@ -176,6 +182,8 @@ export class AccountNatureComponent implements OnInit {
       "AccountName",
       "ParentId",
       "DebitType",
+      "IncomeStatementSequence",
+      "BalanceSheetSequence",
       "Active",
     ];
 
@@ -302,6 +310,8 @@ export class AccountNatureComponent implements OnInit {
           this.AccountNatureData.AccountName = row.AccountName;
           this.AccountNatureData.ParentId = row.ParentId;
           this.AccountNatureData.DebitType = row.DebitType;
+          this.AccountNatureData.IncomeStatementSequence = row.IncomeStatementSequence;
+          this.AccountNatureData.BalanceSheetSequence = row.BalanceSheetSequence;
           this.AccountNatureData.OrgId = this.LoginUserDetail[0]["orgId"];
 
           if (row.AccountNatureId == 0) {

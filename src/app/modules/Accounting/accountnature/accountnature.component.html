@@ -66,6 +66,26 @@
             </mat-checkbox>
         </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="BalanceSheetSequence">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>BS Sequence
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+                <input matInput autocomplete="Off" [max]="255" (blur)="onBlur(element)"
+                    [value]="element.BalanceSheetSequence" [(ngModel)]="element.BalanceSheetSequence">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="IncomeStatementSequence">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>P&L Sequence
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+                <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
+                    [value]="element.IncomeStatementSequence" [(ngModel)]="element.IncomeStatementSequence">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
     <ng-container matColumnDef="Active">
         <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
         <mat-cell *matCellDef="let element">

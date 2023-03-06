@@ -968,7 +968,7 @@ export class PromoteclassComponent implements OnInit {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0,row.StudentClassId,0)
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0, row.StudentClassId, 0)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
@@ -1056,35 +1056,35 @@ export class PromoteclassComponent implements OnInit {
   }
   GetStudents() {
 
-    // let list: List = new List();
-    // list.fields = [
-    //   'PID',
-    //   'StudentId',
-    //   'FirstName',
-    //   'LastName'
-    // ];
+    let list: List = new List();
+    list.fields = [
+      'PID',
+      'StudentId',
+      'FirstName',
+      'LastName'
+    ];
 
-    // list.PageName = "Students";
-    // //list.lookupFields = ["Student"]
-    // list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.PageName = "Students";
+    //list.lookupFields = ["Student"]
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and Active eq 1'];
 
-    // this.dataservice.get(list)
-    //   .subscribe((data: any) => {
-    //debugger;
-    //  //console.log('data.value', data.value);
-    var _students: any = this.tokenstorage.getStudents();
-    _students = _students.filter(a => a.Active == 1);
-    this.Students = _students.map(student => {
-      var _lastname = student.LastName == null ? '' : " " + student.LastName;
-      //student.StudentId
-      //  StudentId: student.StudentId,
-      student.Name = student.PID + '-' + student.FirstName + _lastname;
-      return student;
-      //}
-    })
-    this.loading = false;
-    this.PageLoading = false;
-    //  })
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        //  //console.log('data.value', data.value);
+        var _students: any = [...data.value]; //this.tokenstorage.getStudents();
+        //_students = _students.filter(a => a.Active == 1);
+        this.Students = _students.map(student => {
+          var _lastname = student.LastName == null ? '' : " " + student.LastName;
+          //student.StudentId
+          //  StudentId: student.StudentId,
+          student.Name = student.PID + '-' + student.FirstName + _lastname;
+          return student;
+          //}
+        })
+        this.loading = false;
+        this.PageLoading = false;
+      })
   }
   GetMasterData() {
     this.allMasterData = this.tokenstorage.getMasterData();

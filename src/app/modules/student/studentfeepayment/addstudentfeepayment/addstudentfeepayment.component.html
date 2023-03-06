@@ -109,7 +109,7 @@
                                     <span style="margin-right: 10px;">{{element.FeeName}}</span>
                                     <div *ngIf="element.AmountEditable==1" style="margin-right: 10px;">
                                         <mat-form-field style="width: 170px;">
-                                            <input matInput [(ngModel)]="element.Reference" [value]="element.Reference"
+                                            <input matInput [(ngModel)]="element.ShortText" [value]="element.ShortText"
                                                 autocomplete="Off" [maxlength]="30">
                                         </mat-form-field>
                                     </div>
@@ -153,6 +153,17 @@
                                 <mat-footer-cell *matFooterCellDef
                                     style="display:flex;justify-content:flex-end;padding-right: 15px;">
                                     {{ TotalAmount}}
+                                </mat-footer-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="Action">
+                                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                    <button matTooltip="remove item" [disabled]="loading || element.BaseAmount>0 || Permission=='read'" mat-mini-fab (click)="remove(element)">
+                                        <mat-icon>cancel</mat-icon>
+                                    </button>
+                                </mat-cell>
+                                <mat-footer-cell *matFooterCellDef>
+
                                 </mat-footer-cell>
                             </ng-container>
                             <mat-header-row *matHeaderRowDef="billDisplayedColumns"></mat-header-row>

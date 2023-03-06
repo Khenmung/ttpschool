@@ -1,66 +1,101 @@
-mat-header-cell{
-    display: grid;
+mat-header-cell {
+    display        : grid;
     justify-content: center;
 }
-.mat-cell,.mat-header-cell,.mat-footer-cell{
+html,body{
+    font-family: Smooch;
+}
+.mat-cell,
+.mat-header-cell,
+.mat-footer-cell {
     border-collapse: collapse;
-    border-width: 0px 1px 0px 0px;
-    border-color: lightgray;
-    border-style: solid;
-    padding: 5px;    
+    border-width   : 0px 1px 0px 0px;
+    border-color   : lightgray;
+    border-style   : solid;
+    padding        : 5px;
     
+    //color: black;
 }
-.mat-column-index{
+
+mat-header-row,
+mat-row,
+mat-footer-row {
+    min-height: 34px;
+   
+//    border    : 1px solid gray;
+}
+
+.mat-column-index {
     justify-content: center;
-    flex: 1 1 50px;
+    flex           : 1 1 50px;
 }
-.mat-column-SlNo{
-    display: grid;
+
+.mat-column-SlNo {
+    display    : grid;
     place-items: center;
-    flex: 1 1 50px;
+    flex       : 1 1 50px;
 }
-.mat-column-Amount,.mat-column-BaseAmount,.mat-column-Balance{
-    display: flex;
+
+.mat-column-Amount,
+.mat-column-BaseAmount,
+.mat-column-Balance {
+    display        : flex;
     justify-content: flex-end;
+    flex           : 1 1 80px;
+}
+
+.mat-column-ReceiptNo {
     flex: 1 1 100px;
 }
-.mat-column-ReceiptNo{
-    flex: 1 1 100px;
+
+.mat-column-FeeName {
+    flex: 1 1 250px;
 }
-.mat-column-FeeName{
-    flex: 1 1 200px;
-}
-.mat-column-PaymentAmount,.mat-column-OfflineReceiptNo,.mat-column-TotalAmount{
-    display:flex;
+
+.mat-column-PaymentAmount,
+.mat-column-OfflineReceiptNo,
+.mat-column-TotalAmount {
+    display        : flex;
     justify-content: center;
-    flex: 1 1 150px;
+    flex           : 1 1 150px;
 }
-.mat-column-ReceiptDate,.mat-column-Active, .mat-column-Action{
-    display: flex;
+
+.mat-column-ReceiptDate,
+.mat-column-Active,
+.mat-column-Action {
+    display        : flex;
     justify-content: center;
-    flex: 1 1 150px;
+    flex           : 1 1 150px;
 }
-.divCls{
+
+.divCls {
     font-family: Arial, Helvetica, sans-serif;
-    padding:15px 15px 10px 15px;
+    
+    padding    : 15px 15px 10px 15px;
 }
-button{
+
+button {
     margin-right: 15px;
 }
-div{
+
+div {
     margin-right: 0px !important;
 }
-.mat-raised-button
-{
+
+.mat-raised-button {
     margin-right: 15px;
 }
+
 .mat-row {
     min-height: 43px !important;
 }
-.mat-table{
+
+.mat-table {
     min-width: 350px;
 }
-.mat-column-Active:hover{
-    cursor: pointer;
+
+.mat-column-Active:hover {
+    cursor    : pointer;
     background: #b4b4b433;
-  }
+}
+

@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit {
     }
     else {
       this.loggedIn = true;
-      this.userName = localStorage.getItem('username');
+      this.userName = localStorage.getItem('email');
       this.logoPath = this.LoginUserDetails[0].logoPath;
       if (this.logoPath == undefined) {
         this.logoPath = "assets/images/ttplogo1.png"

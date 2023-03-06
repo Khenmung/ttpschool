@@ -81,3 +81,16 @@
         </span>
     </div>
 </div>
+<div style="margin-top:30px;" data-expand="false" #expandWrap>
+    <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+        <mat-icon>info</mat-icon>
+        Guides..
+    </span>
+    <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+        <ul>
+            <li>
+                <div>Whenever student class is uploaded, <b>Fee Type</b> of all uploaded students will be reset to regular</div>
+            </li>            
+        </ul>
+    </span>
+</div>

@@ -39,32 +39,35 @@
             <div style="padding: 5px;"><b>Print/Cancel Receipt</b></div>
             <div style="border:1px solid lightgray;padding-bottom: 15px;" class="divCls" id="printSection">
                 <div fxLayout="column" fxLayoutAlign="space-around center">
-                    <div *ngFor="let item of ReceiptHeading;let i=index">
+                    <div style="width:100%;display:flex;justify-content: center;flex-direction: column;"
+                        *ngFor="let item of ReceiptHeading;let i=index">
                         <span [ngStyle]="item.Description" [innerHTML]="item.MasterDataName"></span>
                     </div>
                 </div>
-                <br>
-                <div fxLayout="row" fxLayoutAlign="space-between center">
-                    <span>
-                        <b>Receipt No.</b>: {{studentInfoTodisplay.ReceiptNo}}
-                    </span>
-                    <div fxLayout="row" fxLayoutAlign="space-around center">
-                        <span>
-                            <span><strong>Offline Receipt No.: </strong></span>
-                            {{studentInfoTodisplay.OffLineReceiptNo}}
-                        </span>
+
+                <div style="display:flex; justify-content: space-between ;margin-right: 15px;">
+                    <div style="display:flex;flex-direction: column;">
+                        <div style="display:flex">
+                            <div style="font-weight:500;">Receipt No.</div>: {{studentInfoTodisplay.ReceiptNo}}
+                        </div>
+                        <div style="display:flex;justify-content: center;margin-right: 15px;">
+                            <span>
+                                <span><strong>Offline Receipt No.: </strong></span>
+                                {{studentInfoTodisplay.OffLineReceiptNo}}
+                            </span>
+                        </div>
                     </div>
-                    <span>
-                        <b>Bill Date</b>: {{studentInfoTodisplay.ReceiptDate|date:'dd/MM/yyyy'}}
-                    </span>
+                    <div style="display: flex;justify-content: flex-end;">
+                        <b>Date</b>: {{studentInfoTodisplay.ReceiptDate|date:'dd/MM/yyyy'}}
+                    </div>
                 </div>
                 <br>
                 <div fxLayout="row" fxLayoutAlign="space-between center">
-                    <span style="padding: 15px 15px 15px 0px;">
+                    <span style="padding: 0px 15px 15px 0px;">
                         Received with thanks from <b>{{studentInfoTodisplay.StudentName}}</b>,
-                        Admission No. - <b>{{studentInfoTodisplay.AdmissionNo}}</b>,
-                        {{studentInfoTodisplay.StudentClassName}}, Sec - {{studentInfoTodisplay.SectionName}},
-                        Roll no. - {{studentInfoTodisplay.RollNo}}.
+                        PID - <b>{{studentInfoTodisplay.PID}}</b>,
+                        {{studentInfoTodisplay.StudentClassName}}, Sec - <b>{{studentInfoTodisplay.SectionName}}</b>,
+                        Roll no. -<b> {{studentInfoTodisplay.RollNo}}</b>.
                     </span>
                 </div>
                 <div style="border-collapse: collapse; border: 1px solid lightgray;">
@@ -130,12 +133,13 @@
                         <div><b>Payment Type:</b></div>
                         <div style="margin-left:15px">{{PaymentType}}</div>
                     </div>
-                    <div style="display: flex;justify-content: flex-end; padding: 30px;margin-right:20px;margin-top: 60px;">
+                    <!-- <div style="display: flex;justify-content: flex-end; padding: 15px;margin-right:30px;">
                         <div>Accountant</div>
-                    </div>
+                    </div> -->
                 </div>
                 <div style="margin:15px;justify-content: center;width: 100%;display: flex;">
-                    <div><i>This is a computer-generated document. No signature is required.</i></div>
+                    <div style="font-size:smaller;font-style: italic;">This is a computer-generated document. No
+                        signature is required.</div>
                 </div>
             </div>
             <hr>

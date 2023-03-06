@@ -361,7 +361,7 @@ export class LedgerAccountComponent implements OnInit {
     //debugger;
     this.loading = true;
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and Active eq 1';
     var AccountNatureId = this.searchForm.get("searchAccountNatureId").value
     var AccountGroupId = this.searchForm.get("searchAccountGroupId").value
     var AccountSubGroupId = this.searchForm.get("searchAccountSubGroupId").value
@@ -420,6 +420,7 @@ export class LedgerAccountComponent implements OnInit {
         if (this.GeneralLedgerList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
+        console.log("this.GeneralLedgerList",this.GeneralLedgerList);
         this.dataSource = new MatTableDataSource<IGeneralLedger>(this.GeneralLedgerList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
