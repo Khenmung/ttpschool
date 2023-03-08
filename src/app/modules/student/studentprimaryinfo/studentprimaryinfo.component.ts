@@ -201,7 +201,7 @@ export class studentprimaryinfoComponent implements OnInit {
     this.StudentId = this.tokenService.getStudentId();
     this.StudentClassId = this.tokenService.getStudentClassId()
   }
-
+  FeePaymentPermission='';
   ngOnInit(): void {
     // this.servicework.activateUpdate().then(() => {
     //   this.servicework.checkForUpdate().then((value) => {
@@ -221,6 +221,11 @@ export class studentprimaryinfoComponent implements OnInit {
         //this.tabNames
       }
       if (this.Permission != 'deny') {
+        var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+        if (perObj.length > 0) {
+          this.FeePaymentPermission = perObj[0].permission;
+        }
+        console.log("this.FeePaymentPermission ",this.FeePaymentPermission );
         this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
         this.getFields('Student Module');
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
@@ -274,6 +279,55 @@ export class studentprimaryinfoComponent implements OnInit {
       this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
     }
     this.OnBlur();
+  }
+  feepayment() {
+    this.generateDetail();
+    //this.SaveIds();
+    this.route.navigate(['/edu/feepayment']);
+  }
+  // SaveIds() {
+  //   debugger;
+  //   var _ClassId = 0;
+  //   //if (element.StudentClasses.length > 0) {
+  //   if (element.StudentClasses != undefined) {
+  //     this.StudentClassId = element.StudentClassId;
+  //     _ClassId = element.ClassId;
+  //   }
+
+  //   this.StudentId = element.StudentId;
+
+  //   this.tokenService.saveStudentClassId(this.StudentClassId + "");
+  //   this.tokenService.saveClassId(_ClassId + "");
+  //   this.tokenService.saveStudentId(this.StudentId + "");
+
+  // }
+  generateDetail() {
+    let StudentName = this.PID + ' ' + this.studentForm.get("FirstName").value +
+     this.studentForm.get("LastName").value + ',' + this.studentForm.get("FatherName").value + ', ' + 
+     this.studentForm.get("MotherName").value + ', ';
+
+    let studentclass = this.Students.filter(sid => sid.StudentId == this.StudentId);
+    if (studentclass.length > 0) {
+      var _clsName = '';
+      var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
+      if (objcls.length > 0)
+        _clsName = objcls[0].ClassName
+
+      var _sectionName = '';
+      var sectionObj = this.Sections.filter(f => f.MasterDataId == studentclass[0].SectionId)
+      if (sectionObj.length > 0)
+        _sectionName = sectionObj[0].MasterDataName;
+      this.StudentClassId = studentclass[0].StudentClassId
+      StudentName += "-" + _clsName + "-" + _sectionName + "-" + studentclass[0].RollNo;
+    }
+
+    this.shareddata.ChangeStudentName(StudentName);
+
+    //this.shareddata.ChangeStudentClassId(this.StudentClassId);
+    // this.tokenService.saveStudentClassId(this.StudentClassId.toString());
+    // this.tokenService.saveStudentId(element.StudentId);
+    //this.shareddata.ChangeStudentId(element.StudentId);
+
   }
   Sections = [];
   GetMasterData() {
@@ -459,7 +513,7 @@ export class studentprimaryinfoComponent implements OnInit {
     }
 
   }
-
+PID=0;
   save() {
     debugger;
     this.studentForm.patchValue({ AlternateContact: "" });
@@ -477,6 +531,7 @@ export class studentprimaryinfoComponent implements OnInit {
             this.studentForm.patchValue({
               StudentId: result.StudentId
             })
+            this.PID =result.PID;
             this.StudentId = result.StudentId;
             // if (result != null && result.UserId != "")
             //   this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -485,6 +540,7 @@ export class studentprimaryinfoComponent implements OnInit {
 
             this.StudentClassId = result.StudentClassId;
             this.loading = false; this.PageLoading = false;
+            this.tokenService.savePID(this.PID + "")
             this.tokenService.saveStudentId(this.StudentId + "")
             this.tokenService.saveStudentClassId(this.StudentClassId + "");
 

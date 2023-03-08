@@ -145,7 +145,7 @@
                                 <mat-cell *matCellDef="let element" style="justify-content: end;">
                                     <mat-form-field>
                                         <input style="text-align: right" (keyup)="onBlur(element)"
-                                            [disabled]="element.AmountEditable==0" matInput max="100000"
+                                            [disabled]="element.AmountEditable==0 || element.FeeName=='Discount'" matInput max="100000"
                                             [(ngModel)]="element.Amount" [value]="element.Amount" [maxlength]="5"
                                             autocomplete="Off">
                                     </mat-form-field>

@@ -7,7 +7,7 @@
             <div>
                 <mat-form-field appearance="outline" style="width: 100px;">
                     <mat-label>PID</mat-label>
-                    <input formControlName="searchPID" autocomplete="Off" matInput [maxlength]="10">
+                    <input formControlName="searchPID" onfocus="this.select()" autocomplete="Off" matInput [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="300">
                     <mat-label>Student</mat-label>

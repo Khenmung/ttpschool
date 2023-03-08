@@ -462,7 +462,7 @@ export class HomeDashboardComponent implements OnInit {
   }
 
   GetStudents(selectedApp) {
-    this.Students=[];
+    this.Students = [];
     let list: List = new List();
     list.fields = [
       'StudentId',
@@ -485,7 +485,7 @@ export class HomeDashboardComponent implements OnInit {
     ];
     list.PageName = "Students";
     //list.lookupFields=["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId +";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo)"]
-    var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"];
+    var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
       standardfilter += " and StudentId eq " + localStorage.getItem("studentId");
     }
@@ -496,9 +496,11 @@ export class HomeDashboardComponent implements OnInit {
         this.loading = true;
         var _classNameobj = [];
         var _className = '';
+        var _studentClassId = 0;
         data.value.forEach(d => {
           _classNameobj = [];
           _className = '';
+          _studentClassId = 0;
           var studcls = this.StudentClasses.filter(f => f.StudentId == d.StudentId);
           if (studcls.length > 0) {
             _classNameobj = this.Classes.filter(c => c.ClassId == studcls[0].ClassId);
@@ -509,17 +511,20 @@ export class HomeDashboardComponent implements OnInit {
             var _sectionobj = this.Sections.filter(f => f.MasterDataId == studcls[0].SectionId);
             if (_sectionobj.length > 0)
               _Section = _sectionobj[0].MasterDataName;
-            var _lastname = d.LastName == null ? '' : " " + d.LastName;
             var _RollNo = studcls[0].RollNo;
-            var _name = d.FirstName + _lastname;
-            var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
-            d.StudentClassId = studcls[0].StudentClassId;
-            d.Name = _fullDescription;
-            d.ClassName = _className;
-            d.Section = _Section;
-            d.StudentClasses = studcls;
-            this.Students.push(d);
+            _studentClassId = studcls[0].StudentClassId;
           }
+          var _lastname = d.LastName == null ? '' : " " + d.LastName;
+
+          var _name = d.FirstName + _lastname;
+          var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
+          d.StudentClassId = _studentClassId;
+          d.Name = _fullDescription;
+          d.ClassName = _className;
+          d.Section = _Section;
+          d.StudentClasses = studcls;
+          this.Students.push(d);
+
         })
         this.tokenStorage.saveStudents(this.Students);
         //this.GetMasterData(SelectedAppId, selectedApp);

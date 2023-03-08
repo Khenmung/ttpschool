@@ -274,7 +274,7 @@ export class ExamsComponent implements OnInit {
     list.PageName = "Exams";
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and BatchId eq " + this.SelectedBatchId];
-    list.orderBy = "Active desc";
+    //list.orderBy = "Active desc";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

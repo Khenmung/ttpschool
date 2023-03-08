@@ -14,6 +14,7 @@ const PERMITTED_APPS = 'Permitted_Apps';
 const CURRENTBATCHSTARTEND = 'CurrentBatchStartEnd';
 const SELECTEDBATCHSTARTEND = 'SelectedBatchStartEnd';
 const STUDENTID = 'StudentId';
+const PID = 'PID';
 const CLASSID = 'ClassId';
 const STUDENTCLASSID = 'StudentClassId';
 const EMPLOYEEID = 'employeeId';
@@ -177,6 +178,10 @@ export class TokenStorageService {
     localStorage.removeItem(STUDENTID);
     localStorage.setItem(STUDENTID, token);
   }
+  public savePID(token: string): void {
+    localStorage.removeItem(PID);
+    localStorage.setItem(PID, token);
+  }
   public saveEmployeeId(token: string): void {
     localStorage.removeItem(EMPLOYEEID);
     localStorage.setItem(EMPLOYEEID, token);
@@ -209,6 +214,9 @@ export class TokenStorageService {
   }
   public getCheckEqualBatchId(): string | null {
     return localStorage.getItem(CHECKBATCHID);
+  }
+  public getPID(): number | null {
+    return +localStorage.getItem(PID);
   }
   public getStudentId(): number | null {
     return +localStorage.getItem(STUDENTID);

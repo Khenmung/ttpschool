@@ -97,13 +97,13 @@ export class searchstudentComponent implements OnInit {
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
-    // this.servicework.activateUpdate().then(() => {
-    //   this.servicework.checkForUpdate().then((value) => {
-    //     if (value) {
-    //       location.reload();
-    //     }
-    //   })
-    // })
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
@@ -354,27 +354,8 @@ export class searchstudentComponent implements OnInit {
     this.SaveIds(element);
     this.route.navigate(['/edu/progressreport/']);
   }
-  feepayment(element) {
-    this.generateDetail(element);
-    this.SaveIds(element);
-    this.route.navigate(['/edu/feepayment']);
-  }
-  SaveIds(element) {
-    debugger;
-    var _ClassId = 0;
-    //if (element.StudentClasses.length > 0) {
-    if (element.StudentClasses != undefined) {
-      this.StudentClassId = element.StudentClassId;
-      _ClassId = element.ClassId;
-    }
-
-    this.StudentId = element.StudentId;
-
-    this.token.saveStudentClassId(this.StudentClassId + "");
-    this.token.saveClassId(_ClassId + "");
-    this.token.saveStudentId(this.StudentId + "");
-
-  }
+  
+  
 
   ClearData() {
     this.ELEMENT_DATA = [];
@@ -393,6 +374,11 @@ export class searchstudentComponent implements OnInit {
     var _classId = this.studentSearchForm.get("searchClassId").value;
     var _sectionId = this.studentSearchForm.get("searchSectionId").value;
     this.StudentOfClass = this.Students.filter(f => f.ClassId == _classId && f.SectionId == _sectionId);
+  }
+  feepayment(element) {
+    this.generateDetail(element);
+    this.SaveIds(element);
+    this.route.navigate(['/edu/feepayment']);
   }
   generateDetail(element) {
     let StudentName = element.PID + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
@@ -418,6 +404,22 @@ export class searchstudentComponent implements OnInit {
     this.token.saveStudentClassId(this.StudentClassId.toString());
     this.token.saveStudentId(element.StudentId);
     //this.shareddata.ChangeStudentId(element.StudentId);
+
+  }
+  SaveIds(element) {
+    debugger;
+    var _ClassId = 0;
+    //if (element.StudentClasses.length > 0) {
+    if (element.StudentClasses != undefined) {
+      this.StudentClassId = element.StudentClassId;
+      _ClassId = element.ClassId;
+    }
+
+    this.StudentId = element.StudentId;
+
+    this.token.saveStudentClassId(this.StudentClassId + "");
+    this.token.saveClassId(_ClassId + "");
+    this.token.saveStudentId(this.StudentId + "");
 
   }
   new() {

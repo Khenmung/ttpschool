@@ -181,7 +181,6 @@
                             <mat-datepicker #AdmissionDate></mat-datepicker>
                         </mat-form-field>
                     </mat-grid-tile>
-
                 </mat-grid-list>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
@@ -202,6 +201,11 @@
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
+                </button>
+                <button [disabled]="loading || StudentClassId==0" mat-raised-button color="accent"
+                    *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'" matTooltip="Fees"
+                    (click)="feepayment()">
+                    <mat-icon>payments</mat-icon> Fees
                 </button>
             </mat-card-actions>
             <!-- </mat-card> -->
@@ -306,6 +310,11 @@
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
                 </button>
+                <button [disabled]="loading || StudentClassId==0" mat-raised-button color="accent"
+                    *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'" matTooltip="Fees"
+                    (click)="feepayment()">
+                    <mat-icon>payments</mat-icon> Fees
+                </button>
             </mat-card-actions>
         </mat-tab>
         <mat-tab>
@@ -351,6 +360,11 @@
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
+                </button>
+                <button [disabled]="loading || StudentClassId==0" mat-raised-button color="accent"
+                    *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'" matTooltip="Fees"
+                    (click)="feepayment()">
+                    <mat-icon>payments</mat-icon> Fees
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -411,7 +425,7 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    
+
                     <mat-form-field appearance="outline">
                         <mat-label>Identification Mark</mat-label>
                         <input formControlName="IdentificationMark" (blur)="OnBlur()" autocomplete="Off" matInput
@@ -454,6 +468,11 @@
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
+                </button>
+                <button [disabled]="loading || StudentClassId==0" mat-raised-button color="accent"
+                    *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'" matTooltip="Fees"
+                    (click)="feepayment()">
+                    <mat-icon>payments</mat-icon> Fees
                 </button>
             </mat-card-actions>
         </mat-tab>

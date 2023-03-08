@@ -65,7 +65,7 @@ export class ContentService implements OnInit {
   }
   GetExams(pOrgId, pSelectedBatchId) {
 
-    var orgIdSearchstr = 'and OrgId eq ' + pOrgId + ' and BatchId eq ' + pSelectedBatchId;
+    var orgIdSearchstr = 'OrgId eq ' + pOrgId + ' and BatchId eq ' + pSelectedBatchId + " and ReleaseResult eq 1 and Active eq 1";
 
     let list: List = new List();
     list.fields = [
@@ -78,7 +78,7 @@ export class ContentService implements OnInit {
       "ReleaseResult",
       "AttendanceStartDate"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [orgIdSearchstr];
     return this.dataservice.get(list)
 
   }
