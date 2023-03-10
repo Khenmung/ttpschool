@@ -354,8 +354,8 @@ export class searchstudentComponent implements OnInit {
     this.SaveIds(element);
     this.route.navigate(['/edu/progressreport/']);
   }
-  
-  
+
+
 
   ClearData() {
     this.ELEMENT_DATA = [];
@@ -385,7 +385,8 @@ export class searchstudentComponent implements OnInit {
 
     let studentclass = this.Students.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0) {
-      var _clsName = '';
+      var _clsName = '', _rollNo = '';
+      _rollNo = studentclass[0].RollNo ? studentclass[0].RollNo : '';
       var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
       if (objcls.length > 0)
         _clsName = objcls[0].ClassName
@@ -395,7 +396,7 @@ export class searchstudentComponent implements OnInit {
       if (sectionObj.length > 0)
         _sectionName = sectionObj[0].MasterDataName;
       this.StudentClassId = studentclass[0].StudentClassId
-      StudentName += "-" + _clsName + "-" + _sectionName + "-" + studentclass[0].RollNo;
+      StudentName += "-" + _clsName + "-" + _sectionName + "-" + _rollNo;
     }
 
     this.shareddata.ChangeStudentName(StudentName);
@@ -826,7 +827,7 @@ export class searchstudentComponent implements OnInit {
     //})
   }
   AssignNameClassSection(pStudents) {
-    this.Students=[];
+    this.Students = [];
     pStudents.forEach(student => {
       var _RollNo = '';
       var _name = '';

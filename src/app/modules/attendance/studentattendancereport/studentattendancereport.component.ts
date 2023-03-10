@@ -159,7 +159,7 @@ export class StudentattendancereportComponent implements OnInit {
   }
   StudentAttendanceList = [];
   GetStudentAttendance() {
-    //debugger;
+    debugger;
     var SelectedMonth = this.searchForm.get("searchMonth").value;
     var SelectedClassId = this.searchForm.get("searchClassId").value;
     var SelectedSectionId = this.searchForm.get("searchSectionId").value;
@@ -244,18 +244,18 @@ export class StudentattendancereportComponent implements OnInit {
           if (existing.length > 0) {
             //the whole month for an employee.
 
-            for (let day = 1; day <= lastDateOfMonth; day++) {
-              tempdate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 2), day);
+            for (let dayCount = 1; dayCount <= lastDateOfMonth; dayCount++) {
+              tempdate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 2), dayCount);
               var wd = tempdate.getDay();
-              dayHead = day + " " + this.WeekDays[wd];
+              dayHead = dayCount + " " + this.WeekDays[wd];
               if (this.displayedColumns.indexOf(dayHead) == -1) {
                 this.displayedColumns.push(dayHead);
               }
 
-              var dayattendance = existing.filter(e => new Date(e.AttendanceDate).getDate() == day);
+              var dayattendance = existing.filter(e => new Date(e.AttendanceDate).getDate() == dayCount);
               if (dayattendance.length > 0) {
                 stud[dayHead] = dayattendance[0].AttendanceStatus == 1 ? 'P' : dayattendance[0].Approved ? 'L' : '-';
-                if (dayattendance[0].AttendanceStatus == 0 || dayattendance[0].AttendanceStatus == null)
+                if (dayattendance[0].AttendanceStatus == 0 || !dayattendance[0].AttendanceStatus)
                   absent += 1;
                 else
                   Present += 1;
@@ -321,7 +321,7 @@ export class StudentattendancereportComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
 
     let list: List = new List();
     list.fields = ["HolidayId,StartDate,EndDate"];

@@ -5,3 +5,6 @@ mat-form-field{
 mat-cell,mat-header-cell{
     border-right: 1px solid lightgray;
 }
+mat-header-row,mat-row,mat-footer-row{
+    min-height: 35px;
+}

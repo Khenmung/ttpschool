@@ -2,27 +2,28 @@ mat-header-cell {
     display        : grid;
     justify-content: center;
 }
-html,body{
-    font-family: Smooch;
-}
+// html,body{
+//     font-family: Smooch;
+// }
 .mat-cell,
 .mat-header-cell,
 .mat-footer-cell {
     border-collapse: collapse;
-    border-width   : 0px 1px 0px 0px;
-    border-color   : lightgray;
-    border-style   : solid;
+    border-right   : 1px solid lightgray;
+    //border-right-color   : lightgray;
+    //border-style   : solid;
     padding        : 5px;
-    
+    color:black !important;
     //color: black;
 }
 
 mat-header-row,
 mat-row,
 mat-footer-row {
-    min-height: 34px;
+    min-height: 30px;
+    border-collapse: collapse;
+    //border    : 1px solid lightgray;
    
-//    border    : 1px solid gray;
 }
 
 .mat-column-index {
@@ -68,9 +69,11 @@ mat-footer-row {
     flex           : 1 1 150px;
 }
 
-.divCls {
-    font-family: Arial, Helvetica, sans-serif;
-    
+.divCls:nth-child(9) {
+    //font-family: Arial, Helvetica, sans-serif; 
+    margin: 15px;   
+    font-family: 'VT323', monospace,Arial, Helvetica, sans-serif;
+    font-size:large;
     padding    : 15px 15px 10px 15px;
 }
 

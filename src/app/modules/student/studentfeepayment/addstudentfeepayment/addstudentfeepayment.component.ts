@@ -417,7 +417,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             }
             else {
               //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
-              var _lastname = data.value[0].Student.LastName == null || data.value[0].Student.LastName == '' ? '' : " " + data.value[0].Student.LastName;
+              var _lastname = !data.value[0].Student.LastName || data.value[0].Student.LastName == '' ? '' : " " + data.value[0].Student.LastName;
               this.studentInfoTodisplay.AdmissionNo = data.value[0].AdmissionNo;
               this.studentInfoTodisplay.PID = data.value[0].Student.PID;
               this.studentInfoTodisplay.ClassId = data.value[0].ClassId;

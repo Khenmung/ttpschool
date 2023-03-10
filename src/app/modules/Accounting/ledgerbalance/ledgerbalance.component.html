@@ -9,7 +9,7 @@
         <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
         <mat-datepicker #FromDate></mat-datepicker>
     </mat-form-field>
-     <mat-form-field appearance="outline" [style.width.px]="150">
+    <mat-form-field appearance="outline" [style.width.px]="150">
         <mat-label>To</mat-label>
         <input formControlName="searchToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
         <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
@@ -34,63 +34,71 @@
 
 <mat-table #table [dataSource]="dataSource" matSort>
 
-    <ng-container matColumnDef="AccountName">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Account
+    <ng-container matColumnDef="DrDate">
+        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Date
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.AccountName}}
+            {{element.DrDate|date:'dd/mm/yyyy'}}
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef><b>Total</b>
+        <mat-footer-cell *matFooterCellDef><b>Debit Balance</b>
         </mat-footer-cell>
     </ng-container>
-    <ng-container matColumnDef="ShortText">
+    <ng-container matColumnDef="DrShortText">
         <mat-header-cell *matHeaderCellDef>Description
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.ShortText}}
+            {{element.DrShortText}}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
-        </mat-footer-cell>       
+        </mat-footer-cell>
     </ng-container>
-    <ng-container matColumnDef="Reference">
-        <mat-header-cell *matHeaderCellDef>Reference
+    <ng-container matColumnDef="DrAmt">
+        <mat-header-cell *matHeaderCellDef>Amount
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.Reference}}
+            {{element.DrAmt}}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+            {{DebitBalance}}
+        </mat-footer-cell>
+    </ng-container>
+    <ng-container matColumnDef="CrDate">
+        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Date
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.CrDate|date:'dd/mm/yyyy'}}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef><b>Credit Balance</b>
+        </mat-footer-cell>
+    </ng-container>
+    <ng-container matColumnDef="CrShortText">
+        <mat-header-cell *matHeaderCellDef>Description
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.CrShortText}}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
         </mat-footer-cell>
     </ng-container>
-    <ng-container matColumnDef="Dr">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Dr.
+    <ng-container matColumnDef="CrAmt">
+        <mat-header-cell *matHeaderCellDef>Amount
         </mat-header-cell>
-        <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-            {{element.Dr}}
+        <mat-cell *matCellDef="let element">
+            {{element.CrAmt}}
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef style="display: flex;justify-content: center;">
-            {{TotalDebit}}
+        <mat-footer-cell *matFooterCellDef>
+            {{CreditBalance}}
         </mat-footer-cell>
     </ng-container>
-    <ng-container matColumnDef="Cr">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Cr.
+    <ng-container matColumnDef="Debit">
+        <mat-header-cell *matHeaderCellDef [attr.colspan]="2">Debit
         </mat-header-cell>
-        <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-            {{element.Cr}}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef style="display: flex;justify-content: center;">
-            {{TotalCredit}}
-        </mat-footer-cell>
     </ng-container>
-    <ng-container matColumnDef="Balance">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Balance
+    <ng-container matColumnDef="Credit">
+        <mat-header-cell *matHeaderCellDef [attr.colspan]="2">Credit
         </mat-header-cell>
-        <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-            {{element.Balance}}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef style="display: flex;justify-content: center;">
-         
-        </mat-footer-cell>
     </ng-container>
+    <mat-header-row *matHeaderRowDef="headercolumns"></mat-header-row>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
     <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">

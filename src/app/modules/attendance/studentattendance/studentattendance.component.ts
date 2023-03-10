@@ -424,7 +424,7 @@ export class StudentAttendanceComponent implements OnInit {
             this.StudentAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentAttendanceData["UpdatedDate"];
             delete this.StudentAttendanceData["UpdatedBy"];
-            //console.log("StudentAttendanceData",this.StudentAttendanceData);
+            //console.log("StudentAttendanceData insert",this.StudentAttendanceData);
             this.insert(row);
           }
           else {
@@ -432,6 +432,7 @@ export class StudentAttendanceComponent implements OnInit {
             delete this.StudentAttendanceData["CreatedBy"];
             this.StudentAttendanceData["UpdatedDate"] = new Date();
             this.StudentAttendanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            //console.log("StudentAttendanceData update",this.StudentAttendanceData);
             this.update(row);
           }
           row.Action = false;

@@ -29,6 +29,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import * as moment from 'moment';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import {SwUpdate} from '@angular/service-worker';
+import { MatTableDataSource } from '@angular/material/table';
 
 const colors: any = {
   red: {
@@ -211,7 +212,7 @@ export class DemoComponent implements OnInit { PageLoading=true;
     //this.modalData = { event, action };
     //this.modal.open(this.modalContent, { size: 'lg' });
   }
-
+dataSource:MatTableDataSource<any>;
   addEvent(): void {
     this.events = [
       ...this.events,

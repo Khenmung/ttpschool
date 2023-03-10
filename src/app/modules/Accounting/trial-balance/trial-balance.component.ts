@@ -49,6 +49,7 @@ export class TrialBalanceComponent implements OnInit {
   searchForm: UntypedFormGroup;
   TotalDebit = 0;
   TotalCredit = 0;
+  TotalBalance=0;
   AccountingVoucherData = {
     AccountingVoucherId: 0,
     DocDate: new Date(),
@@ -66,7 +67,8 @@ export class TrialBalanceComponent implements OnInit {
   displayedColumns = [
     "AccountName",
     "Dr",
-    "Cr"
+    "Cr",
+    "Balance"
   ];
   //filteredOptions: Observable<IGLAccounts[]>;
   //Students: any;
@@ -255,11 +257,15 @@ export class TrialBalanceComponent implements OnInit {
             }
         })
         //console.log("groupbyDebitCredit", groupbyDebitCredit)
-        var display = result.filter(f => f.Dr != undefined)
-        this.TotalCredit = display.reduce((acc, current) => acc + current.Cr, 0)
-        this.TotalDebit = display.reduce((acc, current) => acc + current.Dr, 0)
+        //var display = result.filter(f => f.Dr != undefined)
+        result.forEach(row=>{
+          row.Balance=row.Dr -row.Cr;
+        })
+        this.TotalCredit = result.reduce((acc, current) => acc + current.Cr, 0)
+        this.TotalDebit = result.reduce((acc, current) => acc + current.Dr, 0)
+        this.TotalBalance = result.reduce((acc, current) => acc + current.Balance, 0)
 
-        this.dataSource = new MatTableDataSource<IAccountingVoucher>(display);
+        this.dataSource = new MatTableDataSource<IAccountingVoucher>(result);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.matsort;
         this.loading = false; this.PageLoading = false;

@@ -52,6 +52,7 @@ export class JournalEntryComponent implements OnInit {
     DocDate: new Date(),
     PostingDate: new Date(),
     Reference: '',
+    TranParentId: 0,
     FeeReceiptId: 0,
     ParentId: 0,
     ClassFeeId: 0,
@@ -150,6 +151,7 @@ export class JournalEntryComponent implements OnInit {
     if (mode) {
       this.AccountingVoucherList = [];
       this.reference = ''
+      this.TranParentId = 0;
     }
     //var debitcredit = debit == 'debit' ? 0 : 1
     if (this.reference.length > 0 || mode) {
@@ -160,6 +162,7 @@ export class JournalEntryComponent implements OnInit {
         Reference: this.reference,
         FeeReceiptId: 0,
         ParentId: 0,
+        TranParentId: 0,
         ClassFeeId: 0,
         LedgerId: 0,
         GeneralLedgerName: '',
@@ -176,12 +179,14 @@ export class JournalEntryComponent implements OnInit {
       this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
     }
   }
+  TranParentId = 0;
   SetReference(row) {
     debugger;
     if (row.Reference.length == 0) {
-      var matches = row.ShortText.replaceAll(' ','').substr(0,10) //.match(/\b(\w)/g);
-      this.reference = matches.join('') + moment(new Date()).format('YYYYMMDDHHmmss');
+      var matches = row.ShortText.replaceAll(' ', '').substr(0, 10) //.match(/\b(\w)/g);
+      this.reference = matches + moment(new Date()).format('YYYYMMDDHHmmss');
       row.Reference = this.reference;
+      this.TranParentId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
     }
   }
   FilteredGeneralLedger = [];
@@ -339,67 +344,70 @@ export class JournalEntryComponent implements OnInit {
       errorMessage += "Amount should be less than 10,00,000 or greater than -10,00,000<br>";
 
     if (errorMessage.length > 0) {
-      this.loading = false; this.PageLoading = false;
+      this.loading = false; 
+      this.PageLoading = false;
       //this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
-      return;
+      
     }
+    else {
+      let checkFilterString = "GeneralLedgerAccountId eq " + row.GeneralLedgerAccountId.GeneralLedgerId +
+        " and Reference eq '" + this.reference + "'";
 
-    let checkFilterString = "GeneralLedgerAccountId eq " + row.GeneralLedgerAccountId.GeneralLedgerId +
-      " and Reference eq '" + this.reference + "'";
 
-
-    if (row.AccountingVoucherId > 0)
-      checkFilterString += " and AccountingVoucherId ne " + row.AccountingVoucherId;
-    checkFilterString += " and " + globalconstants.getStandardFilter(this.LoginUserDetail);
-    let list: List = new List();
-    list.fields = ["AccountingVoucherId"];
-    list.PageName = this.AccountingVoucherListName;
-    list.filter = [checkFilterString];
-    this.loading = true;
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          this.loading = false; this.PageLoading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-        }
-        else {
-
-          this.AccountingVoucherData.Active = row.Active;
-          this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
-          this.AccountingVoucherData.BaseAmount = +row.BaseAmount;
-          this.AccountingVoucherData.Amount = +row.Amount;
-          this.AccountingVoucherData.DocDate = row.DocDate;
-          this.AccountingVoucherData.Debit = row.Debit;
-          this.AccountingVoucherData.PostingDate = row.PostingDate;
-          this.AccountingVoucherData.Reference = this.reference;
-          this.AccountingVoucherData.LedgerId = row.LedgerId;
-          this.AccountingVoucherData.GeneralLedgerAccountId = row.GeneralLedgerAccountId.GeneralLedgerId;
-          this.AccountingVoucherData.ClassFeeId = 0;
-          this.AccountingVoucherData.FeeReceiptId = 0;
-          this.AccountingVoucherData.ParentId = this.ParentId;
-          this.AccountingVoucherData.ShortText = row.ShortText;
-          this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
-
-          if (row.AccountingVoucherId == 0) {
-            this.AccountingVoucherData["CreatedDate"] = new Date();
-            this.AccountingVoucherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.AccountingVoucherData["UpdatedDate"];
-            delete this.AccountingVoucherData["UpdatedBy"];
-            console.log('to insert', this.AccountingVoucherData)
-            this.insert(row);
+      if (row.AccountingVoucherId > 0)
+        checkFilterString += " and AccountingVoucherId ne " + row.AccountingVoucherId;
+      checkFilterString += " and " + globalconstants.getStandardFilter(this.LoginUserDetail);
+      let list: List = new List();
+      list.fields = ["AccountingVoucherId"];
+      list.PageName = this.AccountingVoucherListName;
+      list.filter = [checkFilterString];
+      this.loading = true;
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          //debugger;
+          if (data.value.length > 0) {
+            this.loading = false; this.PageLoading = false;
+            this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           }
           else {
-            delete this.AccountingVoucherData["CreatedDate"];
-            delete this.AccountingVoucherData["CreatedBy"];
-            this.AccountingVoucherData["UpdatedDate"] = new Date();
-            this.AccountingVoucherData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            console.log('to update', this.AccountingVoucherData)
-            this.update(row);
+
+            this.AccountingVoucherData.Active = row.Active;
+            this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
+            this.AccountingVoucherData.BaseAmount = +row.BaseAmount;
+            this.AccountingVoucherData.Amount = +row.Amount;
+            this.AccountingVoucherData.DocDate = row.DocDate;
+            this.AccountingVoucherData.Debit = row.Debit;
+            this.AccountingVoucherData.PostingDate = row.PostingDate;
+            this.AccountingVoucherData.Reference = this.reference;
+            this.AccountingVoucherData.LedgerId = row.LedgerId;
+            this.AccountingVoucherData.GeneralLedgerAccountId = row.GeneralLedgerAccountId.GeneralLedgerId;
+            this.AccountingVoucherData.ClassFeeId = 0;
+            this.AccountingVoucherData.FeeReceiptId = 0;
+            this.AccountingVoucherData.ParentId = this.ParentId;
+            this.AccountingVoucherData.TranParentId = this.TranParentId;
+            this.AccountingVoucherData.ShortText = row.ShortText;
+            this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
+
+            if (row.AccountingVoucherId == 0) {
+              this.AccountingVoucherData["CreatedDate"] = new Date();
+              this.AccountingVoucherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+              delete this.AccountingVoucherData["UpdatedDate"];
+              delete this.AccountingVoucherData["UpdatedBy"];
+              console.log('to insert', this.AccountingVoucherData)
+              this.insert(row);
+            }
+            else {
+              delete this.AccountingVoucherData["CreatedDate"];
+              delete this.AccountingVoucherData["CreatedBy"];
+              this.AccountingVoucherData["UpdatedDate"] = new Date();
+              this.AccountingVoucherData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+              console.log('to update', this.AccountingVoucherData)
+              this.update(row);
+            }
           }
-        }
-      });
+        });
+    }
   }
 
   insert(row) {

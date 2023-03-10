@@ -63,6 +63,16 @@
             {{TotalCredit}}
         </mat-footer-cell>
     </ng-container>
+    <ng-container matColumnDef="Balance">
+        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Balance
+        </mat-header-cell>
+        <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+            {{element.Balance}}
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef style="display: flex;justify-content: center;">
+            {{TotalBalance}}
+        </mat-footer-cell>
+    </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
     <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">

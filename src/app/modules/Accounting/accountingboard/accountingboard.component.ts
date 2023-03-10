@@ -72,7 +72,7 @@ export class AccountingboardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(TrialBalanceComponent);
     this.GetComponents(perObj,comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.LEDGERACCOUNT)
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.ACCOUNTS)
     var comindx = this.components.indexOf(LedgerAccountComponent);
     this.GetComponents(perObj,comindx)
     

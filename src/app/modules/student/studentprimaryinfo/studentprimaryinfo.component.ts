@@ -198,10 +198,11 @@ export class studentprimaryinfoComponent implements OnInit {
       Height: [0],
       Active: [1]
     });
+    this.PID =this.tokenService.getPID();
     this.StudentId = this.tokenService.getStudentId();
     this.StudentClassId = this.tokenService.getStudentClassId()
   }
-  FeePaymentPermission='';
+  FeePaymentPermission = '';
   ngOnInit(): void {
     // this.servicework.activateUpdate().then(() => {
     //   this.servicework.checkForUpdate().then((value) => {
@@ -225,7 +226,7 @@ export class studentprimaryinfoComponent implements OnInit {
         if (perObj.length > 0) {
           this.FeePaymentPermission = perObj[0].permission;
         }
-        console.log("this.FeePaymentPermission ",this.FeePaymentPermission );
+        console.log("this.FeePaymentPermission ", this.FeePaymentPermission);
         this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
         this.getFields('Student Module');
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
@@ -303,22 +304,22 @@ export class studentprimaryinfoComponent implements OnInit {
   // }
   generateDetail() {
     let StudentName = this.PID + ' ' + this.studentForm.get("FirstName").value +
-     this.studentForm.get("LastName").value + ',' + this.studentForm.get("FatherName").value + ', ' + 
-     this.studentForm.get("MotherName").value + ', ';
+      this.studentForm.get("LastName").value + ',' + this.studentForm.get("FatherName").value + ', ' +
+      this.studentForm.get("MotherName").value + ', ';
 
     let studentclass = this.Students.filter(sid => sid.StudentId == this.StudentId);
     if (studentclass.length > 0) {
-      var _clsName = '';
+      var _clsName = '', rollNo = '';
       var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
       if (objcls.length > 0)
         _clsName = objcls[0].ClassName
-
+      rollNo = studentclass[0].RollNo ? studentclass[0].RollNo : '';
       var _sectionName = '';
       var sectionObj = this.Sections.filter(f => f.MasterDataId == studentclass[0].SectionId)
       if (sectionObj.length > 0)
         _sectionName = sectionObj[0].MasterDataName;
       this.StudentClassId = studentclass[0].StudentClassId
-      StudentName += "-" + _clsName + "-" + _sectionName + "-" + studentclass[0].RollNo;
+      StudentName += "-" + _clsName + "-" + _sectionName + "-" + rollNo;
     }
 
     this.shareddata.ChangeStudentName(StudentName);
@@ -513,7 +514,7 @@ export class studentprimaryinfoComponent implements OnInit {
     }
 
   }
-PID=0;
+  PID = 0;
   save() {
     debugger;
     this.studentForm.patchValue({ AlternateContact: "" });
@@ -531,7 +532,7 @@ PID=0;
             this.studentForm.patchValue({
               StudentId: result.StudentId
             })
-            this.PID =result.PID;
+            this.PID = result.PID;
             this.StudentId = result.StudentId;
             // if (result != null && result.UserId != "")
             //   this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -641,19 +642,22 @@ PID=0;
           this.GetStudentForStore(data.value);
           data.value.forEach(stud => {
             var _lastname = stud.LastName == null || stud.LastName == '' ? '' : " " + stud.LastName;
-            let StudentName = stud.PID + ' ' + stud.FirstName + _lastname + ' ' + stud.FatherName +
-              ' ' + stud.MotherName + ", ";
+            var fatherName=stud.FatherName?stud.FatherName:'';
+            var motherName=stud.MotherName?stud.MotherName:'';
+            let StudentName = stud.PID + ' ' + stud.FirstName + _lastname + ' ' + fatherName +
+              ' ' + motherName + ", ";
             if (stud.StudentClasses.length > 0) {
-              var _sectionName = '', _className = '';
+              var _sectionName = '', _className = '', _rollNo = '';
+              _rollNo = stud.StudentClasses[0].RollNo ? stud.StudentClasses[0].RollNo : '';
               if (stud.StudentClasses[0].SectionId > 0)
                 _sectionName = this.Sections.filter(s => s.MasterDataId == stud.StudentClasses[0].SectionId)[0].MasterDataName;
               _className = this.Classes.filter(c => c.ClassId == stud.StudentClasses[0].ClassId)[0].ClassName;
-              StudentName += _className + "-" + _sectionName + "-" + stud.StudentClasses[0].RollNo
+              StudentName += _className + "-" + _sectionName + "-" + _rollNo
               this.StudentClassId = stud.StudentClasses[0].StudentClassId;
               this.tokenService.saveStudentClassId(this.StudentClassId + "");
             }
 
-
+            this.PID =  stud.PID;
             this.shareddata.ChangeStudentName(StudentName);
             this.studentForm.patchValue({
               StudentId: stud.StudentId,

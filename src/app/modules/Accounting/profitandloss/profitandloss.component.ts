@@ -189,27 +189,31 @@ export class ProfitandlossComponent implements OnInit {
     ];
 
     list.PageName = this.AccountingVoucherListName;
-    //list.lookupFields = ["AccountingTrialBalance"];
+    //list.lookupFields = ["GeneralLedger($select=GeneralLedgerName,IncomeStatementSequence,IncomeStatementPlus,BalanceSheetSequence,BalanceSheetPlus"];
     list.filter = [filterStr];
     this.AccountingVoucherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.Income = [];
         this.Expense = [];
+        this.TrialBalance=[];
         //var tuitionFee= data.value.filter(f=>f.GeneralLedgerAccountId==)
         data.value.forEach(f => {
           var _generalaccount = this.GLAccounts.filter(g => g.GeneralLedgerId == f.GeneralLedgerAccountId);
 
           if (_generalaccount.length > 0) {
+            f.Debit=f.Debit!=undefined?f.Debit:false;
             f.AccountNature = _generalaccount[0].AccountNature;
             f.AccountName = _generalaccount[0].GeneralLedgerName;
             f.DebitAccount = _generalaccount[0].DebitAccount;
             f.AccountGroupId = _generalaccount[0].AccountGroupId;
             f.AccountSubGroupId = _generalaccount[0].AccountSubGroupId;
             f.AccountNatureId = _generalaccount[0].AccountNatureId;
-
-
-
+            f.GeneralLedgerName = _generalaccount[0].GeneralLedgerName;
+            f.IncomeStatementSequence = _generalaccount[0].IncomeStatementSequence;
+            f.IncomeStatementPlus = _generalaccount[0].IncomeStatementPlus;
+            f.BalanceSheetSequence = _generalaccount[0].BalanceSheetSequence;
+            f.BalanceSheetPlus = _generalaccount[0].BalanceSheetPlus;
             this.TrialBalance.push(f);
           }
         });
@@ -217,7 +221,7 @@ export class ProfitandlossComponent implements OnInit {
         //this.Expense = this.FormatData(this.Expense, "expense");
         this.TotalDr = this.TrialBalance.reduce((acc, current) => acc + (current.DrBalance ? current.DrBalance : 0), 0);
         this.TotalCr = this.TrialBalance.reduce((acc, current) => acc + (current.CrBalance ? current.CrBalance : 0), 0);
-        
+
 
         this.TrialBalanceDatasource = new MatTableDataSource<IAccountingVoucher>(this.TrialBalance);
 
@@ -229,27 +233,36 @@ export class ProfitandlossComponent implements OnInit {
           else if (t.AccountNature.toLowerCase() == "revenue")
             this.Income.push(t);
         })
-        
+
         this.TotalExpense = this.Expense.reduce((acc, current) => acc + current.Balance, 0);
         this.TotalIncome = this.Income.reduce((acc, current) => acc + current.Balance, 0);
+
+        this.Income = this.Income.sort((a, b) => a.IncomeStatementSequence - b.IncomeStatementSequence);
+        // this.TotalIncome = this.Income.reduce((acc, current) => {
+        //   if (current.IncomeStatementPlus == 1)
+        //     acc += current.Balance
+        //   else if (current.IncomeStatementPlus == -1)
+        //     acc -= current.Balance;
+        // }, 0);
+
         this.NetIncome = this.TotalIncome - this.TotalExpense;
+
         this.ExpenseDataSource = new MatTableDataSource<IAccountingVoucher>(this.Expense);
         this.RevenueDataSource = new MatTableDataSource<IAccountingVoucher>(this.Income);
-        
+
         this.loading = false; this.PageLoading = false;
       });
   }
   FormatData(pdata) {
     //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
-    var groupbyDebitCredit = alasql("select sum(BaseAmount) as Amount,Debit,AccountName,AccountNature from ? GROUP BY AccountName,Debit,AccountNature order by AccountName",
-      [pdata])
-    groupbyDebitCredit = groupbyDebitCredit.sort((a, b) => a.AccountName - b.AccountName);
+    var sql="select sum(BaseAmount) as Amount,Debit,AccountName,AccountNature,IncomeStatementSequence,IncomeStatementPlus," +
+     "BalanceSheetPlus,BalanceSheetSequence from ? GROUP BY AccountName,Debit,AccountNature,IncomeStatementSequence,IncomeStatementPlus,BalanceSheetPlus,BalanceSheetSequence order by AccountName";
+     var groupbyDebitCredit = alasql(sql,[pdata]);
+    
+      groupbyDebitCredit = groupbyDebitCredit.sort((a, b) => a.AccountName - b.AccountName);
     var result = [];
     groupbyDebitCredit.forEach(f => {
-      //var existing = [];
-      // if (type == "income")
-      //   existing = this.Income.filter(r => r.AccountName == f.AccountName);
-      // else
+
       var existing = result.filter(r => r.AccountName == f.AccountName);
 
       if (existing.length > 0) {
@@ -263,7 +276,13 @@ export class ProfitandlossComponent implements OnInit {
         }
       }
       else {
-        var temprow = { "AccountName": f.AccountName, "Dr": 0, "Cr": 0,"AccountNature":f.AccountNature };
+        var temprow = {
+          // "IncomeStatementPlus": f.IncomeStatementPlus,
+          // "IncomeStatementSequence": f.IncomeStatementSequence,
+          // "BalanceSheetSequence": f.BalanceSheetSequence,
+          // "BalanceSheetPlus": f.BalanceSheetPlus,
+          "AccountName": f.AccountName, "Dr": 0, "Cr": 0, "AccountNature": f.AccountNature
+        };
         if (f.Debit) {
           temprow.Dr = f.Amount;
           temprow.Cr = 0;
@@ -272,14 +291,12 @@ export class ProfitandlossComponent implements OnInit {
           temprow.Cr = f.Amount
           temprow.Dr = 0;
         }
-
         result.push(temprow);
-
       }
     })
     //console.log("groupbyDebitCredit", groupbyDebitCredit)
 
-    result = result.filter(f => f.Dr != undefined)
+    result = result.filter(f => f.Dr!=undefined)
     result.forEach(row => {
       if (row.Dr > row.Cr) {
         row.Balance = row.Dr - row.Cr;
@@ -306,7 +323,12 @@ export class ProfitandlossComponent implements OnInit {
       "GeneralLedgerId",
       "GeneralLedgerName",
       "AccountNatureId",
-      "AccountGroupId"
+      "AccountGroupId",
+      "GeneralLedgerName",
+      "IncomeStatementSequence",
+      "IncomeStatementPlus",
+      "BalanceSheetSequence",
+      "BalanceSheetPlus"
     ];
 
     list.PageName = "GeneralLedgers";
@@ -447,6 +469,11 @@ export class ProfitandlossComponent implements OnInit {
       "AccountNatureId",
       "AccountGroupId",
       "AccountSubGroupId",
+      "GeneralLedgerName",
+      "IncomeStatementSequence",
+      "IncomeStatementPlus",
+      "BalanceSheetSequence",
+      "BalanceSheetPlus",
       "Active"
     ];
 

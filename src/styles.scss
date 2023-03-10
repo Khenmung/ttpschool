@@ -247,8 +247,10 @@ body {
     //     font-size: 14pt;
     // }
     mat-table,mat-cell,div,span{
-        font-size: 12pt;
+        //font-size: 12pt;
         box-sizing: border-box;
+        font-family: 'VT323', monospace;
+
         //width:100%;
     }
     

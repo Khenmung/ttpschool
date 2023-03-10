@@ -16,7 +16,7 @@
         <input type="text" matInput formControlName="searchReferenceId" [maxlength]="50" autocomplete="Off">
     </mat-form-field> -->
 
-    <mat-form-field appearance="outline" [style.width.px]="350">
+    <mat-form-field appearance="outline" [style.width.px]="250">
         <mat-label>Account</mat-label>
         <input type="text" matInput formControlName="searchGeneralLedgerId" [matAutocomplete]="auto">
         <mat-autocomplete (optionSelected)="BindReference()" #auto="matAutocomplete" [displayWith]="displayFn">
@@ -25,7 +25,7 @@
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="150">
+    <mat-form-field appearance="outline" [style.width.px]="250">
         <mat-label>Reference</mat-label>
         <mat-select formControlName="searchReference">
             <mat-option *ngFor="let option of FilteredGeneralLedger" [value]="option.Reference">

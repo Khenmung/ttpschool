@@ -37,7 +37,7 @@
         </div>
         <div style="display: flex; flex-direction: column; width: 100%;padding: 15px 0px 15px 0px;">
             <div style="padding: 5px;"><b>Print/Cancel Receipt</b></div>
-            <div style="border:1px solid lightgray;padding-bottom: 15px;" class="divCls" id="printSection">
+            <div style="border:1px solid lightgray;padding: 15px;" class="divCls" id="printSection">
                 <div fxLayout="column" fxLayoutAlign="space-around center">
                     <div style="width:100%;display:flex;justify-content: center;flex-direction: column;"
                         *ngFor="let item of ReceiptHeading;let i=index">
@@ -48,11 +48,11 @@
                 <div style="display:flex; justify-content: space-between ;margin-right: 15px;">
                     <div style="display:flex;flex-direction: column;">
                         <div style="display:flex">
-                            <div style="font-weight:500;">Receipt No.</div>: {{studentInfoTodisplay.ReceiptNo}}
+                            <div>Receipt No.</div>: {{studentInfoTodisplay.ReceiptNo}}
                         </div>
                         <div style="display:flex;justify-content: center;margin-right: 15px;">
                             <span>
-                                <span><strong>Offline Receipt No.: </strong></span>
+                                <span>Offline Receipt No.: </span>
                                 {{studentInfoTodisplay.OffLineReceiptNo}}
                             </span>
                         </div>
@@ -70,7 +70,7 @@
                         Roll no. -<b> {{studentInfoTodisplay.RollNo}}</b>.
                     </span>
                 </div>
-                <div style="border-collapse: collapse; border: 1px solid lightgray;">
+                <div style="border-collapse: collapse;">
                     <mat-table [dataSource]="dataSource">
                         <ng-container matColumnDef="index">
                             <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
@@ -130,7 +130,7 @@
                         </mat-footer-row> -->
                     </mat-table>
                     <div style="display:flex;margin:15px">
-                        <div><b>Payment Type:</b></div>
+                        <div>Payment Type:</div>
                         <div style="margin-left:15px">{{PaymentType}}</div>
                     </div>
                     <!-- <div style="display: flex;justify-content: flex-end; padding: 15px;margin-right:30px;">

@@ -133,10 +133,11 @@ export class HomeDashboardComponent implements OnInit {
                 this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
                 this.SelectedAppName = this.tokenStorage.getSelectedAppName();
                 this.getBatches();
-                if (this.SelectedAppId > 0)
+                if (this.SelectedAppId > 0) {
                   this.GetMasterData(this.SelectedAppId, this.SelectedAppName);
+                }
                 //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-                if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
+                if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
                   let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
                   this.GetStudentClass(obj);
                 }
@@ -295,6 +296,7 @@ export class HomeDashboardComponent implements OnInit {
       // if (selectedApp[0].applicationName.toLowerCase() == 'education management')
       //   this.GetStudentClass(SelectedAppId, selectedApp[0]);
       // else
+      this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
       this.GetMasterData(SelectedAppId, selectedApp[0]);
 
     }
@@ -315,16 +317,6 @@ export class HomeDashboardComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
 
-        //   else {
-        //   ///
-
-
-        //   ///
-        // }
-        // });
-        ///
-
-        this.tokenStorage.saveSelectedAppName(selectedApp.applicationName);
         this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
           .subscribe((data: any) => {
             data.value.forEach(item => {
@@ -349,7 +341,7 @@ export class HomeDashboardComponent implements OnInit {
             this.tokenStorage.saveCustomFeature(data.value);
             this.SelectedAppName = selectedApp.applicationName;
 
-            if (this.SelectedAppName != null && this.SelectedAppName.toLowerCase() == 'education management') {
+            if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
               this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
               this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
                 this.Classes = [...data.value];

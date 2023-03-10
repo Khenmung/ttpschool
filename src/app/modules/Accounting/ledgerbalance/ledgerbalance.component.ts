@@ -63,14 +63,14 @@ export class LedgerBalanceComponent implements OnInit {
     SubOrgId: 0,
     Active: 0,
   };
-
+  headercolumns=["Debit","Credit"];
   displayedColumns = [
-    "AccountName",
-    "ShortText",
-    "Reference",
-    "Dr",
-    "Cr",
-    "Balance"
+    "DrDate",
+    "DrShortText",
+    "DrAmt",
+    "CrDate",
+    "CrShortText",
+    "CrAmt"
   ];
 
   constructor(private servicework: SwUpdate,
@@ -168,109 +168,121 @@ export class LedgerBalanceComponent implements OnInit {
   //   //this.AccountingVoucherList.push(newdata);
   //   this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
   // }
-
+  CreditBalance = 0;
+  DebitBalance = 0;
   GetAccountingVoucher() {
+debugger;
     let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    debugger;
+    filterStr += " and PostingDate ge " + this.datepipe.transform(this.searchForm.get("searchFromDate").value, 'yyyy-MM-dd') + //T00:00:00.000Z
+      " and  PostingDate le " + this.datepipe.transform(this.searchForm.get("searchToDate").value, 'yyyy-MM-dd');//T00:00:00.000Z
     this.loading = true;
 
     var _GeneralLedgerId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
-    if (_GeneralLedgerId != undefined) {
-      filterStr += " and GeneralLedgerAccountId eq " + _GeneralLedgerId
-    }
-    // else
-    //   filterStr += " and"
+    // if (_GeneralLedgerId) {
+    //   filterStr += " and GeneralLedgerAccountId eq " + _GeneralLedgerId;
 
-    //filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
-    //  "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate, 'yyyy-MM-dd') + "'";//T00:00:00.000Z
-    filterStr += " and PostingDate ge " + this.datepipe.transform(this.searchForm.get("searchFromDate").value, 'yyyy-MM-dd') + //T00:00:00.000Z
-      " and  PostingDate le " + this.datepipe.transform(this.searchForm.get("searchToDate").value, 'yyyy-MM-dd');//T00:00:00.000Z
-    // if (_ClassId != 0)
-    //   filterStr += " and ClassId eq " + _ClassId;
+      let list: List = new List();
+      list.fields = [
+        "AccountingVoucherId",
+        "PostingDate",
+        "GeneralLedgerAccountId",
+        "ShortText",
+        "Reference",
+        "LedgerId",
+        "Debit",
+        "BaseAmount",
+        "Amount",
+        "Active",
+      ];
 
-    let list: List = new List();
-    list.fields = [
-      "AccountingVoucherId",
-      "GeneralLedgerAccountId",
-      "ShortText",
-      "Reference",
-      "LedgerId",
-      "Debit",
-      "BaseAmount",
-      "Amount",
-      "Active",
-    ];
+      list.PageName = this.AccountingVoucherListName;
+      //list.lookupFields = ["AccountingTrialBalance"];
+      list.filter = [filterStr];
+      this.AccountingVoucherList = [];
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          data.value.forEach(f => {
+            var _generalaccount = this.GLAccounts.filter(g => g.GeneralLedgerId == f.GeneralLedgerAccountId);
+            if (_generalaccount.length > 0) {
+              f.AccountName = _generalaccount[0].GeneralLedgerName;
+              //f.DebitAccount = _generalaccount[0].DebitAccount;
+              f.AccountGroupId = _generalaccount[0].AccountGroupId;
+              f.AccountSubGroupId = _generalaccount[0].AccountSubGroupId;
+              f.AccountNatureId = _generalaccount[0].AccountNatureId;
+              this.AccountingVoucherList.push(f);
+            }
+          })
+          var currentAccountType = this.AccountingVoucherList.filter(ac => ac.GeneralLedgerAccountId == _GeneralLedgerId)
+          var allRelatedAccounts = this.AccountingVoucherList.filter(all => currentAccountType.findIndex(indx => indx.Reference == all.Reference) > -1);
+          const DistinctReference = [...new Set(allRelatedAccounts.map(item => item.Reference))];
+          var _ledgerBalance = [];
+          DistinctReference.forEach((related: any) => {
+            var sameReference = allRelatedAccounts.filter(same => same.Reference == related);
 
-    list.PageName = this.AccountingVoucherListName;
-    //list.lookupFields = ["AccountingTrialBalance"];
-    list.filter = [filterStr];
-    this.AccountingVoucherList = [];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        data.value.forEach(f => {
-          var _generalaccount = this.GLAccounts.filter(g => g.GeneralLedgerId == f.GeneralLedgerAccountId);
-          if (_generalaccount.length > 0) {
-            f.AccountName = _generalaccount[0].GeneralLedgerName;
-            f.DebitAccount = _generalaccount[0].DebitAccount;
-            f.AccountGroupId = _generalaccount[0].AccountGroupId;
-            f.AccountSubGroupId = _generalaccount[0].AccountSubGroupId;
-            f.AccountNatureId = _generalaccount[0].AccountNatureId;
-            this.AccountingVoucherList.push(f);
+            sameReference.forEach((same: any) => {
+              if (same.Debit) {
+                var credit = sameReference.filter(cr => !cr.Debit);
+                credit.forEach(onlycr => {
+                  var emptytext: any = _ledgerBalance.filter(l => l.DrShortText.length == 0);
+                  if (emptytext.length > 0) {
+                    emptytext[0].DrDate=same.PostingDate,
+                    emptytext[0].DrShortText = onlycr.ShortText;
+                    emptytext[0].DrAmt = same.BaseAmount;
+                  }
+                  else
+                    _ledgerBalance.push({
+                      "DrDate":same.PostingDate,
+                      "DrShortText": onlycr.ShortText,
+                      "CrShortText": '',
+                      "DrAmt": same.BaseAmount,
+                      "CrAmt": 0
+                    });
+                })
+              }
+              else {
+                var debit = sameReference.filter(cr => cr.Debit);
+                debit.forEach(onlydr => {
+                  var emptytext: any = _ledgerBalance.filter(l => l.CrShortText.length == 0);
+                  if (emptytext.length > 0) {
+                    emptytext[0].CrDate=same.PostingDate,
+                    emptytext[0].CrShortText = onlydr.ShortText;
+                    emptytext[0].CrAmt = same.BaseAmount;
+                  }
+                  else
+                    _ledgerBalance.push({
+                      "CrDate":same.PostingDate,
+                      "CrShortText": onlydr.ShortText,
+                      "DrShortText": '',
+                      "CrAmt": same.BaseAmount,
+                      "DrAmt": 0
+                    });
+                })
+              }
+            })
+
+          })
+          console.log("_ledgerBalance", _ledgerBalance)
+          this.TotalCredit = _ledgerBalance.reduce((acc, current) => acc + current["CrAmt"], 0)
+          this.TotalDebit = _ledgerBalance.reduce((acc, current) => acc + current["DrAmt"], 0)
+          if (this.TotalCredit > this.TotalDebit) {
+            this.CreditBalance = this.TotalCredit - this.TotalDebit;
+            this.DebitBalance = 0;
           }
-        })
-        //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
-        var groupbyDebitCredit = alasql("select sum(BaseAmount) as Amount,Debit,AccountName from ? GROUP BY AccountName,Debit order by AccountName",
-          [this.AccountingVoucherList])
-        this.AccountingVoucherList = this.AccountingVoucherList.sort((a, b) => a["AccountName"].localeCompare(b["AccountName"]));
-        var _tempAccountName = '', _tempRow: any = {};
-        var itemcount = this.AccountingVoucherList.length;
-        //var groupbyAccountName = [];
-        this.AccountingVoucherList.forEach((f: any, index) => {
-          _tempAccountName = f.AccountName;
-          if (f.Debit) {
-            f.Dr = f.BaseAmount;
-            f.Cr = 0;
-            f.Balance = 0;
+          else if (this.TotalCredit < this.TotalDebit) {
+            this.DebitBalance = this.TotalDebit - this.TotalCredit;
+            this.CreditBalance = 0;
           }
           else {
-            f.Cr = f.BaseAmount
-            f.Dr = 0;
-            f.Balance = 0;
+            this.DebitBalance = 0;
+            this.CreditBalance = 0;
           }
-
-          let objDebit = groupbyDebitCredit.filter(r => r.AccountName == f.AccountName && r.Debit == true);
-          let objCredit = groupbyDebitCredit.filter(r => r.AccountName == f.AccountName && r.Debit == false);
-          let creditAmount = 0;
-          let debitAmount = 0;
-          if (objDebit.length > 0)
-            debitAmount = objDebit[0].Amount;
-          if (objCredit.length > 0)
-            creditAmount = objCredit[0].Amount;
-
-          if (index < itemcount - 1) {
-            if (_tempAccountName != this.AccountingVoucherList[index + 1]["AccountName"]) {
-              f.Balance = debitAmount - creditAmount;
-            }
-          }
-          else if (index == itemcount - 1) {
-            f.Balance = debitAmount - creditAmount;
-          }
-
-
-
-        })
-        //var  groupbyDebitCredit = 
-        console.log("groupbyDebitCredit", this.AccountingVoucherList)
-        var display = this.AccountingVoucherList.filter((f: any) => f.Dr != undefined)
-        this.TotalCredit = display.reduce((acc, current) => acc + current["Cr"], 0)
-        this.TotalDebit = display.reduce((acc, current) => acc + current["Dr"], 0)
-
-        this.dataSource = new MatTableDataSource<IAccountingVoucher>(display);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.matsort;
-        this.loading = false; this.PageLoading = false;
-        //this.changeDetectorRefs.detectChanges();
-      });
+          this.dataSource = new MatTableDataSource<any>(_ledgerBalance);
+          // this.dataSource.paginator = this.paginator;
+          // this.dataSource.sort = this.matsort;
+          this.loading = false;
+          this.PageLoading = false;
+        });
+    //}
   }
   GetGeneralLedgerAutoComplete() {
 
