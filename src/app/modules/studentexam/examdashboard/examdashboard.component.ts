@@ -81,7 +81,7 @@ export class ExamdashboardComponent implements AfterViewInit {
 
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAM)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMSLOT)
-    this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
+    this.GenerateComponent(globalconstants.Pages.edu.EXAM.ExamMarkEntry)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.STUDENTGRADE)
@@ -123,7 +123,7 @@ export class ExamdashboardComponent implements AfterViewInit {
       case globalconstants.Pages.edu.EXAM.EXAMSLOT:
         comindx = this.components.indexOf(ExamslotComponent);
         break;
-      case globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT:
+      case globalconstants.Pages.edu.EXAM.ExamMarkEntry:
         comindx = this.components.indexOf(ExamSubjectMarkEntryComponent);
         break;
       case globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT:

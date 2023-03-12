@@ -550,7 +550,7 @@ export class PromoteclassComponent implements OnInit {
 
   GetExams() {
     var previousBatchId = this.tokenstorage.getPreviousBatchId();
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], previousBatchId)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], previousBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(e => {

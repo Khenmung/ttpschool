@@ -471,7 +471,7 @@ export class EvaluationExamMapComponent implements OnInit {
 
   }
   GetExams() {
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {

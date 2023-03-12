@@ -457,7 +457,7 @@ export class ResultComponent implements OnInit {
 
   GetExams() {
 
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         var result = data.value.filter(f => f.ReleaseResult == 1);

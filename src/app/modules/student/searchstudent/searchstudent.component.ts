@@ -79,7 +79,7 @@ export class searchstudentComponent implements OnInit {
   filteredMothers: Observable<IStudent[]>;
   LoginUserDetail;
   FeePaymentPermission = '';
-  StudentList = [];
+  StudentsFromCache = [];
   StudentSearch: any[] = [{
     StudentId: 0,
     ClassId: 0,
@@ -122,7 +122,7 @@ export class searchstudentComponent implements OnInit {
       this.SelectedApplicationId = +this.token.getSelectedAPPId();
       this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
-      this.StudentList = this.token.getStudents();
+      this.StudentsFromCache = this.token.getStudents();
       this.studentSearchForm = this.fb.group({
         searchSectionId: [0],
         searchRemarkId: [0],
@@ -157,7 +157,7 @@ export class searchstudentComponent implements OnInit {
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.StudentList.slice())
+        map(Name => Name ? this._filter(Name) : this.StudentsFromCache.slice())
       );
     // this.StudentSearch.forEach(fr=>{
     //   this.studentSearchForm.patchValue({[fr.Text]:fr.Value})
@@ -167,7 +167,7 @@ export class searchstudentComponent implements OnInit {
   private _filter(name: string): IStudent[] {
 
     const filterValue = name.toLowerCase();
-    return this.StudentList.filter(option => option.Name.toLowerCase().includes(filterValue));
+    return this.StudentsFromCache.filter(option => option.Name.toLowerCase().includes(filterValue));
 
   }
   private _filterF(name: string): IStudent[] {
@@ -364,9 +364,9 @@ export class searchstudentComponent implements OnInit {
     this.StudentOfClass = this.Students.filter(f => f.ClassId == _classId);
     // var _students = [];
     // if (_classId > 0)
-    //   _students = this.StudentList.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId)
+    //   _students = this.StudentsFromCache.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId)
     // else
-    //   _students = this.StudentList.filter(s => s.StudentClasses.length == 0)
+    //   _students = this.StudentsFromCache.filter(s => s.StudentClasses.length == 0)
     // this.Students = [];
     // this.AssignNameClassSection(_students);
   }
@@ -760,17 +760,17 @@ export class searchstudentComponent implements OnInit {
 
       var _studentId = localStorage.getItem('studentId');
       if (this.Siblings.length > 0) {
-        _tempStudent = this.StudentList.filter(s => s.StudentId == _studentId || s.ParentStudentId == this.Siblings[0].ParentStudentId)
+        _tempStudent = this.StudentsFromCache.filter(s => s.StudentId == _studentId || s.ParentStudentId == this.Siblings[0].ParentStudentId)
         //standardfilter += ' and (StudentId eq ' + _studentId + ' or ParentStudentId eq ' + this.Siblings[0].ParentStudentId + ")";
       }
       else {
-        _tempStudent = this.StudentList.filter(s => s.StudentId == _studentId);
+        _tempStudent = this.StudentsFromCache.filter(s => s.StudentId == _studentId);
 
       }
 
     }
     else {
-      _tempStudent = [...this.StudentList]//this.StudentList.filter(nocls => nocls.StudentClasses.length == 0);
+      _tempStudent = [...this.StudentsFromCache]//this.StudentsFromCache.filter(nocls => nocls.StudentClasses.length == 0);
     }
 
     this.loading = true;

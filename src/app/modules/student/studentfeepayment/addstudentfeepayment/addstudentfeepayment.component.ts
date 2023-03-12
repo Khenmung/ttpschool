@@ -619,7 +619,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   SelectRow(row, event) {
     debugger;
     var _newCount = 0;
-    if (event.checked || row.BaseAmount1==0) {
+    if (event.checked || row.BaseAmount1 == 0) {
       var previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < row.Month && +f.Balance1 > 0);
       var MonthSelected = [];
 
@@ -783,9 +783,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
         DiscountRow[0].GeneralLedgerAccountId = _discountAccountId;
       }
       else {
-        var discountIndx = this.MonthlyDueDetail.findIndex(f => f.FeeName == this.DiscountText);
-        if (discountIndx > -1)
-          this.MonthlyDueDetail.splice(discountIndx, 1);
+        var discountRowToDelete = this.MonthlyDueDetail.filter(f => f.FeeName == this.DiscountText);
+        for (let row = 0; row < discountRowToDelete.length; row++) {
+          var indx = this.MonthlyDueDetail.findIndex(x => x.FeeName == this.DiscountText);
+          this.MonthlyDueDetail.splice(indx, 1);
+        }
       }
     }
 

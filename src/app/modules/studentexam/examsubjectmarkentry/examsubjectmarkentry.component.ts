@@ -108,7 +108,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.ExamMarkEntry)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
@@ -454,16 +454,19 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
       "SubjectId",
       "ClassId",
       "SubjectCategoryId",
-      "Confidential"
+      "Confidential",
+      "SubjectTypeId"
     ];
     list.PageName = "ClassSubjects";
+    list.lookupFields = ["SubjectType($select=SubjectTypeName,SelectHowMany)"];
     list.filter = [filterStr];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         this.ClassSubjects = [];
-        data.value.forEach(cs => {
+        var result= data.value.filter(f=>f.SubjectType.SelectHowMany>0)
+        result.forEach(cs => {
           var _class = '';
           var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId)
           if (objclass.length > 0)
@@ -473,16 +476,18 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
           var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)
           if (objsubject.length > 0) {
             _subject = objsubject[0].MasterDataName;
-            this.ClassSubjects.push({
-              ClassSubjectId: cs.ClassSubjectId,
-              Active: cs.Active,
-              SubjectId: cs.SubjectId,
-              ClassId: cs.ClassId,
-              Confidential: cs.Confidential,
-              ClassSubject: _class + '-' + _subject,
-              SubjectName: _subject,
-              SubjectCategoryId: cs.SubjectCategoryId
-            });
+            
+              this.ClassSubjects.push({
+                ClassSubjectId: cs.ClassSubjectId,
+                Active: cs.Active,
+                SubjectId: cs.SubjectId,
+                ClassId: cs.ClassId,
+                Confidential: cs.Confidential,
+                ClassSubject: _class + '-' + _subject,
+                SubjectName: _subject,
+                SubjectCategoryId: cs.SubjectCategoryId
+              });
+            
           }
         })
         this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage, this.ClassSubjects, "ClassSubject");
@@ -1092,6 +1097,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     }
   }
   SubjectCategory = [];
+  SubjectTypes = [];
   GetMasterData() {
 
     this.allMasterData = this.tokenstorage.getMasterData();
@@ -1101,6 +1107,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
+    
     this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];

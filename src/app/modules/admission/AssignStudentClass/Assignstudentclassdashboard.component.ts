@@ -719,7 +719,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
   GetExams() {
     //var previousBatchId = this.tokenstorage.getPreviousBatchId();
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {

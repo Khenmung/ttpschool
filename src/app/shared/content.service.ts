@@ -63,9 +63,14 @@ export class ContentService implements OnInit {
 
     return this.authservice.CallAPI(payload, 'EmailDuplicateCheck');
   }
-  GetExams(pOrgId, pSelectedBatchId) {
+  GetExams(pOrgId, pSelectedBatchId,pReleaseResult) {
 
-    var orgIdSearchstr = 'OrgId eq ' + pOrgId + ' and BatchId eq ' + pSelectedBatchId + " and ReleaseResult eq 1 and Active eq 1";
+    var _releaseResult='';
+    if(pReleaseResult==0 || pReleaseResult==1)
+    {
+      _releaseResult =" and ReleaseResult eq "+ pReleaseResult;
+    }
+    var orgIdSearchstr = 'OrgId eq ' + pOrgId + ' and BatchId eq ' + pSelectedBatchId + _releaseResult +" and Active eq 1";
 
     let list: List = new List();
     list.fields = [

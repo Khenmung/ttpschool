@@ -255,7 +255,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.ClassGroups = [...data.value];
       })
     //this.shareddata.ChangeBatch(this.Batches);
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId, 2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(f => {
@@ -268,12 +268,12 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         })
       });
 
-    if (this.Classes.length == 0) {
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-        this.GetClassSubject();
-      });
-    }
+    //if (this.Classes.length == 0) {
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.GetClassSubject();
+    });
+    //}
 
     this.loading = false;
     this.PageLoading = false;
@@ -305,27 +305,27 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.ClassSubjects =
-          data.value.forEach(cs => {
-            var _class = '';
-            var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId)
-            if (objclass.length > 0)
-              _class = objclass[0].ClassName;
+        this.ClassSubjects = [];
+        data.value.forEach(cs => {
+          var _class = '';
+          var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId)
+          if (objclass.length > 0)
+            _class = objclass[0].ClassName;
 
-            var _subject = ''
-            var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)
-            if (objsubject.length > 0) {
-              _subject = objsubject[0].MasterDataName;
-              this.ClassSubjects.push({
-                ClassSubjectId: cs.ClassSubjectId,
-                Active: cs.Active,
-                SubjectId: cs.SubjectId,
-                ClassId: cs.ClassId,
-                ClassSubject: _class + ' - ' + _subject,
-                SubjectName: _subject
-              })
-            }
-          })
+          var _subject = ''
+          var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)
+          if (objsubject.length > 0) {
+            _subject = objsubject[0].MasterDataName;
+            this.ClassSubjects.push({
+              ClassSubjectId: cs.ClassSubjectId,
+              Active: cs.Active,
+              SubjectId: cs.SubjectId,
+              ClassId: cs.ClassId,
+              ClassSubject: _class + ' - ' + _subject,
+              SubjectName: _subject
+            })
+          }
+        })
         this.MergeSubjectnComponents();
       })
   }

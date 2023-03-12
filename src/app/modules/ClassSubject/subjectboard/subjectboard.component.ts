@@ -52,7 +52,7 @@ export class SubjectBoardComponent implements AfterViewInit {
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    ) {
   }
 
   public ngAfterViewInit(): void {

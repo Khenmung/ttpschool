@@ -131,7 +131,7 @@ export class DashboardclassfeeComponent implements OnInit {
         }
         else {
           this.searchForm.patchValue({ Batch: this.SelectedBatchId });
-          this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
+          this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 0).subscribe((d: any) => {
             this.FeeDefinitions = [...d.value];
           })
           this.GetMasterData();
@@ -393,7 +393,7 @@ export class DashboardclassfeeComponent implements OnInit {
               Month: objDiscount[0].Month,
               OrgId: this.LoginUserDetail[0]["orgId"]
             })
-            this.insert(row, insert[0]);
+            this.insert(objDiscount[0], insert[0]);
           }
           //console.log("dataclassfee", this.classFeeData);
           if (this.classFeeData.ClassFeeId == 0)
@@ -441,7 +441,7 @@ export class DashboardclassfeeComponent implements OnInit {
     list.PageName = "ClassFees";
     //list.groupby = "ClassId";
     list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId];
-
+    this.loading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -465,7 +465,8 @@ export class DashboardclassfeeComponent implements OnInit {
               }
           })
           ////console.log('classes', this.ClassStatuses);
-          this.loading = false; this.PageLoading = false;
+          this.loading = false; 
+          this.PageLoading = false;
         }
       })
   }

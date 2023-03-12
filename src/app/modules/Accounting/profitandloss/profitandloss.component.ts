@@ -223,7 +223,7 @@ export class ProfitandlossComponent implements OnInit {
         this.TotalCr = this.TrialBalance.reduce((acc, current) => acc + (current.CrBalance ? current.CrBalance : 0), 0);
 
 
-        this.TrialBalanceDatasource = new MatTableDataSource<IAccountingVoucher>(this.TrialBalance);
+        //this.TrialBalanceDatasource = new MatTableDataSource<IAccountingVoucher>(this.TrialBalance);
 
         this.TrialBalance.forEach(t => {
 

@@ -133,22 +133,25 @@ export class HomeDashboardComponent implements OnInit {
                 this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
                 this.SelectedAppName = this.tokenStorage.getSelectedAppName();
                 this.getBatches();
-                if (this.SelectedAppId > 0) {
-                  this.GetMasterData(this.SelectedAppId, this.SelectedAppName);
-                }
-                //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-                if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
-                  let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
-                  this.GetStudentClass(obj);
-                }
+                // if (this.SelectedAppId > 0) {
+                //   this.GetMasterData(this.SelectedAppId, this.SelectedAppName);
+                // }
+                // //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
+                // if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
+                //   let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+                //   if (this.CurrentBatchId == this.SelectedBatchId)
+                //     this.GetStudents(obj);
+                //   else
+                //     this.GetStudentClass();
+                // }
 
-                if (this.SelectedAppId > 0) {
-                  this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
-                    .subscribe((data: any) => {
-                      this.tokenStorage.saveMasterData(data.value);
-                    })
-                  this.GetMenuData(this.SelectedAppId);
-                }
+                // if (this.SelectedAppId > 0) {
+                //   this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
+                //     .subscribe((data: any) => {
+                //       this.tokenStorage.saveMasterData(data.value);
+                //     })
+                //   this.GetMenuData(this.SelectedAppId);
+                // }
               }
             }
             //}
@@ -347,7 +350,11 @@ export class HomeDashboardComponent implements OnInit {
                 this.Classes = [...data.value];
 
                 let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
-                this.GetStudentClass(obj);
+                //if selected batch is current batch.
+                if (this.CurrentBatchId == this.SelectedBatchId)
+                  this.GetStudents(obj);
+                else
+                  this.GetStudentClass(obj.appShortName);
               })
             }
             else {
@@ -418,20 +425,50 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
       this.tokenStorage.saveBatches(this.Batches)
+      var _currentBatchId = 0;
+      var current = this.Batches.filter(b => b.CurrentBatch == 1);
+      if (current.length > 0) {
+        _currentBatchId = current[0].BatchId;
+        this.tokenStorage.saveCurrentBatchId(_currentBatchId + "");
+        this.CurrentBatchId = _currentBatchId;
+      }
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      this.tokenStorage.saveCurrentBatchId(this.SelectedBatchId + "");
+      // this.tokenStorage.saveCurrentBatchId(this.SelectedBatchId + "");
 
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
       if (this.SelectedBatchId > 0)
         this.generateBatchIds(this.SelectedBatchId);
+      ////////////
+
+      if (this.SelectedAppId > 0) {
+        this.GetMasterData(this.SelectedAppId, this.SelectedAppName);
+      }
+      //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
+      if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
+        let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+        if (this.CurrentBatchId == this.SelectedBatchId)
+          this.GetStudents(obj);
+        else
+          this.GetStudentClass(obj.appShortName);
+      }
+
+      if (this.SelectedAppId > 0) {
+        this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
+          .subscribe((data: any) => {
+            this.tokenStorage.saveMasterData(data.value);
+          })
+        this.GetMenuData(this.SelectedAppId);
+      }
+      /////////////
+
       this.loading = false; this.PageLoading = false;
     });
   }
   Students = [];
   StudentClasses = [];
-  GetStudentClass(selectedApp) {
+  GetStudentClass(appShortName) {
     var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
@@ -441,19 +478,69 @@ export class HomeDashboardComponent implements OnInit {
       standardfilter += " and StudentId eq " + localStorage.getItem("studentId");
     }
     list.PageName = "StudentClasses";
-    //list.lookupFields=["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId +";$select=)"]
+    list.lookupFields = ["Student($select=StudentId," +
+      "FirstName,LastName,FatherName,MotherName,PersonalNo,FatherContactNo,MotherContactNo,PID,Active,RemarkId," +
+      "GenderId,HouseId,EmailAddress,UserId,ReasonForLeavingId,AdmissionStatusId)"];
 
 
     list.filter = [standardfilter];
     this.loading = true;
+    this.PageLoading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.StudentClasses = [...data.value];
-        this.GetStudents(selectedApp);
+        //this.StudentClasses = [...data.value];
+        this.Students=[];
+        data.value.forEach(d => {
+          var studcls = '{';
+          Object.keys(d).forEach(c => {
+            studcls += '"' + c + '":"' + d[c] + '",';
+          });
+          studcls = studcls.substring(0, studcls.length - 1) + "}";
+          d["StudentClasses"]=[];
+          d["StudentClasses"].push(JSON.parse(studcls));
+
+          Object.keys(d.Student).forEach(s => {
+            d[s] = d.Student[s];
+          })
+          delete d.Student;
+
+          var _classNameobj = [];
+          var _className = '';
+          var _studentClassId = 0;
+          //if (d.StudentClasses.length > 0) {
+          _classNameobj = this.Classes.filter(c => c.ClassId == d.StudentClasses[0].ClassId);
+          if (_classNameobj.length > 0)
+            _className = _classNameobj[0].ClassName;
+
+          var _Section = '';
+          var _sectionobj = this.Sections.filter(f => f.MasterDataId == d.StudentClasses[0].SectionId);
+          if (_sectionobj.length > 0)
+            _Section = _sectionobj[0].MasterDataName;
+          var _RollNo = d.StudentClasses[0].RollNo;
+          _studentClassId = d.StudentClasses[0].StudentClassId;
+          //}
+          var _lastname = d.LastName == null ? '' : " " + d.LastName;
+
+          var _name = d.FirstName + _lastname;
+          var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
+
+          //d.StudentClassId = _studentClassId;
+          d.Name = _fullDescription;
+          d.ClassName = _className;
+          d.Section = _Section;
+          this.Students.push(d);
+        });
+        this.tokenStorage.saveStudents(this.Students);
+        //console.log("previous students", this.Students);
+        this.loading = false;
+        this.PageLoading = false;
+        if (this.Submitted)
+          this.route.navigate(['/', appShortName]);
       })
   }
 
   GetStudents(selectedApp) {
+    
     this.Students = [];
     let list: List = new List();
     list.fields = [
@@ -476,16 +563,18 @@ export class HomeDashboardComponent implements OnInit {
       "AdmissionStatusId"
     ];
     list.PageName = "Students";
-    //list.lookupFields=["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId +";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo)"]
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo)"]
+
     var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
       standardfilter += " and StudentId eq " + localStorage.getItem("studentId");
     }
     list.filter = [standardfilter];
     this.loading = true;
+    this.PageLoading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.loading = true;
+       
         var _classNameobj = [];
         var _className = '';
         var _studentClassId = 0;
@@ -493,19 +582,22 @@ export class HomeDashboardComponent implements OnInit {
           _classNameobj = [];
           _className = '';
           _studentClassId = 0;
-          var studcls = this.StudentClasses.filter(f => f.StudentId == d.StudentId);
-          if (studcls.length > 0) {
-            _classNameobj = this.Classes.filter(c => c.ClassId == studcls[0].ClassId);
+          //var studcls = this.StudentClasses.filter(f => f.StudentId == d.StudentId);
+          if (d.StudentClasses.length > 0) {
+            _classNameobj = this.Classes.filter(c => c.ClassId == d.StudentClasses[0].ClassId);
             if (_classNameobj.length > 0)
               _className = _classNameobj[0].ClassName;
 
             var _Section = '';
-            var _sectionobj = this.Sections.filter(f => f.MasterDataId == studcls[0].SectionId);
+            var _sectionobj = this.Sections.filter(f => f.MasterDataId == d.StudentClasses[0].SectionId);
             if (_sectionobj.length > 0)
               _Section = _sectionobj[0].MasterDataName;
-            var _RollNo = studcls[0].RollNo;
-            _studentClassId = studcls[0].StudentClassId;
+            var _RollNo = d.StudentClasses[0].RollNo;
+            _studentClassId = d.StudentClasses[0].StudentClassId;
           }
+          else
+            d.StudentClasses = [];
+
           var _lastname = d.LastName == null ? '' : " " + d.LastName;
 
           var _name = d.FirstName + _lastname;
@@ -514,7 +606,7 @@ export class HomeDashboardComponent implements OnInit {
           d.Name = _fullDescription;
           d.ClassName = _className;
           d.Section = _Section;
-          d.StudentClasses = studcls;
+          //d.StudentClasses = studcls;
           this.Students.push(d);
 
         })
