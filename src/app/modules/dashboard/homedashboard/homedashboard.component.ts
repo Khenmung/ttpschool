@@ -563,7 +563,7 @@ export class HomeDashboardComponent implements OnInit {
       "AdmissionStatusId"
     ];
     list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo)"]
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
 
     var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {

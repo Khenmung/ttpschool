@@ -1,9 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AccountNatureComponent } from '../accountnature/accountnature.component';
+import { BalancesheetComponent } from '../balancesheet/balancesheet.component';
 import { JournalEntryComponent } from '../JournalEntry/JournalEntry.component';
 import { LedgerAccountComponent } from '../ledgeraccount/ledgeraccount.component';
 import { LedgerBalanceComponent } from '../ledgerbalance/ledgerbalance.component';
@@ -22,7 +23,8 @@ export class AccountingboardComponent implements AfterViewInit {
     JournalEntryComponent,
     LedgerBalanceComponent,
     TrialBalanceComponent,
-    ProfitandlossComponent
+    ProfitandlossComponent,
+    BalancesheetComponent
   ];
   LoginUserDetail=[];
   tabNames = [
@@ -31,7 +33,8 @@ export class AccountingboardComponent implements AfterViewInit {
     { 'label': 'Plan Feature', 'faIcon': '' },    
     { 'label': 'Plan Feature', 'faIcon': '' },    
     { 'label': 'Plan Feature', 'faIcon': '' }, 
-    { 'label': 'Plan Feature', 'faIcon': '' } 
+    { 'label': 'Plan Feature', 'faIcon': '' },
+    { 'label': 'Plan Feature', 'faIcon': '' }
   ];
 
   Permissions =
@@ -86,6 +89,10 @@ export class AccountingboardComponent implements AfterViewInit {
     
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.INCOMESTATEMENT)
     var comindx = this.components.indexOf(ProfitandlossComponent);
+    this.GetComponents(perObj,comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.BALANCESHEET)
+    var comindx = this.components.indexOf(BalancesheetComponent);
     this.GetComponents(perObj,comindx)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

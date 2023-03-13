@@ -38,7 +38,7 @@ export class LedgerAccountComponent implements OnInit {
   filteredOptions = [];
   dataSource: MatTableDataSource<IGeneralLedger>;
   allMasterData = [];
-
+  PlusOrMinus = [];
   ExamId = 0;
   GeneralLedgerData = {
     GeneralLedgerId: 0,
@@ -51,24 +51,36 @@ export class LedgerAccountComponent implements OnInit {
     AccountGroupId: 0,
     AccountSubGroupId: 0,
     IncomeStatementSequence: 0,
-    BalanceSheetSequence: 0,
-    IncomeStatementPlus: true,
-    BalanceSheetPlus: true,
+    IncomeStatementPlus: 0,
+    ExpenseSequence: 0,
+    ExpensePlus: 0,
+    LnEPlus: 0,
+    LnESequence: 0,
+    AssetSequence: 0,
+    AssetPlus: 0,
+    TBSequence: 0,
+    TBPlus: 0,
     OrgId: 0,
     Active: 0
   };
   GeneralLedgerForUpdate = [];
   displayedColumns = [
     'Action',
-    'Active',    
+    'Active',
     'GeneralLedgerName',
     'AccountNatureId',
     'AccountGroupId',
     //'AccountSubGroupId',
     'IncomeStatementSequence',
-    'BalanceSheetSequence',
     'IncomeStatementPlus',
-    'BalanceSheetPlus',
+    'ExpenseSequence',
+    'ExpensePlus',
+    'AssetSequence',
+    'AssetPlus',
+    'LnESequence',
+    'LnEPlus',
+    'TBSequence',
+    'TBPlus',
     'ContactNo',
     'ContactName',
     'Email',
@@ -101,6 +113,11 @@ export class LedgerAccountComponent implements OnInit {
       searchAccountGroupId: [0],
       searchAccountSubGroupId: [0]
     });
+    this.PlusOrMinus = [
+      { "Text": "None", "Val": 0 },
+      { "Text": "Plus", "Val": 1 },
+      { "Text": "Minus", "Val": -1 }
+    ]
     // this.filteredOptions = this.searchForm.get("searchLedgerName").valueChanges
     //   .pipe(
     //     startWith(''),
@@ -176,9 +193,15 @@ export class LedgerAccountComponent implements OnInit {
       AccountSubGroupId: subgroupId,
       AccountGroups: this.AccountGroups,
       IncomeStatementSequence: 0,
-      BalanceSheetSequence: 0,
-      IncomeStatementPlus: true,
-      BalanceSheetPlus: true,
+      IncomeStatementPlus: 0,
+      ExpenseSequence: 0,
+      ExpensePlus: 0,
+      AssetPlus: 0,
+      AssetSequence: 0,
+      LnEPlus: 0,
+      LnESequence: 0,
+      TBPlus: 0,
+      TBSequence: 0,
       ContactNo: '',
       ContactName: '',
       Email: '',
@@ -246,9 +269,15 @@ export class LedgerAccountComponent implements OnInit {
           this.GeneralLedgerData.AccountNatureId = row.AccountNatureId;
           this.GeneralLedgerData.AccountGroupId = row.AccountGroupId;
           this.GeneralLedgerData.IncomeStatementPlus = row.IncomeStatementPlus;
-          this.GeneralLedgerData.BalanceSheetPlus = row.BalanceSheetPlus;
           this.GeneralLedgerData.IncomeStatementSequence = row.IncomeStatementSequence;
-          this.GeneralLedgerData.BalanceSheetSequence = row.BalanceSheetSequence;
+          this.GeneralLedgerData.ExpenseSequence = row.ExpenseSequence;
+          this.GeneralLedgerData.ExpensePlus = row.ExpensePlus;
+          this.GeneralLedgerData.AssetPlus = row.AssetPlus;
+          this.GeneralLedgerData.AssetSequence = row.AssetSequence;
+          this.GeneralLedgerData.LnESequence = row.LnESequence;
+          this.GeneralLedgerData.LnEPlus = row.LnEPlus;
+          this.GeneralLedgerData.TBPlus = row.TBPlus;
+          this.GeneralLedgerData.TBSequence = row.TBSequence;
           this.GeneralLedgerData.AccountSubGroupId = row.AccountSubGroupId == null ? 0 : row.AccountSubGroupId;
           this.GeneralLedgerData.GeneralLedgerName = row.GeneralLedgerName;
           this.GeneralLedgerData.ContactNo = row.ContactNo;
@@ -390,8 +419,14 @@ export class LedgerAccountComponent implements OnInit {
       'GeneralLedgerName',
       'IncomeStatementSequence',
       'IncomeStatementPlus',
-      'BalanceSheetPlus',
-      'BalanceSheetSequence',
+      'ExpensePlus',
+      'ExpenseSequence',
+      'AssetSequence',
+      'AssetPlus',
+      'LnESequence',
+      'LnEPlus',
+      'TBSequence',
+      'TBPlus',
       'AccountSubGroupId',
       'AccountNatureId',
       'AccountGroupId',
@@ -420,7 +455,7 @@ export class LedgerAccountComponent implements OnInit {
         if (this.GeneralLedgerList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
-        console.log("this.GeneralLedgerList",this.GeneralLedgerList);
+        console.log("this.GeneralLedgerList", this.GeneralLedgerList);
         this.dataSource = new MatTableDataSource<IGeneralLedger>(this.GeneralLedgerList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -451,7 +486,7 @@ export class LedgerAccountComponent implements OnInit {
       this.AccountGroups = this.AccountNatures.filter(f => f.ParentId == natureId);
   }
   UpdateActive(row, event) {
-    row.Active = event.checked?1:0;
+    row.Active = event.checked ? 1 : 0;
     row.Action = true;
   }
   UpdateBS(row, event) {
@@ -477,6 +512,16 @@ export interface IGeneralLedger {
   ContactName: string;
   Email: string;
   Address: string;
+  IncomeStatementPlus: number;
+  IncomeStatementSequence: number;
+  ExpensePlus: number;
+  ExpenseSequence: number;
+  AssetPlus: number;
+  AssetSequence: number;
+  LnEPlus: number;
+  LnESequence: number;
+  TBPlus: number;
+  TBSequence: number;
   AccountNatureId: number;
   AccountGroupId: number;
   AccountGroups: any[];

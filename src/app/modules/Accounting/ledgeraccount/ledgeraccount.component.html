@@ -65,13 +65,15 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="BalanceSheetSequence">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>BS Sequence
+        <ng-container matColumnDef="IncomeStatementPlus">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>P&L Plus
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input matInput autocomplete="Off" [max]="255" (blur)="onBlur(element)"
-                        [value]="element.BalanceSheetSequence" [(ngModel)]="element.BalanceSheetSequence">
+                    <mat-select [(ngModel)]="element.IncomeStatementPlus" (selectionChange)="onBlur(element)"
+                        [value]="element.IncomeStatementPlus">
+                        <mat-option *ngFor="let item of PlusOrMinus" [value]="item.Val">{{item.Text}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </mat-cell>
         </ng-container>
@@ -85,33 +87,95 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="IncomeStatementPlus">
-            <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>P&L Plus
+        <ng-container matColumnDef="ExpensePlus">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>Expense Plus
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <mat-select [(ngModel)]="element.IncomeStatementPlus"
-                        [value]="element.IncomeStatementPlus">
-                        <mat-option value="0">0</mat-option>
-                        <mat-option value="1">1</mat-option>
-                        <mat-option value="-1">-1</mat-option>
+                    <mat-select [(ngModel)]="element.ExpensePlus" (selectionChange)="onBlur(element)"
+                        [value]="element.ExpensePlus">
+                        <mat-option *ngFor="let item of PlusOrMinus" [value]="item.Val">{{item.Text}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>        
+        <ng-container matColumnDef="ExpenseSequence">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Expense Sequence
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
+                        [value]="element.ExpenseSequence" [(ngModel)]="element.ExpenseSequence">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="AssetPlus">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>Asset Plus
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.AssetPlus" (selectionChange)="onBlur(element)"
+                        [value]="element.AssetPlus">
+                        <mat-option *ngFor="let item of PlusOrMinus" [value]="item.Val">{{item.Text}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="BalanceSheetPlus">
-            <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>BS Plus
+        <ng-container matColumnDef="AssetSequence">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Asset Sequence
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <mat-select [(ngModel)]="element.BalanceSheetPlus" [value]="element.BalanceSheetPlus">
-                        <mat-option value="0">0</mat-option>
-                        <mat-option value="1">1</mat-option>
-                        <mat-option value="-1">-1</mat-option>
+                    <input matInput autocomplete="Off" [max]="255" (blur)="onBlur(element)"
+                        [value]="element.AssetSequence" [(ngModel)]="element.AssetSequence">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="LnEPlus">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>LnE Plus
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.LnEPlus" (selectionChange)="onBlur(element)"
+                        [value]="element.LnEPlus">
+                        <mat-option *ngFor="let item of PlusOrMinus" [value]="item.Val">{{item.Text}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="LnESequence">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>LnE Sequence
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input matInput autocomplete="Off" [min]="0" [max]="255" (blur)="onBlur(element)"
+                        [value]="element.LnESequence" [(ngModel)]="element.LnESequence">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="TBPlus">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>TB Plus
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.TBPlus" (selectionChange)="onBlur(element)"
+                        [value]="element.TBPlus">
+                        <mat-option *ngFor="let item of PlusOrMinus" [value]="item.Val">{{item.Text}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="TBSequence">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>TB Sequence
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input matInput autocomplete="Off" [max]="255" (blur)="onBlur(element)"
+                        [value]="element.TBSequence" [(ngModel)]="element.TBSequence">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        
         <ng-container matColumnDef="AccountNatureId">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Account Nature
             </mat-header-cell>
@@ -221,5 +285,5 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="align-items: start;">
         </mat-row>
     </mat-table>
-    <mat-paginator [pageSizeOptions]="[10,20,50,100]" style="display:flex;justify-content:center"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5,10,20,50,100]" style="display:flex;justify-content:center"></mat-paginator>
 </div>

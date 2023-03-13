@@ -24,7 +24,14 @@ mat-form-field {
 .mat-column-Action,
 .mat-column-IncomeStatementPlus,
 .mat-column-IncomeStatementSequence,
-.mat-column-BalanceSheetPlus,
-.mat-column-BalanceSheetSequence{
-    flex: 1 0 100px;
+.mat-column-ExpensePlus,
+.mat-column-ExpenseSequence,
+.mat-column-AssetPlus,
+.mat-column-AssetSequence,
+.mat-column-LnEPlus,
+.mat-column-LnESequence,
+.mat-column-TBPlus,
+.mat-column-TBSequence
+{
+    flex: 1 0 80px;
 }

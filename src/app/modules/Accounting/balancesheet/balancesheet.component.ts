@@ -4,8 +4,7 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
-//import { SwUpdate } from '@angular/service-worker';
+import { Router } from '@angular/router';
 import alasql from 'alasql';
 import { Observable } from 'rxjs';
 import { ContentService } from 'src/app/shared/content.service';
@@ -13,16 +12,15 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-//import { IAccountNature } from '../accountnature/accountnature.component';
 import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
 import { IGeneralLedger } from '../ledgeraccount/ledgeraccount.component';
 
 @Component({
-  selector: 'app-profitandloss',
-  templateUrl: './profitandloss.component.html',
-  styleUrls: ['./profitandloss.component.scss']
+  selector: 'app-balancesheet',
+  templateUrl: './balancesheet.component.html',
+  styleUrls: ['./balancesheet.component.scss']
 })
-export class ProfitandlossComponent implements OnInit {
+export class BalancesheetComponent implements OnInit {
   PageLoading = true;
   @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -45,15 +43,15 @@ export class ProfitandlossComponent implements OnInit {
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   AccountingVoucherList: IAccountingVoucher[] = [];
-  RevenueDataSource: MatTableDataSource<IAccountingVoucher>;
-  ExpenseDataSource: MatTableDataSource<IAccountingVoucher>;
+  AssetDataSource: MatTableDataSource<IAccountingVoucher>;
+  LiabilityDataSource: MatTableDataSource<IAccountingVoucher>;
   TrialBalanceDatasource: MatTableDataSource<IAccountingVoucher>;
   allMasterData = [];
   searchForm: UntypedFormGroup;
-  Income = [];
-  Expense = [];
-  TotalExpense = 0;
-  TotalIncome = 0;
+  Asset = [];
+  Liability = [];
+  TotalAsset = 0;
+  TotalLiability = 0;
   NetIncome = 0;
   AccountingVoucherData = {
     AccountingVoucherId: 0,
@@ -74,7 +72,7 @@ export class ProfitandlossComponent implements OnInit {
     "DrBalance",
     "CrBalance"
   ];
-  IncomeStatementColumns = [
+  BalanceSheetColumns = [
     "AccountName",
     "Balance"
   ];
@@ -143,7 +141,7 @@ export class ProfitandlossComponent implements OnInit {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
 
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.INCOMESTATEMENT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.BALANCESHEET);
       if (perObj.length > 0) {
 
         this.Permission = perObj[0].permission;
@@ -194,8 +192,8 @@ export class ProfitandlossComponent implements OnInit {
     this.AccountingVoucherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.Income = [];
-        this.Expense = [];
+        this.Asset = [];
+        this.Liability = [];
         this.TrialBalance=[];
         //var tuitionFee= data.value.filter(f=>f.GeneralLedgerAccountId==)
         data.value.forEach(f => {
@@ -212,8 +210,8 @@ export class ProfitandlossComponent implements OnInit {
             f.GeneralLedgerName = _generalaccount[0].GeneralLedgerName;
             f.IncomeStatementSequence = _generalaccount[0].IncomeStatementSequence;
             f.IncomeStatementPlus = _generalaccount[0].IncomeStatementPlus;
-            f.ExpenseSequence = _generalaccount[0].Expenseequence;
-            f.ExpensePlus = _generalaccount[0].ExpensePlus;
+            f.BalanceSheetSequence = _generalaccount[0].BalanceSheetSequence;
+            f.BalanceSheetPlus = _generalaccount[0].BalanceSheetPlus;
             this.TrialBalance.push(f);
           }
         });
@@ -227,45 +225,43 @@ export class ProfitandlossComponent implements OnInit {
 
         this.TrialBalance.forEach(t => {
 
-          if (t.AccountNature.toLowerCase() == "expense") {
-            this.Expense.push(t);
+          if (t.AccountNature.toLowerCase() == "asset") {
+            this.Asset.push(t);
           }
-          else if (t.AccountNature.toLowerCase() == "revenue")
-            this.Income.push(t);
+          else if (t.AccountNature.toLowerCase() == "liability" || t.AccountNature.toLowerCase() == "equity")
+            this.Liability.push(t);
         })
 
-        // this.TotalExpense = this.Expense.reduce((acc, current) => acc + current.Balance, 0);
-        // this.TotalIncome = this.Income.reduce((acc, current) => acc + current.Balance, 0);
+        // this.TotalAsset = this.Asset.reduce((acc, current) => acc + current.Balance, 0);
+        // this.TotalLiability = this.Liability.reduce((acc, current) => acc + current.Balance, 0);
 
-        this.Income = this.Income.sort((a, b) => a.IncomeStatementSequence - b.IncomeStatementSequence);
-        
-        this.TotalIncome = this.Income.reduce((acc, current) => {
-          if (current.IncomeStatementPlus == 1)
+        //this.Asset = this.Asset.sort((a, b) => a.IncomeStatementSequence - b.IncomeStatementSequence);
+        this.TotalAsset = this.Asset.reduce((acc, current) => {
+          if (current.AssetPlus == 1)
             acc += current.Balance
-          else if (current.IncomeStatementPlus == -1)
+          else if (current.AssetPlus == -1)
             acc -= current.Balance;
         }, 0);
-        this.Income = this.Income.sort((a, b) => a.ExpenseSequence - b.ExpenseSequence);
-        this.TotalExpense = this.Expense.reduce((acc, current) => {
-          if (current.ExpensePlus == 1)
+        this.TotalLiability = this.Liability.reduce((acc, current) => {
+          if (current.LnEPlus == 1)
             acc += current.Balance
-          else if (current.ExpensePlus == -1)
+          else if (current.LnEPlus == -1)
             acc -= current.Balance;
         }, 0);
 
-        this.NetIncome = this.TotalIncome - this.TotalExpense;
+        this.NetIncome = this.TotalAsset - this.TotalLiability;
 
-        this.ExpenseDataSource = new MatTableDataSource<IAccountingVoucher>(this.Expense);
-        this.RevenueDataSource = new MatTableDataSource<IAccountingVoucher>(this.Income);
+        this.AssetDataSource = new MatTableDataSource<IAccountingVoucher>(this.Asset);
+        this.LiabilityDataSource = new MatTableDataSource<IAccountingVoucher>(this.Liability);
 
-        this.loading = false; this.PageLoading = false;
+        this.loading = false; 
+        this.PageLoading = false;
       });
   }
   FormatData(pdata) {
     //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
-    var sql="select sum(BaseAmount) as Amount,Debit,AccountName,AccountNature,IncomeStatementSequence,IncomeStatementPlus," +
-     "ExpensePlus,ExpenseSequence from ? GROUP BY AccountName,Debit,AccountNature,IncomeStatementSequence,IncomeStatementPlus,"+
-     "ExpensePlus,ExpenseSequence order by AccountName";
+    var sql="select sum(BaseAmount) as Amount,Debit,AccountName,AccountNature,"+
+    "AssetSequence,AssetPlus,LnESequence,LnEPlus from ? GROUP BY AccountName,Debit,AccountNature,AssetSequence,AssetPlus,LnESequence,LnEPlus order by AccountName";
      var groupbyDebitCredit = alasql(sql,[pdata]);
     
       groupbyDebitCredit = groupbyDebitCredit.sort((a, b) => a.AccountName - b.AccountName);
@@ -286,10 +282,10 @@ export class ProfitandlossComponent implements OnInit {
       }
       else {
         var temprow = {
-          "IncomeStatementPlus": f.IncomeStatementPlus,
-          "IncomeStatementSequence": f.IncomeStatementSequence,
-          "ExpenseSequence": f.ExpenseSequence,
-          "ExpensePlus": f.ExpensePlus,
+          "AssetSequence": f.AssetSequence,
+          "AssetPlus": f.AssetPlus,
+          "LnESequence": f.LnESequence,
+          "LnEPlus": f.LnEPlus,
           "AccountName": f.AccountName, "Dr": 0, "Cr": 0, "AccountNature": f.AccountNature
         };
         if (f.Debit) {
@@ -334,10 +330,10 @@ export class ProfitandlossComponent implements OnInit {
       "AccountNatureId",
       "AccountGroupId",
       "GeneralLedgerName",
-      "IncomeStatementSequence",
-      "IncomeStatementPlus",
-      "ExpenseSequence",
-      "ExpensePlus"
+      "AssetSequence",
+      "AssetPlus",
+      "LnESequence",
+      "LnEPlus"
     ];
 
     list.PageName = "GeneralLedgers";
@@ -479,10 +475,10 @@ export class ProfitandlossComponent implements OnInit {
       "AccountGroupId",
       "AccountSubGroupId",
       "GeneralLedgerName",
-      "IncomeStatementSequence",
-      "IncomeStatementPlus",
-      "ExpenseSequence",
-      "ExpensePlus",
+      "AssetSequence",
+      "AssetPlus",
+      "LnESequence",
+      "LnEPlus",
       "Active"
     ];
 
@@ -567,6 +563,7 @@ export interface ITrialBalance {
   Active: number;
   Action: boolean
 }
+
 
 
 

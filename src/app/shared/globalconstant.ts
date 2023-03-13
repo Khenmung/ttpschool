@@ -292,7 +292,8 @@ export class globalconstants {
                 "ACCOUNTS": "accounts",
                 "LEDGERBALANCE": "ledger balance",
                 "ACCOUNTNATURE": "account nature",
-                "INCOMESTATEMENT": "income statement"
+                "INCOMESTATEMENT": "income statement",
+                "BALANCESHEET": "balance sheet"
             }
         }
 

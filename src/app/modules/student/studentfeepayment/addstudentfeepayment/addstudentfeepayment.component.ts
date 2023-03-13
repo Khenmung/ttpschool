@@ -596,6 +596,14 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.contentservice.openSnackBar("Fees not defined for this class", globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.StudentLedgerList = this.StudentLedgerList.filter(f => f.MonthName != 'Discount')
+        this.StudentLedgerList.forEach(d=>{
+            if(d.TotalDebit==0)
+            {
+              d.TotalCredit=0;
+              d.Balance1=0;
+
+            }
+        })
         this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
         //console.log("this.StudentLedgerList", this.StudentLedgerList)
         this.dataSource = new MatTableDataSource<ILedger>(this.StudentLedgerList);
