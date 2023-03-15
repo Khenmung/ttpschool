@@ -36,6 +36,8 @@ export class ExcelDataManagementComponent implements OnInit {
   ) {
 
   }
+  SelectedApplicationName = '';
+  SubOrgId=0;
   NoOfStudent = 0;
   NoOfStudentInPlan = 0;
   UploadType = {
@@ -76,13 +78,14 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
     this.shareddata.CurrentUploadType.subscribe(c => (this.UploadTypes = c));
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+    this.SubOrgId = +this.tokenservice.getSubOrgId();
     this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
 
     this.uploadForm = this.fb.group({
       UploadTypeId: [0, [Validators.required]]
     })
-    this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenservice);
-    this.filterOrgId = globalconstants.getStandardFilter(this.loginDetail);
+    this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenservice);
+    this.filterOrgId = globalconstants.getOrgSubOrgFilter(this.loginDetail,this.SubOrgId);
     this.PageLoad();
   }
   PageLoad() {
@@ -674,7 +677,7 @@ export class ExcelDataManagementComponent implements OnInit {
       if (this.ErrorMessage.length == 0)
         this.ELEMENT_DATA.push(element);
     });
-    console.log("this.ELEMENT_DATA", this.ELEMENT_DATA)
+   // console.log("this.ELEMENT_DATA", this.ELEMENT_DATA)
   }
   // DateCheck(datestr){
   //     var strArray = datestr.split('/');
@@ -778,7 +781,8 @@ export class ExcelDataManagementComponent implements OnInit {
             StudentClassId: element.StudentClassId,
             FeeTypeId: _regularFeeTypeId,
             BatchId: this.SelectedBatchId,
-            OrgId: this.loginDetail[0]["orgId"]
+            OrgId: this.loginDetail[0]["orgId"],
+            SubOrgId:this.SubOrgId
           });
         }
         else {
@@ -790,7 +794,8 @@ export class ExcelDataManagementComponent implements OnInit {
             StudentClassId: element.StudentClassId,
             FeeTypeId: _regularFeeTypeId,
             BatchId: this.SelectedBatchId,
-            OrgId: this.loginDetail[0]["orgId"]
+            OrgId: this.loginDetail[0]["orgId"],
+            SubOrgId:this.SubOrgId
           });
         }
       }
@@ -1126,6 +1131,7 @@ export class ExcelDataManagementComponent implements OnInit {
       element.StudentId = +element.StudentId;
 
       element.OrgId = this.loginDetail[0]["orgId"];
+      element.SubOrgId = this.SubOrgId;
       element.BatchId = this.SelectedBatchId;
 
       var _nonManadatory = this.ColumnsOfSelectedReports.filter(f => f.Active == 0);
@@ -1371,7 +1377,7 @@ export class ExcelDataManagementComponent implements OnInit {
         })
   }
   GetStudentClasses() {
-    this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenservice);
+    this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenservice);
 
     let list: List = new List();
     list.fields = ["StudentId", "StudentClassId", "ClassId"];
@@ -1393,7 +1399,7 @@ export class ExcelDataManagementComponent implements OnInit {
   }
 
   GetClassEvaluations() {
-    //this.filterOrgIdNBatchId = globalconstants.gt.getStandardFilterWithBatchId(this.tokenservice);
+    //this.filterOrgIdNBatchId = globalconstants.gt.getOrgSubOrgBatchIdFilter(this.tokenservice);
 
     let list: List = new List();
     list.fields = ["ClassEvaluationId", "Description", "ClassId"];
@@ -1441,9 +1447,9 @@ export class ExcelDataManagementComponent implements OnInit {
 
       })
   }
-  SelectedApplicationName = '';
+  
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.loginDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.loginDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         //var SelectedApplicationName = '';
         this.AllMasterData = [...data.value];

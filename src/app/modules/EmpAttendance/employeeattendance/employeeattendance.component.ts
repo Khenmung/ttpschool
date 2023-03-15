@@ -36,7 +36,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   StudentClassId = 0;
   StandardFilter = '';
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -58,7 +58,8 @@ export class EmployeeAttendanceComponent implements OnInit {
     Active:true,
     Remarks: '',
     BatchId: 0,
-    OrgId: 0
+    OrgId: 0,
+    SubOrgId: 0
   };
   displayedColumns = [
     'Employee',
@@ -101,7 +102,8 @@ export class EmployeeAttendanceComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         this.GetEmployees();
 
@@ -315,6 +317,7 @@ export class EmployeeAttendanceComponent implements OnInit {
           this.EmployeeAttendanceData.AttendanceDate = new Date(_AttendanceDate);
           this.EmployeeAttendanceData.EmployeeAttendanceId = row.EmployeeAttendanceId;
           this.EmployeeAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeAttendanceData.SubOrgId = this.SubOrgId;
           this.EmployeeAttendanceData.BatchId = this.SelectedBatchId;
           this.EmployeeAttendanceData.AttendanceStatus = row.AttendanceStatus;
           this.EmployeeAttendanceData.EmployeeId = row.EmployeeId;

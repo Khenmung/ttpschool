@@ -31,7 +31,7 @@ export class ExammarkconfigComponent implements OnInit {
   loading = false;
   rowCount = 0;
   ExamMarkConfigList: IExamMarkConfig[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   StoredForUpdate = [];
   Classes = [];
@@ -55,7 +55,7 @@ export class ExammarkconfigComponent implements OnInit {
     ClassSubjectId: 0,
     Formula: '',
     Active: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0
   }
   displayedColumns = [
@@ -97,6 +97,7 @@ export class ExammarkconfigComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -105,7 +106,7 @@ export class ExammarkconfigComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetMasterData();
         this.GetClassGroupMapping();
         this.GetStudentGradeDefn();
@@ -277,6 +278,7 @@ export class ExammarkconfigComponent implements OnInit {
           this.ExamMarkConfigData.Formula = row.Formula;
           this.ExamMarkConfigData.ClassId = _classId;
           this.ExamMarkConfigData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ExamMarkConfigData.SubOrgId = this.SubOrgId;
           this.ExamMarkConfigData.BatchId = this.SelectedBatchId;
           console.log("this.ExamMarkConfigData", this.ExamMarkConfigData)
           if (this.ExamMarkConfigData.ExamMarkConfigId == 0) {

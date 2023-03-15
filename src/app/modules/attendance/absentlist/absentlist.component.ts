@@ -39,7 +39,7 @@ export class AbsentListComponent implements OnInit {
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -60,7 +60,7 @@ export class AbsentListComponent implements OnInit {
     ReportedTo: 0,
     Approved: false,
     ApprovedBy: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0
   };
   displayedColumns = [
@@ -111,7 +111,8 @@ export class AbsentListComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         this.GetTeachers();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -148,7 +149,7 @@ export class AbsentListComponent implements OnInit {
   Teachers = [];
   GetTeachers() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId;
     //var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     // var _workAccountId = 0;
     // if (_WorkAccount.length > 0)
@@ -177,7 +178,7 @@ export class AbsentListComponent implements OnInit {
 
   GetStudentAttendance() {
     debugger;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId;
     //' and StudentClassId eq ' + this.StudentClassId;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0) {
@@ -401,6 +402,7 @@ export class AbsentListComponent implements OnInit {
           //this.StudentAttendanceData.AttendanceDate = new Date(_AttendanceDate);
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.StudentAttendanceData.SubOrgId = this.SubOrgId;
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
           this.StudentAttendanceData.Approved = row.Approved;
           this.StudentAttendanceData.ReportedTo = row.ReportedTo;
@@ -470,7 +472,7 @@ export class AbsentListComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];

@@ -316,7 +316,8 @@ export class globalconstants {
                 "ACTIVITYSESSION": "activity session",
                 "PAGECATEGORY": "page category",
                 "RULEORPOLICYCATEGORYDISPLAYTYPE": "rules or policy display type",
-                "COMMONPRINTHEADING": "common print heading"
+                "COMMONPRINTHEADING": "common print heading",
+                "SUBORGANIZAION": "sub organization"
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",
@@ -542,25 +543,27 @@ export class globalconstants {
     ) {
 
     }
-    public static getStandardFilterWithBatchId(tokenService) {
+    public static getOrgSubOrgBatchIdFilter(tokenService) {
 
         var _selectedBathId = 0;
         var loginUserdetail = tokenService.getUserDetail();
         _selectedBathId = +tokenService.getSelectedBatchId();
-        var filterstr = 'BatchId eq ' + _selectedBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"];
+        var _subOrgId= +tokenService.getSubOrgId();
+        var filterstr = 'OrgId eq ' + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId + " and BatchId eq " + _selectedBathId;
         return filterstr;
 
     }
-    public static getStandardFilterWithPreviousBatchId(tokenService) {
+    public static getOrgSubOrgFilterWithPreviousBatchId(tokenService) {
         debugger;
         var _previousBathId = 0;
         var loginUserdetail = tokenService.getUserDetail();
         _previousBathId = +tokenService.getPreviousBatchId();
+        var _subOrgId= +tokenService.getSubOrgId();
         var filterstr = ''
         if (_previousBathId > -1)
-            filterstr = 'BatchId eq ' + _previousBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"];
+            filterstr = 'BatchId eq ' + _previousBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId;
         else
-            filterstr = 'OrgId eq ' + loginUserdetail[0]["orgId"];
+            filterstr = 'OrgId eq ' + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId;
         return filterstr;
 
     }
@@ -585,9 +588,9 @@ export class globalconstants {
             { month: 'Dec', val: 12 },
         ];
     }
-    public static getStandardFilter(userDetail) {
-
-        var filterstr = 'OrgId eq ' + userDetail[0]["orgId"];
+    public static getOrgSubOrgFilter(userDetail,SubOrgId) {
+        
+        var filterstr = 'OrgId eq ' + userDetail[0]["orgId"] + " and SubOrgId eq " + SubOrgId;
         return filterstr;
 
     }

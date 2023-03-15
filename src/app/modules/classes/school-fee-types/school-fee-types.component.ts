@@ -26,7 +26,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   filteredOptions: Observable<IFeeType[]>;
   dataSource: MatTableDataSource<IFeeType>;
   Permission = 'deny';
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   allMasterData = [];
   FeeCategories = [];
   FeeTypeData = {
@@ -36,7 +36,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     Formula: '',
     DefaultType: 0,
     Active: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0
   };
   displayedColumns = [
@@ -91,6 +91,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       else {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.Classes = [...data.value];
@@ -172,6 +173,7 @@ export class SchoolFeeTypesComponent implements OnInit {
           this.FeeTypeData.Formula = row.Formula;
           this.FeeTypeData.DefaultType = row.DefaultType;
           this.FeeTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.FeeTypeData.SubOrgId = this.SubOrgId;
           this.FeeTypeData.BatchId = this.SelectedBatchId;
           if (this.FeeTypeData.FeeTypeId == 0) {
             this.FeeTypeData["CreatedDate"] = new Date();

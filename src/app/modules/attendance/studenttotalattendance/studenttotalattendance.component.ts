@@ -26,7 +26,7 @@ export class StudenttotalattendanceComponent implements OnInit {
   TotalAttendanceListName = 'TotalAttendances';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   TotalAttendanceList: ITotalAttendance[] = [];
   filteredOptions: Observable<ITotalAttendance[]>;
   dataSource: MatTableDataSource<ITotalAttendance>;
@@ -40,7 +40,7 @@ export class StudenttotalattendanceComponent implements OnInit {
     ClassId: 0,
     TotalNoOfAttendance: 0,
     ExamId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: false
   };
@@ -99,6 +99,7 @@ export class StudenttotalattendanceComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTTOTALATTENDANCE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -193,6 +194,7 @@ export class StudenttotalattendanceComponent implements OnInit {
           this.TotalAttendanceData.TotalNoOfAttendance = +row.TotalNoOfAttendance;
           this.TotalAttendanceData.BatchId = this.SelectedBatchId;
           this.TotalAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.TotalAttendanceData.SubOrgId = this.SubOrgId;
 
           //console.log("this.TotalAttendanceData", this.TotalAttendanceData);
           if (this.TotalAttendanceData.TotalAttendanceId == 0) {
@@ -347,7 +349,7 @@ export class StudenttotalattendanceComponent implements OnInit {
       this.Classes = [...data.value];
       this.loading = false; this.PageLoading = false;
     });
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(f => {

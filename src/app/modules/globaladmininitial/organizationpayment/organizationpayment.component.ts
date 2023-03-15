@@ -39,9 +39,10 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
   dataSource: MatTableDataSource<IOrganizationPayment>;
   allMasterData = [];
   PagePermission = '';
+  SubOrgId=0;
   OrganizationPaymentData = {
     OrganizationPaymentId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     OrganizationPlanId: 0,
     PaidMonths: 0,
     PaymentDate: new Date(),
@@ -104,6 +105,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
      
       this.UserId = this.LoginUserDetail[0]["userId"];
       this.OrgId = this.LoginUserDetail[0]["orgId"];
+      this.SubOrgId= this.tokenstorage.getSubOrgId();
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT);
       if (perObj.length > 0)
@@ -185,6 +187,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
     this.OrganizationPaymentData.PaymentMode = row.PaymentMode;
     this.OrganizationPaymentData.Active = row.Active;
     this.OrganizationPaymentData.OrgId = _searchCustomerId;//this.LoginUserDetail[0]["orgId"];
+    this.OrganizationPaymentData.SubOrgId = this.SubOrgId;//this.LoginUserDetail[0]["orgId"];
     this.OrganizationPaymentData.PaymentDate = row.PaymentDate
     if (this.OrganizationPaymentData.OrganizationPaymentId == 0) {
       this.OrganizationPaymentData["CreatedDate"] = new Date();
@@ -384,7 +387,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
 }
 export interface IOrganizationPayment {
   OrganizationPaymentId: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   OrganizationPlanId: number;
   PaidMonths: number;
   PaymentDate: Date;

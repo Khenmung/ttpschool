@@ -28,6 +28,7 @@ const STUDENTSEARCH = 'studentsearch';
 const STUDENTS = 'students';
 const MENUDATA = 'menudata';
 const MASTERDATA = 'masterdata';
+const SubOrgId = 'SubOrgId';
 
 @Injectable({
   providedIn: 'root'
@@ -230,6 +231,13 @@ export class TokenStorageService {
   public saveSelectedAppId(token: string): void {
     localStorage.removeItem(SELECTEDAPPID);
     localStorage.setItem(SELECTEDAPPID, token);
+  }
+  public getSubOrgId(): number | null {
+    return +localStorage.getItem(SubOrgId);
+  }
+  public saveSubOrgId(token: string): void {
+    localStorage.removeItem(SubOrgId);
+    localStorage.setItem(SubOrgId, token);
   }
   public saveSelectedAppName(token: string): void {
     localStorage.removeItem(SELECTEDAPPNAME);

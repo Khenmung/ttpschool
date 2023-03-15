@@ -9,7 +9,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import * as moment from 'moment';
 
@@ -18,15 +18,16 @@ import * as moment from 'moment';
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.scss']
 })
-export class EventComponent implements OnInit { PageLoading=true;
-@ViewChild(MatPaginator) paging:MatPaginator;
+export class EventComponent implements OnInit {
+    PageLoading = true;
+  @ViewChild(MatPaginator) paging: MatPaginator;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   EventsListName = 'Events';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   EventsList: IEvent[] = [];
   filteredOptions: Observable<IEvent[]>;
   dataSource: MatTableDataSource<IEvent>;
@@ -41,8 +42,8 @@ export class EventComponent implements OnInit { PageLoading=true;
     EventStartDate: new Date(),
     EventEndDate: new Date(),
     Venue: '',
-    BatchId:0,
-    OrgId: 0,
+    BatchId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
     Broadcasted: 0
   };
@@ -56,7 +57,7 @@ export class EventComponent implements OnInit { PageLoading=true;
     "Active",
     "Action"
   ];
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
@@ -87,8 +88,10 @@ export class EventComponent implements OnInit { PageLoading=true;
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -111,8 +114,8 @@ export class EventComponent implements OnInit { PageLoading=true;
   checkLength(control, len) {
     debugger;
     if (control.value.length > len) // 5 is your maxlength
-        control.value = '';
-}
+      control.value = '';
+  }
   AddNew() {
 
     var newdata = {
@@ -122,10 +125,10 @@ export class EventComponent implements OnInit { PageLoading=true;
       EventStartDate: new Date(),
       EventEndDate: new Date(),
       Venue: '',
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       Active: 0,
       Broadcasted: 0,
-      Action:false
+      Action: false
     };
     this.EventsList = [];
     this.EventsList.push(newdata);
@@ -147,7 +150,7 @@ export class EventComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -168,7 +171,7 @@ export class EventComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -183,6 +186,7 @@ export class EventComponent implements OnInit { PageLoading=true;
           this.EventsData.Broadcasted = 0;
           this.EventsData.Venue = row.Venue;
           this.EventsData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EventsData.SubOrgId = this.SubOrgId;
 
           if (this.EventsData.EventId == 0) {
             this.EventsData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
@@ -204,7 +208,7 @@ export class EventComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -224,7 +228,7 @@ export class EventComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
@@ -244,7 +248,7 @@ export class EventComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.EventsList =data.value.map(m=>{
+          this.EventsList = data.value.map(m => {
             //m.EventStartDate = moment(m.EventStartDate).format('DD/MM/YYYY');
             //m.EventEndDate = moment(m.EventEndDate).format('DD/MM/YYYY');
             return m;
@@ -259,13 +263,13 @@ export class EventComponent implements OnInit { PageLoading=true;
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
         this.Events = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEESKILL);
         this.GetEvents();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -292,7 +296,7 @@ export interface IEvent {
   EventStartDate: Date;
   EventEndDate: Date;
   Venue: string;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   Active: number;
   Broadcasted: number;
   Action: boolean;

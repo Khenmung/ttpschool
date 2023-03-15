@@ -29,7 +29,7 @@ export class TeacherperiodComponent implements OnInit {
   loading = false;
   rowCount = -1;
   DataToSave = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   StoredForUpdate = [];
   PeriodTypes = [];
   Classes = [];
@@ -56,7 +56,7 @@ export class TeacherperiodComponent implements OnInit {
     SectionId: 0,
     SchoolClassPeriodId: 0,
     TeacherSubjectId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -95,6 +95,7 @@ export class TeacherperiodComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -107,7 +108,7 @@ export class TeacherperiodComponent implements OnInit {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetMasterData();
 
       }
@@ -200,6 +201,7 @@ export class TeacherperiodComponent implements OnInit {
       this.SchoolTimeTableData.TeacherSubjectId = row.TeacherSubjectId;
 
       this.SchoolTimeTableData.OrgId = this.LoginUserDetail[0]["orgId"];
+      this.SchoolTimeTableData.SubOrgId = this.SubOrgId;
       this.SchoolTimeTableData.BatchId = this.SelectedBatchId;
 
       //console.log('data', this.SchoolTimeTableData);
@@ -264,6 +266,7 @@ export class TeacherperiodComponent implements OnInit {
   GetSchoolTimeTable() {
     debugger;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.SchoolTimeTableList = [];
 
     this.loading = true;
@@ -449,6 +452,7 @@ export class TeacherperiodComponent implements OnInit {
   GetAllSchoolTimeTable() {
     debugger;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1';
 
@@ -542,6 +546,7 @@ export class TeacherperiodComponent implements OnInit {
   }
   GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.SchoolTimeTableList = [];
     var orgIdSearchstr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 

@@ -35,6 +35,7 @@ export class EmployeeskillComponent implements OnInit { PageLoading=true;
   Applications = [];
   loading = false;
   SelectedBatchId = 0;
+  SubOrgId=0;
   EmployeeSkillsList: ISkill[] = [];
   filteredOptions: Observable<ISkill[]>;
   dataSource: MatTableDataSource<ISkill>;
@@ -48,7 +49,8 @@ export class EmployeeskillComponent implements OnInit { PageLoading=true;
     EmployeeId: 0,
     Active: 0,
     ExperienceInMonths: 0,
-    OrgId:0
+    OrgId:0,
+    SubOrgId:0
   };
   displayedColumns = [
     "EmpEmployeeSkillId",
@@ -62,10 +64,7 @@ export class EmployeeskillComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) { }
@@ -96,6 +95,7 @@ export class EmployeeskillComponent implements OnInit { PageLoading=true;
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EMPLOYEESKILL)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -173,6 +173,7 @@ export class EmployeeskillComponent implements OnInit { PageLoading=true;
           this.EmployeeSkillsData.EmployeeId = this.EmployeeId;
           this.EmployeeSkillsData.ExperienceInMonths = row.ExperienceInMonths;
           this.EmployeeSkillsData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeSkillsData.SubOrgId = this.SubOrgId;
 
           if (this.EmployeeSkillsData.EmpEmployeeSkillId == 0) {
             this.EmployeeSkillsData["CreatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
@@ -243,7 +244,7 @@ export class EmployeeskillComponent implements OnInit { PageLoading=true;
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);

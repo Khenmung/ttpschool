@@ -41,7 +41,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     //ParentId: 0,
     RoleId: 0,
     PermissionId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   SelectedApplicationId = 0;

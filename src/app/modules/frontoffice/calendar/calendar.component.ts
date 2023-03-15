@@ -102,7 +102,7 @@ export class DemoComponent implements OnInit { PageLoading=true;
     },
   ];
 
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   loading = false;
   refresh = new Subject<void>();
   CalendarList = [];

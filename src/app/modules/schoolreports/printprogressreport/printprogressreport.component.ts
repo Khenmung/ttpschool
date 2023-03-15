@@ -37,7 +37,7 @@ export class PrintprogressreportComponent implements OnInit {
   loading = false;
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
   MarkComponents = [];
@@ -73,7 +73,7 @@ export class PrintprogressreportComponent implements OnInit {
     ClassSubjectMarkComponentId: 0,
     Marks: 0,
     ExamStatus: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -123,6 +123,7 @@ export class PrintprogressreportComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -157,7 +158,7 @@ export class PrintprogressreportComponent implements OnInit {
             //var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
             //this.FilteredClasses = this.ClassGroupMapping.filter(f => objExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);
           });
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetMasterData();
         this.GetStudentGradeDefn();
         //this.GetStudentAttendance();
@@ -724,6 +725,7 @@ export class PrintprogressreportComponent implements OnInit {
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
 
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;

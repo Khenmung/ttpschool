@@ -52,7 +52,7 @@ export class StudentattendancereportComponent implements OnInit {
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -124,7 +124,8 @@ export class StudentattendancereportComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+          this.SubOrgId = +this.tokenstorage.getSubOrgId();
+          this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail, this.SubOrgId);
           this.GetMasterData();
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];

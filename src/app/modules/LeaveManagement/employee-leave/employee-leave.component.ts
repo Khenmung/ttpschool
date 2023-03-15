@@ -18,24 +18,18 @@ import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-g
   templateUrl: './employee-leave.component.html',
   styleUrls: ['./employee-leave.component.scss']
 })
-export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
+export class EmployeeLeaveComponent implements OnInit {
+    PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   EmployeeLeaveListName = 'LeaveEmployeeLeaves';
   StandardFilter = '';
-  newitem =false;
+  newitem = false;
   loading = false;
   rowCount = 0;
   EmployeeLeaveList: IEmployeeLeave[] = [];
   SelectedBatchId = 0;
+  SubOrgId = 0;
   Grades = [];
   Leaves = [];
   LeaveStatus = [];
@@ -57,7 +51,7 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
     ApproveRejecteDate: Date,
     ApprovedBy: 0,
     Remarks: String,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
   displayedColumns = [
@@ -74,14 +68,14 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
     "Active",
     "Action"
   ];
-  Permission=''
+  Permission = ''
   searchForm: UntypedFormGroup;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   constructor(private servicework: SwUpdate,
-    private contentservice:ContentService,
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     //private route: ActivatedRoute,
     private nav: Router,
     //private shareddata: SharedataService,
@@ -130,13 +124,14 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
       // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EMPLOYEE);
       // if (perObj.length > 0)
       //   this.Permission = perObj[0].permission;
-      
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
+      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
       this.GetMasterData();
 
     }
-    
+
   }
 
   updateActive(row, value) {
@@ -152,7 +147,7 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -180,7 +175,7 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -196,6 +191,7 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
           this.EmployeeLeaveData.ApprovedBy = this.LoginUserDetail[0]["userId"];
           this.EmployeeLeaveData.NoOfDays = row.NoOfDays;
           this.EmployeeLeaveData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeLeaveData.SubOrgId = this.SubOrgId;
           this.EmployeeLeaveData.Remarks = row.Remarks;
           //console.log('data', this.EmployeeLeaveData);
 
@@ -217,9 +213,9 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
         }
       });
   }
-get f(){
-  return this.searchForm.controls;
-}
+  get f() {
+    return this.searchForm.controls;
+  }
   insert(row) {
 
     //debugger;
@@ -227,7 +223,7 @@ get f(){
       .subscribe(
         (data: any) => {
           row.EmployeeLeaveId = data.EmployeeLeaveId;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.newitem = false;
           // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
@@ -242,13 +238,13 @@ get f(){
     this.dataservice.postPatch(this.EmployeeLeaveListName, this.EmployeeLeaveData, this.EmployeeLeaveData.EmployeeLeaveId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
 
@@ -289,14 +285,14 @@ get f(){
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
         this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVE);
         this.LeaveStatus = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVESTATUS);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.GetEmployees();
       });
   }
@@ -359,7 +355,7 @@ get f(){
         if (data.value.length > 0)
           this.EmployeeLeaveList = [...data.value];
         else {
-          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
 
         // data.value.forEach(appliedLeave => {
@@ -374,7 +370,7 @@ get f(){
 
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    
+
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

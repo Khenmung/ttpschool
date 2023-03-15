@@ -41,7 +41,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   Sections = [];
   ClassSubjects = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   //CheckBatchIDForEdit = 1;
   Batches = [];
   WorkAccounts = [];
@@ -58,7 +58,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     ClassId: 0,
     SectionId: 0,
     BatchId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 1
   };
   displayedColumns = [
@@ -137,10 +137,11 @@ export class ClassmasterdashboardComponent implements OnInit {
 
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
         //this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
         ////console.log(this.CheckPermission);
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-        this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
 
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
 
@@ -378,6 +379,7 @@ export class ClassmasterdashboardComponent implements OnInit {
           this.ClassSubjectTeacherData.HelperId = row.HelperId;
           this.ClassSubjectTeacherData.SectionId = row.SectionId;
           this.ClassSubjectTeacherData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ClassSubjectTeacherData.SubOrgId = this.SubOrgId;
           this.ClassSubjectTeacherData.BatchId = this.SelectedBatchId;
           if (row.TeacherClassMappingId == 0) {
             this.ClassSubjectTeacherData["CreatedDate"] = new Date();

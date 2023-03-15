@@ -64,7 +64,7 @@ export class PromoteclassComponent implements OnInit {
   Remarks = [];
   StudentGrades = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   PreviousBatchId = 0;
   NextBatchId = 0;
   Batches = [];
@@ -79,7 +79,7 @@ export class PromoteclassComponent implements OnInit {
   StudentClassData = {
     StudentClassId: 0,
     ClassId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     StudentId: 0,
     RollNo: 0,
@@ -187,10 +187,11 @@ export class PromoteclassComponent implements OnInit {
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.CurrentBatchStudents = this.tokenstorage.getStudents();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
+      this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+      this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
       if (perObj.length > 0)
@@ -301,7 +302,7 @@ export class PromoteclassComponent implements OnInit {
   }
   GenerateRollNo() {
 
-    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId;
     var _gendersort = this.searchForm.get("searchGenderAscDesc").value;
     var _namesort = this.searchForm.get("searchNameAscDesc").value;
     if (_gendersort == 0) {
@@ -505,11 +506,11 @@ export class PromoteclassComponent implements OnInit {
   }
   GetFeeTypes() {
     this.loading = true;
-    //var filter = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1"];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -550,7 +551,7 @@ export class PromoteclassComponent implements OnInit {
 
   GetExams() {
     var previousBatchId = this.tokenstorage.getPreviousBatchId();
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], previousBatchId,1)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, previousBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(e => {
@@ -904,6 +905,7 @@ export class PromoteclassComponent implements OnInit {
               //this.StudentClassData.AdmissionDate = new Date();
 
               this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
+              this.StudentClassData.SubOrgId = this.SubOrgId;
               this.StudentClassData.BatchId = this.SelectedBatchId;
               if (this.StudentClassData.StudentClassId == 0) {
                 this.StudentClassData.AdmissionNo = _year + ClassStrength;
@@ -1060,7 +1062,7 @@ export class PromoteclassComponent implements OnInit {
 
     //var _classId = this.searchForm.get("searchClassId").value;
     //var _sectionId = this.searchForm.get("searchSectionId").value;
-    let filterstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let filterstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"]  + " and SubOrgId eq " + this.SubOrgId +
       " and ExamId eq " + _examId +
       " and BatchId eq " + pBatchId;
 
@@ -1108,7 +1110,7 @@ export class PromoteclassComponent implements OnInit {
 
     list.PageName = "Students";
     //list.lookupFields = ["Student"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.PreviousBatchId + ' and Active eq 1'];
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]  + " and SubOrgId eq " + this.SubOrgId + ' and BatchId eq ' + this.PreviousBatchId + ' and Active eq 1'];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

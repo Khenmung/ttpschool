@@ -27,7 +27,7 @@ export class ExamslotComponent implements OnInit {
   loading = false;
   DataCountToUpdate = 0;
   ExamSlots: IExamSlots[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   Exams = [];
   ExamNames = [];
@@ -45,7 +45,7 @@ export class ExamslotComponent implements OnInit {
     EndTime: '',
     ExamDate: Date,
     Sequence: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 1
   };
@@ -99,8 +99,9 @@ export class ExamslotComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.Batches = this.tokenstorage.getBatches();
         //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
         this.GetMasterData();
@@ -207,6 +208,7 @@ export class ExamslotComponent implements OnInit {
           this.ExamSlotsData.EndTime = row.EndTime;
           this.ExamSlotsData.Sequence = row.Sequence;
           this.ExamSlotsData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ExamSlotsData.SubOrgId = this.SubOrgId;
           this.ExamSlotsData.BatchId = this.SelectedBatchId;
 
           if (this.ExamSlotsData.ExamSlotId == 0) {
@@ -259,7 +261,7 @@ export class ExamslotComponent implements OnInit {
         });
   }
   GetExams() {
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId,2)
       .subscribe((data: any) => {
         var _examName = '';
         this.Exams = [];
@@ -369,6 +371,7 @@ export class ExamslotComponent implements OnInit {
               EndTime: '',
               Sequence: 0,
               OrgId: 0,
+              SubOrgId: 0,
               BatchId: 0,
               Active: 0,
               Action: false
@@ -421,6 +424,7 @@ export interface IExamSlots {
   EndTime: string;
   Sequence: number;
   OrgId: number;
+  SubOrgId: number;
   BatchId: number;
   Active: number;
   Action: boolean

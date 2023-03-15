@@ -10,14 +10,15 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-planandmasteritem',
   templateUrl: './planandmasteritem.component.html',
   styleUrls: ['./planandmasteritem.component.scss']
 })
-export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
+export class PlanandmasteritemComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -33,7 +34,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
   };
   PlanAndMasterItemListName = 'PlanAndMasterItems';
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   SelectedApplicationId = 0;
   RowToUpdateCount = -1;
   TopMasterItems = [];
@@ -70,7 +71,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private fb: UntypedFormBuilder
   ) {
@@ -107,6 +108,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
 
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail.length == 0)
       this.nav.navigate(['/auth/login']);
     else {
@@ -161,7 +163,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -186,8 +188,8 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
     this.loading = true;
 
     if (row.PlanId == 0) {
-      this.contentservice.openSnackBar("Please select plan name.",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+      this.contentservice.openSnackBar("Please select plan name.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
       row.Action = false;
       return;
     }
@@ -207,7 +209,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -228,7 +230,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -253,7 +255,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
           row.Action = false;
           if (this.RowToUpdateCount == 0) {
             this.RowToUpdateCount = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.loadingFalse();
           }
         });
@@ -295,11 +297,11 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
     this.ClearDisplay();
     var ApplicationId = this.searchForm.get("searchApplicationId").value;
     this.GetMasterItems(ApplicationId).subscribe((d: any) => {
-    
+
       this.MasterItems = [...d.value];
       this.TopMasterItems = this.MasterItems.filter(f => f.ParentId == 0);
-      this.loading = false; this.PageLoading=false;
-    },error=>console.error);
+      this.loading = false; this.PageLoading = false;
+    }, error => console.error);
   }
   GetMasterItems(appId) {
     this.loading = true;
@@ -324,12 +326,12 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
     var _PlanId = this.searchForm.get("searchPlanId").value;
 
     if (_PlanId == 0) {
-      this.contentservice.openSnackBar("Please select plan.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select plan.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var _applicationId = this.searchForm.get("searchApplicationId").value;
     if (_applicationId == 0) {
-      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -379,7 +381,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
           }
         })
         if (this.PlanAndMasterItemList.length == 0) {
-          this.contentservice.openSnackBar("No record found.", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No record found.", globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.PlanAndMasterItemList.sort((a, b) => b.Active - a.Active);
         this.dataSource = new MatTableDataSource<IPlanMasterItem>(this.PlanAndMasterItemList);
@@ -407,18 +409,18 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
   GetMasterData() {
     var globalAdminId = this.contentservice.GetPermittedAppId("globaladmin");
     var Ids = globalAdminId + "," + this.SelectedApplicationId
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], Ids)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, Ids)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
         var applicationId = this.allMasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
-        this.contentservice.GetDropDownDataFromDB(applicationId, 0, 0,1)
+        this.contentservice.GetDropDownDataFromDB(applicationId, 0, 0, 1)
           .subscribe((data: any) => {
             this.Applications = [...data.value];
           })
 
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {

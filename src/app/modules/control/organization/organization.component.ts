@@ -122,6 +122,7 @@ export class OrganizationComponent implements OnInit {
     if (this.LoginUserDetail.length != 0) {
       this.UserId = this.LoginUserDetail[0]["userId"];
       this.OrgId = this.LoginUserDetail[0]["orgId"];
+      //.SubOrgId = this.SubOrgId
     }
     else {
       this.UserId = localStorage.getItem("userId");
@@ -437,7 +438,7 @@ export interface IOrganization {
   ValidTo: Date;
   Active: number;
   ParentId: number;
-  MainOrgId: number;
+  MainOrgId: number;SubOrgId: number;
   CreatedDate: Date;
 }
 

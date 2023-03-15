@@ -33,7 +33,7 @@ export class UserconfigreportnameComponent implements OnInit {
   ];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-
+  SubOrgId=0;
   SelectedApplicationId = 0;
   ColumnsOfAvailableReports = [];
   StandardFilterWithBatchId = '';
@@ -56,7 +56,7 @@ export class UserconfigreportnameComponent implements OnInit {
     ColumnSequence: 0,
     ApplicationId: 0,
     TableNames: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     UserId: '',
     Active: 0
   };
@@ -90,6 +90,7 @@ export class UserconfigreportnameComponent implements OnInit {
     //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
     this.Applications = this.tokenstorage.getPermittedApplications();
     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.PageLoad();
   }
 
@@ -135,7 +136,7 @@ export class UserconfigreportnameComponent implements OnInit {
       ColumnSequence: 0,
       ApplicationId: this.SelectedApplicationId,
       TableNames: '',
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       UserId: '',
       Active: 0,
       Action: false
@@ -188,6 +189,7 @@ export class UserconfigreportnameComponent implements OnInit {
           this.ReportConfigItemData.ColumnSequence = row.ColumnSequence;
           this.ReportConfigItemData.Formula = row.Formula;
           this.ReportConfigItemData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ReportConfigItemData.SubOrgId = this.SubOrgId;
           this.ReportConfigItemData.ParentId = AvailableReportId;
           this.ReportConfigItemData.UserId = row.UserId;
           this.ReportConfigItemData.Active = row.Active;
@@ -412,7 +414,7 @@ export interface IReportConfigItem {
   ColumnSequence: number;
   ApplicationId: number;
   TableNames: string;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   UserId: string;
   Active: number;
   CreatedBy: string;

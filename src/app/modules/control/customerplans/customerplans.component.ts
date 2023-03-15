@@ -28,6 +28,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
   CustomerPlansListName = "CustomerPlans";
   CustomerPlansList = [];
   Plans = [];
+  SubOrgId=0;
   dataSource: MatTableDataSource<ICustomerPlans>;
   allMasterData = [];
   PagePermission = '';
@@ -40,6 +41,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
     Formula: '',
     AmountPerMonth: 0,
     OrgId: 0,
+    SubOrgId: 0,
     Active: 0,
   };
   OrgId = 0;
@@ -88,6 +90,8 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
     if (this.LoginUserDetail.length != 0) {
       this.UserId = this.LoginUserDetail[0]["userId"];
       this.OrgId = this.LoginUserDetail[0]["orgId"];
+      this.SubOrgId = this.tokenstorage.getSubOrgId();
+      
       if (this.LoginUserDetail[0]['org'].toLowerCase() == 'ttp') {
         this.displayedColumns = [
           "PlanName",
@@ -140,6 +144,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
     this.CustomerPlansData.PersonOrItemCount = row.PersonOrItemCount;
     this.CustomerPlansData.Active = 1;
     this.CustomerPlansData.OrgId = this.OrgId;//this.LoginUserDetail[0]["orgId"];
+    this.CustomerPlansData.SubOrgId = this.SubOrgId;//this.LoginUserDetail[0]["orgId"];
 
     //console.log('data', this.CustomerPlansData);
     if (this.CustomerPlansData.CustomerPlanId == 0) {

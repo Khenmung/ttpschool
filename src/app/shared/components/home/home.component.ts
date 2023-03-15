@@ -29,14 +29,14 @@ export class HomeComponent implements OnInit {
   //MenuData = [];
   NewsNEventPageId = 0;
   //////////////////////////
-  SelectedBatchId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   loginUserDetail = [];
   sideMenu = [];
   opened = true;
   SelectedApplicationId = 0;
   MenuData = [];
   /////////////////////////
-  
+
   constructor(
     private sidenavService: SidenavService,
     private servicework: SwUpdate,
@@ -44,12 +44,12 @@ export class HomeComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private shareddata: SharedataService
-   
+
   ) {
 
-    
 
-   }
+
+  }
   ngAfterViewInit(): void {
     this.sidenavService.setSidenav(this.sidenav);
   }
@@ -81,6 +81,7 @@ export class HomeComponent implements OnInit {
       }
       ////////////////
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
       this.loginUserDetail = this.tokenStorage.getUserDetail();
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       // if (this.SelectedApplicationId > 1)
@@ -88,7 +89,7 @@ export class HomeComponent implements OnInit {
       //console.log("home init this.sideMenu", this.sideMenu)
     })
 
-    
+
   }
 
   ngOnDestroy() {

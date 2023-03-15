@@ -11,7 +11,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import {
-  chain, evaluate, round, sqrt, min, max
+  evaluate
 } from 'mathjs';
 import { ContentService } from 'src/app/shared/content.service';
 
@@ -23,22 +23,14 @@ import { ContentService } from 'src/app/shared/content.service';
 export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-
-  StandardFilter = '';
+   StandardFilter = '';
   loading = false;
   rowCount = 0;
   Month = 0;
   CurrentEmployee = [];
   EmpComponents: IEmpComponent[] = [];
   SelectedBatchId = 0;
+  SubOrgId=0;
   //StoredForUpdate = [];
   Months = [];
   EmployeeVariables = [];
@@ -75,7 +67,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
     EmpComponentId: 0,
     ActualFormulaOrAmount: '',
     Month: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Amount: 0,
     Active: 1
   };
@@ -94,11 +86,8 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
     private contentService: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
-    private route: ActivatedRoute,
     private nav: Router,
     private contentservice: ContentService,
-    private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) { }
 
@@ -154,8 +143,9 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
       }
       else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.getVariables();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
       this.GetMasterData();
       }
     }
@@ -214,6 +204,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
           this.EmployeeSalaryComponentData.Amount = row.Amount.toString();
           this.EmployeeSalaryComponentData.EmpComponentId = row.EmpComponentId;
           this.EmployeeSalaryComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeSalaryComponentData.SubOrgId = this.SubOrgId;
           ////console.log('data', this.ClassSubjectData);
           if (this.EmployeeSalaryComponentData.EmployeeSalaryComponentId == 0) {
             this.EmployeeSalaryComponentData["CreatedDate"] = new Date();
@@ -327,7 +318,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
   // }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId,this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);

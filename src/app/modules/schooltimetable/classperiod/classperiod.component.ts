@@ -27,7 +27,7 @@ export class ClassperiodComponent implements OnInit {
   loading = false;
   rowCount = 0;
   DataToSave = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   StoredForUpdate = [];
   Classes = [];
@@ -47,7 +47,7 @@ export class ClassperiodComponent implements OnInit {
     PeriodTypeId: 0,
     FromToTime: '',
     Sequence: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -85,6 +85,7 @@ export class ClassperiodComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -98,7 +99,7 @@ export class ClassperiodComponent implements OnInit {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetMasterData();
         this.GetAllClassPeriods();
       }
@@ -170,6 +171,7 @@ export class ClassperiodComponent implements OnInit {
           this.SchoolClassPeriodData.PeriodId = row.PeriodId;
           this.SchoolClassPeriodData.PeriodTypeId = row.PeriodTypeId;
           this.SchoolClassPeriodData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.SchoolClassPeriodData.SubOrgId = this.SubOrgId;
           this.SchoolClassPeriodData.BatchId = this.SelectedBatchId;
           this.SchoolClassPeriodData.FromToTime = row.FromToTime;
           this.SchoolClassPeriodData.Sequence = row.Sequence;
@@ -235,6 +237,7 @@ export class ClassperiodComponent implements OnInit {
 
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.SchoolClassPeriodList = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
@@ -325,6 +328,7 @@ export class ClassperiodComponent implements OnInit {
   }
   GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.SchoolClassPeriodList = [];
     var orgIdSearchstr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     //var filterstr = '';// 'Active eq 1 ';
@@ -450,7 +454,7 @@ export interface ISchoolClassPeriod {
   PeriodTypeId: number;
   FromToTime: string;
   Sequence: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   BatchId: number;
   Active: number;
   Action: boolean;

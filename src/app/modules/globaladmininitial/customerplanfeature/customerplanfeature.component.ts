@@ -32,7 +32,7 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
   };
   CustomerPlanFeatureListName = 'CustomerPlanFeatures';
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   RowToUpdateCount = -1;
   Topfeatures = [];
@@ -71,14 +71,6 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
-    // this.servicework.activateUpdate().then(() => {
-    //   this.servicework.checkForUpdate().then((value) => {
-    //     if (value) {
-    //       location.reload();
-    //     }
-    //   })
-    // })
-    //debugger;
     this.searchForm = this.fb.group({
       searchPlanId: [0],
     });
@@ -92,6 +84,8 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
 
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -344,7 +338,7 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
   GetMasterData() {
     var globaladminId = this.contentservice.GetPermittedAppId("globaladmin");
     var ids = globaladminId + "," + this.SelectedApplicationId
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], ids)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, ids)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);

@@ -28,7 +28,7 @@ export class EmployeeactivityComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   EmployeeActivityList: IEmployeeActivity[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   EmployeeActivity = [];
   EmployeeActivitySession = [];
   EmployeeActivityCategories = [];
@@ -52,7 +52,7 @@ export class EmployeeactivityComponent implements OnInit {
     AchievementDate: new Date(),
     SessionId: 0,
     BatchId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
   EmployeeActivityForUpdate = [];
@@ -122,7 +122,8 @@ export class EmployeeactivityComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
 
       }
@@ -203,6 +204,7 @@ export class EmployeeactivityComponent implements OnInit {
         else {
           //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
           this.EmployeeActivityForUpdate = [];;
           //console.log("inserting-1",this.EmployeeActivityForUpdate);
 
@@ -272,6 +274,7 @@ export class EmployeeactivityComponent implements OnInit {
       return;
     }
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += ' and EmployeeId eq ' + _employeeId
     let list: List = new List();

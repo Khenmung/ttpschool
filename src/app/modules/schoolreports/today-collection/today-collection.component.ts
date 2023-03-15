@@ -68,7 +68,7 @@ export class TodayCollectionComponent implements OnInit {
   dataSource: MatTableDataSource<ITodayReceipt>;
   SearchForm: UntypedFormGroup;
   ErrorMessage: string = '';
-  SelectedBatchId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   filteredOptions: Observable<IStudent[]>;
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
@@ -258,6 +258,7 @@ export class TodayCollectionComponent implements OnInit {
   GetMasterData() {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
       this.FeeDefinitions = [...f];
       if (this.FeeDefinitions.length == 0) {
@@ -292,37 +293,37 @@ export class TodayCollectionComponent implements OnInit {
 
     // this.dataservice.get(list)
     //   .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        var _students: any = this.tokenStorage.getStudents();
-        this.Students =[..._students];
-        // var _filteredStudents = _students.filter(s => data.value.findIndex(fi => fi.StudentId == s.StudentId) > -1)
-        // if (data.value.length > 0) {
-        //   this.Students = data.value.map(studentcls => {
-        //     var matchstudent = _filteredStudents.filter(stud => stud.StudentId == studentcls.StudentId)
-        //     var _classNameobj = this.Classes.filter(c => c.ClassId == studentcls.ClassId);
-        //     var _className = '';
-        //     if (_classNameobj.length > 0)
-        //       _className = _classNameobj[0].ClassName;
+    //debugger;
+    //  //console.log('data.value', data.value);
+    var _students: any = this.tokenStorage.getStudents();
+    this.Students = [..._students];
+    // var _filteredStudents = _students.filter(s => data.value.findIndex(fi => fi.StudentId == s.StudentId) > -1)
+    // if (data.value.length > 0) {
+    //   this.Students = data.value.map(studentcls => {
+    //     var matchstudent = _filteredStudents.filter(stud => stud.StudentId == studentcls.StudentId)
+    //     var _classNameobj = this.Classes.filter(c => c.ClassId == studentcls.ClassId);
+    //     var _className = '';
+    //     if (_classNameobj.length > 0)
+    //       _className = _classNameobj[0].ClassName;
 
-        //     var _Section = '';
-        //     var _sectionobj = this.Sections.filter(f => f.MasterDataId == studentcls.SectionId);
-        //     if (_sectionobj.length > 0)
-        //       _Section = _sectionobj[0].MasterDataName;
-        //     var _lastname = matchstudent[0].LastName == null ? '' : " " + matchstudent[0].LastName;
-        //     var _RollNo = studentcls.RollNo;
-        //     var _name = matchstudent[0].FirstName + _lastname;
-        //     var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
-        //     return {
-        //       StudentClassId: studentcls.StudentClassId,
-        //       StudentId: studentcls.StudentId,
-        //       ClassName: _className,
-        //       Name: _fullDescription
-        //     }
-        //   })
-        // }
-        this.loading = false; this.PageLoading = false;
-      //})
+    //     var _Section = '';
+    //     var _sectionobj = this.Sections.filter(f => f.MasterDataId == studentcls.SectionId);
+    //     if (_sectionobj.length > 0)
+    //       _Section = _sectionobj[0].MasterDataName;
+    //     var _lastname = matchstudent[0].LastName == null ? '' : " " + matchstudent[0].LastName;
+    //     var _RollNo = studentcls.RollNo;
+    //     var _name = matchstudent[0].FirstName + _lastname;
+    //     var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
+    //     return {
+    //       StudentClassId: studentcls.StudentClassId,
+    //       StudentId: studentcls.StudentId,
+    //       ClassName: _className,
+    //       Name: _fullDescription
+    //     }
+    //   })
+    // }
+    this.loading = false; this.PageLoading = false;
+    //})
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);

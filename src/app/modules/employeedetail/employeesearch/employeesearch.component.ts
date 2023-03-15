@@ -61,6 +61,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
   ReasonForLeaving = [];
   //StandardFilter ='';
   SelectedBatchId = 0;
+  SubOrgId = 0;
   SelectedBatchEmpEmployeeIdRollNo = [];
   EmployeeClassId = 0;
   EmployeeSearchForm: UntypedFormGroup;
@@ -95,13 +96,15 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
-      this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.SubOrgId = +this.token.getSubOrgId();
+      this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+      this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
       this.EmployeeSearchForm = this.fb.group({
         searchemployeeName: [''],
         searchEmployeeCode: ['']
       })
       this.SelectedApplicationId = +this.token.getSelectedAPPId();
+     
       this.filteredEmployees = this.EmployeeSearchForm.get("searchemployeeName").valueChanges
         .pipe(
           startWith(''),
@@ -139,11 +142,11 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
     return emp && emp.EmployeeCode ? emp.EmployeeCode : '';
   }
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
 
         this.SelectedBatchId = +this.token.getSelectedBatchId();
-        this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+        this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
 
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];

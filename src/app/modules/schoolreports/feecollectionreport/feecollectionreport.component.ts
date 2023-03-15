@@ -64,7 +64,7 @@ export class FeecollectionreportComponent implements OnInit {
   ]
   filteredOptions: Observable<IStudent[]>;
   filterOrgIdOnly = '';
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   dataSource: MatTableDataSource<ITodayReceipt>;
   UnpaidDataSource: MatTableDataSource<INotPaidStudent>;
   SearchForm: UntypedFormGroup;
@@ -100,7 +100,8 @@ export class FeecollectionreportComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenservice.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-        this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenservice.getSubOrgId();
+        this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.shareddata.CurrentFeeDefinitions.subscribe(c => (this.FeeDefinitions = c));
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Batches = this.tokenservice.getBatches();

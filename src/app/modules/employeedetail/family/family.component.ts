@@ -32,7 +32,7 @@ export class FamilyComponent implements OnInit {
   EmployeeFamilyListName = 'EmployeeFamilies';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   EmployeeFamilyList: IFamily[] = [];
   filteredOptions: Observable<IFamily[]>;
   dataSource: MatTableDataSource<IFamily>;
@@ -49,7 +49,7 @@ export class FamilyComponent implements OnInit {
     FullName: '',
     Age: 0,
     Gender: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -176,6 +176,7 @@ export class FamilyComponent implements OnInit {
           this.EmployeeFamilyData.FullName = row.FullName;
           this.EmployeeFamilyData.Gender = row.Gender;
           this.EmployeeFamilyData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeFamilyData.SubOrgId = this.SubOrgId;
 
           if (this.EmployeeFamilyData.EmployeeFamilyId == 0) {
             this.EmployeeFamilyData["CreatedDate"] = new Date();

@@ -31,7 +31,7 @@ export class CertificateconfigComponent implements OnInit {
   loading = false;
   //Category = [];
   CertificateConfigList: any[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
   CertificateConfigData = {
@@ -113,7 +113,8 @@ export class CertificateconfigComponent implements OnInit {
         //this.GroupId = this.tokenstorage.getGroupId();
         this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         this.GetAllCertificateConfig();
       }
@@ -154,6 +155,7 @@ export class CertificateconfigComponent implements OnInit {
       return;
     }
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let checkFilterString = "Title eq '" + row.Title + "' and ParentId eq " + row.ParentId
     this.RowsToUpdate = 0;
 

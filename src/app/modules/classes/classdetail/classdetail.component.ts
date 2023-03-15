@@ -29,7 +29,7 @@ export class ClassdetailComponent implements OnInit {
   Applications = [];
   loading = false;
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   ClassMasterList: IClassMaster[] = [];
   filteredOptions: Observable<IClassMaster[]>;
   dataSource: MatTableDataSource<IClassMaster>;
@@ -53,7 +53,7 @@ export class ClassdetailComponent implements OnInit {
     Confidential: false,
     Sequence: 0,
     BatchId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   PreviousBatchId = 0;
@@ -109,6 +109,7 @@ export class ClassdetailComponent implements OnInit {
 
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -123,8 +124,8 @@ export class ClassdetailComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-        this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
         if (this.ClassMasters.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.ClassMasters = [...data.value];
@@ -231,6 +232,7 @@ export class ClassdetailComponent implements OnInit {
           this.ClassMasterData.StudyModeId = row.StudyModeId;
           this.ClassMasterData.Confidential = row.Confidential;
           this.ClassMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ClassMasterData.SubOrgId = this.SubOrgId;
           this.ClassMasterData.BatchId = this.SelectedBatchId;
 
           this.ClassMasterData.Active = row.Active;

@@ -38,7 +38,7 @@ export class roleappAddComponent implements OnInit { PageLoading=true;
     ApplicationId:0,
     RoleId: 0,
     ApplicationRoleId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     DepartmentId:0,
     LocationId:0,
     CreatedDate:new Date(),

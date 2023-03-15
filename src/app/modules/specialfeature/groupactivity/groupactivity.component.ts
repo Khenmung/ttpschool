@@ -32,7 +32,7 @@ export class GroupactivityComponent implements OnInit {
   ActivityCategory = [];
   RelevantEvaluationListForSelectedStudent = [];
   SportsResultList: any[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Sections = [];
   Classes = [];
   AchievementAndPoints = [];
@@ -56,7 +56,7 @@ export class GroupactivityComponent implements OnInit {
     GroupId: 0,
     AchievementDate: new Date(),
     SessionId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   SportsResultForUpdate = [];
@@ -133,7 +133,8 @@ export class GroupactivityComponent implements OnInit {
         //this.GroupId = this.tokenstorage.getGroupId();
 
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
 
         if (this.Classes.length == 0) {
@@ -189,6 +190,7 @@ export class GroupactivityComponent implements OnInit {
     }
 
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let checkFilterString = "GroupId eq " + row.GroupId +
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +

@@ -12,7 +12,7 @@ export class StudentActivity {
     PageLoading=true;
     loading = false;
     loginUserDetail = [];
-    SelectedBatchId = 0;
+    SelectedBatchId = 0;SubOrgId = 0;
     constructor(//private servicework: SwUpdate,
         private token: TokenStorageService,
         private dataservice: NaomitsuService,

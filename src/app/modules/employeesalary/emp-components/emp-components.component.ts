@@ -32,7 +32,7 @@ export class EmpComponentsComponent implements OnInit {
   loading = false;
   rowCount = 0;
   EmpComponentList: IEmpComponent[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Grades = [];
   Departments = [];
   WorkAccounts = [];
@@ -63,7 +63,7 @@ export class EmpComponentsComponent implements OnInit {
     SalaryComponent: '',
     FormulaOrAmount: 0,
     ComponentTypeId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -116,7 +116,7 @@ export class EmpComponentsComponent implements OnInit {
       }
       else {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         this.getEmployeeVariables();
       }
@@ -163,6 +163,7 @@ export class EmpComponentsComponent implements OnInit {
           this.EmpComponentData.SalaryComponent = row.SalaryComponent;
           this.EmpComponentData.ComponentTypeId = row.ComponentTypeId;
           this.EmpComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmpComponentData.SubOrgId = this.SubOrgId;
           this.EmpComponentData.FormulaOrAmount = row.FormulaOrAmount;
           ////console.log('data', this.EmpComponentData);
           if (this.EmpComponentData.EmpSalaryComponentId == 0) {

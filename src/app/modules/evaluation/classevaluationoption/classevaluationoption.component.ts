@@ -27,7 +27,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   ClassEvaluationOptionList: IClassEvaluationOption[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   QuestionnaireTypes = [];
   EvaluationOptionAutoComplete = [];
   Classes = [];
@@ -104,7 +104,8 @@ export class ClassEvaluationOptionComponent implements OnInit {
             map(Title => Title ? this._filter(Title) : this.EvaluationOptionAutoComplete.slice())
           );
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.loading = false; this.PageLoading = false;
 
       }
@@ -202,6 +203,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
           this.ClassEvaluationOptionForUpdate = [];
           this.ClassEvaluationOptionForUpdate.push(
             {

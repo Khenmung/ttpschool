@@ -26,7 +26,7 @@ export class ExamclassgroupComponent implements OnInit {
   ExamClassGroupMapListName = 'ExamClassGroupMaps';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   ExamClassGroupMapList: IExamClassGroupMap[] = [];
   filteredOptions: Observable<IExamClassGroupMap[]>;
   dataSource: MatTableDataSource<IExamClassGroupMap>;
@@ -40,7 +40,7 @@ export class ExamclassgroupComponent implements OnInit {
     ExamClassGroupMapId: 0,
     ExamId: 0,
     ClassGroupId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: false
   };
   displayedColumns = [
@@ -89,6 +89,7 @@ export class ExamclassgroupComponent implements OnInit {
       //this.contentservice.GetOrgExpiry(this.LoginUserDetail);
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMCLASSGROUPMAP);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -177,6 +178,7 @@ export class ExamclassgroupComponent implements OnInit {
           this.ExamClassGroupMapData.ExamId = row.ExamId;
           this.ExamClassGroupMapData.ClassGroupId = row.ClassGroupId;
           this.ExamClassGroupMapData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ExamClassGroupMapData.SubOrgId = this.SubOrgId;
           //console.log("this.ExamClassGroupMapData", this.ExamClassGroupMapData);
           if (this.ExamClassGroupMapData.ExamClassGroupMapId == 0) {
             this.ExamClassGroupMapData["CreatedDate"] = new Date();
@@ -352,7 +354,7 @@ export class ExamclassgroupComponent implements OnInit {
       this.Classes = [...data.value];
       this.loading = false; this.PageLoading = false;
     });
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId,2)
       .subscribe((data: any) => {
         //this.Exams = [...data.value];
         this.Exams = [];

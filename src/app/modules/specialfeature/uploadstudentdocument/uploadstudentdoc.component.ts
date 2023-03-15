@@ -35,7 +35,7 @@ export class StudentDocumentComponent implements OnInit {
   StudentClassId: number = 0;
   StudentDocuments = [];
   Edit: boolean;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   allMasterData = [];
   DocumentTypes = [];
   Batches = [];
@@ -103,8 +103,9 @@ export class StudentDocumentComponent implements OnInit {
       this.StudentId = this.tokenService.getStudentId();
       this.LoginUserDetail = this.tokenService.getUserDetail();
       this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
-      this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
-      this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.SubOrgId = +this.tokenService.getSubOrgId();
+      this.FilterOrgnBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenService);
+      this.FilterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
       this.PageLoad();
     }
     //}
@@ -254,7 +255,7 @@ export class StudentDocumentComponent implements OnInit {
   }
   GetStudentClasses() {
     //debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenService);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];

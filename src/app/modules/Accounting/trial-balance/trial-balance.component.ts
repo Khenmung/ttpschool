@@ -42,7 +42,7 @@ export class TrialBalanceComponent implements OnInit {
   GLAccounts = [];
   GeneralLedgers = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   AccountingVoucherList: IAccountingVoucher[] = [];
   dataSource: MatTableDataSource<IAccountingVoucher>;
   allMasterData = [];
@@ -59,8 +59,7 @@ export class TrialBalanceComponent implements OnInit {
     Debit: false,
     Amount: '',
     ShortText: '',
-    OrgId: 0,
-    SubOrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
 
@@ -135,6 +134,7 @@ export class TrialBalanceComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.TRIALBALANCE);
@@ -142,7 +142,7 @@ export class TrialBalanceComponent implements OnInit {
 
         this.Permission = perObj[0].permission;
         if (this.Permission != 'deny') {
-          this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+          this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
           //this.GetMasterData();
           this.GetGLAccounts();
           this.GetGeneralLedgerAutoComplete();
@@ -173,7 +173,7 @@ export class TrialBalanceComponent implements OnInit {
   }
 
   GetAccountingVoucher() {
-    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'LedgerId eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ ' and SubOrgId eq ' + this.SubOrgId + " and Active eq 1";
     debugger;
     this.loading = true;
 
@@ -283,7 +283,7 @@ export class TrialBalanceComponent implements OnInit {
     ];
 
     list.PageName = "GeneralLedgers";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId + " and Active eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -291,85 +291,7 @@ export class TrialBalanceComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
-  onBlur(row) {
-    row.Action = true;
-  }
-  updateActive(row, value) {
-
-    row.Active = value.checked ? 1 : 0;
-    row.Action = true;
-  }
-  // delete(element) {
-  //   let toupdate = {
-  //     Active: element.Active == 1 ? 0 : 1
-  //   }
-  //   this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-  //     .subscribe(
-  //       (data: any) => {
-  //         // this.GetApplicationRoles();
-  //         this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
-
-  //       });
-  // }
-
-  UpdateOrSave(row) {
-
-    //debugger;
-    this.loading = true;
-
-
-    this.AccountingVoucherData.Active = row.Active;
-    this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
-    this.AccountingVoucherData.Amount = row.Amount;
-    this.AccountingVoucherData.DocDate = row.DocDate;
-    this.AccountingVoucherData.Debit = row.Debit;
-    this.AccountingVoucherData.PostingDate = row.PostingDate;
-    this.AccountingVoucherData.Reference = row.Reference;
-    this.AccountingVoucherData.LedgerId = row.LedgerId;
-    this.AccountingVoucherData.ShortText = row.ShortText;
-    this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
-    if (row.AccountingVoucherId == 0) {
-      this.AccountingVoucherData["CreatedDate"] = new Date();
-      this.AccountingVoucherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-      delete this.AccountingVoucherData["UpdatedDate"];
-      delete this.AccountingVoucherData["UpdatedBy"];
-      //console.log('to insert', this.AccountingVoucherData)
-      this.insert(row);
-    }
-    else {
-      delete this.AccountingVoucherData["CreatedDate"];
-      delete this.AccountingVoucherData["CreatedBy"];
-      this.AccountingVoucherData["UpdatedDate"] = new Date();
-      this.AccountingVoucherData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-      //console.log('to update', this.AccountingVoucherData)
-      this.update(row);
-    }
-    //        }
-    //      });
-
-  }
-
-  insert(row) {
-
-    //debugger;
-    this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, 0, 'post')
-      .subscribe(
-        (data: any) => {
-          this.loading = false; this.PageLoading = false;
-          row.AccountingVoucherId = data.AccountingVoucherId;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-        });
-  }
-  update(row) {
-
-    this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, this.AccountingVoucherData.AccountingVoucherId, 'patch')
-      .subscribe(
-        (data: any) => {
-          this.loading = false; this.PageLoading = false;
-
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-        });
-  }
+  
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -391,7 +313,7 @@ export class TrialBalanceComponent implements OnInit {
 
     list.PageName = "GeneralLedgers";
     list.lookupFields = ["AccountNature($select=Active,AccountNatureId,DebitType)"];
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId + " and Active eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -418,7 +340,7 @@ export class TrialBalanceComponent implements OnInit {
     ];
 
     list.PageName = "AccountingPeriods";
-    list.filter = ["CurrentPeriod eq 1 and Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["CurrentPeriod eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]+ ' and SubOrgId eq ' + this.SubOrgId + " and Active eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {

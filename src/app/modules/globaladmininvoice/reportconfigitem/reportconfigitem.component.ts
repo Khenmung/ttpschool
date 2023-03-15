@@ -60,7 +60,7 @@ export class ReportConfigItemComponent implements OnInit { PageLoading=true;
     ColumnSequence: 0,
     ApplicationId: 0,
     TableNames: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     UserId: '',
     Active: 0
   };
@@ -126,7 +126,7 @@ export class ReportConfigItemComponent implements OnInit { PageLoading=true;
       ColumnSequence: 0,
       ApplicationId: appId,
       TableNames: '',
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       UserId: '',
       Active: 0,
       Action: false
@@ -423,7 +423,7 @@ export interface IReportConfigItem {
   ColumnSequence: number;
   ApplicationId: number;
   TableNames: string;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   UserId: string;
   Active: number;
   CreatedBy: string;

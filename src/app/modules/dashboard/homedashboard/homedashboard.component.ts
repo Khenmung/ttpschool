@@ -27,7 +27,8 @@ export class HomeDashboardComponent implements OnInit {
   loggedIn: boolean;
   loginUserDetail: any;
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0; 
+  SubOrgId = 0;
   SelectedAppId = 0;
   Batches = [];
   PermittedApplications = [];
@@ -55,10 +56,11 @@ export class HomeDashboardComponent implements OnInit {
     })
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
-      searchBatchId: [0]
+      searchBatchId: [0],
+      searchSubOrgId: [0]
     })
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-    console.log("HOme dashboard init")
+    //console.log("HOme dashboard init")
     //console.log('role',this.Role);
     if (this.loginUserDetail.length == 0) {
       this.tokenStorage.signOut();
@@ -130,28 +132,12 @@ export class HomeDashboardComponent implements OnInit {
                 //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
                 this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
                 this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+                this.SubOrgId = +this.tokenStorage.getSubOrgId();
+                this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
                 this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
                 this.SelectedAppName = this.tokenStorage.getSelectedAppName();
                 this.getBatches();
-                // if (this.SelectedAppId > 0) {
-                //   this.GetMasterData(this.SelectedAppId, this.SelectedAppName);
-                // }
-                // //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-                // if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
-                //   let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
-                //   if (this.CurrentBatchId == this.SelectedBatchId)
-                //     this.GetStudents(obj);
-                //   else
-                //     this.GetStudentClass();
-                // }
 
-                // if (this.SelectedAppId > 0) {
-                //   this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
-                //     .subscribe((data: any) => {
-                //       this.tokenStorage.saveMasterData(data.value);
-                //     })
-                //   this.GetMenuData(this.SelectedAppId);
-                // }
               }
             }
             //}
@@ -274,6 +260,7 @@ export class HomeDashboardComponent implements OnInit {
     this.Submitted = true;
     this.SelectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
+    var _SubOrgId = this.searchForm.get("searchSubOrgId").value;
     if (this.SelectedBatchId > 0)
       this.SaveBatchIds(this.SelectedBatchId);
     else {
@@ -281,6 +268,7 @@ export class HomeDashboardComponent implements OnInit {
       this.contentservice.openSnackBar("Please select batch.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+
     if (SelectedAppId > 0) {
       this.loading = true;
       this.tokenStorage.saveSelectedAppId(SelectedAppId);
@@ -293,6 +281,8 @@ export class HomeDashboardComponent implements OnInit {
       }
       else
         this.tokenStorage.saveSelectedBatchName('');
+      this.tokenStorage.saveSubOrgId(_SubOrgId);
+      this.SubOrgId = _SubOrgId;
       //////for local storage
 
       this.GetMenuData(SelectedAppId);
@@ -310,15 +300,18 @@ export class HomeDashboardComponent implements OnInit {
     }
   }
   allMasterData = [];
+  SubOrganization = [];
   Sections = [];
   Classes = [];
   GetMasterData(SelectedAppId, selectedApp) {
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], SelectedAppId)
+    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SubOrgId, SelectedAppId)
       .subscribe((data: any) => {
         this.tokenStorage.saveMasterData([...data.value]);
         ///
         this.allMasterData = [...data.value];
+        this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.SUBORGANIZAION)
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
 
         this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
           .subscribe((data: any) => {
@@ -433,6 +426,7 @@ export class HomeDashboardComponent implements OnInit {
         this.CurrentBatchId = _currentBatchId;
       }
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      //this.SubOrgId = +this.tokenStorage.getSubOrgId();
       // this.tokenStorage.saveCurrentBatchId(this.SelectedBatchId + "");
 
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
@@ -455,7 +449,7 @@ export class HomeDashboardComponent implements OnInit {
       }
 
       if (this.SelectedAppId > 0) {
-        this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SelectedAppId)
+        this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
           .subscribe((data: any) => {
             this.tokenStorage.saveMasterData(data.value);
           })
@@ -469,7 +463,8 @@ export class HomeDashboardComponent implements OnInit {
   Students = [];
   StudentClasses = [];
   GetStudentClass(appShortName) {
-    var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] +
+      " and BatchId eq " + this.SelectedBatchId + " and SubOrgId eq " + this.SubOrgId;
     let list: List = new List();
     list.fields = [
       "StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active"
@@ -489,14 +484,14 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //this.StudentClasses = [...data.value];
-        this.Students=[];
+        this.Students = [];
         data.value.forEach(d => {
           var studcls = '{';
           Object.keys(d).forEach(c => {
             studcls += '"' + c + '":"' + d[c] + '",';
           });
           studcls = studcls.substring(0, studcls.length - 1) + "}";
-          d["StudentClasses"]=[];
+          d["StudentClasses"] = [];
           d["StudentClasses"].push(JSON.parse(studcls));
 
           Object.keys(d.Student).forEach(s => {
@@ -540,7 +535,7 @@ export class HomeDashboardComponent implements OnInit {
   }
 
   GetStudents(selectedApp) {
-    
+
     this.Students = [];
     let list: List = new List();
     list.fields = [
@@ -563,9 +558,10 @@ export class HomeDashboardComponent implements OnInit {
       "AdmissionStatusId"
     ];
     list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + " and SubOrgId eq " + this.SubOrgId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
 
-    var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"] +
+      ' and BatchId eq ' + this.SelectedBatchId + ' and SubOrgId eq ' + this.SubOrgId;
     if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
       standardfilter += " and StudentId eq " + localStorage.getItem("studentId");
     }
@@ -574,7 +570,7 @@ export class HomeDashboardComponent implements OnInit {
     this.PageLoading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-       
+
         var _classNameobj = [];
         var _className = '';
         var _studentClassId = 0;

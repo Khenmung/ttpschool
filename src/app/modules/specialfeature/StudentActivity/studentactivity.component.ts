@@ -36,7 +36,7 @@ export class StudentActivityComponent implements OnInit {
   ActivityCategory = [];
   RelevantEvaluationListForSelectedStudent = [];
   SportsResultList: any[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Sections = [];
   Classes = [];
   dataSource: MatTableDataSource<any>;
@@ -58,7 +58,7 @@ export class StudentActivityComponent implements OnInit {
     StudentClassId: 0,
     AchievementDate: new Date(),
     SessionId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   SportsResultForUpdate = [];
@@ -137,7 +137,8 @@ export class StudentActivityComponent implements OnInit {
         this.StudentClassId = this.tokenstorage.getStudentClassId();
 
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
 
         if (this.Classes.length == 0) {
@@ -239,6 +240,7 @@ export class StudentActivityComponent implements OnInit {
     }
 
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let checkFilterString = "RankId eq " + row.RankId +
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +
@@ -575,7 +577,7 @@ export class StudentActivityComponent implements OnInit {
 
   GetStudentClasses() {
     //debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];

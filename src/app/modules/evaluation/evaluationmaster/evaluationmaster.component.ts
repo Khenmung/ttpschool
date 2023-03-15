@@ -28,7 +28,7 @@ export class EvaluationMasterComponent implements OnInit {
   Applications = [];
   ClassGroups = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   EvaluationMasterList: IEvaluationMaster[] = [];
   filteredOptions: Observable<IEvaluationMaster[]>;
   dataSource: MatTableDataSource<IEvaluationMaster>;
@@ -47,7 +47,7 @@ export class EvaluationMasterComponent implements OnInit {
     FullMark: 0,
     PassMark: 0,
     Confidential: false,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -260,6 +260,7 @@ export class EvaluationMasterComponent implements OnInit {
           this.EvaluationMasterData.PassMark = row.PassMark == null ? 0 : row.PassMark;
           this.EvaluationMasterData.Confidential = row.Confidential;
           this.EvaluationMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EvaluationMasterData.SubOrgId = this.SubOrgId;
 
           if (this.EvaluationMasterData.EvaluationMasterId == 0) {
             this.EvaluationMasterData["CreatedDate"] = new Date();

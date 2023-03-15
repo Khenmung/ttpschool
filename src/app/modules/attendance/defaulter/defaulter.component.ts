@@ -40,7 +40,7 @@ export class DefaulterComponent implements OnInit {
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -61,6 +61,7 @@ export class DefaulterComponent implements OnInit {
     Approved: false,
     ApprovedBy: '',
     OrgId: 0,
+    SubOrgId: 0,
     BatchId: 0
   };
   displayedColumns = [
@@ -108,8 +109,9 @@ export class DefaulterComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
         this.Students = this.tokenstorage.getStudents();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         this.GetTeachers();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -146,7 +148,7 @@ export class DefaulterComponent implements OnInit {
   Teachers = [];
   GetTeachers() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId;
     //var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     // var _workAccountId = 0;
     // if (_WorkAccount.length > 0)
@@ -174,7 +176,7 @@ export class DefaulterComponent implements OnInit {
 
   GetStudentAttendance() {
     debugger;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId + " and Active eq 1"
     //' and StudentClassId eq ' + this.StudentClassId;
     var _AbsentDays = this.searchForm.get("searchAbsentCount").value;
     if (_AbsentDays < 2) {
@@ -279,7 +281,7 @@ export class DefaulterComponent implements OnInit {
     ];
     list.PageName = "Attendances";
     //list.lookupFields = ["StudentClass"];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId +
       datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
     this.dataservice.get(list)
@@ -413,6 +415,7 @@ export class DefaulterComponent implements OnInit {
           //this.StudentAttendanceData.AttendanceDate = new Date(_AttendanceDate);
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.StudentAttendanceData.SubOrgId = this.SubOrgId;
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
           this.StudentAttendanceData.Approved = row.Approved;
           this.StudentAttendanceData.ReportedTo = row.ReportedTo;

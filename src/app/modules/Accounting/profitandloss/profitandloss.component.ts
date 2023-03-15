@@ -42,6 +42,7 @@ export class ProfitandlossComponent implements OnInit {
   loading = false;
   GLAccounts = [];
   GeneralLedgers = [];
+  SubOrgId = 0;
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   AccountingVoucherList: IAccountingVoucher[] = [];
@@ -64,8 +65,7 @@ export class ProfitandlossComponent implements OnInit {
     Debit: false,
     Amount: '',
     ShortText: '',
-    OrgId: 0,
-    SubOrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
 
@@ -141,6 +141,7 @@ export class ProfitandlossComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.INCOMESTATEMENT);
@@ -148,7 +149,7 @@ export class ProfitandlossComponent implements OnInit {
 
         this.Permission = perObj[0].permission;
         if (this.Permission != 'deny') {
-          this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+          this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
           //this.GetMasterData();
           this.GetAccountNature();
 
@@ -167,7 +168,7 @@ export class ProfitandlossComponent implements OnInit {
   TotalDr = 0;
   TotalCr = 0;
   GetAccountingVoucher() {
-    let filterStr = 'FeeReceiptId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'FeeReceiptId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId;
     debugger;
     this.loading = true;
     var toDate = new Date(this.searchForm.get("searchToDate").value);
@@ -196,13 +197,13 @@ export class ProfitandlossComponent implements OnInit {
       .subscribe((data: any) => {
         this.Income = [];
         this.Expense = [];
-        this.TrialBalance=[];
+        this.TrialBalance = [];
         //var tuitionFee= data.value.filter(f=>f.GeneralLedgerAccountId==)
         data.value.forEach(f => {
           var _generalaccount = this.GLAccounts.filter(g => g.GeneralLedgerId == f.GeneralLedgerAccountId);
 
           if (_generalaccount.length > 0) {
-            f.Debit=f.Debit!=undefined?f.Debit:false;
+            f.Debit = f.Debit != undefined ? f.Debit : false;
             f.AccountNature = _generalaccount[0].AccountNature;
             f.AccountName = _generalaccount[0].GeneralLedgerName;
             f.DebitAccount = _generalaccount[0].DebitAccount;
@@ -238,7 +239,7 @@ export class ProfitandlossComponent implements OnInit {
         // this.TotalIncome = this.Income.reduce((acc, current) => acc + current.Balance, 0);
 
         this.Income = this.Income.sort((a, b) => a.IncomeStatementSequence - b.IncomeStatementSequence);
-        
+
         this.TotalIncome = this.Income.reduce((acc, current) => {
           if (current.IncomeStatementPlus == 1)
             acc += current.Balance
@@ -263,12 +264,12 @@ export class ProfitandlossComponent implements OnInit {
   }
   FormatData(pdata) {
     //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
-    var sql="select sum(BaseAmount) as Amount,Debit,AccountName,AccountNature,IncomeStatementSequence,IncomeStatementPlus," +
-     "ExpensePlus,ExpenseSequence from ? GROUP BY AccountName,Debit,AccountNature,IncomeStatementSequence,IncomeStatementPlus,"+
-     "ExpensePlus,ExpenseSequence order by AccountName";
-     var groupbyDebitCredit = alasql(sql,[pdata]);
-    
-      groupbyDebitCredit = groupbyDebitCredit.sort((a, b) => a.AccountName - b.AccountName);
+    var sql = "select sum(BaseAmount) as Amount,Debit,AccountName,AccountNature,IncomeStatementSequence,IncomeStatementPlus," +
+      "ExpensePlus,ExpenseSequence from ? GROUP BY AccountName,Debit,AccountNature,IncomeStatementSequence,IncomeStatementPlus," +
+      "ExpensePlus,ExpenseSequence order by AccountName";
+    var groupbyDebitCredit = alasql(sql, [pdata]);
+
+    groupbyDebitCredit = groupbyDebitCredit.sort((a, b) => a.AccountName - b.AccountName);
     var result = [];
     groupbyDebitCredit.forEach(f => {
 
@@ -305,7 +306,7 @@ export class ProfitandlossComponent implements OnInit {
     })
     //console.log("groupbyDebitCredit", groupbyDebitCredit)
 
-    result = result.filter(f => f.Dr!=undefined)
+    result = result.filter(f => f.Dr != undefined)
     result.forEach(row => {
       if (row.Dr > row.Cr) {
         row.Balance = row.Dr - row.Cr;
@@ -341,7 +342,7 @@ export class ProfitandlossComponent implements OnInit {
     ];
 
     list.PageName = "GeneralLedgers";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -349,85 +350,7 @@ export class ProfitandlossComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
-  onBlur(row) {
-    row.Action = true;
-  }
-  updateActive(row, value) {
 
-    row.Active = value.checked ? 1 : 0;
-    row.Action = true;
-  }
-  // delete(element) {
-  //   let toupdate = {
-  //     Active: element.Active == 1 ? 0 : 1
-  //   }
-  //   this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-  //     .subscribe(
-  //       (data: any) => {
-  //         // this.GetApplicationRoles();
-  //         this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
-
-  //       });
-  // }
-
-  UpdateOrSave(row) {
-
-    //debugger;
-    this.loading = true;
-
-
-    this.AccountingVoucherData.Active = row.Active;
-    this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
-    this.AccountingVoucherData.Amount = row.Amount;
-    this.AccountingVoucherData.DocDate = row.DocDate;
-    this.AccountingVoucherData.Debit = row.Debit;
-    this.AccountingVoucherData.PostingDate = row.PostingDate;
-    this.AccountingVoucherData.Reference = row.Reference;
-    this.AccountingVoucherData.LedgerId = row.LedgerId;
-    this.AccountingVoucherData.ShortText = row.ShortText;
-    this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
-    if (row.AccountingVoucherId == 0) {
-      this.AccountingVoucherData["CreatedDate"] = new Date();
-      this.AccountingVoucherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-      delete this.AccountingVoucherData["UpdatedDate"];
-      delete this.AccountingVoucherData["UpdatedBy"];
-      //console.log('to insert', this.AccountingVoucherData)
-      this.insert(row);
-    }
-    else {
-      delete this.AccountingVoucherData["CreatedDate"];
-      delete this.AccountingVoucherData["CreatedBy"];
-      this.AccountingVoucherData["UpdatedDate"] = new Date();
-      this.AccountingVoucherData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-      //console.log('to update', this.AccountingVoucherData)
-      this.update(row);
-    }
-    //        }
-    //      });
-
-  }
-
-  insert(row) {
-
-    //debugger;
-    this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, 0, 'post')
-      .subscribe(
-        (data: any) => {
-          this.loading = false; this.PageLoading = false;
-          row.AccountingVoucherId = data.AccountingVoucherId;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-        });
-  }
-  update(row) {
-
-    this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, this.AccountingVoucherData.AccountingVoucherId, 'patch')
-      .subscribe(
-        (data: any) => {
-          this.loading = false; this.PageLoading = false;
-
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-        });
-  }
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -436,7 +359,7 @@ export class ProfitandlossComponent implements OnInit {
   AccountNatureList = [];
   GetAccountNature() {
 
-    let filterStr = '(OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
+    let filterStr = '(OrgId eq 0 or (OrgId eq ' + this.LoginUserDetail[0]["orgId"]  + ' and SubOrgId eq ' + this.SubOrgId + "))";
     debugger;
     this.loading = true;
 
@@ -488,7 +411,7 @@ export class ProfitandlossComponent implements OnInit {
 
     list.PageName = "GeneralLedgers";
     //list.lookupFields = ["AccountNature($select=Active,AccountNatureId,DebitType)"];
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId + " and Active eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -518,7 +441,7 @@ export class ProfitandlossComponent implements OnInit {
     ];
 
     list.PageName = "AccountingPeriods";
-    list.filter = ["CurrentPeriod eq 1 and Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["CurrentPeriod eq 1 and Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]+ ' and SubOrgId eq ' + this.SubOrgId];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {

@@ -43,7 +43,7 @@ export class StudentEvaluationComponent implements OnInit {
   loading = false;
   RelevantEvaluationListForSelectedStudent = [];
   StudentEvaluationList: any[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   QuestionnaireTypes = [];
   Sections = [];
   Classes = [];
@@ -77,7 +77,7 @@ export class StudentEvaluationComponent implements OnInit {
     ExamId: 0,
     StudentClassId: 0,
     StudentId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   ResultDetail = {
@@ -148,7 +148,8 @@ export class StudentEvaluationComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.StudentId = +localStorage.getItem('studentId');
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
           .subscribe((data: any) => {
             this.ClassGroupMappings = [...data.value];
@@ -283,6 +284,7 @@ export class StudentEvaluationComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
 
           var _toappend = '', _answerText = '', _history = '', _studentClassId = 0;
           _answerText = row.AnswerText;
@@ -414,6 +416,7 @@ export class StudentEvaluationComponent implements OnInit {
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
 
     var objstudent = this.searchForm.get("searchStudentName").value;
     this.ClassId = this.searchForm.get("searchClassId").value;
@@ -694,6 +697,7 @@ export class StudentEvaluationComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
@@ -880,7 +884,7 @@ export class StudentEvaluationComponent implements OnInit {
   GetStudentClasses() {
     //debugger;
     var _filter = '';
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
 

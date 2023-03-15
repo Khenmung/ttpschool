@@ -31,7 +31,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
   loading = false;
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
@@ -62,7 +62,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     Marks: 0,
     Grade: '',
     ExamStatus: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -104,6 +104,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -112,7 +113,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
 
         this.GetStudents();
@@ -199,6 +200,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
           this.ExamStudentSubjectResultData.StudentClassSubjectId = row.StudentClassSubjectId;
           this.ExamStudentSubjectResultData.ClassSubjectMarkComponentId = row.ClassSubjectMarkComponentId;
           this.ExamStudentSubjectResultData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ExamStudentSubjectResultData.SubOrgId = this.SubOrgId;
           this.ExamStudentSubjectResultData.BatchId = this.SelectedBatchId;
           this.ExamStudentSubjectResultData.ExamStatus = _examstatus;
           this.ExamStudentSubjectResultData.Marks = parseFloat(row.Marks);
@@ -549,6 +551,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.ExamStudentSubjectResult = [];
     this.StoredForUpdate = [];
     this.loading = true;
@@ -918,6 +921,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.MultiExamsStudentSubjectResult = [];
     this.StoredForUpdate = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;

@@ -29,7 +29,7 @@ export class ClassgroupmappingComponent implements OnInit {
   ClassGroupMappingListName = 'ClassGroupMappings';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   ClassGroupMappingList: IClassGroupMapping[] = [];
   filteredOptions: Observable<IClassGroupMapping[]>;
   dataSource: MatTableDataSource<IClassGroupMapping>;
@@ -41,7 +41,7 @@ export class ClassgroupmappingComponent implements OnInit {
     ClassGroupMappingId: 0,
     ClassId: 0,
     ClassGroupId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -91,6 +91,7 @@ export class ClassgroupmappingComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUPING);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -209,6 +210,7 @@ export class ClassgroupmappingComponent implements OnInit {
           this.ClassGroupMappingData.ClassGroupId = row.ClassGroupId;
           this.ClassGroupMappingData.BatchId = this.SelectedBatchId;
           this.ClassGroupMappingData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ClassGroupMappingData.SubOrgId = this.SubOrgId;
           console.log("this.ClassGroupMappingData", this.ClassGroupMappingData)
           if (this.ClassGroupMappingData.ClassGroupMappingId == 0) {
             this.ClassGroupMappingData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');

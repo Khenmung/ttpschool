@@ -66,7 +66,7 @@ export class searchstudentComponent implements OnInit {
   ReasonForLeaving = [];
   Siblings = [];
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   //SelectedBatchStudentIDRollNo = [];
   Clubs = [];
   StudentClassId = 0;
@@ -118,10 +118,10 @@ export class searchstudentComponent implements OnInit {
       //var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
       this.ELEMENT_DATA = [];
       this.SelectedBatchId = +this.token.getSelectedBatchId();
-      this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
       this.SelectedApplicationId = +this.token.getSelectedAPPId();
-      this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+      this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
       this.StudentsFromCache = this.token.getStudents();
       this.studentSearchForm = this.fb.group({
         searchSectionId: [0],
@@ -465,7 +465,7 @@ export class searchstudentComponent implements OnInit {
   GetFeeTypes() {
     debugger;
     this.loading = true;
-    //var filter = globalconstants.getStandardFilterWithBatchId(this.token);
+    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
@@ -700,7 +700,7 @@ export class searchstudentComponent implements OnInit {
   }
   // GetStudentClasses() {
   //   debugger;
-  //   var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+  //   var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
   //   var _ClassId = this.studentSearchForm.get("searchClassId").value;
   //   var _sectionId = this.studentSearchForm.get("searchSectionId").value;
   //   //if (_ClassId > 0)

@@ -36,7 +36,7 @@ export class EvaluationExamMapComponent implements OnInit {
   //ExamModes = [];
   ExamNames = [];
   Sessions = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   //SelectedClassSubjects = [];
   //ClassGroups = [];
   ClassGroupMappings = [];
@@ -54,7 +54,7 @@ export class EvaluationExamMapComponent implements OnInit {
     //ClassSubjectId: 0,
     EvaluationMasterId: 0,
     ExamId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
   EvaluationExamMapForUpdate = [];
@@ -117,7 +117,8 @@ export class EvaluationExamMapComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetEvaluationNames();
         this.GetMasterData();
         if (this.Classes.length == 0) {
@@ -232,6 +233,7 @@ export class EvaluationExamMapComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
           this.EvaluationExamMapForUpdate = [];
           this.EvaluationExamMapForUpdate.push(
             {
@@ -297,6 +299,7 @@ export class EvaluationExamMapComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
@@ -380,6 +383,7 @@ export class EvaluationExamMapComponent implements OnInit {
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     //var _classGroupId = this.searchForm.get("searchClassGroupId").value;
@@ -471,7 +475,7 @@ export class EvaluationExamMapComponent implements OnInit {
 
   }
   GetExams() {
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {

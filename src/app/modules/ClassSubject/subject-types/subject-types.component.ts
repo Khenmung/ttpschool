@@ -26,7 +26,7 @@ export class SubjectTypesComponent implements OnInit {
   Classes = [];
   Subjects = [];
   SubjectTypes: ISubjectType[];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
   dataSource: MatTableDataSource<ISubjectType>;
   allMasterData = [];
@@ -37,7 +37,7 @@ export class SubjectTypesComponent implements OnInit {
   SubjectTypeData = {
     SubjectTypeId: 0,
     SubjectTypeName: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     SelectHowMany: 0,
     Active: 1,
     Deleted: false,
@@ -77,6 +77,7 @@ export class SubjectTypesComponent implements OnInit {
 
     debugger;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
 
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
@@ -90,9 +91,9 @@ export class SubjectTypesComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.IsCurrentBatchSelected = +this.tokenstorage.getCheckEqualBatchId();
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         if (+this.tokenstorage.getPreviousBatchId() > 0)
-          this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage)
+          this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage)
         this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
 
         this.GetSubjectTypes();
@@ -114,7 +115,7 @@ export class SubjectTypesComponent implements OnInit {
     let toadd = {
       SubjectTypeId: 0,
       SubjectTypeName: 'new subject type',
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       SelectHowMany: 0,
       Active: 1,
       Deleted: 0,
@@ -174,6 +175,7 @@ export class SubjectTypesComponent implements OnInit {
           this.SubjectTypeData.SubjectTypeId = row.SubjectTypeId;
           this.SubjectTypeData.SelectHowMany = row.SelectHowMany;
           this.SubjectTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.SubjectTypeData.SubOrgId = this.SubOrgId;
           this.SubjectTypeData.Deleted = false;
           if (this.SubjectTypeData.SubjectTypeId == 0) {
             this.SubjectTypeData["CreatedDate"] = new Date();
@@ -311,6 +313,6 @@ export interface ISubjectType {
   SubjectTypeName: string;
   SelectHowMany: number;
   SubjectTypeId: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   Active: number;
 }

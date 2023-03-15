@@ -32,7 +32,7 @@ export class WorkhistoryComponent implements OnInit { PageLoading=true;
   EmployeeWorkHistoryListName = 'EmpWorkHistories';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   EmployeeWorkHistoryList: IWorkHistory[] = [];
   filteredOptions: Observable<IWorkHistory[]>;
   dataSource: MatTableDataSource<IWorkHistory>;
@@ -50,7 +50,7 @@ export class WorkhistoryComponent implements OnInit { PageLoading=true;
     FromDate: new Date(),
     ToDate: new Date(),
     Active: 1,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
   };
   displayedColumns = [
     "EmpWorkHistoryId",
@@ -67,10 +67,7 @@ export class WorkhistoryComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) { }
@@ -97,6 +94,7 @@ export class WorkhistoryComponent implements OnInit { PageLoading=true;
 
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -182,6 +180,7 @@ export class WorkhistoryComponent implements OnInit { PageLoading=true;
           this.EmployeeWorkHistoryData.FromDate = row.FromDate;
           this.EmployeeWorkHistoryData.ToDate = row.ToDate;
           this.EmployeeWorkHistoryData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeWorkHistoryData.SubOrgId = this.SubOrgId;
 
           if (this.EmployeeWorkHistoryData.EmpWorkHistoryId == 0) {
             this.EmployeeWorkHistoryData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
@@ -252,7 +251,7 @@ export class WorkhistoryComponent implements OnInit { PageLoading=true;
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId,this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);

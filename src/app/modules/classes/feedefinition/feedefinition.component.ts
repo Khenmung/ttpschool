@@ -37,7 +37,7 @@ export class FeeDefinitionComponent implements OnInit {
   FeeDefinitionListName = 'FeeDefinitions';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   FeeDefinitionList: IFeeDefinition[] = [];
   filteredOptions: Observable<IFeeDefinition[]>;
   dataSource: MatTableDataSource<IFeeDefinition>;
@@ -53,7 +53,7 @@ export class FeeDefinitionComponent implements OnInit {
     FeeCategoryId: 0,
     FeeSubCategoryId: 0,
     AmountEditable: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -98,6 +98,7 @@ export class FeeDefinitionComponent implements OnInit {
 
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -130,7 +131,7 @@ export class FeeDefinitionComponent implements OnInit {
       FeeSubCategoryId: 0,
       FeeSubCategories: [],
       AmountEditable: 0,
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       BatchId: 0,
       Active: 0,
       Action: true
@@ -211,6 +212,7 @@ export class FeeDefinitionComponent implements OnInit {
           this.FeeDefinitionData.AmountEditable = row.AmountEditable;
           this.FeeDefinitionData.Active = row.Active;
           this.FeeDefinitionData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.FeeDefinitionData.SubOrgId = this.SubOrgId;
           this.FeeDefinitionData.BatchId = this.SelectedBatchId;
 
           this.FeeDefinitionData.Active = row.Active;
@@ -338,7 +340,7 @@ export interface IFeeDefinition {
   FeeCategoryId: number;
   FeeSubCategoryId: number;
   AmountEditable: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   BatchId: number;
   Active: number;
   Action: boolean;

@@ -54,7 +54,7 @@ export class FeereceiptComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   dataReceiptSource: MatTableDataSource<IReceipt>;
   allMasterData = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   searchForm = new UntypedFormGroup({
     StudentId: new UntypedFormControl(0),
   });

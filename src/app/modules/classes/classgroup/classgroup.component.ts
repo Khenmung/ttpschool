@@ -30,7 +30,7 @@ export class ClassgroupComponent implements OnInit {
   loading = false;
   SelectedApplicationId = 0;
   ClassGroupType = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   classgroupList: IClassgroup[] = [];
   filteredOptions: Observable<IClassgroup[]>;
   dataSource: MatTableDataSource<IClassgroup>;
@@ -41,7 +41,7 @@ export class ClassgroupComponent implements OnInit {
     GroupName: '',
     ClassGroupTypeId: 0,
     BatchId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
     //Deleted: 0
   };
@@ -81,6 +81,7 @@ export class ClassgroupComponent implements OnInit {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -117,7 +118,7 @@ export class ClassgroupComponent implements OnInit {
       ClassGroupId: 0,
       GroupName: '',
       ClassGroupTypeId: 0,
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       Active: 0,
       Action: false
     };
@@ -213,6 +214,7 @@ export class ClassgroupComponent implements OnInit {
           this.classgroupData.ClassGroupTypeId = row.ClassGroupTypeId;
           this.classgroupData.BatchId = this.SelectedBatchId;
           this.classgroupData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.classgroupData.SubOrgId = this.SubOrgId;
           //this.classgroupData.Deleted = 0;
           this.classgroupData.Active = row.Active;
 

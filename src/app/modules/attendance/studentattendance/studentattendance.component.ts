@@ -42,7 +42,7 @@ export class StudentAttendanceComponent implements OnInit {
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -70,7 +70,8 @@ export class StudentAttendanceComponent implements OnInit {
     ApprovedBy: '',
     Remarks: '',
     BatchId: 0,
-    OrgId: 0
+    OrgId: 0,
+    SubOrgId: 0
   };
   displayedColumns = [
     'StudentRollNo',
@@ -113,7 +114,8 @@ export class StudentAttendanceComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.Students = this.tokenstorage.getStudents();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         //this.GetSubjectTypes();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -151,7 +153,7 @@ export class StudentAttendanceComponent implements OnInit {
     //this.StudentAttendanceList=[];
     //this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
 
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId;
     //' and StudentClassId eq ' + this.StudentClassId;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId == 0) {
@@ -299,7 +301,7 @@ export class StudentAttendanceComponent implements OnInit {
   StudentClassSubjects = [];
   GetExistingStudentClassSubjects() {
     var clssubjectid = this.searchForm.get("searchClassSubjectId").value;
-    var orgIdSearchstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    var orgIdSearchstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId + " and BatchId eq " + this.SelectedBatchId;
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
 
@@ -413,6 +415,7 @@ export class StudentAttendanceComponent implements OnInit {
           this.StudentAttendanceData.AttendanceDate = new Date(_AttendanceDate);
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.StudentAttendanceData.SubOrgId = this.SubOrgId;
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
           this.StudentAttendanceData.AttendanceStatus = row.AttendanceStatus;
           this.StudentAttendanceData.ClassSubjectId = clssubjectid;

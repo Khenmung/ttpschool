@@ -43,7 +43,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
     RoleId: 0,
     PermissionId: 0,
     ApplicationId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   CustomFeatures = [];

@@ -53,6 +53,7 @@ export class AppuserdashboardComponent implements OnInit {
   RoleUserList = [];
   OrgIdAndBatchIdFilter = '';
   SelectedApplicationId = 0;
+  SubOrgId = 0;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   datasource: MatTableDataSource<IAppUser>;
@@ -107,7 +108,7 @@ export class AppuserdashboardComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.FirstName),
         map(FirstName => FirstName ? this._filter(FirstName) : this.Users.slice())
       );
-    this.OrgIdAndBatchIdFilter = globalconstants.getStandardFilterWithBatchId(this.tokenStorage);
+    this.OrgIdAndBatchIdFilter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     this.PageLoad();
   }
   private _filter(FirstName: string): IUser[] {
@@ -131,8 +132,9 @@ export class AppuserdashboardComponent implements OnInit {
       this.Permission = perObj[0].permission;
     if (this.Permission != 'deny') {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
       this.SelectedApplicationName = this.tokenStorage.getSelectedAppName();
-      this.filterwithOrg = globalconstants.getStandardFilter(this.LoginDetail);
+      this.filterwithOrg = globalconstants.getOrgSubOrgFilter(this.LoginDetail,this.SubOrgId);
       this.contentservice.GetClasses(this.LoginDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
@@ -143,7 +145,7 @@ export class AppuserdashboardComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);

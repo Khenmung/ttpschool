@@ -39,6 +39,7 @@ export class VariableConfigComponent implements OnInit {
   allMasterData = [];
   StandardFilter = '';
   loading = false;
+  SubOrgId=0;
   rowCount = 0;
   SelectedApplicationId = 0;
   filteredOptions: Observable<IVariableConfig[]>;
@@ -55,7 +56,7 @@ export class VariableConfigComponent implements OnInit {
     VariableFormula: '',
     Active: 0,
     DisplayOrder: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
   };
   displayedColumns = [
     "VariableName",
@@ -123,7 +124,8 @@ export class VariableConfigComponent implements OnInit {
       }
       else {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
       }
 
@@ -195,6 +197,7 @@ export class VariableConfigComponent implements OnInit {
           this.VariableConfigData.VariableTypeId = this.searchForm.get("searchTypeId").value;
           this.VariableConfigData.DisplayOrder = row.DisplayOrder;
           this.VariableConfigData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.VariableConfigData.SubOrgId = this.SubOrgId;
           this.VariableConfigData.VariableFormula = row.VariableFormula;
           //console.log('data', this.VariableConfigData);
           if (this.VariableConfigData.VariableConfigurationId == 0) {

@@ -39,7 +39,7 @@ export class EvaluationControlComponent implements OnInit {
   loading = false;
   AssessmentTypeList = [];
   StudentEvaluationList: any[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   QuestionnaireTypes = [];
   Sections = [];
   Classes = [];
@@ -137,7 +137,8 @@ export class EvaluationControlComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetEvaluationNames();
 
         this.GetEvaluationOption();
@@ -292,7 +293,7 @@ export class EvaluationControlComponent implements OnInit {
     return this.StudentEvaluationList.filter(f => f.ClassEvalCategoryId == item.ClassEvalCategoryId)
   }
   GetExams() {
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {
@@ -421,6 +422,7 @@ export class EvaluationControlComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
@@ -645,7 +647,7 @@ export class EvaluationControlComponent implements OnInit {
 
     //var _examId = this.searchForm.get("searchExamId").value;
 
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
     filterOrgIdNBatchId += " and ClassId eq " + _searchClassId
     if (_searchSectionId > 0)
       filterOrgIdNBatchId + " and SectionId eq " + _searchSectionId

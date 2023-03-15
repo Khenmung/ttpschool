@@ -28,7 +28,7 @@ export class ExamsComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   Exams: IExams[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   ClassGroups = [];
   SelectedApplicationId = 0;
   StudentGradeFormula = [];
@@ -50,7 +50,7 @@ export class ExamsComponent implements OnInit {
     ReleaseResult: 0,
     ReleaseDate: null,
     AttendanceStartDate: null,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 1
   };
@@ -106,7 +106,8 @@ export class ExamsComponent implements OnInit {
         this.nav.navigate(['/auth/login']);
       else {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         this.GetSubjectComponents();
         //this.GetStudentSubjects();
@@ -129,7 +130,7 @@ export class ExamsComponent implements OnInit {
       AttendanceStartDate: new Date(),
       //AttendanceModeId: 0,
       BatchId: 0,
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       Active: 0,
       Action: false
 
@@ -219,6 +220,7 @@ export class ExamsComponent implements OnInit {
             this.ExamsData.ReleaseDate = null;
 
           this.ExamsData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ExamsData.SubOrgId = this.SubOrgId;
           if (this.ExamsData.ExamId == 0) {
             this.ExamsData["CreatedDate"] = new Date();
             this.ExamsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -263,7 +265,7 @@ export class ExamsComponent implements OnInit {
   }
   GetExams() {
 
-    //var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    //var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
     let list: List = new List();
 
@@ -301,7 +303,7 @@ export class ExamsComponent implements OnInit {
               EndDate: new Date(),
               ReleaseResult: 0,
               ReleaseDate: null,
-              OrgId: 0,
+              OrgId: 0,SubOrgId: 0,
               ClassGroupId: 0,
               Active: 0,
               Action: false
@@ -439,7 +441,7 @@ export interface IExams {
   ClassGroupId: number;
   ReleaseResult: number;
   ReleaseDate: Date;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   BatchId: number;
   Active: number;
 }

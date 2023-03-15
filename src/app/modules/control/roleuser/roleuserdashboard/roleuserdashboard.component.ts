@@ -50,7 +50,7 @@ export class roleuserdashboardComponent implements OnInit {
     searchRoleId: [0]
   });
   Permission = '';
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   filterOrgIdNBatchId = '';
   RoleUserId = 0;
   RoleUserData = {
@@ -59,6 +59,7 @@ export class roleuserdashboardComponent implements OnInit {
     RoleId: 0,
     BatchId: 0,
     OrgId: 0,
+    SubOrgId: 0,    
     Active: 1
   };
   displayedColumns = [
@@ -94,6 +95,7 @@ export class roleuserdashboardComponent implements OnInit {
       );
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.PageLoad();
   }
   private _filter(name: string): IUser[] {
@@ -232,7 +234,7 @@ export class roleuserdashboardComponent implements OnInit {
       'Active'];
 
     list.PageName = "RoleUsers";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + filterstr];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId  + filterstr];
     this.RoleUserList = [];
 
     this.dataservice.get(list)
@@ -314,8 +316,8 @@ export class roleuserdashboardComponent implements OnInit {
       return;
     }
 
-    var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]['orgId'] + " and UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId + " and " + StandardFilter;
+    var StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+    let checkFilterString = StandardFilter + " and UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId;
 
     if (row.RoleUserId > 0)
       checkFilterString += " and RoleUserId ne " + row.RoleUserId;
@@ -340,6 +342,7 @@ export class roleuserdashboardComponent implements OnInit {
           this.RoleUserData.RoleId = row.RoleId;
           this.RoleUserData.UserId = row.UserId;
           this.RoleUserData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.RoleUserData.SubOrgId = this.SubOrgId;
           this.RoleUserData.BatchId = this.SelectedBatchId;
           if (this.RoleUserData.RoleUserId == 0) {
             this.RoleUserData["CreatedDate"] = new Date();
@@ -392,7 +395,7 @@ export interface IBatches {
   BatchId: number;
   BatchName: string;
   CurrentBatch: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   Active;
 }
 

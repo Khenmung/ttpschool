@@ -39,7 +39,7 @@ export class SyllabusComponent implements OnInit {
   SyllabusOptionList = [];
   SyllabusList: ISyllabus[] = [];
   //EvaluationMasterId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   QuestionnaireTypes = [];
   SubContentUnits = [];
   Classes = [];
@@ -58,7 +58,7 @@ export class SyllabusComponent implements OnInit {
     ContentUnitId: 0,
     SubContentUnitId: 0,
     Lesson: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: false
   };
   EvaluationMasterForClassGroup = [];
@@ -120,7 +120,8 @@ export class SyllabusComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         //this.GetEvaluationNames();
         this.GetMasterData();
         if (this.Classes.length == 0) {
@@ -252,7 +253,7 @@ export class SyllabusComponent implements OnInit {
   }
   // GetExams() {
 
-  //   this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
+  //   this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId)
   //     .subscribe((data: any) => {
   //       this.Exams = [];
   //       data.value.forEach(e => {
@@ -407,6 +408,7 @@ export class SyllabusComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
           this.SyllabusForUpdate = [];;
           this.SyllabusData.SyllabusId = row.SyllabusId;
           this.SyllabusData.ContentUnitId = row.ContentUnitId;
@@ -490,6 +492,7 @@ export class SyllabusComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _classId = this.searchForm.get("searchClassId").value;
@@ -565,6 +568,7 @@ export class SyllabusComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
@@ -601,6 +605,7 @@ export class SyllabusComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'ParentId eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();

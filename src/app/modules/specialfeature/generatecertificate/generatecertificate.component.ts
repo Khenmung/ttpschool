@@ -36,7 +36,7 @@ export class GenerateCertificateComponent implements OnInit {
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
   StandardFilterWithBatchId = '';
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   DisplayColumn = [];
   GeneratedCertificatelist = [];
 
@@ -91,7 +91,7 @@ export class GenerateCertificateComponent implements OnInit {
     ClassSubjectMarkComponentId: 0,
     Marks: 0,
     ExamStatus: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -163,6 +163,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -177,7 +178,7 @@ export class GenerateCertificateComponent implements OnInit {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetMasterData();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -576,46 +577,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.loading = false;
     this.PageLoading = false;
   }
-  // GetExamStudentSubjectResults() {
-
-  //   this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-  //   this.ExamStudentSubjectResult = [];
-  //   var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-  //   var filterstr = 'Active eq 1 ';
-  //   if (this.searchForm.get("searchExamId").value == 0) {
-  //     this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
-  //     return;
-  //   }
-  //   if (this.searchForm.get("searchClassId").value == 0) {
-  //     this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
-  //     return;
-  //   }
-
-  //   this.loading = true;
-  //   filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
-
-  //   let list: List = new List();
-  //   list.fields = [
-  //     "ExamStudentSubjectResultId",
-  //     "ExamId",
-  //     "StudentClassSubjectId",
-  //     "ClassSubjectMarkComponentId",
-  //     "Marks",
-  //     "ExamStatus",
-  //     "Active"
-  //   ];
-  //   list.PageName = "ExamStudentSubjectResults";
-  //   list.filter = [filterstr + orgIdSearchstr];
-  //   this.displayedColumns = [
-  //     'Student',
-  //   ];
-  //   this.dataservice.get(list)
-  //     .subscribe((examComponentResult: any) => {
-  //       this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
-  //       this.loading = false; this.PageLoading = false;
-  //     })
-
-  // }
+  
   GetGeneratedCertificate() {
     debugger;
     var filterstr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -902,7 +864,7 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetStudentClasses() {
     debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
@@ -1411,7 +1373,7 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetExams() {
 
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,1)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {

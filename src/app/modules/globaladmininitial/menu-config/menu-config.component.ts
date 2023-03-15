@@ -21,6 +21,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
 
   loading = false;
   SelectedAppId = 0;
+  SubOrgId = 0;
   oldvalue: any;
   TopMenu = [];
   ParentDropDown = [];
@@ -46,6 +47,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
     "link": "",
     "Active": 0,
     "OrgId": 0,
+    "SubOrgId": 0,
     "faIcon": "",
     "FullPath": "",
     "PhotoPath": "",
@@ -120,6 +122,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
       }
       if (this.Permission != 'deny') {
         this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
         this.GetMasterData();
       }
     }
@@ -146,7 +149,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
   GetMasterData() {
     var globaladminId = this.contentservice.GetPermittedAppId("globaladmin");
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], globaladminId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, globaladminId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
@@ -376,6 +379,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
         this.MenuConfigData.HasSubmenu = row.HasSubmenu;
 
         this.MenuConfigData.OrgId = this.LoginUserDetail[0]["orgId"];
+        this.MenuConfigData.SubOrgId = this.SubOrgId;
         if (this.MenuConfigData.PageId == 0) {
           this.MenuConfigData["CreatedDate"] = new Date();
           this.MenuConfigData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -478,7 +482,7 @@ export interface IMenuConfig {
   label: string;
   link: string;
   Active: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   faIcon: string;
   FullPath: string;
   PhotoPath: string;

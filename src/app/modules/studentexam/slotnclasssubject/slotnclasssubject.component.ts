@@ -33,7 +33,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   DataToUpdateCount = -1;
   StoreForUpdate: ISlotNClassSubject[] = [];
   ClassWiseSubjectDisplay = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   AllSelectedSubjects = [];
   ExamSlots = [];
@@ -53,7 +53,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     SlotClassSubjectId: 0,
     SlotId: 0,
     ClassSubjectId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -104,7 +104,8 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
         this.GetMasterData();
         this.GetClassGroupMapping();
@@ -210,6 +211,7 @@ export class SlotnclasssubjectComponent implements OnInit {
           this.SlotNClassSubjectData.Active = 1;
           this.SlotNClassSubjectData.ClassSubjectId = row.SelectedSubject.ClassSubjectId;
           this.SlotNClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.SlotNClassSubjectData.SubOrgId = this.SubOrgId;
           this.SlotNClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.SlotNClassSubjectData.SlotClassSubjectId == 0) {
             this.SlotNClassSubjectData["CreatedDate"] = new Date();
@@ -353,7 +355,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetExams() {
 
-    //var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    //var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
     let list: List = new List();
 

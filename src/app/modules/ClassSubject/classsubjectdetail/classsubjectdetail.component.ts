@@ -51,7 +51,7 @@ export class ClassSubjectDetailComponent implements OnInit {
   SubjectTypes = [];
   SubjectCategory = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   CheckBatchIDForEdit = 1;
   DataCountToSave = -1;
   Batches = [];
@@ -72,6 +72,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     ClassId: 0,
     Credits: 0,
     OrgId: 0,
+    SubOrgId: 0,
     SubjectId: 0,
     SubjectTypeId: 0,
     SubjectCategoryId: 0,
@@ -125,6 +126,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.nameFilter.valueChanges
         .subscribe(
           name => {
@@ -140,8 +142,8 @@ export class ClassSubjectDetailComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-        this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
         this.GetMasterData();
         this.GetSubjectTypes();
@@ -501,6 +503,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           this.ClassSubjectData.SubjectCategoryId = row.SubjectCategoryId;
           //      this.ClassSubjectData.TeacherId = row.TeacherId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ClassSubjectData.SubOrgId = this.SubOrgId;
           this.ClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.ClassSubjectData.ClassSubjectId == 0) {
             this.ClassSubjectData["CreatedDate"] = new Date();

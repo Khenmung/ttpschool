@@ -64,7 +64,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   Remarks = [];
   StudentGrades = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   PreviousBatchId = 0;
   NextBatchId = 0;
   Batches = [];
@@ -79,6 +79,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     StudentClassId: 0,
     ClassId: 0,
     OrgId: 0,
+    SubOrgId: 0,
     BatchId: 0,
     StudentId: 0,
     RollNo: 0,
@@ -113,13 +114,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   filteredOptions: Observable<IStudentClass[]>;
   constructor(private servicework: SwUpdate,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
-    private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
   ) { }
@@ -182,10 +180,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
+      this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+      this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
       if (perObj.length > 0)
@@ -296,7 +295,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   GenerateRollNo() {
 
-    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId;
     var _gendersort = this.searchForm.get("searchGenderAscDesc").value;
     var _namesort = this.searchForm.get("searchNameAscDesc").value;
     if (_gendersort == 0) {
@@ -499,11 +498,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   GetFeeTypes() {
     this.loading = true;
-    //var filter = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -719,7 +718,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
   GetExams() {
     //var previousBatchId = this.tokenstorage.getPreviousBatchId();
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,1)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {
@@ -978,6 +977,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.StudentClassData.AdmissionNo = row.AdmissionNo;
 
               this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
+              this.StudentClassData.SubOrgId = this.SubOrgId;
               this.StudentClassData.BatchId = this.SelectedBatchId;
               if (this.StudentClassData.StudentClassId == 0) {
                 this.StudentClassData.AdmissionNo = _year + ClassStrength;
@@ -1164,7 +1164,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value;
     //var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
-    let filterstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let filterstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId +
       " and ExamId eq " + _examId +
       " and ClassId eq " + pClassId +
       " and BatchId eq " + pBatchId;

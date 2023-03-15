@@ -63,14 +63,14 @@ export class ContentService implements OnInit {
 
     return this.authservice.CallAPI(payload, 'EmailDuplicateCheck');
   }
-  GetExams(pOrgId, pSelectedBatchId,pReleaseResult) {
+  GetExams(pOrgId,SubOrgId, pSelectedBatchId,pReleaseResult) {
 
     var _releaseResult='';
     if(pReleaseResult==0 || pReleaseResult==1)
     {
       _releaseResult =" and ReleaseResult eq "+ pReleaseResult;
     }
-    var orgIdSearchstr = 'OrgId eq ' + pOrgId + ' and BatchId eq ' + pSelectedBatchId + _releaseResult +" and Active eq 1";
+    var orgIdSearchstr = 'OrgId eq ' + pOrgId + " and SubOrgId eq " + SubOrgId + ' and BatchId eq ' + pSelectedBatchId + _releaseResult +" and Active eq 1";
 
     let list: List = new List();
     list.fields = [
@@ -922,7 +922,7 @@ export class ContentService implements OnInit {
     return appId;
   }
 
-  GetCommonMasterData(orgId, appIds) {
+  GetCommonMasterData(orgId,SubOrgId, appIds) {
 
     var applicationparam = '';
     (appIds + "").split(',').forEach(id => {
@@ -931,7 +931,7 @@ export class ContentService implements OnInit {
 
     var commonAppId = this.GetPermittedAppId('common');
     var orgIdSearchstr = '(ApplicationId eq ' + commonAppId + applicationparam + ")" +
-      ' and (ParentId eq 0  or OrgId eq ' + orgId + ') and Active eq 1 ';
+      ' and (ParentId eq 0  or (OrgId eq ' + orgId + ' and SubOrgId eq ' + SubOrgId +')) and Active eq 1 ';
 
     let list: List = new List();
 

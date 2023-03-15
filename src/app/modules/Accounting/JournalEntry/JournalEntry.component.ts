@@ -43,6 +43,7 @@ export class JournalEntryComponent implements OnInit {
   GLAccounts = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
+  SubOrgId = 0;
   AccountingVoucherList: IAccountingVoucher[] = [];
   dataSource: MatTableDataSource<IAccountingVoucher>;
   allMasterData = [];
@@ -62,7 +63,8 @@ export class JournalEntryComponent implements OnInit {
     BaseAmount: 0,
     Amount: 0,
     ShortText: '',
-    OrgId: 0,
+    
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
 
@@ -124,13 +126,14 @@ export class JournalEntryComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.JOURNALENTRY);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission && this.Permission != 'denied') {
         this.GetAllAccountingVoucher();
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetGeneralLedgerAutoComplete();
       }
     }
@@ -198,7 +201,7 @@ export class JournalEntryComponent implements OnInit {
   }
   AllAccountingVouchers = [];
   GetAllAccountingVoucher() {
-    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId;
     debugger;
     this.loading = true;
     var FinancialStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
@@ -224,7 +227,8 @@ export class JournalEntryComponent implements OnInit {
       })
   }
   GetAccountingVoucher() {
-    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId;
     debugger;
     this.loading = true;
     var FinancialStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
@@ -344,11 +348,11 @@ export class JournalEntryComponent implements OnInit {
       errorMessage += "Amount should be less than 10,00,000 or greater than -10,00,000<br>";
 
     if (errorMessage.length > 0) {
-      this.loading = false; 
+      this.loading = false;
       this.PageLoading = false;
       //this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
-      
+
     }
     else {
       let checkFilterString = "GeneralLedgerAccountId eq " + row.GeneralLedgerAccountId.GeneralLedgerId +
@@ -357,7 +361,7 @@ export class JournalEntryComponent implements OnInit {
 
       if (row.AccountingVoucherId > 0)
         checkFilterString += " and AccountingVoucherId ne " + row.AccountingVoucherId;
-      checkFilterString += " and " + globalconstants.getStandardFilter(this.LoginUserDetail);
+      checkFilterString += " and " + globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
       let list: List = new List();
       list.fields = ["AccountingVoucherId"];
       list.PageName = this.AccountingVoucherListName;
@@ -388,6 +392,8 @@ export class JournalEntryComponent implements OnInit {
             this.AccountingVoucherData.TranParentId = this.TranParentId;
             this.AccountingVoucherData.ShortText = row.ShortText;
             this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
+            this.AccountingVoucherData.SubOrgId = this.SubOrgId;
+            this.AccountingVoucherData.SubOrgId = this.SubOrgId;
 
             if (row.AccountingVoucherId == 0) {
               this.AccountingVoucherData["CreatedDate"] = new Date();
@@ -457,7 +463,7 @@ export class JournalEntryComponent implements OnInit {
     ];
 
     list.PageName = "GeneralLedgers";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {

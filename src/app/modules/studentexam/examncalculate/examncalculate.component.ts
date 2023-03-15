@@ -26,7 +26,7 @@ export class ExamncalculateComponent implements OnInit {
   ExamNCalculateListName = 'ExamNCalculates';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   ExamNCalculateList: IExamNCalculate[] = [];
   filteredOptions: Observable<IExamNCalculate[]>;
   dataSource: MatTableDataSource<IExamNCalculate>;
@@ -39,7 +39,7 @@ export class ExamncalculateComponent implements OnInit {
     ExamNCalculateId: 0,
     ExamId: 0,
     CalculateResultPropertyId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: false
   };
   MonthYears = [];
@@ -87,6 +87,7 @@ export class ExamncalculateComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMNCALCULATE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -158,8 +159,9 @@ export class ExamncalculateComponent implements OnInit {
           this.ExamNCalculateData.ExamId = this.searchForm.get("searchExamId").value;
           this.ExamNCalculateData.CalculateResultPropertyId = row.CalculateResultPropertyId;
           this.ExamNCalculateData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ExamNCalculateData.SubOrgId = this.SubOrgId;
 
-          console.log("this.ExamNCalculateData", this.ExamNCalculateData);
+          //console.log("this.ExamNCalculateData", this.ExamNCalculateData);
           if (this.ExamNCalculateData.ExamNCalculateId == 0) {
             this.ExamNCalculateData["CreatedDate"] = new Date();
             this.ExamNCalculateData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -307,7 +309,7 @@ export class ExamncalculateComponent implements OnInit {
       this.Classes = [...data.value];
       this.loading = false; this.PageLoading = false;
     });
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(f => {

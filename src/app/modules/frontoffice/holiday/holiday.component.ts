@@ -10,25 +10,19 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-holiday',
   templateUrl: './holiday.component.html',
   styleUrls: ['./holiday.component.scss']
 })
-export class HolidayComponent implements OnInit { PageLoading=true;
+export class HolidayComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paging: MatPaginator;
-  HolidayTypes =[];
+  HolidayTypes = [];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  SubOrgId = 0;
   HolidayListName = 'Holidays';
   Applications = [];
   loading = false;
@@ -47,7 +41,7 @@ export class HolidayComponent implements OnInit { PageLoading=true;
     StartDate: new Date(),
     EndDate: new Date(),
     HolidayTypeId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -61,12 +55,12 @@ export class HolidayComponent implements OnInit { PageLoading=true;
     "Active",
     "Action"
   ];
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
-    private contentservice:ContentService,
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,    
+    private tokenstorage: TokenStorageService,
     private nav: Router,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder
@@ -99,6 +93,7 @@ export class HolidayComponent implements OnInit { PageLoading=true;
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.HOLIDAY);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -123,9 +118,9 @@ export class HolidayComponent implements OnInit { PageLoading=true;
       StartDate: new Date(),
       EndDate: new Date(),
       HolidayTypeId: 0,
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       BatchId: 0,
-      Active:0,
+      Active: 0,
       Action: false
     };
     this.HolidayList = [];
@@ -148,7 +143,7 @@ export class HolidayComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -169,7 +164,7 @@ export class HolidayComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -183,6 +178,7 @@ export class HolidayComponent implements OnInit { PageLoading=true;
           this.HolidayData.HolidayTypeId = row.HolidayTypeId;
           this.HolidayData.BatchId = this.SelectedBatchId;
           this.HolidayData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.HolidayData.SubOrgId = this.SubOrgId;
 
           if (this.HolidayData.HolidayId == 0) {
             this.HolidayData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
@@ -202,7 +198,7 @@ export class HolidayComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -222,7 +218,7 @@ export class HolidayComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
@@ -253,12 +249,12 @@ export class HolidayComponent implements OnInit { PageLoading=true;
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.HolidayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.HOLIDAYLIST)
         this.GetHoliday();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -285,7 +281,7 @@ export interface IHoliday {
   StartDate: Date;
   EndDate: Date;
   HolidayTypeId: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   BatchId: number;
   Active: number;
   Action: boolean;

@@ -40,7 +40,7 @@ export class ExamtimetableComponent implements OnInit {
   loading = false;
   SlotNClassSubjects = [];
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   ExamSlots = [];
   Classes = [];
   Subjects = [];
@@ -58,7 +58,7 @@ export class ExamtimetableComponent implements OnInit {
     SlotClassSubjectId: 0,
     SlotId: 0,
     ClassSubjectId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -111,7 +111,8 @@ export class ExamtimetableComponent implements OnInit {
         });
 
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
 
       }
@@ -162,7 +163,7 @@ export class ExamtimetableComponent implements OnInit {
   }
   GetExams() {
 
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {

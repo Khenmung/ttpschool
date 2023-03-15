@@ -44,7 +44,7 @@ export class AttendanceCountComponent implements OnInit {
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -99,7 +99,8 @@ export class AttendanceCountComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -133,7 +134,7 @@ export class AttendanceCountComponent implements OnInit {
   GetStudentAttendance() {
     debugger;
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    //let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId + " and Active eq 1"
     var filterStrClsSub = '';
 
     this.loading = true;
@@ -170,7 +171,7 @@ export class AttendanceCountComponent implements OnInit {
       "BatchId"
     ];
     list.PageName = "Attendances";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId +
       datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
     this.dataservice.get(list)
@@ -288,7 +289,8 @@ export class AttendanceCountComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId + 
+                   " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
     this.dataservice.get(list)

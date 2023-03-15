@@ -26,7 +26,7 @@ export class StudentfamilynfriendComponent implements OnInit {
   StudentFamilyNFriendListName = 'StudentFamilyNFriends';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   StudentFamilyNFriendList: IStudentFamilyNFriends[] = [];
   filteredOptions: Observable<IStudentFamilyNFriends[]>;
   dataSource: MatTableDataSource<IStudentFamilyNFriends>;
@@ -54,7 +54,7 @@ export class StudentfamilynfriendComponent implements OnInit {
     Active: 0,
     Deleted: false,
     Remarks: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
   };
   displayedColumns = [
     'SiblingName',
@@ -333,6 +333,7 @@ export class StudentfamilynfriendComponent implements OnInit {
           this.StudentFamilyNFriendData.Name = row.Name;
           this.StudentFamilyNFriendData.Remarks = row.Remarks;
           this.StudentFamilyNFriendData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.StudentFamilyNFriendData.SubOrgId = this.SubOrgId;
 
           if (this.StudentFamilyNFriendData.StudentFamilyNFriendId == 0) {
             this.StudentFamilyNFriendData["CreatedDate"] = new Date();
@@ -519,7 +520,7 @@ export class StudentfamilynfriendComponent implements OnInit {
   }
   GetStudentClasses() {
     debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId,Remarks,FeeTypeId"];

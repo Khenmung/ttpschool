@@ -22,7 +22,7 @@ export class AddstudentclassComponent implements OnInit {
   SaveDisable = false;
   StudentId = 0;
   StudentClassId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   invalidId = false;
   allMasterData = [];
   Students = [];
@@ -48,7 +48,8 @@ export class AddstudentclassComponent implements OnInit {
     Remarks: '',
     Promoted: 0,
     Active: 1,
-    OrgId: 0
+    OrgId: 0,
+    SubOrgId: 0
   }
   Permission = '';
   constructor(private servicework: SwUpdate,
@@ -113,6 +114,7 @@ export class AddstudentclassComponent implements OnInit {
         this.StudentClassId = this.tokenstorage.getStudentClassId()
         this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
         this.GetMasterData();
         //this.GetStudentClass();
       }
@@ -157,7 +159,7 @@ export class AddstudentclassComponent implements OnInit {
   }
   GetStudent() {
     debugger;
-    var filterOrgId = globalconstants.getStandardFilter(this.LoginUserDetail);
+    var filterOrgId = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
     if (this.StudentId == 0) {
       this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
       this.invalidId = true;
@@ -194,7 +196,7 @@ export class AddstudentclassComponent implements OnInit {
   }
   GetStudentClass() {
     debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
     if (this.StudentId > 0 && this.StudentClassId > 0) {
 
@@ -300,6 +302,7 @@ export class AddstudentclassComponent implements OnInit {
             this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
             this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
             this.studentclassData.OrgId = this.LoginUserDetail[0]["orgId"];
+            this.studentclassData.SubOrgId = this.SubOrgId;
             this.studentclassData.StudentId = this.StudentId;
             if (!this.StudentClassId || this.StudentClassId == 0) {
               this.StudentClassId = 0;

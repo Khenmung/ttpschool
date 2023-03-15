@@ -18,14 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  SubOrgId=0;
   StandardFilterWithBatchId = '';
   loading = false;
   Organizations = [];
@@ -41,7 +34,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
     CustomerId: 0,
     InvoiceComponentId: 0,
     Formula: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -54,14 +47,12 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
   ];
   SelectedApplicationId=0;
   searchForm: UntypedFormGroup;
-  constructor(private servicework: SwUpdate,
+  constructor(
+    private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
-    private route: ActivatedRoute,
     private nav: Router,
     private contentservice: ContentService,
-    private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) {
 
@@ -91,6 +82,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.GetMasterData();
       this.GetOrganizations();
     }
@@ -104,28 +96,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
 
   UpdateOrSave(row) {
 
-    // //debugger;
-
     this.loading = true;
-    // let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
-    //   " and ApplicationId eq " + row.ApplicationId;
-
-    // if (row.CustomerInvoiceComponentId > 0)
-    //   checkFilterString += " and CustomerInvoiceComponentId ne " + row.CustomerInvoiceComponentId;
-
-    // let list: List = new List();
-    // list.fields = ["CustomerInvoiceComponentId"];
-    // list.PageName = this.CustomerInvoiceComponentListName;
-    // list.filter = [checkFilterString];
-
-    // this.dataservice.get(list)
-    //   .subscribe((data: any) => {
-    //     //debugger;
-    //     if (data.value.length > 0) {
-    //       this.loading = false; this.PageLoading=false;
-    //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-    //     }
-    //     else {
 
     this.CustomerInvoiceComponentData.CustomerInvoiceComponentId = row.CustomerInvoiceComponentId;
     this.CustomerInvoiceComponentData.CustomerId = row.CustomerId;
@@ -133,6 +104,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
     this.CustomerInvoiceComponentData.InvoiceComponentId = row.InvoiceComponentId;
     this.CustomerInvoiceComponentData.Active = row.Active;
     this.CustomerInvoiceComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
+    this.CustomerInvoiceComponentData.SubOrgId = this.SubOrgId;
 
     //console.log('data', this.CustomerInvoiceComponentData);
     if (this.CustomerInvoiceComponentData.CustomerInvoiceComponentId == 0) {
@@ -273,7 +245,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId,this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.InvoiceComponents = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.INVOICECOMPONENT);
@@ -312,7 +284,7 @@ export interface ICustomerInvoiceComponent {
   ApplicationId: number;
   InvoiceComponentId: number;
   Formula: '';
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   Active: number;
 
 }

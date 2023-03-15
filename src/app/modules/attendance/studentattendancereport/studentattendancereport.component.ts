@@ -41,7 +41,7 @@ export class StudentattendancereportComponent implements OnInit {
   Sections = [];
   Classes = [];
   Subjects = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
   StudentClassSubjects = [];
 
@@ -103,8 +103,10 @@ export class StudentattendancereportComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        
         this.GetMasterData();
         //this.SubjectTypes();
         //this.GetClassSubject();
@@ -623,7 +625,7 @@ export class StudentattendancereportComponent implements OnInit {
 
   //         this.StudentSubjectData.Active = row.Active;
   //         this.StudentSubjectData.StudentClassSubjectId = row.StudentClassSubjectId;
-  //         this.StudentSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
+  //         this.StudentSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];.SubOrgId = this.SubOrgId
   //         this.StudentSubjectData.BatchId = this.SelectedBatchId;
   //         this.StudentSubjectData.StudentClassId = row.StudentClassId;
   //         this.StudentSubjectData.SubjectId = row.SubjectId;

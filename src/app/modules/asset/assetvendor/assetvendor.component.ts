@@ -30,7 +30,7 @@ export class AssetVendorComponent implements OnInit {
   loading = false;
   Category = [];
   AchievementAndPointList: any[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
   AchievementAndPointData = {
@@ -104,7 +104,7 @@ export class AssetVendorComponent implements OnInit {
         //this.GroupId = this.tokenstorage.getGroupId();
 
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail);
         this.GetMasterData();
         // if (this.Classes.length == 0) {
         //   this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -144,6 +144,7 @@ export class AssetVendorComponent implements OnInit {
     }
 
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let checkFilterString = "CategoryId eq " + row.CategoryId + " and Rank eq '" + row.Rank + "'"
     this.RowsToUpdate = 0;
 

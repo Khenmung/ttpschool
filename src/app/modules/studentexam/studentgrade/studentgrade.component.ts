@@ -25,7 +25,7 @@ export class StudentgradeComponent implements OnInit {
   StudentGradeListName = 'StudentGrades';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   StudentGradeList: IStudentGrade[] = [];
   filteredOptions: Observable<IStudentGrade[]>;
   dataSource: MatTableDataSource<IStudentGrade>;
@@ -45,7 +45,7 @@ export class StudentgradeComponent implements OnInit {
     GradeStatusId: 0,
     Sequence: 0,
     Points: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -104,6 +104,7 @@ export class StudentgradeComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.STUDENTGRADE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -226,6 +227,7 @@ export class StudentgradeComponent implements OnInit {
           this.StudentGradeData.Points = row.Points;
           this.StudentGradeData.BatchId = this.SelectedBatchId;
           this.StudentGradeData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.StudentGradeData.SubOrgId = this.SubOrgId;
           //console.log("this.StudentGradeData", this.StudentGradeData);
           if (this.StudentGradeData.StudentGradeId == 0) {
             this.StudentGradeData["CreatedDate"] = new Date();
@@ -493,7 +495,7 @@ export class StudentgradeComponent implements OnInit {
       this.Classes = [...data.value];
       this.loading = false; this.PageLoading = false;
     });
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId,2)
       .subscribe((data: any) => {
         //this.Exams = [...data.value];
         this.Exams = [];

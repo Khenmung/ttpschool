@@ -27,7 +27,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   LoginUserDetail = [];
   CurrentBatch = '';
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   StandardOrgIdWithBatchId = '';
   StandardOrgIdWithPreviousBatchId = '';
@@ -53,7 +53,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     PassMark: 0,
     OverallPassMark: 0,
     BatchId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   Exams = [];
@@ -83,8 +83,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.StandardOrgIdWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
-        this.StandardOrgIdWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.token);
+        this.StandardOrgIdWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
+        this.StandardOrgIdWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.token);
         this.searchForm = this.fb.group({
           searchExamId: [0],
           searchSubjectId: [0],
@@ -187,6 +187,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           this.classSubjectComponentData.OverallPassMark = row.OverallPassMark == '' ? 0 : row.OverallPassMark;
           this.classSubjectComponentData.BatchId = this.SelectedBatchId;
           this.classSubjectComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.classSubjectComponentData.SubOrgId = this.SubOrgId;
 
           if (this.classSubjectComponentData.ClassSubjectMarkComponentId == 0) {
             this.classSubjectComponentData["CreatedDate"] = new Date();
@@ -255,7 +256,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.ClassGroups = [...data.value];
       })
     //this.shareddata.ChangeBatch(this.Batches);
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId, 2)
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId, 2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(f => {

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -11,7 +10,6 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-employeedocuments',
@@ -35,6 +33,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
   formdata: FormData;
   selectedFile: any;
   EmployeeId: number = 0;
+  SubOrgId: number = 0;
   StudentDocuments = [];
   Edit: boolean;
   SelectedBatchId = 0;
@@ -55,7 +54,6 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
   constructor(private servicework: SwUpdate,
     private contentservice:ContentService,
     private fileUploadService: FileUploadService,
-    private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private fb: UntypedFormBuilder,
     private tokenService: TokenStorageService,
@@ -76,6 +74,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
     })
     debugger;
     this.EmployeeId = this.tokenService.getEmployeeId();
+    this.SubOrgId = this.tokenService.getSubOrgId();
 
     if (this.EmployeeId == 0) {
       
@@ -91,8 +90,9 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
         this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
         this.LoginUserDetail = this.tokenService.getUserDetail();
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
-        this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
-        this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenService.getSubOrgId();
+        this.FilterOrgnBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenService);
+        this.FilterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.PageLoad();
       }
     }
@@ -188,7 +188,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
     return;
   }
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.DOCUMENTTYPE);

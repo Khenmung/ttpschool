@@ -7,7 +7,6 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -30,6 +29,7 @@ export class LedgerAccountComponent implements OnInit {
   loading = false;
   GeneralLedgerList: IGeneralLedger[] = [];
   SelectedBatchId = 0;
+  SubOrgId = 0;
   TopAccountNatures = [];
   AccountNatures = [];
   AccountGroups = [];
@@ -60,7 +60,7 @@ export class LedgerAccountComponent implements OnInit {
     AssetPlus: 0,
     TBSequence: 0,
     TBPlus: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   GeneralLedgerForUpdate = [];
@@ -88,13 +88,11 @@ export class LedgerAccountComponent implements OnInit {
     'GeneralLedgerId'
   ];
   searchForm: UntypedFormGroup;
-  constructor(private servicework: SwUpdate,
+  constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
     private nav: Router,
-    private shareddata: SharedataService,
     private fb: UntypedFormBuilder
   ) { }
 
@@ -149,8 +147,9 @@ export class LedgerAccountComponent implements OnInit {
       }
       debugger;
       if (this.Permission != 'deny') {
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
         this.GetAccountNature();
         this.GetGeneralLedgerAutoComplete();
@@ -207,6 +206,7 @@ export class LedgerAccountComponent implements OnInit {
       Email: '',
       Address: '',
       OrgId: 0,
+      SubOrgId:0,
       Active: 0,
       Action: false
     }
@@ -287,7 +287,8 @@ export class LedgerAccountComponent implements OnInit {
 
           this.GeneralLedgerData.Active = row.Active;
           this.GeneralLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
-
+          this.GeneralLedgerData.SubOrgId = this.SubOrgId;
+          this.GeneralLedgerData.SubOrgId = this.SubOrgId;
 
           if (this.GeneralLedgerData.GeneralLedgerId == 0) {
             this.GeneralLedgerData["CreatedDate"] = new Date();
@@ -362,7 +363,7 @@ export class LedgerAccountComponent implements OnInit {
   GetGeneralLedgerAutoComplete() {
     //debugger;
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId;
 
     let list: List = new List();
     list.fields = [
@@ -390,7 +391,7 @@ export class LedgerAccountComponent implements OnInit {
     //debugger;
     this.loading = true;
 
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and Active eq 1';
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId + ' and Active eq 1';
     var AccountNatureId = this.searchForm.get("searchAccountNatureId").value
     var AccountGroupId = this.searchForm.get("searchAccountGroupId").value
     var AccountSubGroupId = this.searchForm.get("searchAccountSubGroupId").value
@@ -526,6 +527,7 @@ export interface IGeneralLedger {
   AccountGroupId: number;
   AccountGroups: any[];
   OrgId: number;
+  SubOrgId: number;
   Active: number;
   Action: boolean;
 }

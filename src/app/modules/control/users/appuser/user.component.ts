@@ -34,7 +34,7 @@ title ='';
     ContactNo: '',
     ValidFrom: Date,
     ValidTo: Date,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     DepartmentId: 0,
     LocationId: 0,
     ManagerId: 0,

@@ -32,7 +32,7 @@ export class EducationhistoryComponent implements OnInit {
   EmployeeEducationHistoryListName = 'EmployeeEducationHistories';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   EmployeeEducationHistoryList: IEducationHistory[] = [];
   filteredOptions: Observable<IEducationHistory[]>;
   dataSource: MatTableDataSource<IEducationHistory>;
@@ -50,7 +50,8 @@ export class EducationhistoryComponent implements OnInit {
     BoardName: '',
     Active: 0,
     EmployeeId: 0,
-    OrgId: 0
+    OrgId: 0,
+    SubOrgId: 0
   };
   displayedColumns = [
     "EmployeeEducationHistoryId",
@@ -67,10 +68,7 @@ export class EducationhistoryComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) { }
@@ -96,6 +94,7 @@ export class EducationhistoryComponent implements OnInit {
     this.loading = true;
 
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.SubOrgId = this.tokenstorage.getSubOrgId();
     this.EmployeeId = +this.tokenstorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -183,6 +182,7 @@ export class EducationhistoryComponent implements OnInit {
           this.EmployeeEducationHistoryData.ToYear = row.ToYear;
           this.EmployeeEducationHistoryData.PercentageObtained = row.PercentageObtained;
           this.EmployeeEducationHistoryData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeEducationHistoryData.SubOrgId = this.SubOrgId;
 
           if (this.EmployeeEducationHistoryData.EmployeeEducationHistoryId == 0) {
             this.EmployeeEducationHistoryData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
@@ -253,7 +253,7 @@ export class EducationhistoryComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);

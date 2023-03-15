@@ -27,7 +27,7 @@ export class studentprimaryinfoComponent implements OnInit {
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
   Edit = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   loginUserDetail = [];
   StudentLeaving = false;
@@ -226,8 +226,9 @@ export class studentprimaryinfoComponent implements OnInit {
         if (perObj.length > 0) {
           this.FeePaymentPermission = perObj[0].permission;
         }
-        console.log("this.FeePaymentPermission ", this.FeePaymentPermission);
+        //console.log("this.FeePaymentPermission ", this.FeePaymentPermission);
         this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
+        this.SubOrgId = +this.tokenService.getSubOrgId();
         this.getFields('Student Module');
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
         this.GetMasterData();
@@ -332,7 +333,7 @@ export class studentprimaryinfoComponent implements OnInit {
   }
   Sections = [];
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
@@ -497,6 +498,7 @@ export class studentprimaryinfoComponent implements OnInit {
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeaving").value,
       OrgId: this.loginUserDetail[0]["orgId"],
+      SubOrgId: this.SubOrgId,
       IdentificationMark: this.studentForm.get("IdentificationMark").value,
       BoardRegistrationNo: this.studentForm.get("BoardRegistrationNo").value,
       Height: this.studentForm.get("Height").value,

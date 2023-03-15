@@ -20,14 +20,7 @@ import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-g
 export class LeavepolicyComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  
   PagePermission = '';
   LeavePolicyListName = 'LeavePolicies';
   StandardFilter = '';
@@ -37,6 +30,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   RawLeavePolicy = [];
   LeavePolicyList: any[] = [];
   SelectedBatchId = 0;
+  SubOrgId = 0;
   StoredForUpdate = [];
   Leaves = [];
 
@@ -53,7 +47,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     LeaveOpenAdjustCloseId: 0,
     FormulaOrDays: '',
     BatchId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -76,27 +70,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
-    // this.servicework.activateUpdate().then(() => {
-    //   this.servicework.checkForUpdate().then((value) => {
-    //     if (value) {
-    //       location.reload();
-    //     }
-    //   })
-    // })
-    //debugger;
-    // this.searchForm = this.fb.group({
-    //   searchEmployee: [0]
-    // });
-    //this.PageLoad();
-    // this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
-    //   .pipe(
-    //     startWith(''),
-    //     map(value => typeof value === 'string' ? value : value.Name),
-    //     map(Name => Name ? this._filter(Name) : this.Employees.slice())
-    //   );
-
-    // this.DropDownMonths = this.GetSessionFormattedMonths();
-
+   
   }
   private _filter(name: string): IEmployee[] {
 
@@ -117,7 +91,8 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
+      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
       this.GetMasterData();
 
     }
@@ -228,6 +203,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
           this.LeavePolicyData.LeaveOpenAdjustCloseId = row.LeaveOpenAdjustCloseId;
           this.LeavePolicyData.FormulaOrDays = row.FormulaOrDays;
           this.LeavePolicyData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.LeavePolicyData.SubOrgId = this.SubOrgId;
           this.LeavePolicyData.BatchId = this.SelectedBatchId;
           this.LeavePolicyData.Active = row.Active;
 
@@ -315,7 +291,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         //debugger;
         this.allMasterData = [...data.value];
@@ -360,7 +336,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   }
   GetLeavePolicy() {
 
-    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     //var _employeeId = 0;
     //var EmployeeFilter = '';

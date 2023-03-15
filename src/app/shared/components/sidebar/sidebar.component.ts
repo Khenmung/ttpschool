@@ -10,14 +10,15 @@ import { SharedataService } from '../../sharedata.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit { PageLoading=true;
+export class SidebarComponent implements OnInit {
+    PageLoading = true;
   //@Output() openLeftMenu1:new EventEmitter();
-  SelectedBatchId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   loginUserDetail = [];
   sideMenu = [];
   collapse = false;
   SelectedApplicationId = 0;
-  MenuData =[];
+  MenuData = [];
   constructor(
     private dataservice: NaomitsuService,
     private shareddata: SharedataService,
@@ -27,6 +28,7 @@ export class SidebarComponent implements OnInit { PageLoading=true;
   ngOnInit(): void {
     debugger;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.loginUserDetail = this.tokenStorage.getUserDetail();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     // this.shareddata.CurrentPagesData.subscribe((data:any)=>{
@@ -34,8 +36,8 @@ export class SidebarComponent implements OnInit { PageLoading=true;
     // })
     //if (this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)//this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)
     this.sideMenu = this.tokenStorage.getMenuData();
-    if(this.sideMenu.length==0)
-    this.GetMenuData();
+    if (this.sideMenu.length == 0)
+      this.GetMenuData();
 
   }
   open() {

@@ -25,7 +25,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
   Permission = '';
   StandardFilter = '';
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
   BatchList: IBatches[] = [];
   dataSource: MatTableDataSource<IBatches>;
@@ -36,7 +36,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
     StartDate: Date,
     EndDate: Date,
     CurrentBatch:0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 1
   };
   displayedColumns = [
@@ -80,7 +80,8 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
 
         this.GetBatches();
       }
@@ -91,7 +92,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
     row.Action = true;
   }
   GetBatches() {
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId;
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
@@ -132,6 +133,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
       EndDate: new Date(),
       CurrentBatch:0,
       OrgId: +this.LoginUserDetail[0]["orgId"],
+      SubOrgId:this.SubOrgId,
       Active: 1
     }
     this.BatchList.push(newdata);
@@ -170,7 +172,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
     //   }
     // }
     this.loading = true;
-    var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+    var StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
     let checkFilterString = "BatchName eq '" + row.BatchName + "' and " + StandardFilter;
 
     if (row.BatchId > 0)
@@ -198,6 +200,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
           this.BatchData.EndDate = row.EndDate;
           this.BatchData.CurrentBatch = row.CurrentBatch;
           this.BatchData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.BatchData.SubOrgId = this.SubOrgId;
           if (this.BatchData.BatchId == 0) {
             this.BatchData["CreatedDate"] = new Date();
             this.BatchData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -254,6 +257,7 @@ export interface IBatches {
   EndDate: Date;
   CurrentBatch:number;
   OrgId: number;
+  SubOrgId: number;
   Active;
 }
 

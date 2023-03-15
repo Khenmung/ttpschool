@@ -41,7 +41,7 @@ export class BalancesheetComponent implements OnInit {
   GLAccounts = [];
   GeneralLedgers = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   AccountingVoucherList: IAccountingVoucher[] = [];
   AssetDataSource: MatTableDataSource<IAccountingVoucher>;
   LiabilityDataSource: MatTableDataSource<IAccountingVoucher>;
@@ -62,8 +62,7 @@ export class BalancesheetComponent implements OnInit {
     Debit: false,
     Amount: '',
     ShortText: '',
-    OrgId: 0,
-    SubOrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
 
@@ -139,6 +138,7 @@ export class BalancesheetComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.BALANCESHEET);
@@ -146,7 +146,7 @@ export class BalancesheetComponent implements OnInit {
 
         this.Permission = perObj[0].permission;
         if (this.Permission != 'deny') {
-          this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+          this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
           //this.GetMasterData();
           this.GetAccountNature();
 
@@ -382,6 +382,7 @@ export class BalancesheetComponent implements OnInit {
     this.AccountingVoucherData.LedgerId = row.LedgerId;
     this.AccountingVoucherData.ShortText = row.ShortText;
     this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
+    this.AccountingVoucherData.SubOrgId = this.SubOrgId;
     if (row.AccountingVoucherId == 0) {
       this.AccountingVoucherData["CreatedDate"] = new Date();
       this.AccountingVoucherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];

@@ -37,7 +37,7 @@ export class GradehistoryComponent implements OnInit {
   WorkAccounts = [];
   JobTitles = [];
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   EmploymentHistoryList: IEmployeementHistory[] = [];
   filteredOptions: Observable<IEmployeementHistory[]>;
   //filteredEmployees: Observable<IEmployee[]>;
@@ -61,7 +61,7 @@ export class GradehistoryComponent implements OnInit {
     DesignationId: 0,
     WorkAccountId: 0,
     IsCurrent: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Remarks: '',
     ApprovedBy: 0,
     Active: 0
@@ -251,6 +251,7 @@ export class GradehistoryComponent implements OnInit {
           this.EmploymentHistoryData.FromDate = row.FromDate;
           this.EmploymentHistoryData.ToDate = row.ToDate;
           this.EmploymentHistoryData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmploymentHistoryData.SubOrgId = this.SubOrgId;
 
           if (this.EmploymentHistoryData.EmployeeGradeHistoryId == 0) {
             this.EmploymentHistoryData.IsCurrent = 1;

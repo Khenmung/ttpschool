@@ -30,7 +30,7 @@ export class StudentSubjectReportComponent implements OnInit {
   loading = false;
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   //StoredForUpdate = [];
   SubjectMarkComponents = [];
@@ -59,7 +59,7 @@ export class StudentSubjectReportComponent implements OnInit {
     Marks: 0,
     Grade: '',
     ExamStatus: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -99,6 +99,7 @@ export class StudentSubjectReportComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -107,7 +108,7 @@ export class StudentSubjectReportComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetStudents();
         //this.GetClassGroupMapping();
         //this.GetStudentGradeDefn();
@@ -402,154 +403,7 @@ export class StudentSubjectReportComponent implements OnInit {
         //this.GetExamStudentSubjectResults();
       })
   }
-  // GetExamStudentSubjectResults() {
-  //   debugger;
-  //   //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-  //   this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-  //   this.ExamStudentSubjectResult = [];
-  //   //this.StoredForUpdate = [];
-  //   var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-  //   var filterstr = 'Active eq 1 ';
-  //   // if (this.searchForm.get("searchExamId").value == 0) {
-  //   //   this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
-  //   //   return;
-  //   // }
-  //   // var _classId =this.searchForm.get("searchClassId").value;
-  //   // var _sectionId =this.searchForm.get("searchSectionId").value;
-
-  //   // if (this.searchForm.get("searchClassId").value == 0) {
-  //   //   this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
-  //   //   return;
-  //   // }
-  //   // if (this.searchForm.get("searchSectionId").value == 0) {
-  //   //   this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
-  //   //   return;
-  //   // }
-  //   // if (this.searchForm.get("searchSubjectId").value == 0) {
-  //   //   this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText, globalconstants.RedBackground);
-  //   //   return;
-  //   // }
-  //   this.loading = true;
-  //   //this.GetStudentSubjects(_classId,_sectionId);
-  //   var _examId = this.searchForm.get("searchExamId").value;
-  //   filterstr = 'ExamId eq ' + _examId;
-
-  //   let list: List = new List();
-  //   list.fields = [
-  //     "ExamStudentSubjectResultId",
-  //     "ExamId",
-  //     "StudentClassId",
-  //     "StudentClassSubjectId",
-  //     "ClassSubjectMarkComponentId",
-  //     "Marks",
-  //     "Grade",
-  //     "ExamStatus",
-  //     "Active"
-  //   ];
-  //   list.PageName = "ExamStudentSubjectResults";
-  //   list.lookupFields = ["ClassSubjectMarkComponent($select=ExamId,ClassSubjectId,SubjectComponentId,FullMark)"];
-  //   list.filter = [filterstr + orgIdSearchstr];
-  //   //list.orderBy = "ParentId";
-  //   this.displayedColumns = [
-  //     'StudentClassSubject',
-  //   ];
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       //debugger;
-  //       var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
-  //         return studentsubject.ClassId == this.searchForm.get("searchClassId").value
-  //           && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value
-  //           && studentsubject.SectionId == this.searchForm.get("searchSectionId").value
-  //       });
-
-  //       filteredStudentSubjects.forEach(studentsubject => {
-  //         studentsubject.Components = studentsubject.Components.filter(c => c.ExamId == _examId)
-  //       });
-
-  //       var forDisplay;
-  //       if (filteredStudentSubjects.length == 0 || filteredStudentSubjects[0].Components.length == 0) {
-  //         this.loading = false; this.PageLoading = false;
-  //         this.contentservice.openSnackBar("Student Subject/Subject components not defined for this class subject!", globalconstants.ActionText, globalconstants.RedBackground);
-  //         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>([]);
-  //         return;
-  //       }
-  //       filteredStudentSubjects.forEach(ss => {
-  //         forDisplay = {
-  //           StudentClassSubject: ss.StudentClassSubject,
-  //           StudentClassSubjectId: ss.StudentClassSubjectId
-  //         }
-
-  //         ss.Components.forEach(component => {
-
-  //           let existing = data.value.filter(db => db.StudentClassSubjectId == ss.StudentClassSubjectId
-  //             && db.ClassSubjectMarkComponentId == component.ClassSubjectMarkComponentId);
-  //           if (existing.length > 0) {
-  //             var _ComponentName = this.MarkComponents.filter(c => c.MasterDataId == existing[0].ClassSubjectMarkComponent.SubjectComponentId)[0].MasterDataName;
-  //             var _toPush;
-  //             if (this.displayedColumns.indexOf(_ComponentName) == -1)
-  //               this.displayedColumns.push(_ComponentName)
-  //             _toPush = {
-  //               ExamStudentSubjectResultId: existing[0].ExamStudentSubjectResultId,
-  //               ExamId: existing[0].ExamId,
-  //               ClassSubjectId: ss.ClassSubjectId,
-  //               StudentClassId: existing[0].StudentClassId,
-  //               StudentClassSubjectId: existing[0].StudentClassSubjectId,
-  //               StudentClassSubject: ss.StudentClassSubject,
-  //               ClassSubjectMarkComponentId: existing[0].ClassSubjectMarkComponentId,
-  //               SubjectCategoryId: ss.SubjectCategoryId,
-  //               SubjectMarkComponent: _ComponentName,
-  //               FullMark: component.FullMark,
-  //               PassMark: component.PassMark,
-  //               Marks: existing[0].Marks,
-  //               Grade: existing[0].Grade,
-  //               ExamStatus: existing[0].ExamStatus,
-  //               Active: existing[0].Active,
-  //               Action: true
-  //             }
-  //             _toPush[_ComponentName] = existing[0].Marks;
-  //             forDisplay[_ComponentName] = existing[0].Marks;
-
-  //             this.StoredForUpdate.push(_toPush);
-  //           }
-  //           else {
-  //             var _componentName = this.MarkComponents.filter(c => c.MasterDataId == component.SubjectComponentId)[0].MasterDataName;
-  //             if (this.displayedColumns.indexOf(_componentName) == -1)
-  //               this.displayedColumns.push(_componentName)
-  //             _toPush = {
-  //               ExamStudentSubjectResultId: 0,
-  //               ExamId: this.searchForm.get("searchExamId").value,
-  //               StudentClassSubjectId: ss.StudentClassSubjectId,
-  //               ClassSubjectId: ss.ClassSubjectId,
-  //               StudentClassId: ss.StudentClassId,
-  //               SubjectCategoryId: ss.SubjectCategoryId,
-  //               StudentClassSubject: ss.StudentClassSubject,
-  //               ClassSubjectMarkComponentId: component.ClassSubjectMarkComponentId,
-  //               SubjectMarkComponent: _componentName,
-  //               FullMark: component.FullMark,
-  //               PassMark: component.PassMark,
-  //               Marks: 0,
-  //               Grade: '',
-  //               ExamStatus: 0,
-  //               Active: 0,
-  //               Action: true
-  //             }
-  //             _toPush[_componentName] = 0;
-  //             forDisplay[_componentName] = 0;
-
-  //             this.StoredForUpdate.push(_toPush);
-  //           }
-  //         })
-  //         forDisplay["Action"] = '';
-  //         this.ExamStudentSubjectResult.push(forDisplay);
-
-  //       })
-  //       this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.sort((a, b) => a.StudentClassSubject.localeCompare(b.StudentClassSubject));
-  //       console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
-  //       this.displayedColumns.push("Action");
-  //       this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
-  //       this.loading = false; this.PageLoading = false;
-  //     })
-  // }
+  
   StudentGrades = [];
   SelectedClassStudentGrades = [];
   ClassGroupMapping = [];

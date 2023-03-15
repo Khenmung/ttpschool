@@ -45,7 +45,7 @@ export class VerifyResultsComponent implements OnInit {
   ExamStudentSubjectGrading: any[] = [];
   ClassFullMark = 0;
   ClassSubjectComponents = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
@@ -85,7 +85,7 @@ export class VerifyResultsComponent implements OnInit {
     Marks: 0,
     ActualMarks: 0,
     ExamStatus: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -136,6 +136,7 @@ export class VerifyResultsComponent implements OnInit {
     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -150,7 +151,7 @@ export class VerifyResultsComponent implements OnInit {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetMasterData();
         //this.GetExamClassGroup();
 
@@ -551,6 +552,7 @@ export class VerifyResultsComponent implements OnInit {
   GetExamStudentSubjectResults(pExamId, pClassId, pSectionId) {
     this.ClickedVerified = false;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.ExamStudentSubjectResult = [];
     this.ExamStudentSubjectGrading = [];
 
@@ -766,7 +768,7 @@ export class VerifyResultsComponent implements OnInit {
                 Marks: 0,
                 ActualMarks: 0,
                 Grade: '',
-                OrgId: 0,
+                OrgId: 0,SubOrgId: 0,
                 Active: 0,
                 BatchId: 0
               }

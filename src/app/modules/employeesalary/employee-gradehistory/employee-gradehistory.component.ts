@@ -32,7 +32,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   EmployeeGradeHistoryList: IEmployeeGradeHistory[] = [];
   Employees: IEmployee[] = [];
   //EmployeeSalaryComponentList: IEmployeeSalaryComponent[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   StoredForUpdate = [];
   //SubjectMarkComponents = [];
   GradeComponents = [];
@@ -61,7 +61,8 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
     "FromDate": new Date(),
     "ToDate": new Date(),
     "Active": 0,
-    "OrgId": 0
+    "OrgId": 0,
+    "SubOrgId": 0
   };
   displayedColumns = [
     "DepartmentId",
@@ -80,11 +81,8 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
-    private route: ActivatedRoute,
     private nav: Router,
     private contentservice: ContentService,
-    private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) { }
 
@@ -137,7 +135,8 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
       }
       else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.SubOrgId= +this.tokenstorage.getSubOrgId();
+      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
       this.GetMasterData();
       }
     }
@@ -200,6 +199,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
           this.EmployeeGradeHistoryData.DepartmentId = row.DepartmentId;
           this.EmployeeGradeHistoryData.DesignationId = row.DesignationId;
           this.EmployeeGradeHistoryData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeGradeHistoryData.SubOrgId = this.SubOrgId;
           this.EmployeeGradeHistoryData.WorkAccountId = row.WorkAccountId;
           this.EmployeeGradeHistoryData.EmpGradeId = row.EmpGradeId;
           this.EmployeeGradeHistoryData.FromDate = row.FromDate;
@@ -368,7 +368,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);

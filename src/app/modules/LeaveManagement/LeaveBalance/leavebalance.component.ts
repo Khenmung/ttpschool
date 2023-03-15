@@ -39,7 +39,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   LeavePolicies = [];
   RawLeaveBalance = [];
   LeaveBalanceList: any[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   StoredForUpdate = [];
   //SubjectMarkComponents = [];
   //MarkComponents = [];
@@ -78,7 +78,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
     LeaveOpenAdjustCloseId: 0,
     YearMonth: 0,
     BatchId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -139,7 +139,8 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
+      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
       this.GetMasterData();
 
     }
@@ -252,6 +253,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
           this.LeaveBalanceData.LeaveOpenAdjustCloseId = row.LeaveOpenAdjustCloseId;
           this.LeaveBalanceData.YearMonth = row.YearMonth;
           this.LeaveBalanceData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.LeaveBalanceData.SubOrgId = this.SubOrgId;
           this.LeaveBalanceData.BatchId = this.SelectedBatchId;
           this.LeaveBalanceData.Active = row.Active;
 
@@ -343,7 +345,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         //debugger;
         this.allMasterData = [...data.value];
@@ -564,7 +566,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   }
   GetLeaveBalance() {
 
-    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _employeeId = 0;
     var EmployeeFilter = '';

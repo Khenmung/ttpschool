@@ -8,7 +8,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-chartreport',
@@ -46,7 +46,7 @@ export class ChartReportComponent {
   public pieChartPlugins = [];
   LoginUserDetail = [];
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Permission = '';
   constructor(private servicework: SwUpdate,
     private tokenStorage: TokenStorageService,
@@ -72,6 +72,7 @@ export class ChartReportComponent {
     if (this.Permission != 'deny') {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
       this.Months = this.contentservice.GetSessionFormattedMonths();
 
       this.GetClassFees();

@@ -46,6 +46,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
   CustomerInvoiceDataSource: MatTableDataSource<ICustomerInvoice>;
   allMasterData = [];
   PagePermission = '';
+  SubOrgId=0;
   CustomerInvoiceData = {
     CustomerInvoiceId: 0,
     CustomerId: 0,
@@ -55,7 +56,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
     TotalAmount: 0,
     DueDate: new Date(),
     PaymentStatusId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   InvoiceDisplayedColumns = [
@@ -115,6 +116,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.DropDownMonths = this.GetSessionFormattedMonths();
       this.GetOrganizations();
       this.GetCustomerPlans();
@@ -163,6 +165,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
     this.CustomerInvoiceData.TotalAmount = row.TotalAmount.toString();
     this.CustomerInvoiceData.Active = row.Active;
     this.CustomerInvoiceData.OrgId = this.LoginUserDetail[0]["orgId"];
+    this.CustomerInvoiceData.SubOrgId = this.SubOrgId
 
     //console.log('data', this.CustomerInvoiceData);
     if (this.CustomerInvoiceData.CustomerInvoiceId == 0) {
@@ -405,7 +408,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],0,this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
@@ -443,7 +446,7 @@ export interface ICustomerInvoice {
   TotalAmount: number;
   DueDate: Date;
   PaymentStatusId: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   Active: number;
 }
 export interface ICustomerPlansDisplay {
@@ -458,7 +461,7 @@ export interface ICustomerInvoiceComponent {
   CustomerInvoiceComponentId: number;
   CustomerInvoiceId: number;
   InvoiceComponentId: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   Active: number;
 }
 

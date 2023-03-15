@@ -33,7 +33,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   ActivityCategory = [];
   RelevantEvaluationListForSelectedStudent = [];
   GroupActivityParticipantList: any[] = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Sections = [];
   Classes = [];
   dataSource: MatTableDataSource<any>;
@@ -53,7 +53,7 @@ export class GroupactivityparticipantComponent implements OnInit {
     SportResultId: 0,
     StudentClassId: 0,
     Description: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   GroupActivityParticipantForUpdate = [];
@@ -139,7 +139,7 @@ export class GroupactivityparticipantComponent implements OnInit {
       if (this.Permission != 'deny') {
 
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetMasterData();
 
         if (this.Classes.length == 0) {
@@ -174,6 +174,7 @@ export class GroupactivityparticipantComponent implements OnInit {
     this.loading = true;
 
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let checkFilterString = "SportResultId eq " + row.SportResultId +
       " and StudentClassId eq " + row.StudentClassId
 
@@ -447,7 +448,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   }
   GetStudentClasses() {
     //debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
@@ -612,7 +613,7 @@ export interface IGroupActivityParticipant {
   SportResultId: number;
   StudentClassId: number;
   Description: string;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   Active: number;
   UpdatedDate
 

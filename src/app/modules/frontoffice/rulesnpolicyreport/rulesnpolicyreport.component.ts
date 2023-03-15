@@ -27,7 +27,7 @@ export class RulesnpolicyreportComponent implements OnInit {
   Applications = [];
   ckeConfig: any;
   loading = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   RulesOrPolicyList: IRulesOrPolicy[] = [];
   filteredOptions: Observable<IRulesOrPolicy[]>;
   dataSource: MatTableDataSource<IRulesOrPolicy>;
@@ -39,7 +39,7 @@ export class RulesnpolicyreportComponent implements OnInit {
     RulesOrPolicyId: 0,
     Title: '',
     Description: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -95,6 +95,7 @@ export class RulesnpolicyreportComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.RULESORPOLICYREPORT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -192,6 +193,7 @@ export class RulesnpolicyreportComponent implements OnInit {
           this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(_desc);
           this.RulesOrPolicyData.Title = _title;
           this.RulesOrPolicyData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.RulesOrPolicyData.SubOrgId = this.SubOrgId;
 
           if (_rulesOrPolicyId == 0) {
             this.RulesOrPolicyData["CreatedDate"] = new Date();

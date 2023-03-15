@@ -39,7 +39,7 @@ export class QuestionandexamreportComponent implements OnInit {
   QuestionBankOptionList = [];
   QuestionBankList: IQuestionNExam[] = [];
   //EvaluationMasterId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   QuestionnaireTypes = [];
   SubCategories = [];
   Classes = [];
@@ -57,7 +57,7 @@ export class QuestionandexamreportComponent implements OnInit {
     QuestionBankNExamId: 0,
     ExamId: 0,
     BatchId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: false
   };
   EvaluationMasterForClassGroup = [];
@@ -113,7 +113,8 @@ export class QuestionandexamreportComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         //this.GetEvaluationNames();
         this.GetMasterData();
 
@@ -200,7 +201,7 @@ export class QuestionandexamreportComponent implements OnInit {
 
   GetExams() {
 
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,1)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(e => {
@@ -302,6 +303,7 @@ export class QuestionandexamreportComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
           this.QuestionBankNExamForUpdate = [];
           this.QuestionBankNExamData.QuestionBankNExamId = row.QuestionBankNExamId;
           this.QuestionBankNExamData.QuestionBankId = row.QuestionBankId;
@@ -401,6 +403,7 @@ export class QuestionandexamreportComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _examId = this.searchForm.get("searchExamId").value;
 
@@ -500,6 +503,7 @@ export class QuestionandexamreportComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = "Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     if (pExamId > 0)
       filterStr += " and ExamId eq " + pExamId;

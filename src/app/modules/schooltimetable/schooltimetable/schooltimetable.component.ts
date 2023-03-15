@@ -31,7 +31,7 @@ export class SchooltimetableComponent implements OnInit {
   loading = false;
   rowCount = -1;
   DataToSave = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   StoredForUpdate = [];
   PeriodTypes = [];
   Classes = [];
@@ -58,7 +58,7 @@ export class SchooltimetableComponent implements OnInit {
     SectionId: 0,
     SchoolClassPeriodId: 0,
     TeacherSubjectId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -99,6 +99,7 @@ export class SchooltimetableComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -109,7 +110,7 @@ export class SchooltimetableComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
-          this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+          this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
           this.GetMasterData();
         });
       }
@@ -174,6 +175,7 @@ export class SchooltimetableComponent implements OnInit {
     this.SchoolTimeTableData.TeacherSubjectId = row.TeacherSubjectId;
 
     this.SchoolTimeTableData.OrgId = this.LoginUserDetail[0]["orgId"];
+    this.SchoolTimeTableData.SubOrgId = this.SubOrgId;
     this.SchoolTimeTableData.BatchId = this.SelectedBatchId;
 
     //console.log('data', this.SchoolTimeTableData);
@@ -205,6 +207,7 @@ export class SchooltimetableComponent implements OnInit {
         (data: any) => {
           row.TimeTableId = data.TimeTableId;
           this.SchoolTimeTableData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.SchoolTimeTableData.SubOrgId = this.SubOrgId;
           // var newdata = {
           //   "TimeTableId": this.SchoolTimeTableData.TimeTableId,
           //   "DayId": this.SchoolTimeTableData.DayId,
@@ -288,6 +291,7 @@ export class SchooltimetableComponent implements OnInit {
     this.dataSourcePeriodStatistic = new MatTableDataSource<any>(this.PeriodStatistics);
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.SchoolTimeTableList = [];
 
     var _classId = this.searchForm.get("searchClassId").value;
@@ -487,6 +491,7 @@ export class SchooltimetableComponent implements OnInit {
   GetAllSchoolTimeTable() {
     debugger;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1';
 
@@ -569,6 +574,7 @@ export class SchooltimetableComponent implements OnInit {
   }
   GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.SchoolTimeTableList = [];
     var orgIdSearchstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 

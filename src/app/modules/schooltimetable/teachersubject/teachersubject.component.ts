@@ -40,7 +40,7 @@ export class TeachersubjectComponent implements OnInit {
   Subjects = [];
   SubjectTypes = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   CheckBatchIDForEdit = 1;
   DataCountToSave = -1;
   Batches = [];
@@ -58,7 +58,7 @@ export class TeachersubjectComponent implements OnInit {
     TeacherSubjectId: 0,
     ClassSubjectId: 0,
     EmployeeId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 1
   };
   displayedColumns = [
@@ -105,6 +105,7 @@ export class TeachersubjectComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.nameFilter.valueChanges
         .subscribe(
           name => {
@@ -120,8 +121,8 @@ export class TeachersubjectComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-        this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
         this.GetMasterData();
 
@@ -370,6 +371,7 @@ export class TeachersubjectComponent implements OnInit {
           this.TeacherSubjectData.ClassSubjectId = row.ClassSubjectId;
           this.TeacherSubjectData.EmployeeId = row.EmployeeId;
           this.TeacherSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.TeacherSubjectData.SubOrgId = this.SubOrgId;
           if (this.TeacherSubjectData.TeacherSubjectId == 0) {
             this.TeacherSubjectData["CreatedDate"] = new Date();
             this.TeacherSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];

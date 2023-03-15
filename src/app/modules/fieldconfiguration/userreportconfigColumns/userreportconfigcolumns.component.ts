@@ -55,6 +55,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
   dataSource: MatTableDataSource<IReportConfigItem>;
   allMasterData = [];
   PagePermission = '';
+  SubOrgId=0;
   ReportConfigItemData = {
     ReportConfigItemId: 0,
     ReportName: '',
@@ -64,7 +65,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     ColumnSequence: 0,
     ApplicationId: 0,
     TableNames: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     UserId: '',
     Active: 0
   };
@@ -140,7 +141,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       OldSequence: 0,
       ApplicationId: this.SelectedApplicationId,
       TableNames: '',
-      OrgId: 0,
+      OrgId: 0,SubOrgId: 0,
       UserId: '',
       Active: 0,
       Action: false
@@ -221,6 +222,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
           this.ReportConfigItemData.ColumnSequence = row.ColumnSequence;
           this.ReportConfigItemData.Formula = row.Formula;
           this.ReportConfigItemData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ReportConfigItemData.SubOrgId = this.SubOrgId;
           this.ReportConfigItemData.ParentId = MyReportNameId;
           this.ReportConfigItemData.UserId = row.UserId;
           this.ReportConfigItemData.Active = row.Active;
@@ -530,7 +532,7 @@ export interface IReportConfigItem {
   ColumnSequence: number;
   ApplicationId: number;
   TableNames: string;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   UserId: string;
   Active: number;
   CreatedBy: string;

@@ -44,6 +44,7 @@ export class LedgerBalanceComponent implements OnInit {
   GeneralLedgers = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
+  SubOrgId = 0;
   AccountingVoucherList: IAccountingVoucher[] = [];
   dataSource: MatTableDataSource<IAccountingVoucher>;
   allMasterData = [];
@@ -59,8 +60,7 @@ export class LedgerBalanceComponent implements OnInit {
     Debit: false,
     Amount: '',
     ShortText: '',
-    OrgId: 0,
-    SubOrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
   headercolumns = ["Debit", "Credit"];
@@ -132,6 +132,7 @@ export class LedgerBalanceComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.TRIALBALANCE);
@@ -139,7 +140,7 @@ export class LedgerBalanceComponent implements OnInit {
 
         this.Permission = perObj[0].permission;
         if (this.Permission != 'deny') {
-          this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+          this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
           //this.GetMasterData();
           this.GetGLAccounts();
           this.GetGeneralLedgerAutoComplete();
@@ -172,7 +173,7 @@ export class LedgerBalanceComponent implements OnInit {
   DebitBalance = 0;
   GetAccountingVoucher() {
     debugger;
-    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId;
     filterStr += " and PostingDate ge " + this.datepipe.transform(this.searchForm.get("searchFromDate").value, 'yyyy-MM-dd') + //T00:00:00.000Z
       " and  PostingDate le " + this.datepipe.transform(this.searchForm.get("searchToDate").value, 'yyyy-MM-dd');//T00:00:00.000Z
     this.loading = true;
@@ -295,7 +296,7 @@ export class LedgerBalanceComponent implements OnInit {
     ];
 
     list.PageName = "GeneralLedgers";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -328,8 +329,6 @@ export class LedgerBalanceComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-
-
     this.AccountingVoucherData.Active = row.Active;
     this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
     this.AccountingVoucherData.Amount = row.Amount;
@@ -340,6 +339,7 @@ export class LedgerBalanceComponent implements OnInit {
     this.AccountingVoucherData.LedgerId = row.LedgerId;
     this.AccountingVoucherData.ShortText = row.ShortText;
     this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
+    this.AccountingVoucherData.SubOrgId = this.SubOrgId;
     if (row.AccountingVoucherId == 0) {
       this.AccountingVoucherData["CreatedDate"] = new Date();
       this.AccountingVoucherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -356,9 +356,6 @@ export class LedgerBalanceComponent implements OnInit {
       //console.log('to update', this.AccountingVoucherData)
       this.update(row);
     }
-    //        }
-    //      });
-
   }
 
   insert(row) {
@@ -403,7 +400,7 @@ export class LedgerBalanceComponent implements OnInit {
 
     list.PageName = "GeneralLedgers";
     list.lookupFields = ["AccountNature($select=Active,AccountNatureId,DebitType)"];
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {

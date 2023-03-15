@@ -36,7 +36,7 @@ export class DashboardclassfeeComponent implements OnInit {
   CurrentBatch = '';
   CurrentBatchId = 0;
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   PreviousBatchId = 0;
   FeeDefinitions = [];
   Classes = [];
@@ -58,7 +58,7 @@ export class DashboardclassfeeComponent implements OnInit {
     Amount: 0,
     BatchId: 0,
     Month: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
     LocationId: 0
   };
@@ -116,10 +116,10 @@ export class DashboardclassfeeComponent implements OnInit {
       if (this.Permission == 'deny') {
       }
       else {
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
         //console.log("this.StandardFilterWithBatchId",this.StandardFilterWithBatchId);
         if (+this.token.getPreviousBatchId() > 0)
-          this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.token)
+          this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.token)
 
         this.SelectedBatchId = +this.token.getSelectedBatchId();
         //console.log("this.SelectedBatchId",this.SelectedBatchId);
@@ -380,6 +380,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.classFeeData.LocationId = +row.LocationId;
           this.classFeeData.Month = row.Month;
           this.classFeeData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.classFeeData.SubOrgId = this.SubOrgId;
           if (objDiscount[0].ClassFeeId == 0) {
             var insert = [];
             insert.push({

@@ -43,7 +43,7 @@ export class AccountNatureComponent implements OnInit {
   loading = false;
   GLAccounts = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   AccountNatureList: IAccountNature[] = [];
   dataSource: MatTableDataSource<IAccountNature>;
   allMasterData = [];
@@ -55,7 +55,7 @@ export class AccountNatureComponent implements OnInit {
     DebitType: false,
     BalanceSheetSequence:0,
     IncomeStatementSequence:0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
 
@@ -117,6 +117,7 @@ export class AccountNatureComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.ACCOUNTNATURE);
       if (perObj.length > 0)
@@ -124,7 +125,7 @@ export class AccountNatureComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.GetAccountNatureAutoComplete();
 
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
       }
     }
@@ -290,7 +291,7 @@ export class AccountNatureComponent implements OnInit {
 
     if (row.AccountNatureId > 0)
       checkFilterString += " and AccountNatureId ne " + row.AccountNatureId;
-    checkFilterString += " and " + globalconstants.getStandardFilter(this.LoginUserDetail);
+    checkFilterString += " and " + globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
     let list: List = new List();
     list.fields = ["AccountNatureId"];
     list.PageName = this.AccountNatureListName;
@@ -313,6 +314,7 @@ export class AccountNatureComponent implements OnInit {
           this.AccountNatureData.IncomeStatementSequence = row.IncomeStatementSequence;
           this.AccountNatureData.BalanceSheetSequence = row.BalanceSheetSequence;
           this.AccountNatureData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.AccountNatureData.SubOrgId = this.SubOrgId;
 
           if (row.AccountNatureId == 0) {
             this.AccountNatureData["CreatedDate"] = new Date();

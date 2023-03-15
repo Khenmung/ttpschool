@@ -29,7 +29,7 @@ export class StudentviewComponent implements OnInit {
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
   Edit = false;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
   loginUserDetail = [];
   StudentLeaving = false;
@@ -149,7 +149,8 @@ export class StudentviewComponent implements OnInit {
   ) {
 
     this.StudentId = this.tokenService.getStudentId();
-    this.StudentClassId = this.tokenService.getStudentClassId()
+    this.StudentClassId = this.tokenService.getStudentClassId();
+    this.SubOrgId = this.tokenService.getSubOrgId();
   }
 
   ngOnInit(): void {
@@ -239,7 +240,7 @@ export class StudentviewComponent implements OnInit {
   StudentClasses = [];
   GetStudentClass() {
     debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenService);
 
     if (this.StudentId > 0 && this.StudentClassId > 0) {
 
@@ -250,7 +251,7 @@ export class StudentviewComponent implements OnInit {
         "BatchId", "FeeTypeId",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
-      list.filter = ["StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
+      list.filter = ["StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId + " and SubOrgId eq " + this.SubOrgId];
 
       this.dataservice.get(list)
         .subscribe((data: any) => {
@@ -376,7 +377,7 @@ export class StudentviewComponent implements OnInit {
 
   GetSportsResult() {
     debugger;
-    var filterStr = "Active eq 1 and OrgId eq " + this.loginUserDetail[0]["orgId"];
+    var filterStr = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and Active eq 1";
     filterStr += " and StudentClassId eq " + this.StudentClassId;
 
     this.loading = true;
@@ -425,7 +426,7 @@ export class StudentviewComponent implements OnInit {
   AchievementAndPoints = [];
   GetAchievementAndPoint() {
     //debugger;
-    var filterOrgId = "Active eq true and OrgId eq " + this.loginUserDetail[0]['orgId'];
+    var filterOrgId = "OrgId eq " + this.loginUserDetail[0]['orgId'] + " and Active eq true";
 
     let list: List = new List();
     list.fields = ["AchievementAndPointId,Rank"];
@@ -497,7 +498,7 @@ export class StudentviewComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];

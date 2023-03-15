@@ -4,7 +4,8 @@
     <!-- <mat-card-content style="min-height: 100vh;margin-top:-100px; display: flex;flex-direction: column; align-items:center;justify-content: center;">         -->
     <mat-card-content>
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-        <form [formGroup]="searchForm" style="margin: 30px;">
+        <form [formGroup]="searchForm">
+            <!-- <div style="display:flex"> -->
             <mat-form-field [style.width.px]="250" appearance="outline">
                 <mat-label>Application</mat-label>
                 <mat-select formControlName="searchApplicationId" (selectionChange)="ChangeApplication()">
@@ -12,14 +13,19 @@
                         {{item.applicationName}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <span>
-                <mat-form-field [style.width.px]="130" appearance="outline">
-                    <mat-label>Batch</mat-label>
-                    <mat-select formControlName="searchBatchId" (selectionChange)="changebatch()">
-                        <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </span>
+            <mat-form-field [style.width.px]="130" appearance="outline">
+                <mat-label>Batch</mat-label>
+                <mat-select formControlName="searchBatchId" (selectionChange)="changebatch()">
+                    <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field [style.width.px]="130" appearance="outline">
+                <mat-label>Sub Organization</mat-label>
+                <mat-select formControlName="searchSubOrgId">
+                    <mat-option *ngFor="let item of SubOrganization"
+                        [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
             <button [disabled]="loading || !ValueChanged" mat-raised-button color="accent" (click)="submit()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">

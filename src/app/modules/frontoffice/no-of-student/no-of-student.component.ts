@@ -28,6 +28,7 @@ export class NoOfStudentComponent implements OnInit {
   RowsToUpdate = -1;
   RollNoGenerationSortBy = '';
   SearchSectionId = 0;
+  SubOrgId = 0;
   Permission = '';
   PromotePermission = '';
   LoginUserDetail: any[] = [];
@@ -67,7 +68,7 @@ export class NoOfStudentComponent implements OnInit {
   StudentClassData = {
     StudentClassId: 0,
     ClassId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     BatchId: 0,
     StudentId: 0,
     RollNo: 0,
@@ -87,8 +88,6 @@ export class NoOfStudentComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
-    private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
   ) { }
@@ -121,10 +120,11 @@ export class NoOfStudentComponent implements OnInit {
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.Batches = this.tokenstorage.getBatches()
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenstorage.getSubOrgId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
+      this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+      this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.NOOFSTUDENT);
       if (perObj.length > 0)
@@ -132,6 +132,7 @@ export class NoOfStudentComponent implements OnInit {
       if (this.Permission != 'deny') {
 
         this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
 
         this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
         this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
@@ -187,7 +188,7 @@ export class NoOfStudentComponent implements OnInit {
 
   GetFeeTypes() {
     this.loading = true;
-    //var filter = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
@@ -229,7 +230,7 @@ export class NoOfStudentComponent implements OnInit {
       .subscribe((StudentClassesdb: any) => {
         //console.log("Studenclass no.", StudentClassesdb.value)
         var errormsg = '';
-        this.BoyGirlTotal=[];
+        this.BoyGirlTotal = [];
         this.StudentClassList = StudentClassesdb.value.map(student => {
           var _sectionname = ''
           var _pid = 0
@@ -370,6 +371,7 @@ export class NoOfStudentComponent implements OnInit {
     //set current batch id back to the actual one.
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
   }
   clear() {
     this.searchForm.patchValue({
@@ -399,27 +401,27 @@ export class NoOfStudentComponent implements OnInit {
 
     // this.dataservice.get(list)
     //   .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        var _students:any = this.tokenstorage.getStudents();
-        if (_students.length > 0) {
-          _students.forEach(student => {
-            var obj = this.Genders.filter(g => g.MasterDataId == student.GenderId);
-            if (obj.length > 0)
-              this.Students.push({
-                PID: student.PID,
-                StudentId: student.StudentId,
-                GenderId: student.GenderId,
-                Gender: obj[0].MasterDataName
-              })
+    //debugger;
+    //  //console.log('data.value', data.value);
+    var _students: any = this.tokenstorage.getStudents();
+    if (_students.length > 0) {
+      _students.forEach(student => {
+        var obj = this.Genders.filter(g => g.MasterDataId == student.GenderId);
+        if (obj.length > 0)
+          this.Students.push({
+            PID: student.PID,
+            StudentId: student.StudentId,
+            GenderId: student.GenderId,
+            Gender: obj[0].MasterDataName
           })
-        }
-        this.loading = false; this.PageLoading = false;
-     // })
+      })
+    }
+    this.loading = false; this.PageLoading = false;
+    // })
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         debugger;
         this.allMasterData = [...data.value];

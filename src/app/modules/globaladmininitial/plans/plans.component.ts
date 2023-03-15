@@ -22,18 +22,11 @@ export class PlansComponent implements OnInit { PageLoading=true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  
   PlanListName = 'Plans';
   loading = false;
   SelectedApplicationId=0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   PlanList: IPlan[] = [];
   filteredOptions: Observable<IPlan[]>;
   dataSource: MatTableDataSource<IPlan>;
@@ -97,6 +90,8 @@ export class PlansComponent implements OnInit { PageLoading=true;
 
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -275,7 +270,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);

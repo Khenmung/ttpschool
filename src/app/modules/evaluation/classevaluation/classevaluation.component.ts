@@ -42,7 +42,7 @@ export class ClassEvaluationComponent implements OnInit {
   ClassEvaluationOptionList = [];
   ClassEvaluationList: IClassEvaluation[] = [];
   //EvaluationMasterId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   QuestionnaireTypes = [];
   SubCategories = [];
   Classes = [];
@@ -64,7 +64,7 @@ export class ClassEvaluationComponent implements OnInit {
     Description: '',
     DisplayOrder: 0,
     ClassEvaluationAnswerOptionParentId: 0,
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0,
   };
   EvaluationMasterForClassGroup = [];
@@ -124,7 +124,8 @@ export class ClassEvaluationComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
         this.GetEvaluationNames();
         this.GetMasterData();
         if (this.Classes.length == 0) {
@@ -176,7 +177,7 @@ export class ClassEvaluationComponent implements OnInit {
 
   GetExams() {
 
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,1)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(e => {
@@ -349,6 +350,7 @@ export class ClassEvaluationComponent implements OnInit {
     //     else {
     //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.ClassEvaluationForUpdate = [];;
     ////console.log("inserting-1",this.ClassEvaluationForUpdate);
     this.ClassEvaluationForUpdate.push(
@@ -429,6 +431,7 @@ export class ClassEvaluationComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
@@ -494,6 +497,7 @@ export class ClassEvaluationComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
@@ -529,6 +533,7 @@ export class ClassEvaluationComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     let filterStr = 'ParentId eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();

@@ -43,7 +43,7 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
     MinPrice: 0,
     CurrencyId: 0,
     Description: '',
-    OrgId: 0,
+    OrgId: 0,SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -57,6 +57,7 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
     "Action"
   ];
   SelectedApplicationId=0;
+  SubOrgId=0;
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private contentservice:ContentService,
@@ -121,6 +122,7 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
     this.ApplicationPriceData.PCPM = row.PCPM;
     this.ApplicationPriceData.Active = row.Active;
     this.ApplicationPriceData.OrgId = this.LoginUserDetail[0]["orgId"];
+    this.ApplicationPriceData.SubOrgId = this.SubOrgId;
 
     //console.log('data', this.ApplicationPriceData);
     if (this.ApplicationPriceData.ApplicationPriceId == 0) {
@@ -233,7 +235,7 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],0,this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.common.CURRENCY);
@@ -270,7 +272,7 @@ export interface IApplicationPrice {
   MinPrice: number;
   CurrencyId: number;
   Description: string;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   Active: number;
 
 }

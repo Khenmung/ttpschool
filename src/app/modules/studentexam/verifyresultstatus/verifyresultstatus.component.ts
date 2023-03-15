@@ -32,7 +32,7 @@ export class VerifyresultstatusComponent implements OnInit {
   ExamStudentResult: IExamStudentResult[] = [];
   ClassFullMark = 0;
   ClassSubjectComponents = [];
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   Students = [];
   Classes = [];
   ExamNames = [];
@@ -76,6 +76,7 @@ export class VerifyresultstatusComponent implements OnInit {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -89,7 +90,7 @@ export class VerifyresultstatusComponent implements OnInit {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
         this.GetMasterData();
         this.GetClassGroupMapping();
       }
@@ -103,6 +104,7 @@ export class VerifyresultstatusComponent implements OnInit {
   GetExamStudentResults() {
 
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenstorage.getSubOrgId();
     this.ExamStudentResult = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
@@ -257,7 +259,7 @@ export interface IExamStudentResult {
   TotalMarks: number;
   GradeId: number;
   Rank: number;
-  OrgId: number;
+  OrgId: number;SubOrgId: number;
   BatchId: number;
   Active: number;
   Action: boolean

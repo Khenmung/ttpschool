@@ -59,7 +59,7 @@ export class StudentDatadumpComponent implements OnInit {
   AdmissionStatus = [];
   Clubs = [];
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;
+  SelectedBatchId = 0;SubOrgId = 0;
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
   StudentId = 0;
@@ -102,10 +102,11 @@ export class StudentDatadumpComponent implements OnInit {
       }
       //var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
       this.SelectedBatchId = +this.token.getSelectedBatchId();
-      this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.SubOrgId = +this.token.getSubOrgId();
+      this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
       this.SelectedApplicationId = +this.token.getSelectedAPPId();
-      this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+      this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
       this.studentSearchForm = this.fb.group({
         searchRemarkId: [0],
         searchGroupId: [0],
@@ -164,7 +165,7 @@ export class StudentDatadumpComponent implements OnInit {
   }
   Groups = [];
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
 
         this.shareddata.ChangeMasterData(data.value);
@@ -354,7 +355,7 @@ export class StudentDatadumpComponent implements OnInit {
   GetFeeTypes() {
     debugger;
     this.loading = true;
-    //var filter = globalconstants.getStandardFilterWithBatchId(this.token);
+    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
@@ -449,14 +450,10 @@ export class StudentDatadumpComponent implements OnInit {
             }
             else
               element.Remarks = '';
-            delete element.RemarkId;
 
-            // if (element.StudentClasses.length == 0) {
-            //   //item.Remarks = '';
-            //   element.ClassName = '';
-            // }
-            // else {
-            //element.StudentClasses.forEach(studcls => {
+            delete element.RemarkId;
+            element.SubOrgId = this.SubOrgId;
+        
             if (element.SectionId > 0) {
               let SectionFilter = this.Sections.filter(g => g.MasterDataId == element.SectionId);
               if (SectionFilter.length == 0)
@@ -746,7 +743,7 @@ export class StudentDatadumpComponent implements OnInit {
   }
   GetStudentClasses() {
     //debugger;
-    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
