@@ -27,6 +27,8 @@ export class SchoolFeeTypesComponent implements OnInit {
   dataSource: MatTableDataSource<IFeeType>;
   Permission = 'deny';
   SelectedBatchId = 0;SubOrgId = 0;
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   allMasterData = [];
   FeeCategories = [];
   FeeTypeData = {
@@ -54,7 +56,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private contentservice: ContentService,
     private fb: UntypedFormBuilder
@@ -77,11 +79,11 @@ export class SchoolFeeTypesComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
@@ -89,10 +91,13 @@ export class SchoolFeeTypesComponent implements OnInit {
         //this.nav.navigate(['/edu']);
       }
       else {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"])
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrgBatchId= globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+       
+          this.contentservice.GetClasses(this.FilterOrgSubOrg)
           .subscribe((data: any) => {
             this.Classes = [...data.value];
           })
@@ -120,7 +125,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   }
   GetStudents() {
 
-    var _students: any = this.tokenstorage.getStudents();
+    var _students: any = this.tokenStorage.getStudents();
     _students = _students.filter(a => a.Active == 1);
     this.Students = _students.map(student => {
       var _lastName = student.LastName == '' ? '' : '-' + student.LastName;
@@ -148,7 +153,7 @@ export class SchoolFeeTypesComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and FeeTypeName eq '" + row.FeeTypeName + "'";
+    let checkFilterString = this.FilterOrgSubOrg + " and FeeTypeName eq '" + row.FeeTypeName + "'";
 
     if (row.FeeTypeId > 0)
       checkFilterString += " and FeeTypeId ne " + row.FeeTypeId;
@@ -256,12 +261,13 @@ export class SchoolFeeTypesComponent implements OnInit {
   CreateInvoice() {
     debugger;
     this.loading = true;
-    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+    
+    this.contentservice.GetClassFeeWithFeeDefinition(this.FilterOrgSubOrgBatchId, 0)
       .subscribe((datacls: any) => {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,0, 0,this.FeeTypeData.FeeTypeId)
+        this.contentservice.getStudentClassWithFeeType(this.FilterOrgSubOrgBatchId,0, 0,this.FeeTypeData.FeeTypeId)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
@@ -322,12 +328,12 @@ export class SchoolFeeTypesComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY)
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
   GetFeeTypes() {
     //debugger;
@@ -337,7 +343,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     //   return;
     // }  
     this.loading = true;
-    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];// 'BatchId eq '+ this.SelectedBatchId;
+    let filterStr = this.FilterOrgSubOrg;// 'BatchId eq '+ this.SelectedBatchId;
     if (this.searchForm.get("searchFeeTypeName").value.length != 0)
       filterStr += " and contains(FeeTypeName,'" + this.searchForm.get("searchFeeTypeName").value + "')";
 

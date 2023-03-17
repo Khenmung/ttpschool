@@ -26,7 +26,8 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   Applications = [];
   Organizations = [];
@@ -69,7 +70,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -96,7 +97,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail.length == 0) {
       this.UserId = localStorage.getItem("userId");
       this.OrgId = +localStorage.getItem("orgId");
@@ -105,9 +106,9 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
      
       this.UserId = this.LoginUserDetail[0]["userId"];
       this.OrgId = this.LoginUserDetail[0]["orgId"];
-      this.SubOrgId= this.tokenstorage.getSubOrgId();
+      this.SubOrgId= this.tokenStorage.getSubOrgId();
 
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
@@ -115,6 +116,9 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+
         this.GetPaymentModes();
         this.GetOrganizations();
         this.GetCustomerPlan();
@@ -233,11 +237,11 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
     this.contentservice.GetParentZeroMasters()
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Applications = this.tokenstorage.getPermittedApplications();
+        this.Applications = this.tokenStorage.getPermittedApplications();
         var globalAdminId = this.Applications.filter(f => f.appShortName.toLowerCase() == 'globaladmin')[0].applicationId;
         var PaymentModeParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == globalconstants.MasterDefinitions.ttpapps.PAYMENTSTATUS)[0].MasterDataId;
 
-        this.contentservice.GetDropDownDataFromDB(PaymentModeParentId, this.LoginUserDetail[0]["orgId"], globalAdminId, 1)
+        this.contentservice.GetDropDownDataFromDB(PaymentModeParentId, this.FilterOrgSubOrg, globalAdminId, 1)
           .subscribe((data: any) => {
             this.PaymentModes = [...data.value];
             this.loading = false; this.PageLoading=false;
@@ -368,7 +372,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

@@ -29,6 +29,8 @@ export class FiledragAndDropComponent implements OnInit {
     parentId: new UntypedFormControl(0)
 
   });
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   LoginUserDetail = [];
   constructor(private servicework: SwUpdate,
     private fileUploadService: FileUploadService,
@@ -52,6 +54,8 @@ export class FiledragAndDropComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
+        this.FilterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId= globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.formdata = new FormData();
         this.getAlbums();
       }
@@ -214,7 +218,8 @@ export class FiledragAndDropComponent implements OnInit {
 
     this.formdata.append("batchId", "0");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
-    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("subOrgId", this.tokenStorage.getSubOrgId()+"");
+    this.formdata.append("orgId", this.LoginUserDetail[0]["subOrgId"]);
     this.formdata.append("pageId", "0");
 
     this.formdata.append("studentId", "0");
@@ -254,7 +259,7 @@ export class FiledragAndDropComponent implements OnInit {
     let list: List = new List();
     list.fields = ["FileId", "UpdatedFileFolderName"];
     list.PageName = "StorageFnPs";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + 
+    list.filter = [this.FilterOrgSubOrg + 
     " and Active eq 1 and FileOrFolder eq 1"];
 
     this.naomitsuService.get(list)

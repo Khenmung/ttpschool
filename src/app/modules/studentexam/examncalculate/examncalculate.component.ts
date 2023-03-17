@@ -27,6 +27,8 @@ export class ExamncalculateComponent implements OnInit {
   Applications = [];
   loading = false;
   SelectedBatchId = 0;SubOrgId = 0;
+  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId='';
   ExamNCalculateList: IExamNCalculate[] = [];
   filteredOptions: Observable<IExamNCalculate[]>;
   dataSource: MatTableDataSource<IExamNCalculate>;
@@ -54,7 +56,7 @@ export class ExamncalculateComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -80,15 +82,15 @@ export class ExamncalculateComponent implements OnInit {
     debugger;
     this.loading = true;
     this.MonthYears = this.contentservice.GetSessionFormattedMonths();
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    //this.EmployeeId = +this.tokenStorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMNCALCULATE);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAMNCALCULATE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -97,7 +99,8 @@ export class ExamncalculateComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         this.Getclassgroups();
       }
@@ -135,8 +138,7 @@ export class ExamncalculateComponent implements OnInit {
       return;
     }
 
-    let checkFilterString = "ExamId eq " + row.ExamId +
-      " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let checkFilterString = this.FilterOrgSubOrg + " and ExamId eq " + row.ExamId +
       " and CalculateResultPropertyId eq " + row.CalculateResultPropertyId
 
     if (row.ExamNCalculateId > 0)
@@ -209,7 +211,8 @@ export class ExamncalculateComponent implements OnInit {
         });
   }
   Getclassgroups() {
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClassGroups(filterOrgSubOrg)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassGroups = [...data.value];
@@ -223,7 +226,7 @@ export class ExamncalculateComponent implements OnInit {
   GetExamNCalculate() {
     debugger;
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = this.FilterOrgSubOrg;
 
     var _examId = this.searchForm.get("searchExamId").value;
 
@@ -300,16 +303,17 @@ export class ExamncalculateComponent implements OnInit {
   ExamResultProperties = [];
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME)
     this.ExamResultProperties = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMRESULTPROPERTY)
 
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.loading = false; this.PageLoading = false;
     });
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(f => {
@@ -323,7 +327,7 @@ export class ExamncalculateComponent implements OnInit {
       })
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
 }
 export interface IExamNCalculate {

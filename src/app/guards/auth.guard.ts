@@ -22,9 +22,9 @@ export class AuthGuard implements CanActivate{
         | Promise<boolean 
         | UrlTree> {
         var userData; 
-        var loginUserDetail = this.token.getUserDetail();
+        var LoginUserDetail = this.token.getUserDetail();
         //debugger;
-        if(loginUserDetail!=null){ // sub represents user id value
+        if(LoginUserDetail!=null){ // sub represents user id value
             return true;
             // if(state.url.indexOf("/auth/login") != -1){
             //     // loggin user trying to access login page

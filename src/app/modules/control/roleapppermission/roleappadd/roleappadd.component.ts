@@ -18,14 +18,7 @@ export class roleappAddComponent implements OnInit { PageLoading=true;
   @Output() OutAppRoleId = new EventEmitter();
   @Output() CallParentPageFunction = new EventEmitter();
   @Input("AppRoleId") AppRoleId: number;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  FilterOrgSubOrg='';
   loading =false;
   allMasterData = [];
   AppRoles = [];
@@ -55,7 +48,7 @@ export class roleappAddComponent implements OnInit { PageLoading=true;
     private route: Router,
     
     private fb: UntypedFormBuilder,
-    private tokenstorage: TokenStorageService
+    private tokenStorage: TokenStorageService
   ) {
 
   }
@@ -81,12 +74,13 @@ export class roleappAddComponent implements OnInit { PageLoading=true;
   PageLoad(){
     //debugger;
     this.loading =true;
-    this.UserDetail = this.tokenstorage.getUserDetail();
+    this.UserDetail = this.tokenStorage.getUserDetail();
     if (this.UserDetail == null) {
       this.route.navigate(['auth/login']);
       //return;
     }
-    this.Applications = this.tokenstorage.getPermittedApplications();
+    this.FilterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.Applications = this.tokenStorage.getPermittedApplications();
     this.shareddata.CurrentRoles.subscribe(r => this.Roles = r);
     this.Permissions = globalconstants.PERMISSIONTYPES;
     this.GetAppRole();
@@ -140,10 +134,10 @@ export class roleappAddComponent implements OnInit { PageLoading=true;
       return;
     }
     
-    let checkFilterString = "Active eq 1 " +
+    let checkFilterString = this.FilterOrgSubOrg + " and Active eq 1 " +
       " and RoleId eq " + this.AppRoleForm.get("RoleId").value +
-      " and ApplicationId eq " + this.AppRoleForm.get("ApplicationId").value+
-      " and OrgId eq " + this.UserDetail[0]["orgId"];
+      " and ApplicationId eq " + this.AppRoleForm.get("ApplicationId").value //+
+      //" and OrgId eq " + this.UserDetail[0]["orgId"];
 
     if (this.AppRoleData.ApplicationRoleId > 0)
       checkFilterString += " and ApplicationRoleId ne " + this.AppRoleData.ApplicationRoleId;
@@ -167,6 +161,7 @@ export class roleappAddComponent implements OnInit { PageLoading=true;
           this.AppRoleData.RoleId = this.AppRoleForm.get("RoleId").value;
           this.AppRoleData.PermissionId = this.AppRoleForm.get("PermissionId").value;
           this.AppRoleData.OrgId = this.UserDetail[0]["orgId"];
+          this.AppRoleData.SubOrgId = this.tokenStorage.getSubOrgId();
           this.AppRoleData.DepartmentId=0;
           this.AppRoleData.LocationId=0;
           this.AppRoleData.CreatedDate=new Date();

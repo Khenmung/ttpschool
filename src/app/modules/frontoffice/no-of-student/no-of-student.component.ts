@@ -42,7 +42,8 @@ export class NoOfStudentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   StandardFilterWithPreviousBatchId = '';
   SameClassPreviousBatch = "SameClassPreviousBatch";
   PreviousClassPreviousBatch = "PreviousClassPreviousBatch";
@@ -87,7 +88,7 @@ export class NoOfStudentComponent implements OnInit {
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private shareddata: SharedataService,
   ) { }
@@ -108,35 +109,37 @@ export class NoOfStudentComponent implements OnInit {
   PageLoad() {
     //debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
       })
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
-      this.Batches = this.tokenstorage.getBatches()
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      this.NextBatchId = +this.tokenstorage.getNextBatchId();
-      this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-      this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
-      this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
+      this.Batches = this.tokenStorage.getBatches()
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.NextBatchId = +this.tokenStorage.getNextBatchId();
+      this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage);
 
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.NOOFSTUDENT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.misc.NOOFSTUDENT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
 
-        this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.checkBatchIdNSelectedIdEqual = +this.tokenStorage.getCheckEqualBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
 
         this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
         this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
-        this.Batches = this.tokenstorage.getBatches()
+        this.Batches = this.tokenStorage.getBatches()
 
         if (this.Classes.length == 0 || this.FeeTypes.length == 0 || this.Sections.length == 0) {
           this.GetMasterData();
@@ -188,11 +191,11 @@ export class NoOfStudentComponent implements OnInit {
 
   GetFeeTypes() {
     this.loading = true;
-    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [ this.FilterOrgSubOrg + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -208,7 +211,7 @@ export class NoOfStudentComponent implements OnInit {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
-    filterStr = this.StandardFilterWithBatchId;
+    filterStr = this.FilterOrgSubOrgBatchId;
     if (_classId > 0)
       filterStr += " and ClassId eq " + _classId;
 
@@ -370,8 +373,8 @@ export class NoOfStudentComponent implements OnInit {
 
     //set current batch id back to the actual one.
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
   }
   clear() {
     this.searchForm.patchValue({
@@ -403,7 +406,7 @@ export class NoOfStudentComponent implements OnInit {
     //   .subscribe((data: any) => {
     //debugger;
     //  //console.log('data.value', data.value);
-    var _students: any = this.tokenstorage.getStudents();
+    var _students: any = this.tokenStorage.getStudents();
     if (_students.length > 0) {
       _students.forEach(student => {
         var obj = this.Genders.filter(g => g.MasterDataId == student.GenderId);
@@ -437,7 +440,7 @@ export class NoOfStudentComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

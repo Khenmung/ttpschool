@@ -23,7 +23,7 @@ export class EmployeeLeaveComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   EmployeeLeaveListName = 'LeaveEmployeeLeaves';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
   newitem = false;
   loading = false;
   rowCount = 0;
@@ -74,7 +74,7 @@ export class EmployeeLeaveComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     //private route: ActivatedRoute,
     private nav: Router,
@@ -117,17 +117,17 @@ export class EmployeeLeaveComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EMPLOYEE);
+      // var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPLOYEE);
       // if (perObj.length > 0)
       //   this.Permission = perObj[0].permission;
 
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMasterData();
 
     }
@@ -157,14 +157,13 @@ export class EmployeeLeaveComponent implements OnInit {
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let checkFilterString = "EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId +
+    let checkFilterString = this.FilterOrgSubOrg + " and EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId +
       " and LeaveFrom eq " + row.LeaveFrom +
       " and LeaveTo eq " + row.LeaveTo +
       " and Active eq 1"
 
     if (row.EmployeeLeaveId > 0)
       checkFilterString += " and EmployeeLeaveId ne " + row.EmployeeLeaveId;
-    checkFilterString += " and " + this.StandardFilter;
 
     let list: List = new List();
     list.fields = ["EmployeeLeaveId"];
@@ -298,7 +297,7 @@ export class EmployeeLeaveComponent implements OnInit {
   }
   GetEmployees() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr =this.StandardFilter;
 
     let list: List = new List();
 
@@ -308,7 +307,7 @@ export class EmployeeLeaveComponent implements OnInit {
       "FirstName",
       "LastName"];
     list.PageName = "EmpEmployees";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg + "and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
@@ -325,7 +324,7 @@ export class EmployeeLeaveComponent implements OnInit {
   }
   GetEmployeeLeave() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = this.FilterOrgSubOrg;// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
@@ -346,7 +345,7 @@ export class EmployeeLeaveComponent implements OnInit {
     ];
 
     list.PageName = this.EmployeeLeaveListName;
-    list.filter = ["EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg + " and EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId];
     //list.orderBy = "ParentId";
     this.EmployeeLeaveList = [];
     this.dataservice.get(list)
@@ -369,7 +368,7 @@ export class EmployeeLeaveComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {

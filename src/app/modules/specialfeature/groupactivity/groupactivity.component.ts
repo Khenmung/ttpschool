@@ -27,7 +27,8 @@ export class GroupactivityComponent implements OnInit {
   SelectedApplicationId = 0;
   ClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   ActivityCategory = [];
   RelevantEvaluationListForSelectedStudent = [];
@@ -74,7 +75,7 @@ export class GroupactivityComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -102,7 +103,7 @@ export class GroupactivityComponent implements OnInit {
     //     map(value => typeof value === 'string' ? value : value.Name),
     //     map(Name => Name ? this._filter(Name) : this.Students.slice())
     //   );
-    this.ClassId = this.tokenstorage.getClassId();
+    this.ClassId = this.tokenStorage.getClassId();
     this.PageLoad();
 
   }
@@ -121,24 +122,26 @@ export class GroupactivityComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        //this.GroupId = this.tokenstorage.getGroupId();
+        //this.GroupId = this.tokenStorage.getGroupId();
 
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
 
         if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
             this.loading = false;
             this.PageLoading = false;
@@ -189,19 +192,18 @@ export class GroupactivityComponent implements OnInit {
       return;
     }
 
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let checkFilterString = "GroupId eq " + row.GroupId +
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and GroupId eq " + row.GroupId +
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +
       " and CategoryId eq " + row.CategoryId +
-      " and SubCategoryId eq " + row.SubCategoryId +
-      " and BatchId eq " + this.SelectedBatchId;
+      " and SubCategoryId eq " + row.SubCategoryId 
+      //" and BatchId eq " + this.SelectedBatchId;
     this.RowsToUpdate = 0;
 
     if (row.SportResultId > 0)
       checkFilterString += " and SportResultId ne " + row.SportResultId;
-    checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
     list.fields = ["SportResultId"];
     list.PageName = "SportResults";
@@ -231,6 +233,7 @@ export class GroupactivityComponent implements OnInit {
               SessionId: row.SessionId,
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"],
+              SubOrgId: this.SubOrgId,
               BatchId: this.SelectedBatchId
             });
 
@@ -289,7 +292,7 @@ export class GroupactivityComponent implements OnInit {
 
   GetSportsResult() {
     debugger;
-    var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterStr = this.FilterOrgSubOrg + " and Active eq 1";
     var _GroupId = this.searchForm.get("searchGroupId").value;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
@@ -375,7 +378,7 @@ export class GroupactivityComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
     this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
     this.StudentHouses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
@@ -472,7 +475,7 @@ export class GroupactivityComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 

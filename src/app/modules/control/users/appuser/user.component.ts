@@ -49,7 +49,7 @@ title ='';
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private tokenstorage:TokenStorageService,
+    private tokenStorage:TokenStorageService,
     private fb: UntypedFormBuilder,
     private sharedData: SharedataService) { }
 
@@ -235,7 +235,7 @@ title ='';
         });
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;

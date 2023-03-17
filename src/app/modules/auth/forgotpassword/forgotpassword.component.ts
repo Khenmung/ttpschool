@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class ForgotpasswordComponent implements OnInit { PageLoading=true;
   loading = false;
-  loginUserDetail = [];
+  LoginUserDetail = [];
   forgotpwdForm: UntypedFormGroup;
   isSuccessful = false;
   isSignUpFailed = false;
@@ -51,8 +51,8 @@ export class ForgotpasswordComponent implements OnInit { PageLoading=true;
       this.deviceXs = result.mqAlias === "xs" ? true : false;
     });
 
-    this.loginUserDetail = this.tokenService.getUserDetail();
-    if (this.loginUserDetail == null)
+    this.LoginUserDetail = this.tokenService.getUserDetail();
+    if (this.LoginUserDetail == null)
       this.route.navigate(['/auth/login']);
     else {
       this.forgotpwdForm = this.fb.group({

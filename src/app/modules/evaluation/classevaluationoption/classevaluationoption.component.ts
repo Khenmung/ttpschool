@@ -24,7 +24,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   SelectedApplicationId = 0;
   StudentClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
   loading = false;
   ClassEvaluationOptionList: IClassEvaluationOption[] = [];
   SelectedBatchId = 0;SubOrgId = 0;
@@ -61,7 +61,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -74,7 +74,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     //     }
     //   })
     // })
-    this.StudentClassId = this.tokenstorage.getStudentClassId();
+    this.StudentClassId = this.tokenStorage.getStudentClassId();
     this.PageLoad();
   }
 
@@ -84,11 +84,11 @@ export class ClassEvaluationOptionComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.CLASSEVALUATIONOPTION)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.CLASSEVALUATIONOPTION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -103,9 +103,9 @@ export class ClassEvaluationOptionComponent implements OnInit {
             map(value => typeof value === 'string' ? value : value.Title),
             map(Title => Title ? this._filter(Title) : this.EvaluationOptionAutoComplete.slice())
           );
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.loading = false; this.PageLoading = false;
 
       }
@@ -181,14 +181,14 @@ export class ClassEvaluationOptionComponent implements OnInit {
       return;
     }
 
-    let checkFilterString = this.StandardFilter;
+    let checkFilterString = this.FilterOrgSubOrg;
     if (row.ParentId != null)
-      checkFilterString = "ParentId eq " + row.ParentId
+      checkFilterString += " and ParentId eq " + row.ParentId
     checkFilterString += " and Title eq '" + globalconstants.encodeSpecialChars(row.Title) + "'";
 
     if (row.ClassEvaluationAnswerOptionsId > 0)
       checkFilterString += " and ClassEvaluationAnswerOptionsId ne " + row.ClassEvaluationAnswerOptionsId;
-    checkFilterString += " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    //checkFilterString += " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     let list: List = new List();
     list.fields = ["ClassEvaluationAnswerOptionsId"];
     list.PageName = "ClassEvaluationOptions";
@@ -202,8 +202,8 @@ export class ClassEvaluationOptionComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+          this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
           this.ClassEvaluationOptionForUpdate = [];
           this.ClassEvaluationOptionForUpdate.push(
             {
@@ -215,7 +215,8 @@ export class ClassEvaluationOptionComponent implements OnInit {
               ClassEvaluationId: this.ClassEvaluationId,
               ParentId: row.ParentId,
               Active: row.Active,
-              OrgId: this.LoginUserDetail[0]["orgId"]
+              OrgId: this.LoginUserDetail[0]["orgId"],
+              SubOrgId:this.SubOrgId
             });
           //console.log('dta', this.ClassEvaluationOptionForUpdate);
 
@@ -274,7 +275,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   GetClassEvaluationOption(pClassEvaluationId, pAnswerOptionId) {
     debugger;
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     // if (pAnswerOptionId == 0 && pClassEvaluationId == 0) {
     //   this.contentservice.openSnackBar("Atleast one parameter should be provided.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -327,7 +328,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   GetEvaluationOptionAutoComplete() {
     //debugger;
     this.loading = true;
-    let filterStr = 'ParentId eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg + " and ParentId eq 0";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     let list: List = new List();
     list.fields = [
       'ClassEvaluationAnswerOptionsId',
@@ -352,7 +353,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
     //this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
     this.loading = false; this.PageLoading = false;
@@ -369,7 +370,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

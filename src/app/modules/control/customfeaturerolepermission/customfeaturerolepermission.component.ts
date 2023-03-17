@@ -34,6 +34,8 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   FilteredPageFeatures = [];
   oldvalue = '';
   selectedData = '';
+  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId='';
   filteredFeatures: Observable<ICustomFeature[]>;
   nameFilter = new UntypedFormControl('');
   datasource: MatTableDataSource<ICustomFeatureRolePermission>;
@@ -116,6 +118,8 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.filteredFeatures = this.searchForm.get("searchFeatureName").valueChanges
         .pipe(
           startWith(''),
@@ -158,7 +162,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "CustomFeatures";
-    list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + " and Active eq true and (ApplicationId eq " + globalconstants.CommonPanelID + " or ApplicationId eq " + this.SelectedApplicationId + ")"];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq true and (ApplicationId eq " + globalconstants.CommonPanelID + " or ApplicationId eq " + this.SelectedApplicationId + ")"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -178,8 +182,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] +
-      ") and Active eq 1"];
+    list.filter = ["(ParentId eq 0 or (" + this.FilterOrgSubOrg +")) and Active eq 1"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -267,7 +270,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   GetCustomerFeatures() {
     //debugger;
 
-    var rolefilter = "OrgId eq " + this.UserDetails[0]["orgId"] + " and ApplicationId eq " + this.SelectedApplicationId;
+    var rolefilter = this.FilterOrgSubOrg + " and ApplicationId eq " + this.SelectedApplicationId;
     if (this.SelectedApplicationId == 0) {
       this.contentservice.openSnackBar("Please select Application", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -421,9 +424,8 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       return;
     }
     this.loading = true;
-    let checkFilterString = "RoleId eq " + row.RoleId +
-      " and CustomFeatureId eq " + row.CustomFeatureId +
-      " and OrgId eq " + this.UserDetails[0]["orgId"];
+    let checkFilterString = this.FilterOrgSubOrg + " and RoleId eq " + row.RoleId +
+      " and CustomFeatureId eq " + row.CustomFeatureId ;
 
     if (row.CustomFeatureRolePermissionId > 0)
       checkFilterString += " and CustomFeatureRolePermissionId ne " + row.CustomFeatureRolePermissionId;
@@ -449,6 +451,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
           this.AppRoleData.PermissionId = row.PermissionId;
           this.AppRoleData.ApplicationId = row.ApplicationId;
           this.AppRoleData.OrgId = this.UserDetails[0]["orgId"];
+          this.AppRoleData.SubOrgId = this.tokenStorage.getSubOrgId();
 
           console.log('data', this.AppRoleData);
           if (this.AppRoleData.CustomFeatureRolePermissionId == 0) {

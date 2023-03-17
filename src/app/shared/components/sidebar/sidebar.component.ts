@@ -14,7 +14,7 @@ export class SidebarComponent implements OnInit {
     PageLoading = true;
   //@Output() openLeftMenu1:new EventEmitter();
   SelectedBatchId = 0; SubOrgId = 0;
-  loginUserDetail = [];
+  LoginUserDetail = [];
   sideMenu = [];
   collapse = false;
   SelectedApplicationId = 0;
@@ -29,7 +29,7 @@ export class SidebarComponent implements OnInit {
     debugger;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     this.SubOrgId = +this.tokenStorage.getSubOrgId();
-    this.loginUserDetail = this.tokenStorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     // this.shareddata.CurrentPagesData.subscribe((data:any)=>{
     //   this.MenuData =[...data];
@@ -50,7 +50,7 @@ export class SidebarComponent implements OnInit {
     debugger;
     //let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
-    strFilter = "PlanId eq " + this.loginUserDetail[0]["planId"] + " and Active eq 1 and ApplicationId eq " + this.SelectedApplicationId;
+    strFilter = "PlanId eq " + this.LoginUserDetail[0]["planId"] + " and Active eq 1 and ApplicationId eq " + this.SelectedApplicationId;
 
     let list: List = new List();
     list.fields = [
@@ -68,7 +68,7 @@ export class SidebarComponent implements OnInit {
     this.dataservice.get(list).subscribe((data: any) => {
       //this.sideMenu = [...data.value];
       data.value.forEach(m => {
-        permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
+        permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
         if (permission.length > 0 && permission[0].permission != 'deny') {
           m.PageId = m.Page.PageId;
           m.PageTitle = m.Page.PageTitle;

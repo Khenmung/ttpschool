@@ -36,7 +36,8 @@ export class ExamtimetableComponent implements OnInit {
   NoOfColumn = 0;
   SelectedExamName = '';
   SelectedClasses = '';
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   SlotNClassSubjects = [];
   SelectedApplicationId = 0;
@@ -67,7 +68,7 @@ export class ExamtimetableComponent implements OnInit {
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private contentservice: ContentService,
     private nav: Router,
@@ -94,25 +95,27 @@ export class ExamtimetableComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //console.log('loginuserdetail', this.LoginUserDetail)
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.REPORT.EXAMTIMETABLE);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.EXAMTIMETABLE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.GetMasterData();
         });
 
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
 
 
       }
@@ -125,7 +128,7 @@ export class ExamtimetableComponent implements OnInit {
 
   GetClassSubject() {
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr =this.FilterOrgSubOrgBatchId + " and Active eq 1";
     //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
@@ -163,7 +166,7 @@ export class ExamtimetableComponent implements OnInit {
   }
   GetExams() {
 
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {
@@ -179,9 +182,6 @@ export class ExamtimetableComponent implements OnInit {
   }
   GetExamSlots() {
     //debugger;
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = '';
-    //filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
 
     let list: List = new List();
     list.fields = [
@@ -194,7 +194,7 @@ export class ExamtimetableComponent implements OnInit {
       "EndTime"];
     list.PageName = "ExamSlots";
     list.lookupFields = ["Exam($select=ExamNameId)"];
-    list.filter = ["Active eq 1 " + orgIdSearchstr + filterstr];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     list.orderBy = "ExamId,Sequence";
 
     this.dataservice.get(list)
@@ -402,10 +402,10 @@ export class ExamtimetableComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-    this.Batches = this.tokenstorage.getBatches()
+    this.Batches = this.tokenStorage.getBatches()
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
 
@@ -415,7 +415,7 @@ export class ExamtimetableComponent implements OnInit {
     this.GetClassSubject();
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

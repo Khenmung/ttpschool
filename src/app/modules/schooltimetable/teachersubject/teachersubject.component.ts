@@ -30,7 +30,8 @@ export class TeachersubjectComponent implements OnInit {
   TeacherSubjectListName = "TeacherSubjects";
   Permission = '';
   SelectedApplicationId = 0;
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   StandardFilterWithPreviousBatchId = '';
   PreviousBatchId = 0;
   loading = false;
@@ -79,7 +80,7 @@ export class TeachersubjectComponent implements OnInit {
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private shareddata: SharedataService,
     private dialog: MatDialog
@@ -98,14 +99,14 @@ export class TeachersubjectComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
       this.nameFilter.valueChanges
         .subscribe(
           name => {
@@ -113,7 +114,7 @@ export class TeachersubjectComponent implements OnInit {
             this.dataSource.filter = JSON.stringify(this.filterValues);
           }
         )
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
@@ -121,8 +122,9 @@ export class TeachersubjectComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
-        this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage);
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
         this.GetMasterData();
 
@@ -211,7 +213,7 @@ export class TeachersubjectComponent implements OnInit {
   }
   // CopyFromPreviousBatch() {
   //   //console.log("here ", this.PreviousBatchId)
-  //   this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
+  //   this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
   //   if (this.PreviousBatchId == -1)
   //     this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
   //   else
@@ -229,7 +231,7 @@ export class TeachersubjectComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class/course or teacher", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    filterStr = this.FilterOrgSubOrg;
     if (_employeeId > 0) {
       filterStr += ' and EmployeeId eq ' + _employeeId
     }
@@ -341,14 +343,12 @@ export class TeachersubjectComponent implements OnInit {
       this.loading = false;
       return;
     }
-    let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
+    let checkFilterString = this.FilterOrgSubOrg + " and ClassSubjectId eq " + row.ClassSubjectId +
       " and EmployeeId eq " + row.EmployeeId;
 
 
     if (row.TeacherSubjectId > 0)
       checkFilterString += " and TeacherSubjectId ne " + row.TeacherSubjectId;
-
-    checkFilterString += ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = ["TeacherSubjectId"];
@@ -434,7 +434,7 @@ export class TeachersubjectComponent implements OnInit {
 
     list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
     list.PageName = "SubjectTypes";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1 "];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -455,7 +455,7 @@ export class TeachersubjectComponent implements OnInit {
 
     list.PageName = "ClassSubjects";
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -490,7 +490,6 @@ export class TeachersubjectComponent implements OnInit {
   }
   GetTeachers() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     var _workAccountId = 0;
     if (_WorkAccount.length > 0)
@@ -501,7 +500,7 @@ export class TeachersubjectComponent implements OnInit {
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName", "LastName)"]
-    list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
     //list.orderBy = "ParentId";
     this.Teachers = [];
     this.dataservice.get(list)
@@ -518,7 +517,6 @@ export class TeachersubjectComponent implements OnInit {
   TeachingEmployees = [];
   GetTeachingEmployees() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     var _workAccountId = 0;
     if (_WorkAccount.length > 0)
@@ -529,7 +527,7 @@ export class TeachersubjectComponent implements OnInit {
     list.fields = ["EmpEmployeeId", "FirstName", "LastName"];
     list.PageName = "EmpEmployees";
     //list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName", "LastName)"]
-    list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
     //list.orderBy = "ParentId";
     this.Teachers = [];
     this.dataservice.get(list)
@@ -545,14 +543,15 @@ export class TeachersubjectComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    this.Batches = this.tokenstorage.getBatches()
+    this.Batches = this.tokenStorage.getBatches()
     this.shareddata.ChangeSubjects(this.Subjects);
     this.GetTeachers();
     //this.GetTeachingEmployees();
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.GetClassSubject();
     });
@@ -560,7 +559,7 @@ export class TeachersubjectComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

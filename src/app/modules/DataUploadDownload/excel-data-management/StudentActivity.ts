@@ -11,7 +11,7 @@ export class StudentActivity {
     ELEMENT_DATA = [];
     PageLoading=true;
     loading = false;
-    loginUserDetail = [];
+    LoginUserDetail = [];
     SelectedBatchId = 0;SubOrgId = 0;
     constructor(//private servicework: SwUpdate,
         private token: TokenStorageService,
@@ -19,7 +19,7 @@ export class StudentActivity {
         private contentservice: ContentService,
 
     ) {
-        this.loginUserDetail = this.token.getUserDetail();
+        this.LoginUserDetail = this.token.getUserDetail();
         this.SelectedBatchId = +this.token.getSelectedBatchId();
     }
 
@@ -34,9 +34,10 @@ export class StudentActivity {
                 RatingId: 4588,
                 Detail: row.Detail,
                 Active: 1,
-                OrgId: this.loginUserDetail[0]["orgId"],
+                OrgId: this.LoginUserDetail[0]["orgId"],
+                SubOrgId: this.SubOrgId,
                 ActivityDate: new Date(row.ActivityDate),
-                CreatedBy: this.loginUserDetail[0]["userId"],
+                CreatedBy: this.LoginUserDetail[0]["userId"],
             });
         });
         console.log("toInsert", toInsert)

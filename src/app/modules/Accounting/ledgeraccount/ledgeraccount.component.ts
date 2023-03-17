@@ -25,7 +25,8 @@ export class LedgerAccountComponent implements OnInit {
   SelectedApplicationId = 0;
   StudentClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   GeneralLedgerList: IGeneralLedger[] = [];
   SelectedBatchId = 0;
@@ -91,7 +92,7 @@ export class LedgerAccountComponent implements OnInit {
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -122,7 +123,7 @@ export class LedgerAccountComponent implements OnInit {
     //     map(value => typeof value === 'string' ? value : value.GeneralLedgerName),
     //     map(GeneralLedgerName => GeneralLedgerName ? this._filter(GeneralLedgerName) : this.GeneralLedgerAutoComplete.slice())
     //   );
-    //this.StudentClassId = this.tokenstorage.getStudentClassId();
+    //this.StudentClassId = this.tokenStorage.getStudentClassId();
     this.PageLoad();
   }
   private _filter(name: string): IGeneralLedger[] {
@@ -137,19 +138,20 @@ export class LedgerAccountComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.STUDENTAPROFILE)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.STUDENTAPROFILE)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       debugger;
       if (this.Permission != 'deny') {
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetAccountNature();
         this.GetGeneralLedgerAutoComplete();
@@ -218,7 +220,7 @@ export class LedgerAccountComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = this.StandardFilter;
+    let checkFilterString = this.FilterOrgSubOrg;
     if (row.AccountNatureId == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select account nature.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -263,7 +265,7 @@ export class LedgerAccountComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+          this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
           this.GeneralLedgerForUpdate = [];;
           this.GeneralLedgerData.GeneralLedgerId = row.GeneralLedgerId;
           this.GeneralLedgerData.AccountNatureId = row.AccountNatureId;
@@ -287,7 +289,6 @@ export class LedgerAccountComponent implements OnInit {
 
           this.GeneralLedgerData.Active = row.Active;
           this.GeneralLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.GeneralLedgerData.SubOrgId = this.SubOrgId;
           this.GeneralLedgerData.SubOrgId = this.SubOrgId;
 
           if (this.GeneralLedgerData.GeneralLedgerId == 0) {
@@ -337,7 +338,7 @@ export class LedgerAccountComponent implements OnInit {
   GetAccountNature() {
     //debugger;
     this.loading = true;
-    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
+    let filterStr = 'Active eq true and (OrgId eq 0 or (' + this.FilterOrgSubOrg +"))";
 
     let list: List = new List();
     list.fields = [
@@ -363,7 +364,7 @@ export class LedgerAccountComponent implements OnInit {
   GetGeneralLedgerAutoComplete() {
     //debugger;
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId;
+    let filterStr =this.FilterOrgSubOrg+ ' and Active eq 1';
 
     let list: List = new List();
     list.fields = [
@@ -391,7 +392,7 @@ export class LedgerAccountComponent implements OnInit {
     //debugger;
     this.loading = true;
 
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId + ' and Active eq 1';
+    let filterStr = ''+this.FilterOrgSubOrg + ' and Active eq 1';
     var AccountNatureId = this.searchForm.get("searchAccountNatureId").value
     var AccountGroupId = this.searchForm.get("searchAccountGroupId").value
     var AccountSubGroupId = this.searchForm.get("searchAccountSubGroupId").value
@@ -467,7 +468,7 @@ export class LedgerAccountComponent implements OnInit {
 
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
   }
   onBlur(row) {
     row.Action = true;
@@ -500,7 +501,7 @@ export class LedgerAccountComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 

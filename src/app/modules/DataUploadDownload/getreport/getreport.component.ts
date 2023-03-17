@@ -46,7 +46,8 @@ export class GetreportComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   ColumnsOfSelectedReports = [];
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   ReportName = '';
   BaseReportName = '';
@@ -96,7 +97,7 @@ export class GetreportComponent implements OnInit {
     private contentservice: ContentService,
     private datepipe: DatePipe,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -129,8 +130,8 @@ export class GetreportComponent implements OnInit {
       { "text": "like", "val": "substringof" }
     ];
     this.dataSource = new MatTableDataSource([]);
-    this.Applications = this.tokenstorage.getPermittedApplications();
-    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.Applications = this.tokenStorage.getPermittedApplications();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
     this.PageLoad();
     //this.cdr.detectChanges();
@@ -148,12 +149,12 @@ export class GetreportComponent implements OnInit {
 
 
   PageLoad() {
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
-    var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.DATA.DOWNLOAD);
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.DOWNLOAD);
     if (perObj.length > 0) {
       this.Permission = perObj[0].permission;
     }
@@ -164,7 +165,9 @@ export class GetreportComponent implements OnInit {
       this.GetFeeTypes();
       this.GetBaseReportId();
       this.GetMasterData();
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.FilterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.FilterOrgSubOrgBatchId= globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+          this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
       })
     }
@@ -192,8 +195,8 @@ export class GetreportComponent implements OnInit {
     }
 
     this.loading = true;
-    let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
-      " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let checkFilterString = this.FilterOrgSubOrg + " and ReportName eq '" + row.ReportName + "'" +
+      " and ApplicationId eq " + row.ApplicationId + 
       " and ParentId eq " + MyReportNameId;
 
     if (row.ReportConfigItemId > 0)
@@ -269,14 +272,15 @@ export class GetreportComponent implements OnInit {
         });
   }
   IfStudentActivityMethods() {
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
     })
     this.GetStudents();
   }
   GetMasterData() {
 
-    this.AllMasterData = this.tokenstorage.getMasterData();
+    this.AllMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.SchoolGenders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
     this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
@@ -362,7 +366,7 @@ export class GetreportComponent implements OnInit {
     list.PageName = this.ReportConfigItemListName;
     list.filter = ["Active eq 1 and ApplicationId eq " + this.SelectedApplicationId +
       " and (ParentId eq " + this.BaseReportId +
-      " or OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
+      " or OrgId eq 0 or ("+this.FilterOrgSubOrg + "))"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -501,7 +505,7 @@ export class GetreportComponent implements OnInit {
           filter += " and ";
         ////console.log('filter str', filter);
 
-        list.filter = [filter + "OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+        list.filter = [this.FilterOrgSubOrg + filter];
 
         this.dataservice.get(list)
           .subscribe((data: any) => {
@@ -755,7 +759,7 @@ export class GetreportComponent implements OnInit {
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrg + "and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -785,7 +789,7 @@ export class GetreportComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.AllMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.AllMasterData);
     // let Id = 0;
     // let Ids = this.AllMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
@@ -807,14 +811,14 @@ export class GetreportComponent implements OnInit {
       "StudentClassId,StudentId,ClassId,RollNo,SectionId"
     ];
     list.PageName = "StudentClasses";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId];
+    list.filter = [this.FilterOrgSubOrgBatchId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
-          var _students: any = this.tokenstorage.getStudents();
+          var _students: any = this.tokenStorage.getStudents();
           _students = _students.filter(stud => data.value.findIndex(fi => fi.StudentId == stud.StudentId) > -1)
 
           this.Students = _students.map(student => {

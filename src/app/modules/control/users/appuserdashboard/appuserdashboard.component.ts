@@ -134,8 +134,8 @@ export class AppuserdashboardComponent implements OnInit {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.SubOrgId = +this.tokenStorage.getSubOrgId();
       this.SelectedApplicationName = this.tokenStorage.getSelectedAppName();
-      this.filterwithOrg = globalconstants.getOrgSubOrgFilter(this.LoginDetail,this.SubOrgId);
-      this.contentservice.GetClasses(this.LoginDetail[0]["orgId"]).subscribe((data: any) => {
+      this.filterwithOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.contentservice.GetClasses(this.filterwithOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
       this.GetMasterData();
@@ -158,7 +158,7 @@ export class AppuserdashboardComponent implements OnInit {
         this.shareddata.CurrentOrganization.subscribe(o => this.Organizations = o);
         this.shareddata.CurrentDepartment.subscribe(d => this.Departments = d);
         this.shareddata.CurrentLocation.subscribe(l => this.Locations = l);
-        this.contentservice.GetClasses(this.LoginDetail[0]["orgId"]).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.filterwithOrg).subscribe((data: any) => {
           this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
           if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement) {
             this.RoleName = 'Student';
@@ -385,7 +385,7 @@ export class AppuserdashboardComponent implements OnInit {
     //this.contentservice.openSnackBar(this.authservice.CallAPI("","SendSMS"),)
     debugger;
     this.loading = true;
-    let filterStr = "OrgId eq " + this.LoginDetail[0]["orgId"];
+    let filterStr = this.filterwithOrg;// "OrgId eq " + this.LoginDetail[0]["orgId"];
     var searchObj = this.searchForm.get("searchUserName").value;
     if (searchObj != "") {
       filterStr += " and Id eq '" + searchObj.Id + "'";

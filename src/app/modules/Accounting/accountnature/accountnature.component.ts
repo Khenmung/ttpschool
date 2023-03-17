@@ -38,7 +38,8 @@ export class AccountNatureComponent implements OnInit {
   }
   AccountNatures = [];
   Permission = '';
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   SelectedApplicationId = 0;
   loading = false;
   GLAccounts = [];
@@ -53,9 +54,13 @@ export class AccountNatureComponent implements OnInit {
     AccountName: '',
     ParentId: 0,
     DebitType: false,
-    BalanceSheetSequence:0,
+    TBSequence:0,
     IncomeStatementSequence:0,
-    OrgId: 0,SubOrgId: 0,
+    ExpenseSequence:0,
+    AssetSequence:0,
+    LnESequence:0,
+    OrgId: 0,
+    SubOrgId: 0,
     Active: 0,
   };
 
@@ -65,7 +70,10 @@ export class AccountNatureComponent implements OnInit {
     "ParentId",
     "DebitType",
     "IncomeStatementSequence",
-    "BalanceSheetSequence",
+    "ExpenseSequence",
+    "AssetSequence",
+    "LnESequence",
+    "TBSequence",
     "Active",
     "Action",
   ];
@@ -75,7 +83,7 @@ export class AccountNatureComponent implements OnInit {
     private dialog: MatDialog,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private contentservice: ContentService,
   ) { }
@@ -104,7 +112,7 @@ export class AccountNatureComponent implements OnInit {
   PageLoad() {
 
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     // this.filteredOptions = this.searchForm.get("searchGeneralLedgerId").valueChanges
     //   .pipe(
@@ -116,17 +124,17 @@ export class AccountNatureComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.ACCOUNTNATURE);
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.ACCOUNTNATURE);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
-      if (this.Permission != 'deny') {
+      if (this.Permission != 'deny') {       
+
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetAccountNatureAutoComplete();
-
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
-
       }
     }
 
@@ -153,7 +161,10 @@ export class AccountNatureComponent implements OnInit {
       AccountName: '',
       DebitType: false,
       IncomeStatementSequence:0,
-      BalanceSheetSequence:0,
+      ExpenseSequence:0,
+      TBSequence:0,
+      AssetSequence:0,
+      LnESequence:0,
       ParentId: 0,
       Active: 0,
       Action: true
@@ -164,7 +175,7 @@ export class AccountNatureComponent implements OnInit {
 
   GetAccountNature() {
 
-    let filterStr = '(OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
+    let filterStr = "OrgId eq 0 or (" + this.FilterOrgSubOrg + ")";
     debugger;
     this.loading = true;
 
@@ -184,7 +195,10 @@ export class AccountNatureComponent implements OnInit {
       "ParentId",
       "DebitType",
       "IncomeStatementSequence",
-      "BalanceSheetSequence",
+      "TBSequence",
+      "ExpenseSequence",
+      "AssetSequence",
+      "LnESequence",
       "Active",
     ];
 
@@ -207,7 +221,7 @@ export class AccountNatureComponent implements OnInit {
   }
   GetAccountNatures() {
 
-    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
+    let filterStr = "Active eq true and (OrgId eq 0 or (" + this.FilterOrgSubOrg + "))";;
     debugger;
     this.loading = true;
     
@@ -231,7 +245,7 @@ export class AccountNatureComponent implements OnInit {
       });
   }
   GetAccountNatureAutoComplete() {
-    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
+    let filterStr = 'Active eq true and (OrgId eq 0 or (' + this.FilterOrgSubOrg +"))";
     this.loading = true;
 
     let list: List = new List();
@@ -275,7 +289,7 @@ export class AccountNatureComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString = this.FilterOrgSubOrg;
     if (row.AccountName.length == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter account name.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -291,7 +305,7 @@ export class AccountNatureComponent implements OnInit {
 
     if (row.AccountNatureId > 0)
       checkFilterString += " and AccountNatureId ne " + row.AccountNatureId;
-    checkFilterString += " and " + globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+    checkFilterString += " and " + globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     let list: List = new List();
     list.fields = ["AccountNatureId"];
     list.PageName = this.AccountNatureListName;
@@ -312,7 +326,10 @@ export class AccountNatureComponent implements OnInit {
           this.AccountNatureData.ParentId = row.ParentId;
           this.AccountNatureData.DebitType = row.DebitType;
           this.AccountNatureData.IncomeStatementSequence = row.IncomeStatementSequence;
-          this.AccountNatureData.BalanceSheetSequence = row.BalanceSheetSequence;
+          this.AccountNatureData.ExpenseSequence = row.ExpenseSequence;
+          this.AccountNatureData.AssetSequence = row.AssetSequence;
+          this.AccountNatureData.LnESequence = row.LnESequence;
+          this.AccountNatureData.TBSequence = row.TBSequence;
           this.AccountNatureData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.AccountNatureData.SubOrgId = this.SubOrgId;
 
@@ -416,11 +433,11 @@ export class AccountNatureComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

@@ -25,7 +25,7 @@ export class StudentgradeComponent implements OnInit {
   StudentGradeListName = 'StudentGrades';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   StudentGradeList: IStudentGrade[] = [];
   filteredOptions: Observable<IStudentGrade[]>;
   dataSource: MatTableDataSource<IStudentGrade>;
@@ -35,6 +35,8 @@ export class StudentgradeComponent implements OnInit {
   Classes = [];
   ExamStatus = [];
   Exams = [];
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   StudentGradeData = {
     StudentGradeId: 0,
     ExamId: 0,
@@ -45,7 +47,7 @@ export class StudentgradeComponent implements OnInit {
     GradeStatusId: 0,
     Sequence: 0,
     Points: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -67,7 +69,7 @@ export class StudentgradeComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -97,15 +99,17 @@ export class StudentgradeComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    //this.EmployeeId = +this.tokenStorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.STUDENTGRADE);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.STUDENTGRADE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -186,7 +190,7 @@ export class StudentgradeComponent implements OnInit {
       this.contentservice.openSnackBar("Points should not be greater than 250.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let checkFilterString = "GradeName eq '" + row.GradeName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let checkFilterString = this.FilterOrgSubOrg + " and GradeName eq '" + row.GradeName +
       " and ClassGroupId eq " + row.ClassGroupId +
       " and ExamId eq " + row.ExamId;
 
@@ -280,11 +284,11 @@ export class StudentgradeComponent implements OnInit {
         });
   }
   Getclassgroups() {
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrgBatchId)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassGroups = [...data.value];
-          
+
         }
         else {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -320,35 +324,35 @@ export class StudentgradeComponent implements OnInit {
   }
   SelectClassGroup() {
     var _examId = this.searchForm.get("searchExamId").value;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'],_examId)
-    .subscribe((data: any) => {
-      this.ExamClassGroups = data.value.map(e => {
-        e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
-        return e;
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+      .subscribe((data: any) => {
+        this.ExamClassGroups = data.value.map(e => {
+          e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
+          return e;
+        })
+        this.FilteredClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
       })
-      this.FilteredClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
-    })
-   
+
     this.EnableCopyButton();
   }
   SelectCopyFromClassGroup() {
     debugger;
     var _examId = this.searchForm.get("searchCopyFromExamId").value;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'],_examId)
-    .subscribe((data: any) => {
-      this.ExamClassGroups = data.value.map(e => {
-        e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
-        return e;
+    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+      .subscribe((data: any) => {
+        this.ExamClassGroups = data.value.map(e => {
+          e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
+          return e;
+        })
+
+        this.FilteredCopyFromClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
       })
-      
-      this.FilteredCopyFromClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);
-    })
-    
+
   }
   GetStudentGrade(pCopyFromExamId, pCoyFromClassGroupId) {
 
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = this.FilterOrgSubOrg;
     //" and BatchId eq " + this.SelectedBatchId;
 
     var _examId = this.searchForm.get("searchExamId").value;
@@ -486,16 +490,17 @@ export class StudentgradeComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY)
     this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    //var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.loading = false; this.PageLoading = false;
     });
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId, 2)
       .subscribe((data: any) => {
         //this.Exams = [...data.value];
         this.Exams = [];
@@ -519,7 +524,7 @@ export class StudentgradeComponent implements OnInit {
       })
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

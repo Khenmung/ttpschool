@@ -28,12 +28,13 @@ export class GroupactivityparticipantComponent implements OnInit {
   SelectedApplicationId = 0;
   ClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   ActivityCategory = [];
   RelevantEvaluationListForSelectedStudent = [];
   GroupActivityParticipantList: any[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Sections = [];
   Classes = [];
   dataSource: MatTableDataSource<any>;
@@ -53,7 +54,7 @@ export class GroupactivityparticipantComponent implements OnInit {
     SportResultId: 0,
     StudentClassId: 0,
     Description: '',
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0
   };
   GroupActivityParticipantForUpdate = [];
@@ -77,7 +78,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -109,7 +110,7 @@ export class GroupactivityparticipantComponent implements OnInit {
         map(Name => Name ? this._filter(Name) : this.HouseFilteredStudent.slice())
       );
 
-    this.ClassId = this.tokenstorage.getClassId();
+    this.ClassId = this.tokenStorage.getClassId();
     this.PageLoad();
 
   }
@@ -128,22 +129,24 @@ export class GroupactivityparticipantComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
 
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
 
         if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
             this.GetStudentClasses();
             this.loading = false;
@@ -173,16 +176,16 @@ export class GroupactivityparticipantComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let checkFilterString = "SportResultId eq " + row.SportResultId +
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let checkFilterString = this.FilterOrgSubOrg + " and SportResultId eq " + row.SportResultId +
       " and StudentClassId eq " + row.StudentClassId
 
     this.RowsToUpdate = 0;
 
     if (row.GroupActivityParticipantId > 0)
       checkFilterString += " and GroupActivityParticipantId ne " + row.GroupActivityParticipantId;
-    checkFilterString += " and " + this.StandardFilter;
+
     let list: List = new List();
     list.fields = ["GroupActivityParticipantId"];
     list.PageName = "GroupActivityParticipants";
@@ -207,6 +210,7 @@ export class GroupactivityparticipantComponent implements OnInit {
               Description: row.Description,
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"],
+              SubOrgId: this.SubOrgId,
               BatchId: this.SelectedBatchId
             });
 
@@ -267,7 +271,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   GetSportResult() {
     debugger;
 
-    var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
     var _GroupId = this.searchForm.get("searchGroupId").value;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
@@ -421,7 +425,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
     this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
     this.StudentHouses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
@@ -448,7 +452,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   }
   GetStudentClasses() {
     //debugger;
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
@@ -488,7 +492,7 @@ export class GroupactivityparticipantComponent implements OnInit {
     //this.Students = [...data.value];
     //  //console.log('data.value', data.value);
     this.Students = [];
-    var _students: any = this.tokenstorage.getStudents();
+    var _students: any = this.tokenStorage.getStudents();
     if (_students.length > 0) {
 
       //var _students = [...data.value];
@@ -603,7 +607,7 @@ export class GroupactivityparticipantComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 
@@ -613,7 +617,7 @@ export interface IGroupActivityParticipant {
   SportResultId: number;
   StudentClassId: number;
   Description: string;
-  OrgId: number;SubOrgId: number;
+  OrgId: number; SubOrgId: number;
   Active: number;
   UpdatedDate
 

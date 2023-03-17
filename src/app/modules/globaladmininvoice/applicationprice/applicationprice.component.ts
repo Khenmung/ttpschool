@@ -30,6 +30,7 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
   Applications = [];
   //ReportNames = [];
   Currencies = [];
+  FilterOrgSubOrg='';
   ApplicationPriceListName = "ApplicationPrices";
   ApplicationPriceList = [];
   dataSource: MatTableDataSource<IApplicationPrice>;
@@ -62,7 +63,7 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
   constructor(private servicework: SwUpdate,
     private contentservice:ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -88,11 +89,12 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMasterData();
 
     }
@@ -166,8 +168,8 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
   GetApplicationPrice() {
 
     this.ApplicationPriceList = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    //var orgIdSearchstr = this.FilterOrgSubOrg;// ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
+    var filterstr = ' and Active eq 1 ';
    
 
     this.loading = true;
@@ -189,7 +191,7 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
       "Active"
     ];
     list.PageName = this.ApplicationPriceListName;
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg + filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
@@ -246,7 +248,7 @@ export class ApplicationpriceComponent implements OnInit { PageLoading=true;
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {

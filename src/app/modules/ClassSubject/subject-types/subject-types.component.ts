@@ -21,7 +21,8 @@ export class SubjectTypesComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   CheckBatchIdForEdit = 1;
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   Classes = [];
   Subjects = [];
@@ -53,7 +54,7 @@ export class SubjectTypesComponent implements OnInit {
   IsCurrentBatchSelected = 1;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private dialog: MatDialog,
     private contentservice: ContentService,
     private nav: Router,
@@ -76,25 +77,26 @@ export class SubjectTypesComponent implements OnInit {
   PageLoad() {
 
     debugger;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
 
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.SUBJECTTYPE);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTTYPE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.IsCurrentBatchSelected = +this.tokenstorage.getCheckEqualBatchId();
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
-        if (+this.tokenstorage.getPreviousBatchId() > 0)
-          this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage)
-        this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
+        this.IsCurrentBatchSelected = +this.tokenStorage.getCheckEqualBatchId();
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        if (+this.tokenStorage.getPreviousBatchId() > 0)
+          this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage)
+        this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
 
         this.GetSubjectTypes();
       }//    this.GetMasterData();      
@@ -115,7 +117,8 @@ export class SubjectTypesComponent implements OnInit {
     let toadd = {
       SubjectTypeId: 0,
       SubjectTypeName: 'new subject type',
-      OrgId: 0,SubOrgId: 0,
+      OrgId: 0,
+      SubOrgId: 0,
       SelectHowMany: 0,
       Active: 1,
       Deleted: 0,
@@ -159,7 +162,7 @@ export class SubjectTypesComponent implements OnInit {
     let list: List = new List();
     list.fields = ["SubjectTypeId"];
     list.PageName = "SubjectTypes";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + checkFilterString];
+    list.filter = [this.FilterOrgSubOrg + checkFilterString + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -243,6 +246,7 @@ export class SubjectTypesComponent implements OnInit {
     let toUpdate = {
       Active: 0,
       Deleted: true,
+      SubOrgId:this.SubOrgId,
       UpdatedDate: new Date()
     }
 
@@ -259,13 +263,13 @@ export class SubjectTypesComponent implements OnInit {
   }
   GetSubjectTypes() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
 
     let list: List = new List();
 
     list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany", "Active"];
     list.PageName = "SubjectTypes";
-    list.filter = [orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -282,17 +286,17 @@ export class SubjectTypesComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
 
     //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-    this.Batches = this.tokenstorage.getBatches()
+    this.Batches = this.tokenStorage.getBatches()
 
     //this.shareddata.ChangeBatch(this.Batches);
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

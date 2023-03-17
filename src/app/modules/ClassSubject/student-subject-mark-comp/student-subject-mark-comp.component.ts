@@ -27,9 +27,10 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   LoginUserDetail = [];
   CurrentBatch = '';
   CurrentBatchId = 0;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0;
+  SubOrgId = 0;
   SelectedApplicationId = 0;
-  StandardOrgIdWithBatchId = '';
+  OrgIdSubOrgWithBatchIdFilter = '';
   StandardOrgIdWithPreviousBatchId = '';
   PreviousBatchId = 0;
   Classes = [];
@@ -60,7 +61,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   ExamNames = [];
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
-    private token: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
 
     private route: Router,
@@ -75,16 +76,17 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //     }
     //   })
     // })
-    this.LoginUserDetail = this.token.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.SUBJECT.SUBJECTMARKCOMPONENT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTMARKCOMPONENT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.StandardOrgIdWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
-        this.StandardOrgIdWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.token);
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.OrgIdSubOrgWithBatchIdFilter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.StandardOrgIdWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage);
         this.searchForm = this.fb.group({
           searchExamId: [0],
           searchSubjectId: [0],
@@ -99,11 +101,12 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   PageLoad() {
     //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
-    this.SelectedBatchId = +this.token.getSelectedBatchId();
-    this.SelectedApplicationId = +this.token.getSelectedAPPId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
     this.GetMasterData();
-    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMappings = data.value.map(m => {
           m.ClassName = m.Class.ClassName;
@@ -156,8 +159,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //debugger;
     this.loading = true;
     var _examId = this.searchForm.get("searchExamId").value;
-    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId +
+    let checkFilterString = this.OrgIdSubOrgWithBatchIdFilter + //"OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ClassSubjectId eq " + row.ClassSubjectId +
       " and SubjectComponentId eq " + row.SubjectComponentId +
       " and ExamId eq " + _examId;
@@ -245,18 +247,19 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.token.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
 
-    this.Batches = this.token.getBatches()
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+    this.Batches = this.tokenStorage.getBatches()
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClassGroups(filterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
       })
     //this.shareddata.ChangeBatch(this.Batches);
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId, 2)
+    this.contentservice.GetExams(this.OrgIdSubOrgWithBatchIdFilter, 2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(f => {
@@ -270,7 +273,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       });
 
     //if (this.Classes.length == 0) {
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.GetClassSubject();
     });
@@ -280,7 +284,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.token, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
   MergeSubjectnComponents() {
@@ -293,7 +297,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    var filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+    let filterStr = filterOrgSubOrgBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
@@ -334,7 +339,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //console.log("here ", this.PreviousBatchId)
     var _otherExamId = this.searchForm.get("searchCopyExamId").value;
     var _examId = this.searchForm.get("searchExamId").value;
-    this.PreviousBatchId = +this.token.getPreviousBatchId();
+    this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
     if (_examId == 0)
       this.contentservice.openSnackBar("Please select exam for which formula to define.", globalconstants.ActionText, globalconstants.RedBackground);
     else if (_otherExamId == 0)
@@ -368,7 +373,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //var _copyExamId = this.searchForm.get("searchCopyExamId").value;
     var _examId = this.searchForm.get("searchExamId").value;
 
-    var filterstr = this.StandardOrgIdWithBatchId;
+    var filterstr = this.OrgIdSubOrgWithBatchIdFilter;
     if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;

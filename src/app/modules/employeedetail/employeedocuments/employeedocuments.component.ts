@@ -56,7 +56,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
     private fileUploadService: FileUploadService,
     private dataservice: NaomitsuService,
     private fb: UntypedFormBuilder,
-    private tokenService: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
   ) { }
 
@@ -73,8 +73,8 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
       DocTypeId: [0, Validators.required]
     })
     debugger;
-    this.EmployeeId = this.tokenService.getEmployeeId();
-    this.SubOrgId = this.tokenService.getSubOrgId();
+    this.EmployeeId = this.tokenStorage.getEmployeeId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
 
     if (this.EmployeeId == 0) {
       
@@ -82,17 +82,17 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
       //this.nav.navigate(['/employee/info']);
     }
     else {
-      var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.emp.employee.DOCUMENT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.DOCUMENT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        //this.StudentId = this.tokenService.getStudentId();
-        this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-        this.LoginUserDetail = this.tokenService.getUserDetail();
-        this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
-        this.SubOrgId = +this.tokenService.getSubOrgId();
-        this.FilterOrgnBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenService);
-        this.FilterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        //this.StudentId = this.tokenStorage.getStudentId();
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.LoginUserDetail = this.tokenStorage.getUserDetail();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgnBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.PageLoad();
       }
     }
@@ -129,6 +129,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
     this.formdata.append("description", "");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
     this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("subOrgId", this.SubOrgId+"");
     this.formdata.append("pageId", "0");
     this.formdata.append("studentId", "0");
     this.formdata.append("EmployeeId", this.EmployeeId.toString());
@@ -194,13 +195,13 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.DOCUMENTTYPE);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.tokenService.getBatches();
+        this.Batches = this.tokenStorage.getBatches();
         this.GetDocuments();
       });
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenService, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;

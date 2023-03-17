@@ -34,13 +34,14 @@ export class DefaulterComponent implements OnInit {
   NoOfRecordToUpdate = -1;
   StudentDetailToDisplay = '';
   StudentClassId = 0;
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   Sections = [];
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -80,7 +81,7 @@ export class DefaulterComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -98,23 +99,24 @@ export class DefaulterComponent implements OnInit {
     // })
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.StudentClassId = 0;
-    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.Students = this.tokenstorage.getStudents();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.Students = this.tokenStorage.getStudents();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetTeachers();
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
 
@@ -148,7 +150,7 @@ export class DefaulterComponent implements OnInit {
   Teachers = [];
   GetTeachers() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId;
+    var orgIdSearchstr = this.FilterOrgSubOrg;
     //var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     // var _workAccountId = 0;
     // if (_WorkAccount.length > 0)
@@ -176,7 +178,7 @@ export class DefaulterComponent implements OnInit {
 
   GetStudentAttendance() {
     debugger;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId + " and Active eq 1"
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1"
     //' and StudentClassId eq ' + this.StudentClassId;
     var _AbsentDays = this.searchForm.get("searchAbsentCount").value;
     if (_AbsentDays < 2) {
@@ -204,7 +206,7 @@ export class DefaulterComponent implements OnInit {
     filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
     //}
 
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
+    //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     //filterStr += ' and AttendanceStatus eq 0';
 
 
@@ -281,8 +283,7 @@ export class DefaulterComponent implements OnInit {
     ];
     list.PageName = "Attendances";
     //list.lookupFields = ["StudentClass"];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId +
-      datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
+    list.filter = [this.FilterOrgSubOrg + datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
@@ -388,7 +389,7 @@ export class DefaulterComponent implements OnInit {
     if (clssubjectid == undefined)
       clssubjectid = 0;
 
-    let checkFilterString = "AttendanceId eq " + row.AttendanceId +
+    let checkFilterString = " and AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
       " and AttendanceDate ge " + moment(_AttendanceDate).format('YYYY-MM-DD') +
       " and AttendanceDate lt " + moment(_AttendanceDate).add(1, 'day').format('YYYY-MM-DD')
@@ -401,7 +402,7 @@ export class DefaulterComponent implements OnInit {
     let list: List = new List();
     list.fields = ["AttendanceId"];
     list.PageName = "Attendances";
-    list.filter = [checkFilterString + " and " + this.StandardFilter];
+    list.filter = [this.FilterOrgSubOrg + checkFilterString];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -485,7 +486,7 @@ export class DefaulterComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
@@ -507,7 +508,7 @@ export class DefaulterComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     //this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
@@ -517,7 +518,7 @@ export class DefaulterComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
 
 }

@@ -23,7 +23,8 @@ export class ClassperiodComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   rowCount = 0;
   DataToSave = 0;
@@ -56,7 +57,7 @@ export class ClassperiodComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private datepipe: DatePipe,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private nav: Router,
     private shareddata: SharedataService,
@@ -82,24 +83,26 @@ export class ClassperiodComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.TIMETABLE.CLASSPERIOD);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.CLASSPERIOD);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetAllClassPeriods();
       }
@@ -143,13 +146,12 @@ export class ClassperiodComponent implements OnInit {
     this.loading = true;
 
 
-    let checkFilterString = "ClassId eq " + row.ClassId +
+    let checkFilterString =this.FilterOrgSubOrgBatchId + " and ClassId eq " + row.ClassId +
       " and PeriodId eq " + row.PeriodId
 
 
     if (row.SchoolClassPeriodId > 0)
       checkFilterString += " and SchoolClassPeriodId ne " + row.SchoolClassPeriodId;
-    checkFilterString += " and " + this.StandardFilterWithBatchId;
 
     let list: List = new List();
     list.fields = ["SchoolClassPeriodId"];
@@ -236,17 +238,17 @@ export class ClassperiodComponent implements OnInit {
   GetSchoolClassPeriods() {
 
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.SchoolClassPeriodList = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+
+    var filterstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';
     if (this.searchForm.get("searchClassId").value == 0) {
       this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
-    filterstr = 'ClassId eq ' + this.searchForm.get("searchClassId").value;
+    filterstr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
 
     let list: List = new List();
     list.fields = [
@@ -260,7 +262,7 @@ export class ClassperiodComponent implements OnInit {
     ];
     list.PageName = this.SchoolClassPeriodListName;
     //list.lookupFields = ["ClassSubjectMarkComponent"];
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [filterstr];
     //list.orderBy = "ParentId";
     this.displayedColumns = [
       'PeriodName',
@@ -327,10 +329,10 @@ export class ClassperiodComponent implements OnInit {
     element.Action = true;
   }
   GetAllClassPeriods() {
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.SchoolClassPeriodList = [];
-    var orgIdSearchstr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr =this.FilterOrgSubOrgBatchId;
     //var filterstr = '';// 'Active eq 1 ';
 
     this.loading = true;
@@ -418,19 +420,19 @@ export class ClassperiodComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
     this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
     this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
     //this.shareddata.ChangeBatch(this.Batches);
-    this.Batches = this.tokenstorage.getBatches()
+    this.Batches = this.tokenStorage.getBatches()
     this.loading = false;
      this.PageLoading = false;
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

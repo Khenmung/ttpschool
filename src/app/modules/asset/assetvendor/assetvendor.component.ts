@@ -26,7 +26,7 @@ export class AssetVendorComponent implements OnInit {
   SelectedApplicationId = 0;
   ClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
   loading = false;
   Category = [];
   AchievementAndPointList: any[] = [];
@@ -54,7 +54,7 @@ export class AssetVendorComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -73,7 +73,7 @@ export class AssetVendorComponent implements OnInit {
       searchCategoryId: [0]
     });
 
-    this.ClassId = this.tokenstorage.getClassId();
+    this.ClassId = this.tokenStorage.getClassId();
     this.PageLoad();
 
   }
@@ -92,22 +92,23 @@ export class AssetVendorComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        //this.GroupId = this.tokenstorage.getGroupId();
+        //this.GroupId = this.tokenStorage.getGroupId();
 
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail[0]['orgId']);
         this.GetMasterData();
         // if (this.Classes.length == 0) {
-        //   this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        //   var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        //  this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         //     this.Classes = [...data.value];
         //     this.loading = false;
         //     this.PageLoading = false;
@@ -143,14 +144,14 @@ export class AssetVendorComponent implements OnInit {
       return;
     }
 
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let checkFilterString = "CategoryId eq " + row.CategoryId + " and Rank eq '" + row.Rank + "'"
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let checkFilterString =this.FilterOrgSubOrg + " and CategoryId eq " + row.CategoryId + " and Rank eq '" + row.Rank + "'"
     this.RowsToUpdate = 0;
 
     if (row.AchievementAndPointId > 0)
       checkFilterString += " and AchievementAndPointId ne " + row.AchievementAndPointId;
-    checkFilterString += " and " + this.StandardFilter;
+    //checkFilterString += " and " + this.FilterOrgSubOrg;
     let list: List = new List();
     list.fields = ["AchievementAndPointId"];
     list.PageName = "AchievementAndPoints";
@@ -232,7 +233,7 @@ export class AssetVendorComponent implements OnInit {
 
   GetAchievementAndPoint() {
     debugger;
-    var filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterStr = this.FilterOrgSubOrg;// "OrgId eq " + this.LoginUserDetail[0]["orgId"];
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     if (_categoryId > 0) {
       filterStr += " and CategoryId eq " + _categoryId;
@@ -278,7 +279,7 @@ export class AssetVendorComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
     this.PageLoading = false;
     this.loading = false;
@@ -307,7 +308,7 @@ export class AssetVendorComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 

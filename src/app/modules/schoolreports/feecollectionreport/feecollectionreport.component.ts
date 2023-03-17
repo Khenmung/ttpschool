@@ -63,7 +63,8 @@ export class FeecollectionreportComponent implements OnInit {
 
   ]
   filteredOptions: Observable<IStudent[]>;
-  filterOrgIdOnly = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   SelectedBatchId = 0;SubOrgId = 0;
   dataSource: MatTableDataSource<ITodayReceipt>;
   UnpaidDataSource: MatTableDataSource<INotPaidStudent>;
@@ -76,7 +77,7 @@ export class FeecollectionreportComponent implements OnInit {
     private fb: UntypedFormBuilder,
 
     private shareddata: SharedataService,
-    private tokenservice: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router
   ) { }
 
@@ -88,26 +89,28 @@ export class FeecollectionreportComponent implements OnInit {
     //     }
     //   })
     // })
-    this.LoginUserDetail = this.tokenservice.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.REPORT.FEEPAYMENTSTATUS);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.FEEPAYMENTSTATUS);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       //      //console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
-        this.SelectedApplicationId = +this.tokenservice.getSelectedAPPId();
-        this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-        this.SubOrgId = +this.tokenservice.getSubOrgId();
-        this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.shareddata.CurrentFeeDefinitions.subscribe(c => (this.FeeDefinitions = c));
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.tokenservice.getBatches();
+        this.Batches = this.tokenStorage.getBatches();
         this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
@@ -142,7 +145,7 @@ export class FeecollectionreportComponent implements OnInit {
   PageLoad() {
     debugger;
     this.Months = this.contentservice.GetSessionFormattedMonths();
-    this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     this.GetMasterData();
     this.GetStudents();
   }
@@ -153,7 +156,7 @@ export class FeecollectionreportComponent implements OnInit {
   GetStudentFeePaymentReport() {
     debugger;
     this.ErrorMessage = '';
-    let filterstring = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    let filterstring = this.FilterOrgSubOrgBatchId + " and Active eq 1";
 
     var selectedMonth = this.SearchForm.get("searchMonth").value;
     var _selectedClassId = this.SearchForm.get("searchClassId").value;
@@ -285,12 +288,12 @@ export class FeecollectionreportComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.allMasterData = this.tokenservice.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenservice, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;
@@ -320,7 +323,7 @@ export class FeecollectionreportComponent implements OnInit {
         //debugger;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
-          var _students: any = this.tokenservice.getStudents();
+          var _students: any = this.tokenStorage.getStudents();
           var _filteredStudents = _students.filter(s => data.value.findIndex(fi => fi.StudentId == s.StudentId) > -1)
           this.Students = data.value.map(studentcls => {
             var matchstudent = _filteredStudents.filter(stud => stud.StudentId == studentcls.StudentId)

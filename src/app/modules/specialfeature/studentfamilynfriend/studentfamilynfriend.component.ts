@@ -27,6 +27,8 @@ export class StudentfamilynfriendComponent implements OnInit {
   Applications = [];
   loading = false;
   SelectedBatchId = 0;SubOrgId = 0;
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   StudentFamilyNFriendList: IStudentFamilyNFriends[] = [];
   filteredOptions: Observable<IStudentFamilyNFriends[]>;
   dataSource: MatTableDataSource<IStudentFamilyNFriends>;
@@ -74,7 +76,7 @@ export class StudentfamilynfriendComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -151,12 +153,12 @@ export class StudentfamilynfriendComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.StudentId = +this.tokenstorage.getStudentId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.StudentId = +this.tokenStorage.getStudentId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SPECIALFEATURE.SIBLINGSNFRIENDS)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SPECIALFEATURE.SIBLINGSNFRIENDS)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -166,8 +168,9 @@ export class StudentfamilynfriendComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.FilterOrgSubOrgBatchId= globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.GetFeeTypes();
         this.GetMasterData();
 
@@ -461,7 +464,7 @@ export class StudentfamilynfriendComponent implements OnInit {
     this.StudentFamilyNFriendList =[];
     var _fatherName = this.searchForm.get("FatherName").value.FatherName;
     var _motherName = this.searchForm.get("MotherName").value.MotherName;
-    var _students: any = this.tokenstorage.getStudents();
+    var _students: any = this.tokenStorage.getStudents();
     if (_fatherName != undefined && _motherName != undefined)
       _students = _students.filter(f => f.FatherName == _fatherName && f.MotherName == _motherName);
     else if (_motherName != undefined && _fatherName == undefined)
@@ -520,7 +523,7 @@ export class StudentfamilynfriendComponent implements OnInit {
   }
   GetStudentClasses() {
     debugger;
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId,Remarks,FeeTypeId"];
@@ -551,12 +554,12 @@ export class StudentfamilynfriendComponent implements OnInit {
     list.PageName = "StudentFamilyNFriends";
     //list.lookupFields = ["StudentFamilyNFriends($select=ParentStudentId)"];
 
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrg];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //if (data.value.length > 0) {
-          var _students: any = this.tokenstorage.getStudents();
+          var _students: any = this.tokenStorage.getStudents();
           _students.forEach(student => {
             var _RollNo = '';
             var _name = '';
@@ -625,11 +628,12 @@ export class StudentfamilynfriendComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.school.SIBLINGSNFRIENDSRELATIONSHIP);
     this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.GetStudentClasses();
     });
@@ -637,7 +641,7 @@ export class StudentfamilynfriendComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

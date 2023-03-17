@@ -50,7 +50,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
   constructor(
     private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private contentservice: ContentService,
     private fb: UntypedFormBuilder
@@ -77,12 +77,12 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
       this.GetMasterData();
       this.GetOrganizations();
     }
@@ -149,10 +149,9 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
   }
 
   GetCustomerInvoiceComponent() {
-
+    var FilterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.CustomerInvoiceComponentList = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    var filterstr = ' and Active eq 1 ';
 
     if (_searchOrgId == 0) {
       this.contentservice.openSnackBar("Please select organization.", globalconstants.ActionText,globalconstants.RedBackground);
@@ -184,7 +183,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
       "Active"
     ];
     list.PageName = this.CustomerInvoiceComponentListName;
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [FilterOrgSubOrg + filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var _appName = '';
@@ -260,7 +259,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {

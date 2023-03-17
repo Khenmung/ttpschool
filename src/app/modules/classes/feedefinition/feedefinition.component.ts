@@ -38,6 +38,8 @@ export class FeeDefinitionComponent implements OnInit {
   Applications = [];
   loading = false;
   SelectedBatchId = 0;SubOrgId = 0;
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   FeeDefinitionList: IFeeDefinition[] = [];
   filteredOptions: Observable<IFeeDefinition[]>;
   dataSource: MatTableDataSource<IFeeDefinition>;
@@ -71,7 +73,7 @@ export class FeeDefinitionComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -96,14 +98,14 @@ export class FeeDefinitionComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.FEEDEFINITION)
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEEDEFINITION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -114,6 +116,8 @@ export class FeeDefinitionComponent implements OnInit {
 
       }
       else {
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetFeeDefinitions();
 
@@ -169,10 +173,9 @@ export class FeeDefinitionComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "FeeName eq '" + row.FeeName + "'" +
+    let checkFilterString = this.FilterOrgSubOrg + " and FeeName eq '" + row.FeeName + "'" +
       " and FeeCategoryId eq " + row.FeeCategoryId +
-      " and FeeSubCategoryId eq " + row.FeeSubCategoryId +
-      " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+      " and FeeSubCategoryId eq " + row.FeeSubCategoryId;
 
     if (row.FeeCategoryId == 0) {
       this.contentservice.openSnackBar("Please select Fee Category.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -268,7 +271,7 @@ export class FeeDefinitionComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg;
     // var _searchClassName = this.searchForm.get("searchClassName").value;
     // if (_searchClassName > 0) {
     //   filterStr += ' and FeeDefinitionId eq ' + _searchClassName;
@@ -310,14 +313,14 @@ export class FeeDefinitionComponent implements OnInit {
 
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
 
     //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
     this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

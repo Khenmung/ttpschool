@@ -26,7 +26,8 @@ export class VerifyresultstatusComponent implements OnInit {
   CurrentRow: any = {};
   SelectedClassStudentGrades = [];
   SelectedApplicationId = 0;
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   rowCount = 0;
   ExamStudentResult: IExamStudentResult[] = [];
@@ -51,7 +52,7 @@ export class VerifyresultstatusComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -74,23 +75,25 @@ export class VerifyresultstatusComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetClassGroupMapping();
       }
@@ -103,11 +106,10 @@ export class VerifyresultstatusComponent implements OnInit {
 
   GetExamStudentResults() {
 
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.ExamStudentResult = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    var filterstr = ' and Active eq 1 ';
     var _examId = this.searchForm.get("searchExamId").value;
     if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
@@ -119,7 +121,7 @@ export class VerifyresultstatusComponent implements OnInit {
       _examClassGroupId = obj[0].ClassGroupId;
     }
     this.loading = true;
-    filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
+    filterstr = ' and ExamId eq ' + this.searchForm.get("searchExamId").value;
 
     let list: List = new List();
     list.fields = [
@@ -130,7 +132,7 @@ export class VerifyresultstatusComponent implements OnInit {
     ];
     list.PageName = "ExamResultSubjectMarks";
     //list.lookupFields = ["StudentClass($select=ClassId)"];
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrgBatchId + filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
@@ -185,22 +187,20 @@ export class VerifyresultstatusComponent implements OnInit {
 
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-    this.Batches = this.tokenstorage.getBatches()
+    this.Batches = this.tokenStorage.getBatches()
     this.GetExams();
 
   }
 
   GetExams() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-
     let list: List = new List();
 
     list.fields = ["ExamId", "ExamNameId", "ClassGroupId"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1" + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -224,7 +224,9 @@ export class VerifyresultstatusComponent implements OnInit {
   }
   ClassGroupMapping = [];
   GetClassGroupMapping() {
-    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+    
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMapping = data.value.map(f => {
           f.ClassName = f.Class.ClassName;
@@ -233,7 +235,7 @@ export class VerifyresultstatusComponent implements OnInit {
       })
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {

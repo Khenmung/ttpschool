@@ -34,6 +34,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   FilteredPageFeatures = [];
   oldvalue = '';
   selectedData = '';
+  FilterOrgSubOrg='';
   datasource: MatTableDataSource<IApplicationRolePermission>;
   AppRoleData = {
     ApplicationFeatureRoleId: 0,
@@ -117,6 +118,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.Permissions = globalconstants.PERMISSIONTYPES;
+        this.FilterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetTopMasters();
         
        
@@ -134,7 +136,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] +
+    list.filter = ["(ParentId eq 0 or ("+ this.FilterOrgSubOrg +"))" +
       ") and Active eq 1"];
     //debugger;
     this.dataservice.get(list)
@@ -287,7 +289,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     list.PageName = "ApplicationFeatureRolesPerms";
     list.lookupFields = ["PlanFeature($filter=Active eq 1 and ApplicationId eq "+ this.SelectedApplicationId +";$select=PlanFeatureId,ApplicationId;$expand=Page($select=label,ParentId))"];
 
-    list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + rolefilter];
+    list.filter = [this.FilterOrgSubOrg + rolefilter];
     this.ApplicationRoleList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -438,6 +440,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           this.AppRoleData.RoleId = row.RoleId;
           this.AppRoleData.PermissionId = row.PermissionId;
           this.AppRoleData.OrgId = this.UserDetails[0]["orgId"];
+          this.AppRoleData.SubOrgId = this.tokenStorage.getSubOrgId();
 
           //console.log('data', this.AppRoleData);
           if (this.AppRoleData.ApplicationFeatureRoleId == 0) {

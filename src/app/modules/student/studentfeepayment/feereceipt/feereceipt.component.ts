@@ -75,9 +75,9 @@ export class FeereceiptComponent implements OnInit {
   OriginalAmountForCalc = 0;
   TotalAmount = 0;
   Balance = 0;
-
+  FilterOrgSubOrgBatchId='';
   constructor(private servicework: SwUpdate, private dataservice: NaomitsuService,
-    private tokenservice: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private shareddata: SharedataService,
     private contentservice: ContentService) { }
@@ -121,28 +121,30 @@ export class FeereceiptComponent implements OnInit {
     this.loading = true;
     //this.calculateTotal();
     //this.dataSource = new MatTableDataSource<any>(this.BillDetail);
-    this.LoginUserDetail = this.tokenservice.getUserDetail();
-    var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
     if (perObj.length > 0) {
       this.Permission = perObj[0].permission;
     }
     if (this.Permission != 'deny') {
       this.TotalAmount = 0;
       this.Balance = 0;
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
         var obj = this.Classes.filter(f => f.ClassId == this.studentInfoTodisplay.ClassId)
         if (obj.length > 0)
           this.studentInfoTodisplay.StudentClassName = obj[0].ClassName;
       })
       //this.shareddata.CurrentBatch.subscribe(lo => (this.Batches = lo));
-      this.Batches = this.tokenservice.getBatches();
+      this.Batches = this.tokenStorage.getBatches();
       this.shareddata.CurrentSection.subscribe(pr => (this.Sections = pr));
 
-      //this.studentInfoTodisplay.AdmissionNo = this.tokenservice.getStudentId();
-      this.studentInfoTodisplay.StudentId = this.tokenservice.getStudentId();
-      this.studentInfoTodisplay.StudentClassId = this.tokenservice.getStudentClassId();
-      this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+      //this.studentInfoTodisplay.AdmissionNo = this.tokenStorage.getStudentId();
+      this.studentInfoTodisplay.StudentId = this.tokenStorage.getStudentId();
+      this.studentInfoTodisplay.StudentClassId = this.tokenStorage.getStudentClassId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
       this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
       this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
 
@@ -202,12 +204,13 @@ export class FeereceiptComponent implements OnInit {
   CreateInvoice(pStudentClassId) {
     debugger;
     this.loading = true;
-    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+    
+    this.contentservice.GetClassFeeWithFeeDefinition(this.FilterOrgSubOrgBatchId, 0)
       .subscribe((datacls: any) => {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0,pStudentClassId,0)
+        this.contentservice.getStudentClassWithFeeType(this.FilterOrgSubOrgBatchId, 0,pStudentClassId,0)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
@@ -354,7 +357,7 @@ export class FeereceiptComponent implements OnInit {
     // this.dataservice.get(list)
     //   .subscribe((data: any) => {
     //debugger;
-    this.allMasterData = this.tokenservice.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
     this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.RECEIPTHEADING);
     
@@ -369,7 +372,7 @@ export class FeereceiptComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenservice, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;

@@ -34,7 +34,8 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   StudentDetailToDisplay = '';
   SelectedApplicationId = 0;
   StudentClassId = 0;
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   ClassSubjectList = [];
   Sections = [];
@@ -75,7 +76,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -97,21 +98,22 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   PageLoad() {
     //debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.Months = this.contentservice.GetSessionFormattedMonths();
     this.StudentClassId = 1;
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         
         this.GetEmployees();
         this.GetHoliday();
@@ -127,7 +129,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
 
     let list: List = new List();
     list.fields = ["HolidayId,StartDate,EndDate"];
@@ -153,7 +155,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
       this.contentservice.openSnackBar("Please select month", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg+ " and Active eq true";
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -273,7 +275,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
 
   }
   GetEmployees() {
-    var filterStr = "OrgId eq " + this.LoginUserDetail[0]['orgId'] + " and Active eq 1";
+    var filterStr = this.FilterOrgSubOrg + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       'EmpEmployeeId',
@@ -340,126 +342,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
       //searchBatchId: this.SelectedBatchId
     });
   }
-  // SelectColumn(element,colName) {
-  //   this.SelectAllInRow(element, col);
-  // }
-  // SelectAllRowInColumn(event, colName) {
-  //   debugger;
-  //   this.StudentSubjectList.forEach(element => {
-  //     var currentrow = this.StoreForUpdate.filter(f => f.Subject == colName && f.StudentClassId == element.StudentClassId);
-  //     if (event.checked) {
-  //       currentrow[colName] = 1;
-  //       element[colName] = 1;
-  //     }
-  //     else {
-  //       currentrow[colName] = 0;
-  //       element[colName] = 0;
-  //       currentrow[0].SubjectCount = 0;
-  //     }
-  //     element.Action = true;
-  //   });
-  // }
-  // SelectAllInRow(element, event, colName) {
-  //   debugger;
-  //   var columnexist = [];
-  //   if (colName == 'Action') {
-  //     for (var prop in element) {
-  //       columnexist = this.displayedColumns.filter(f => f == prop)
-  //       if (columnexist.length > 0 && event.checked && prop != 'Student' && prop != 'Action') {
-  //         element[prop] = 1;
-  //       }
-  //       else if (columnexist.length > 0 && !event.checked && prop != 'Student' && prop != 'Action') {
-  //         element[prop] = 0;
-  //       }
-  //       element.Action = true;
-  //     }
-  //   }
-  //   else {
-  //     var currentrow = this.StoreForUpdate.filter(f => f.Subject == colName && f.StudentClassId == element.StudentClassId);
-  //     if (event.checked) {
-  //       currentrow[colName] = 1;
-  //       element[colName] = 1;
-  //     }
-  //     else {
-  //       currentrow[colName] = 0;
-  //       element[colName] = 0;
-  //       currentrow[0].SubjectCount = 0;
-  //     }
-  //     element.Action = true;
-  //   }
-  // }
-  // SaveRow(element) {
-  //   //debugger;
-  //   this.loading = true;
-  //   this.rowCount = 0;
-  //   this.SelectedStudentSubjectCount = [];
-  //   ////////
-  //   //console.log("this.StudentSubjectList", this.StudentSubjectList);
-  //   let StudentSubjects = this.StoreForUpdate.filter(s => s.StudentClassId == element.StudentClassId);
-  //   var groupbySubjectType = alasql("select distinct SubjectTypeId,SubjectType,SelectHowMany from ? ", [StudentSubjects])
-  //   var matchrow;
-  //   for (var prop in element) {
-  //     matchrow = StudentSubjects.filter(x => x.Subject == prop)
-  //     if (matchrow.length > 0) {
-  //       var resultarray = groupbySubjectType.filter(f => f.SubjectTypeId == matchrow[0].SubjectTypeId);
-  //       if (element[prop] == 1) {
-  //         //assuming greater than 20 means compulsory subject types
-  //         // if (resultarray[0].SelectHowMany > 30)
-  //         //   matchrow[0].SubjectCount = resultarray[0].SelectHowMany;
-  //         // //resultarray[0].SubjectCount = resultarray[0].SelectHowMany;
-  //         // else
-  //         resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 1 : resultarray[0].SubjectCount + 1;
-  //       }
-  //       else {
-  //         resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 0 : resultarray[0].SubjectCount;
-  //       }
-  //     }
-  //   }
-  //   var _compulsory = groupbySubjectType.filter(f => f.SubjectType.toLowerCase() == 'compulsory')
-  //   var _otherThanCompulsory = groupbySubjectType.filter(f => f.SubjectType.toLowerCase() != 'compulsory')
-  //   var subjectCounterr = '';
-  //   _otherThanCompulsory.forEach(noncompulsory => {
-  //     //element.SelectHowMany =0 meeans optional
-  //     if (noncompulsory.SubjectCount != noncompulsory.SelectHowMany) {
-  //       subjectCounterr += " Subject type " + noncompulsory.SubjectType + " must have " + noncompulsory.SelectHowMany + " subject(s) selected.";
-  //     }
-  //   });
-  //   var compulsorysubjectCount = StudentSubjects.filter(c => c.SubjectType.toLowerCase() == 'compulsory')
-
-  //   if (compulsorysubjectCount.length > _compulsory[0].SubjectCount) {
-  //     subjectCounterr += " Subject type " + _compulsory[0].SubjectType + " must have " + _compulsory[0].SelectHowMany + " subject(s) selected";
-  //   }
-  //   // _compulsory.forEach(s => {
-  //   //   if (s.SelectHowMany > 30 && s.SubjectCount != s.SelectHowMany) {
-  //   //     debugger;
-  //   //     subjectCounterr += " Subject type " + s.SubjectType + " must have " + s.SelectHowMany + " subject(s) selected.";
-  //   //   }
-  //   // })
-  //   /////////
-  //   if (subjectCounterr.length > 0) {
-  //     this.loading = false; this.PageLoading = false;
-  //     this.contentservice.openSnackBar(subjectCounterr, globalconstants.ActionText, globalconstants.RedBackground);
-  //     return;
-  //   }
-  //   else {
-  //     for (var prop in element) {
-  //       var row: any = StudentSubjects.filter(s => s.Subject == prop);
-
-  //       if (row.length > 0 && prop != 'Student' && prop != 'Action') {
-  //         var data = {
-  //           Active: element[prop],
-  //           StudentClassSubjectId: row[0].StudentClassSubjectId,
-  //           StudentClassId: row[0].StudentClassId,
-  //           ClassSubjectId: row[0].ClassSubjectId,
-  //           SubjectId: row[0].SubjectId
-  //         }
-  //         ////console.log('data to update',data)
-  //         if (row.length > 0)
-  //           this.UpdateOrSave(data, element);
-  //       }
-  //     }
-  //   }
-  // }
+  
   delete(element) {
     let toupdate = {
       Active: element.Active == 1 ? 0 : 1
@@ -474,14 +357,12 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   }
   UpdateOrSave(row, element) {
     //debugger;
-    let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
-      " and StudentClassId eq " + row.StudentClassId +
-      " and BatchId eq " + this.SelectedBatchId
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and ClassSubjectId eq " + row.ClassSubjectId +
+      " and StudentClassId eq " + row.StudentClassId
 
 
     if (row.StudentClassSubjectId > 0)
       checkFilterString += " and StudentClassSubjectId ne " + row.StudentClassSubjectId;
-    checkFilterString += " and " + this.StandardFilter
     let list: List = new List();
     list.fields = ["ClassSubjectId"];
     list.PageName = "StudentClassSubjects";
@@ -572,14 +453,14 @@ export class EmployeeAttendanceReportComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.shareddata.ChangeSubjects(this.Subjects);
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownDataNoConfidentail(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownDataNoConfidentail(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

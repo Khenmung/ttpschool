@@ -49,6 +49,8 @@ export class AddMasterDataComponent implements OnInit {
   SelectedApplicationId = 0;
   DataToSaveCount = -1;
   SelectedApplicationName = '';
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   //ApplicationDataStatus = [];
   //SchoolDataStatus = [];
   StudentVariableNames = [];
@@ -142,7 +144,8 @@ export class AddMasterDataComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
 
-
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.OrgId = this.UserDetails[0]["orgId"];
         this.searchForm.patchValue({ "OrgId": this.OrgId });
         this.GetMastersForAutoComplete();
@@ -174,7 +177,7 @@ export class AddMasterDataComponent implements OnInit {
       var commonAppId = objcommon[0].applicationId;
       var applicationFilter = '';
       //applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"]
-      var applicationFilter = "(OrgId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] +
+      var applicationFilter = "(OrgId eq 0 or ("+this.FilterOrgSubOrg+")" +
         ") and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
       let list: List = new List();
       list.fields = [
@@ -400,9 +403,9 @@ export class AddMasterDataComponent implements OnInit {
       commonAppId = permittedAppIdObj.filter(f => f.appShortName == 'common');
       Ids = commonAppId[0].applicationId + "," + this.SelectedApplicationId
     }
-    _OrgId = this.UserDetails[0]["orgId"];
+    //_OrgId = this.UserDetails[0]["orgId"];
     //}
-    this.contentservice.GetDropDownDataFromDB(_searchParentId, _OrgId, Ids, 0)
+    this.contentservice.GetDropDownDataFromDB(_searchParentId, this.FilterOrgSubOrg, Ids, 0)
       //this.GetMasters(_searchParentId, _OrgId,_appId)
       .subscribe((data: any) => {
         debugger;
@@ -537,6 +540,7 @@ export class AddMasterDataComponent implements OnInit {
     if (row.MasterDataId == 0) {
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
+      mastertoUpdate["SubOrgId"] = this.tokenStorage.getSubOrgId();
       //mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
       //console.log("kjhk", mastertoUpdate)
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')

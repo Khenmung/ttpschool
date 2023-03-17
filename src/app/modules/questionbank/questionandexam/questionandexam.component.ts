@@ -35,7 +35,8 @@ export class QuestionandexamComponent implements OnInit {
   SelectedApplicationId = 0;
   StudentClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   QuestionBankOptionList = [];
   QuestionBankList: IQuestionNExam[] = [];
@@ -76,7 +77,7 @@ export class QuestionandexamComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder,
     private fileUploadService: FileUploadService,
@@ -92,7 +93,7 @@ export class QuestionandexamComponent implements OnInit {
     // })
     debugger;
     this.imgURL = '';
-    this.StudentClassId = this.tokenstorage.getStudentClassId();
+    this.StudentClassId = this.tokenStorage.getStudentClassId();
     this.searchForm = this.fb.group({
       searchClassId: [0],
       searchSubjectId: [0],
@@ -110,23 +111,24 @@ export class QuestionandexamComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONQUESTIONNAIRE)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONQUESTIONNAIRE)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         //this.GetEvaluationNames();
         this.GetMasterData();
 
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
           .subscribe((data: any) => {
             this.ClassGroups = [...data.value];
           });
@@ -209,7 +211,7 @@ export class QuestionandexamComponent implements OnInit {
 
   GetExams() {
 
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId,2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(e => {
@@ -310,8 +312,8 @@ export class QuestionandexamComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+          this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
           this.QuestionBankNExamForUpdate = [];
           this.QuestionBankNExamData.QuestionBankNExamId = row.QuestionBankNExamId;
           this.QuestionBankNExamData.QuestionBankId = row.QuestionBankId;
@@ -414,9 +416,9 @@ export class QuestionandexamComponent implements OnInit {
   GetSyllabusDetailForDropDown() {
     debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg+ " and Active eq true";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
@@ -496,9 +498,9 @@ export class QuestionandexamComponent implements OnInit {
   GetSyllabusDetail() {
     debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg+ " and Active eq true";//'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
@@ -604,9 +606,9 @@ export class QuestionandexamComponent implements OnInit {
   GetQuestionNExam(pExamId) {
     debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = "Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg+ " and Active eq true";//"Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     if (pExamId > 0)
       filterStr += " and ExamId eq " + pExamId;
 
@@ -666,7 +668,7 @@ export class QuestionandexamComponent implements OnInit {
     list.fields = ["ClassSubjectId,ClassId,SubjectId"];
     //list.lookupFields = ["ClassMaster($select=ClassId,ClassName)"];
     //list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(m => {
@@ -688,7 +690,7 @@ export class QuestionandexamComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     //var result = this.allMasterData.filter(f=>f.MasterDataName =='Question Bank ContentUnit')
     //console.log("result",result)
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
@@ -696,7 +698,8 @@ export class QuestionandexamComponent implements OnInit {
     this.DifficultyLevels = this.getDropDownData(globalconstants.MasterDefinitions.school.DIFFICULTYLEVEL);
     this.GetExams();
     if (this.Classes.length == 0) {
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
         this.loading = false; this.PageLoading = false;
         this.GetClassSubjects();
@@ -747,7 +750,7 @@ export class QuestionandexamComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
 
 }

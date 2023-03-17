@@ -62,7 +62,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -88,14 +88,14 @@ export class PlansComponent implements OnInit { PageLoading=true;
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin.PLAN)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLAN)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -105,7 +105,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
         //this.nav.navigate(['/edu'])
       }
       else {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.GetMasterData();
         this.GetPlans();
 
@@ -279,7 +279,7 @@ export class PlansComponent implements OnInit { PageLoading=true;
       });
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

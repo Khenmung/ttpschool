@@ -16,14 +16,14 @@ export class employee {
         autoClose: true,
         keepAfterRouteChange: true
     };
-    loginUserDetail = [];
+    LoginUserDetail = [];
     constructor(
         private token: TokenStorageService,
         private dataservice: NaomitsuService,
         
 
     ) {
-        this.loginUserDetail = this.token.getUserDetail();
+        this.LoginUserDetail = this.token.getUserDetail();
     }
     save(ELEMENT_DATA) {
         var toInsert = [];
@@ -76,9 +76,10 @@ export class employee {
                 PermanentAddressStateId: row.PermanentAddressStateId,
                 PermanentAddressCountryId: row.PermanentAddressCountryId,
                 PermanentAddress: row.PermanentAddress,
-                OrgId: this.loginUserDetail[0]["orgId"],
+                OrgId: this.LoginUserDetail[0]["orgId"],
+                SubOrgId: this.token.getSubOrgId(),
                 CreatedDate: new Date(),
-                CreatedBy: this.loginUserDetail[0]['userId'],
+                CreatedBy: this.LoginUserDetail[0]['userId'],
                 DepartmentId: +row.DepartmentId,
                 DesignationId: +row.DesignationId,
                 EmpGradeId: +row.EmpGradeId,

@@ -32,6 +32,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
   NoOfRowsToUpdate = -1;
   PlanFeaturePages = [];
   FilteredPageFeatures = [];
+  FilterOrgSubOrg='';
   oldvalue = '';
   selectedData = '';
   SelectedCustomerPlanId = 0;
@@ -431,11 +432,9 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
       return;
     }
     this.loading = true;
-    let checkFilterString = "Active eq 1 " +
+    let checkFilterString =this.FilterOrgSubOrg + " and Active eq 1 " +
       " and RoleId eq " + row.RoleId +
-      // " and PermissionId eq " + row.PermissionId +
-      " and PlanFeatureId eq " + row.PlanFeatureId +
-      " and OrgId eq " + this.UserDetails[0]["orgId"];
+      " and PlanFeatureId eq " + row.PlanFeatureId ;
 
 
     if (row.ApplicationFeatureRoleId > 0)

@@ -62,7 +62,7 @@ export class ExamslotComponent implements OnInit {
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private contentservice: ContentService,
     private nav: Router,
@@ -89,20 +89,20 @@ export class ExamslotComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMSLOT)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAMSLOT)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
-        this.Batches = this.tokenstorage.getBatches();
+        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.Batches = this.tokenStorage.getBatches();
         //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
         this.GetMasterData();
       }
@@ -261,7 +261,7 @@ export class ExamslotComponent implements OnInit {
         });
   }
   GetExams() {
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'],this.SubOrgId, this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.StandardFilterWithBatchId,2)
       .subscribe((data: any) => {
         var _examName = '';
         this.Exams = [];
@@ -390,13 +390,13 @@ export class ExamslotComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.GetExams();
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

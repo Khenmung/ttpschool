@@ -38,7 +38,8 @@ export class VerifyResultsComponent implements OnInit {
   ClickedVerified = false;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
@@ -104,7 +105,7 @@ export class VerifyResultsComponent implements OnInit {
     private route: Router,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -132,26 +133,28 @@ export class VerifyResultsComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.VERIFYRESULT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.VERIFYRESULT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       //console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
         //this.GetExamClassGroup();
 
@@ -190,7 +193,7 @@ export class VerifyResultsComponent implements OnInit {
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
@@ -238,7 +241,7 @@ export class VerifyResultsComponent implements OnInit {
             SubjectCategoryId: cs.SubjectCategoryId
           }
         })
-        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage, this.ClassSubjects, "ClassSubject");
+        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenStorage, this.ClassSubjects, "ClassSubject");
         this.loading = false;
       })
   }
@@ -251,8 +254,7 @@ export class VerifyResultsComponent implements OnInit {
   SelectedStudentClass = [];
   GetStudents(classId, pSectionId) {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
+    var orgIdSearchstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';
     if (classId != undefined && classId > 0)
       orgIdSearchstr += ' and ClassId eq ' + classId
     if (pSectionId != undefined && pSectionId > 0)
@@ -274,7 +276,7 @@ export class VerifyResultsComponent implements OnInit {
       .subscribe((data: any) => {
         this.SelectedStudentClass = [...data.value];
         this.Students = [];
-        var studentList = this.tokenstorage.getStudents();
+        var studentList = this.tokenStorage.getStudents();
         var _students = studentList.filter(s => s["Active"] == 1 && data.value.findIndex(fi => fi.StudentId == s["StudentId"]) > -1)
         data.value.forEach(f => {
           var match = _students.filter(stud => stud["StudentId"] == f.StudentId)
@@ -389,6 +391,7 @@ export class VerifyResultsComponent implements OnInit {
         "Attendance": this.AttendanceDisplay,
         "ClassStrength": this.ClassStrength,
         "OrgId": this.LoginUserDetail[0]["orgId"],
+        "SubOrgId": this.SubOrgId,
         "BatchId": this.SelectedBatchId,
         "ExamStatusId": 0,
         "Active": 1,
@@ -412,7 +415,7 @@ export class VerifyResultsComponent implements OnInit {
   }
   GetExamNCalculate() {
     this.loading = true;
-    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq true"
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true"
     let list: List = new List();
     list.fields = ["*"];
 
@@ -458,7 +461,7 @@ export class VerifyResultsComponent implements OnInit {
     this.loading = true;
     this.GetSpecificStudentGrades();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
     filterStr += " and ClassId eq " + _classId
     if (_sectionId > 0) {
       this.SectionSelected = true;
@@ -551,13 +554,13 @@ export class VerifyResultsComponent implements OnInit {
 
   GetExamStudentSubjectResults(pExamId, pClassId, pSectionId) {
     this.ClickedVerified = false;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.ExamStudentSubjectResult = [];
     this.ExamStudentSubjectGrading = [];
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = "Active eq 1 and ExamId eq " + pExamId +
+    var orgIdSearchstr = this.FilterOrgSubOrgBatchId;
+    var filterstr = " and Active eq 1 and ExamId eq " + pExamId +
       " and ClassId eq " + pClassId
     if (pSectionId > 0)
       filterstr += " and SectionId eq " + pSectionId;
@@ -574,7 +577,7 @@ export class VerifyResultsComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ExamStudentSubjectResults";
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [orgIdSearchstr + filterstr];
     //list.orderBy = "ParentId";
     this.displayedColumns = [
       'Student'
@@ -982,7 +985,7 @@ export class VerifyResultsComponent implements OnInit {
 
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
@@ -1003,14 +1006,14 @@ export class VerifyResultsComponent implements OnInit {
     this.PageLoading = false;
   }
   GetClassGroup() {
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
       })
   }
   ClassGroupMapping = [];
   GetClassGroupMapping() {
-    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+    this.contentservice.GetClassGroupMapping(this.FilterOrgSubOrg, 1)
       .subscribe((data: any) => {
         //debugger;
         data.value.map(f => {
@@ -1025,7 +1028,8 @@ export class VerifyResultsComponent implements OnInit {
       })
   }
   GetStudentGradeDefn() {
-    this.contentservice.GetStudentGrade(this.LoginUserDetail[0]["orgId"])
+    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetStudentGrade(filterOrgSubOrg)
       .subscribe((data: any) => {
         this.StudentGrades = [...data.value];
         this.loading = false;
@@ -1033,14 +1037,14 @@ export class VerifyResultsComponent implements OnInit {
   }
 
   GetStudentGradeDefn_old(classgroupmapping) {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    var orgIdSearchstr = this.FilterOrgSubOrg + " and Active eq 1";
     //batch wise not necessary
     //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
 
     list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula,Sequence"];
     list.PageName = "StudentGrades";
-    list.filter = ["Active eq 1" + orgIdSearchstr];
+    list.filter = [orgIdSearchstr];
     this.StudentGrades = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -1070,7 +1074,7 @@ export class VerifyResultsComponent implements OnInit {
     var _sectionId = this.searchForm.get("searchSectionId").value;
     if (_classId > 0 && _sectionId > 0) {
       this.SelectedClassAttendances = this.AttendanceStatusSum.filter(f => f.ClassId == _classId);
-      var studentList: any = this.tokenstorage.getStudents();
+      var studentList: any = this.tokenStorage.getStudents();
       this.Students = studentList.filter(s =>
         s["Active"] == 1 && s.StudentClasses
         && s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId && s.StudentClasses[0].SectionId == _sectionId
@@ -1112,7 +1116,7 @@ export class VerifyResultsComponent implements OnInit {
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
 
     let list: List = new List();
 
@@ -1121,7 +1125,7 @@ export class VerifyResultsComponent implements OnInit {
       "StartDate", "EndDate",
       "ReleaseResult", "AttendanceStartDate"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -1204,10 +1208,9 @@ export class VerifyResultsComponent implements OnInit {
       //list.PageName = "StudentClasses";
       //list.lookupFields = ["Attendances($filter=" + _filter + ";$select=AttendanceId,StudentClassId,AttendanceDate,AttendanceStatus)"];
       list.PageName = "Attendances";
-      list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      list.filter = [this.FilterOrgSubOrgBatchId + 
         " and ClassId eq " + _classId +
-        " and SectionId eq " + _sectionId +
-        " and BatchId eq " + this.SelectedBatchId + _filter];
+        " and SectionId eq " + _sectionId + _filter];
       //  list.limitTo=10;
 
       return this.dataservice.get(list)
@@ -1219,7 +1222,7 @@ export class VerifyResultsComponent implements OnInit {
   }
   SubjectTypes = [];
   GetSubjectTypes() {
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
+    var orgIdSearchstr = this.FilterOrgSubOrg + " and Active eq 1";
     this.loading = true;
     let list: List = new List();
 
@@ -1238,14 +1241,13 @@ export class VerifyResultsComponent implements OnInit {
   }
   GetSubjectComponents() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     this.loading = true;
     let list: List = new List();
 
     list.fields = ["ClassSubjectMarkComponentId", "ExamId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark", "OverallPassMark"];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=SubjectCategoryId,SubjectTypeId,ClassId,Active)"];
-    list.filter = ["ExamId ne null and Active eq 1 " + orgIdSearchstr];
+    list.filter = [ this.FilterOrgSubOrgBatchId + " and ExamId ne null and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -1271,7 +1273,7 @@ export class VerifyResultsComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
   GetDropDownWithNoConfidential(dropdowntype) {
     let Id = 0;

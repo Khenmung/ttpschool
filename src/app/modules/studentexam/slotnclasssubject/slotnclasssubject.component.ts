@@ -28,7 +28,8 @@ export class SlotnclasssubjectComponent implements OnInit {
 
   DistinctExamDate = [];
   Permission = 'deny';
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   DataToUpdateCount = -1;
   StoreForUpdate: ISlotNClassSubject[] = [];
@@ -67,7 +68,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private shareddata: SharedataService,
     private datepipe: DatePipe,
@@ -93,19 +94,20 @@ export class SlotnclasssubjectComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
 
         this.GetMasterData();
         this.GetClassGroupMapping();
@@ -186,12 +188,12 @@ export class SlotnclasssubjectComponent implements OnInit {
       row.SelectedSubject = subobject[0];
     else
       row.Subject = {};
-    let checkFilterString = "SlotId eq " + this.searchForm.get("searchSlotId").value +
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and SlotId eq " + this.searchForm.get("searchSlotId").value +
       " and ClassSubjectId eq " + row.SelectedSubject.ClassSubjectId;
 
     if (row.SlotClassSubjectId > 0)
       checkFilterString += " and SlotClassSubjectId ne " + row.SlotClassSubjectId;
-    checkFilterString += " and " + this.StandardFilterWithBatchId;
+    //checkFilterString += " and " + this.StandardFilterWithBatchId;
 
     let list: List = new List();
     list.fields = ["SlotClassSubjectId"];
@@ -276,8 +278,8 @@ export class SlotnclasssubjectComponent implements OnInit {
     element.Action = true;
   }
   GetClassSubject() {
-    //let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
-    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    //let filterStr = '(' + this.FilterOrgSubOrg +") and Active eq 1";
+    let filterStr =this.FilterOrgSubOrgBatchId + " and Active eq 1";
     this.loading = true;
     //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
@@ -320,7 +322,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
 
   GetClassGroupMapping() {
-    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMapping = data.value.map(f => {
           f.ClassName = f.Class.ClassName;
@@ -355,15 +357,14 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetExams() {
 
-    //var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    //var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
 
     list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate", "ClassGroupId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -393,8 +394,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetExamSlots() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
+    var orgIdSearchstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';
     //var filterstr = '';
     //filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
     this.loading = true;
@@ -450,7 +450,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetSelectedSubjectsForSelectedExam() {
 
-    var filterstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var filterstr = this.FilterOrgSubOrgBatchId;
 
     filterstr += ' and ExamId eq ' + this.searchForm.get("searchExamId").value + ' and Active eq 1';
 
@@ -483,8 +483,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   GetSlotNClassSubjects() {
 
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and BatchId eq ' + this.SelectedBatchId + ' and Active eq 1';
+    var orgIdSearchstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';
     //var filterstr = 'Active eq 1';
     if (this.searchForm.get("searchSlotId").value == 0) {
       this.contentservice.openSnackBar("Please select exam slot", globalconstants.ActionText, globalconstants.RedBackground);
@@ -652,12 +651,13 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.GetExams();
       this.GetExamSlots();
@@ -670,7 +670,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   ClassGroups=[];
   Getclassgroups() {
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassGroups = [...data.value];          
@@ -681,7 +681,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

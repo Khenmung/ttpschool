@@ -37,6 +37,7 @@ export class GradehistoryComponent implements OnInit {
   WorkAccounts = [];
   JobTitles = [];
   loading = false;
+  FilterOrgSubOrgStr='';
   SelectedBatchId = 0;SubOrgId = 0;
   EmploymentHistoryList: IEmployeementHistory[] = [];
   filteredOptions: Observable<IEmployeementHistory[]>;
@@ -87,7 +88,7 @@ export class GradehistoryComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private nav: Router,
     private datepipe: DatePipe,
@@ -127,12 +128,12 @@ export class GradehistoryComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.EmployeeId = +this.tokenStorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EMPLOYMENTHISTORY)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPLOYMENTHISTORY)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -142,7 +143,9 @@ export class GradehistoryComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.FilterOrgSubOrgStr = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+
         this.GetEmployees();
         //this.GetMasterData();
 
@@ -343,7 +346,7 @@ export class GradehistoryComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
     this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
     this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
@@ -353,7 +356,7 @@ export class GradehistoryComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
@@ -373,7 +376,7 @@ export class GradehistoryComponent implements OnInit {
     let list: List = new List();
     list.fields = ["EmpEmployeeId", "EmployeeCode", "FirstName", "LastName", "ContactNo"];
     list.PageName = "EmpEmployees";
-    list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrgStr + " and Active eq 1"];// and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

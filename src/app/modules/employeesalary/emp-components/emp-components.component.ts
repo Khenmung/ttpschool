@@ -77,7 +77,7 @@ export class EmpComponentsComponent implements OnInit {
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -103,11 +103,11 @@ export class EmpComponentsComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
@@ -115,8 +115,8 @@ export class EmpComponentsComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
         this.getEmployeeVariables();
       }
@@ -269,7 +269,7 @@ export class EmpComponentsComponent implements OnInit {
   }
   GetConfigVariables() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = this.StandardFilter;// ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var variabletypeId = this.VariableTypes.filter(f => f.MasterDataName.toLowerCase() == 'payroll')[0].MasterDataId;
 
     let list: List = new List();
@@ -292,7 +292,7 @@ export class EmpComponentsComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
     //this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
     //this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
@@ -322,7 +322,7 @@ export class EmpComponentsComponent implements OnInit {
   GetEmpComponents() {
 
     this.loading = true;
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = this.StandardFilter;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var compfilter = ''
     if (this.searchForm.get("searchComponentId").value > 0)
       compfilter = " and EmpSalaryComponentId eq " + this.searchForm.get("searchComponentId").value
@@ -363,7 +363,7 @@ export class EmpComponentsComponent implements OnInit {
   }
   GetAllComponents() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = this.StandardFilter;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
@@ -395,7 +395,7 @@ export class EmpComponentsComponent implements OnInit {
     this.dataSource = new MatTableDataSource<IEmpComponent>(this.EmpComponentList);
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

@@ -561,7 +561,7 @@ export class globalconstants {
         var _subOrgId= +tokenService.getSubOrgId();
         var filterstr = ''
         if (_previousBathId > -1)
-            filterstr = 'BatchId eq ' + _previousBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId;
+            filterstr = "OrgId eq " + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId + " and BatchId eq " + _previousBathId;
         else
             filterstr = 'OrgId eq ' + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId;
         return filterstr;
@@ -588,9 +588,10 @@ export class globalconstants {
             { month: 'Dec', val: 12 },
         ];
     }
-    public static getOrgSubOrgFilter(userDetail,SubOrgId) {
-        
-        var filterstr = 'OrgId eq ' + userDetail[0]["orgId"] + " and SubOrgId eq " + SubOrgId;
+    public static getOrgSubOrgFilter(tokenService:TokenStorageService) {
+        var loginUserdetail = tokenService.getUserDetail();
+        var _subOrgId= +tokenService.getSubOrgId();
+        var filterstr = 'OrgId eq ' + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId;
         return filterstr;
 
     }
@@ -624,10 +625,10 @@ export class globalconstants {
     }
     public static getPermission(tokenservice: TokenStorageService, feature: any) {
         var checkBatchIdNSelectedId = 0;
-        var loginUserDetail = tokenservice.getUserDetail();
+        var LoginUserDetail = tokenservice.getUserDetail();
         checkBatchIdNSelectedId = +tokenservice.getCheckEqualBatchId();
 
-        var _permission = loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
+        var _permission = LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
         if (_permission.length > 0)
             return [_permission[0]];
         else

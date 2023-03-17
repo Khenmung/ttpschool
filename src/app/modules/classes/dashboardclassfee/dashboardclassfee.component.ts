@@ -31,7 +31,8 @@ export class DashboardclassfeeComponent implements OnInit {
   FeeDefinitionListName = 'FeeDefinitions'
   DataCountToUpdate = -1;
   LoginUserDetail = [];
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   StandardFilterWithPreviousBatchId = '';
   CurrentBatch = '';
   CurrentBatchId = 0;
@@ -65,7 +66,7 @@ export class DashboardclassfeeComponent implements OnInit {
   //matcher = new TouchedErrorStateMatcher();
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
-    private token: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private route: Router,
     private fb: UntypedFormBuilder
@@ -91,7 +92,7 @@ export class DashboardclassfeeComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.token.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     var check = moment();
 
     var month = check.format('M');
@@ -105,8 +106,8 @@ export class DashboardclassfeeComponent implements OnInit {
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
     else {
-      this.SelectedApplicationId = +this.token.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.CLASSCOURSE.CLASSFEE);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSFEE);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
@@ -116,14 +117,15 @@ export class DashboardclassfeeComponent implements OnInit {
       if (this.Permission == 'deny') {
       }
       else {
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         //console.log("this.StandardFilterWithBatchId",this.StandardFilterWithBatchId);
-        if (+this.token.getPreviousBatchId() > 0)
-          this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.token)
+        if (+this.tokenStorage.getPreviousBatchId() > 0)
+          this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage)
 
-        this.SelectedBatchId = +this.token.getSelectedBatchId();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         //console.log("this.SelectedBatchId",this.SelectedBatchId);
-        this.PreviousBatchId = +this.token.getPreviousBatchId();
+        this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
         if (this.SelectedBatchId == 0) {
           //this.contentservice.openSnackBar("Current batch not defined in master!", this.options);
           this.route.navigate(['/admin']);
@@ -131,12 +133,13 @@ export class DashboardclassfeeComponent implements OnInit {
         }
         else {
           this.searchForm.patchValue({ Batch: this.SelectedBatchId });
-          this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 0).subscribe((d: any) => {
+          this.contentservice.GetFeeDefinitions(this.FilterOrgSubOrg, 0).subscribe((d: any) => {
             this.FeeDefinitions = [...d.value];
           })
           this.GetMasterData();
           if (this.Classes.length == 0) {
-            this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+            var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
               this.Classes = [...data.value];
               //this.GetMasterData();
             })
@@ -195,12 +198,12 @@ export class DashboardclassfeeComponent implements OnInit {
     // }
     else {
       this.loading = true;
-      this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+      this.contentservice.GetClassFeeWithFeeDefinition(this.FilterOrgSubOrgBatchId, 0)
         .subscribe((datacls: any) => {
 
           var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-          this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, _classId, 0, 0)
+          this.contentservice.getStudentClassWithFeeType(this.FilterOrgSubOrgBatchId, _classId, 0, 0)
             .subscribe((data: any) => {
               var studentfeedetail = [];
               data.value.forEach(studcls => {
@@ -303,7 +306,7 @@ export class DashboardclassfeeComponent implements OnInit {
       'Dec'
     ]
     var monthArray = [];
-    var selectedBatch = this.token.getSelectedBatchStartEnd();
+    var selectedBatch = this.tokenStorage.getSelectedBatchStartEnd();
     var b = JSON.parse(selectedBatch);
     debugger;
     if (b.length != 0) {
@@ -349,10 +352,10 @@ export class DashboardclassfeeComponent implements OnInit {
       return;
     }
     this.loading = true;
-    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let checkFilterString = this.FilterOrgSubOrgBatchId +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
-      " and ClassId eq " + row.ClassId +
-      " and BatchId eq " + row.BatchId
+      " and ClassId eq " + row.ClassId ;
+
     if (row.Month > 0)
       checkFilterString += " and Month eq " + row.Month
 
@@ -392,7 +395,8 @@ export class DashboardclassfeeComponent implements OnInit {
               FeeDefinitionId: objDiscount[0].FeeDefinitionId,
               LocationId: 0,
               Month: objDiscount[0].Month,
-              OrgId: this.LoginUserDetail[0]["orgId"]
+              OrgId: this.LoginUserDetail[0]["orgId"],
+              SubOrgId:this.SubOrgId
             })
             this.insert(objDiscount[0], insert[0]);
           }
@@ -441,7 +445,7 @@ export class DashboardclassfeeComponent implements OnInit {
     list.fields = ["ClassId"];
     list.PageName = "ClassFees";
     //list.groupby = "ClassId";
-    list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     this.loading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -520,7 +524,7 @@ export class DashboardclassfeeComponent implements OnInit {
             this.loading = false; this.PageLoading = false;
             return;
           }
-          list.filter = [this.StandardFilterWithBatchId + filterstr];
+          list.filter = [this.FilterOrgSubOrgBatchId + filterstr];
           this.dataservice.get(list)
             .subscribe((existingclsfee: any) => {
               _classFee = data.value.filter(f => existingclsfee.value.filter(g => g.FeeDefinitionId == f.FeeDefinitionId).length == 0)
@@ -634,13 +638,13 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.token.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.token, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

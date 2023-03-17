@@ -35,6 +35,8 @@ export class ChartReportComponent {
   MonthlyPayments = [];
   StudentClasses = [];
   ClassFees = [];
+  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId='';
   public pieChartOptions: ChartOptions = {
     responsive: true,
   };
@@ -73,6 +75,8 @@ export class ChartReportComponent {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
       this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.FilterOrgSubOrg =globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.FilterOrgSubOrgBatchId =globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.Months = this.contentservice.GetSessionFormattedMonths();
 
       this.GetClassFees();
@@ -87,7 +91,7 @@ export class ChartReportComponent {
     let list = new List();
     list.PageName = "AccountingLedgerTrialBalances";
     list.fields = ["Month,StudentClassId,TotalDebit,TotalCredit,Balance"];
-    list.filter = ["Active eq 1 and Month eq " + pMonth + " and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1 and Month eq " + pMonth];
     return this.dataservice.get(list);
     // .subscribe((data: any) => {
     //   this.MonthlyPayments = [...data.value];
@@ -124,7 +128,7 @@ export class ChartReportComponent {
       "FeeType($select=Formula,FeeTypeName;$filter=Active eq 1)",
 
     ];
-    list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         console.log('data gg', data.value)

@@ -33,7 +33,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   };
   PagePermission = '';
   LeaveBalanceListName = 'LeaveBalances';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
   loading = false;
   rowCount = 0;
   LeavePolicies = [];
@@ -92,7 +92,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
     private shareddata: SharedataService,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -134,13 +134,13 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMasterData();
 
     }
@@ -227,12 +227,11 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let checkFilterString = "LeaveNameId eq " + row.LeaveNameId +
+    let checkFilterString = this.FilterOrgSubOrg + " and LeaveNameId eq " + row.LeaveNameId +
       " and EmployeeId eq " + this.searchForm.get("searchEmployee").value
 
     if (row.LeaveBalanceId > 0)
       checkFilterString += " and LeaveBalanceId ne " + row.LeaveBalanceId;
-    checkFilterString += " and " + this.StandardFilter;
 
     let list: List = new List();
     list.fields = ["LeaveBalanceId"];
@@ -380,7 +379,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   }
   GetLeavePolicy() {
 
-    var orgIdAndBatchSearchstr = 'BatchId eq ' + this.SelectedBatchId + ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdAndBatchSearchstr = 'BatchId eq ' + this.SelectedBatchId + ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
     let list: List = new List();
 
@@ -390,7 +389,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
       "LeaveOpenAdjustCloseId",
       "FormulaOrDays"];
     list.PageName = "LeavePolicies";
-    list.filter = ["Active eq 1 and " + orgIdAndBatchSearchstr];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.LeavePolicies = [...data.value];
@@ -398,10 +397,10 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
       })
 
   }
-  GetCurrentEmployeeVariableData(empId, OrgId) {
+  GetCurrentEmployeeVariableData(empId, pOrgSubOrg) {
 
     var VariableConfigs = [];
-    var orgIdSearchstr = ' and OrgId eq ' + OrgId;
+    //var orgIdSearchstr = ' and OrgId eq ' + OrgId;
     var searchfilter = '';
     if (empId > 0)
       searchfilter = " and EmployeeId eq " + empId
@@ -411,7 +410,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
     list.fields = ["*"];
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["Employee($SELECT=*)"];
-    list.filter = ["IsCurrent eq 1 and Active eq 1" + searchfilter + orgIdSearchstr];
+    list.filter = [pOrgSubOrg + " and Active eq 1 and IsCurrent eq 1" + searchfilter];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
@@ -538,7 +537,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   UpdateAll() { }
   GetEmployees() {
     this.loading = true;
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
@@ -548,7 +547,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
       "FirstName",
       "LastName"];
     list.PageName = "EmpEmployees";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
@@ -566,7 +565,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   }
   GetLeaveBalance() {
 
-    var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _employeeId = 0;
     var EmployeeFilter = '';
@@ -594,7 +593,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
         //var employeeVariables:any=
         this.RawLeaveBalance = [...data.value];
 
-        this.GetCurrentEmployeeVariableData(_employeeId, this.LoginUserDetail[0]["orgId"]);
+        this.GetCurrentEmployeeVariableData(_employeeId, this.FilterOrgSubOrg);
 
 
         //this.dataSource = new MatTableDataSource<ILeaveBalance>(this.LeaveBalanceList);
@@ -602,7 +601,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

@@ -29,7 +29,7 @@ export class studentprimaryinfoComponent implements OnInit {
   Edit = false;
   SelectedBatchId = 0;SubOrgId = 0;
   SelectedApplicationId = 0;
-  loginUserDetail = [];
+  LoginUserDetail = [];
   StudentLeaving = false;
   StudentName = '';
   StudentClassId = 0;
@@ -59,6 +59,8 @@ export class studentprimaryinfoComponent implements OnInit {
   AdmissionStatuses = [];
   ColumnsOfSelectedReports = [];
   CountryId = 0;
+  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId='';
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
@@ -108,8 +110,9 @@ export class studentprimaryinfoComponent implements OnInit {
     this.formdata.append("parentId", "-1");
 
     this.formdata.append("batchId", "0");
-    this.formdata.append("orgName", this.loginUserDetail[0]["org"]);
-    this.formdata.append("orgId", this.loginUserDetail[0]["orgId"]);
+    this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
+    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("subOrgId", this.SubOrgId+"");
     this.formdata.append("pageId", "0");
 
     if (this.StudentId != null && this.StudentId != 0)
@@ -142,7 +145,7 @@ export class studentprimaryinfoComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
-    private tokenService: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
   ) {
     //this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
@@ -198,9 +201,9 @@ export class studentprimaryinfoComponent implements OnInit {
       Height: [0],
       Active: [1]
     });
-    this.PID =this.tokenService.getPID();
-    this.StudentId = this.tokenService.getStudentId();
-    this.StudentClassId = this.tokenService.getStudentClassId()
+    this.PID =this.tokenStorage.getPID();
+    this.StudentId = this.tokenStorage.getStudentId();
+    this.StudentClassId = this.tokenStorage.getStudentClassId()
   }
   FeePaymentPermission = '';
   ngOnInit(): void {
@@ -212,25 +215,27 @@ export class studentprimaryinfoComponent implements OnInit {
     //   })
     // })
     this.imgURL = '';
-    this.loginUserDetail = this.tokenService.getUserDetail();
-    if (this.loginUserDetail.length == 0)
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    if (this.LoginUserDetail.length == 0)
       this.route.navigate(['/auth/login'])
     else {
-      var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.STUDENT.STUDENTDETAIL);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.STUDENTDETAIL);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
         //this.tabNames
       }
       if (this.Permission != 'deny') {
-        var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+        var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
         if (perObj.length > 0) {
           this.FeePaymentPermission = perObj[0].permission;
         }
         //console.log("this.FeePaymentPermission ", this.FeePaymentPermission);
-        this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-        this.SubOrgId = +this.tokenService.getSubOrgId();
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg =globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId =globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.getFields('Student Module');
-        this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.GetMasterData();
 
       }
@@ -298,9 +303,9 @@ export class studentprimaryinfoComponent implements OnInit {
 
   //   this.StudentId = element.StudentId;
 
-  //   this.tokenService.saveStudentClassId(this.StudentClassId + "");
-  //   this.tokenService.saveClassId(_ClassId + "");
-  //   this.tokenService.saveStudentId(this.StudentId + "");
+  //   this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
+  //   this.tokenStorage.saveClassId(_ClassId + "");
+  //   this.tokenStorage.saveStudentId(this.StudentId + "");
 
   // }
   generateDetail() {
@@ -326,14 +331,14 @@ export class studentprimaryinfoComponent implements OnInit {
     this.shareddata.ChangeStudentName(StudentName);
 
     //this.shareddata.ChangeStudentClassId(this.StudentClassId);
-    // this.tokenService.saveStudentClassId(this.StudentClassId.toString());
-    // this.tokenService.saveStudentId(element.StudentId);
+    // this.tokenStorage.saveStudentClassId(this.StudentClassId.toString());
+    // this.tokenStorage.saveStudentId(element.StudentId);
     //this.shareddata.ChangeStudentId(element.StudentId);
 
   }
   Sections = [];
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
@@ -354,7 +359,8 @@ export class studentprimaryinfoComponent implements OnInit {
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
         this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
-        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
           if (this.StudentId > 0)
             this.GetStudent();
@@ -365,7 +371,7 @@ export class studentprimaryinfoComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenService, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;
@@ -497,7 +503,7 @@ export class studentprimaryinfoComponent implements OnInit {
       EmailAddress: _email,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeaving").value,
-      OrgId: this.loginUserDetail[0]["orgId"],
+      OrgId: this.LoginUserDetail[0]["orgId"],
       SubOrgId: this.SubOrgId,
       IdentificationMark: this.studentForm.get("IdentificationMark").value,
       BoardRegistrationNo: this.studentForm.get("BoardRegistrationNo").value,
@@ -520,7 +526,7 @@ export class studentprimaryinfoComponent implements OnInit {
   save() {
     debugger;
     this.studentForm.patchValue({ AlternateContact: "" });
-    this.contentservice.GetStudentMaxPID(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    this.contentservice.GetStudentMaxPID(this.FilterOrgSubOrg).subscribe((data: any) => {
       var _MaxPID = 1;
       if (data.value.length > 0) {
         _MaxPID = +data.value[0].PID + 1;
@@ -543,9 +549,9 @@ export class studentprimaryinfoComponent implements OnInit {
 
             this.StudentClassId = result.StudentClassId;
             this.loading = false; this.PageLoading = false;
-            this.tokenService.savePID(this.PID + "")
-            this.tokenService.saveStudentId(this.StudentId + "")
-            this.tokenService.saveStudentClassId(this.StudentClassId + "");
+            this.tokenStorage.savePID(this.PID + "")
+            this.tokenStorage.saveStudentId(this.StudentId + "")
+            this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
 
             this.CreateInvoice();
             this.GetStudent();
@@ -579,10 +585,10 @@ export class studentprimaryinfoComponent implements OnInit {
       })
   }
   CreateInvoice() {
-    this.contentservice.getInvoice(+this.loginUserDetail[0]["orgId"], this.SelectedBatchId, this.StudentClassId)
+    this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId, this.StudentClassId)
       .subscribe((data: any) => {
 
-        this.contentservice.createInvoice(data, this.SelectedBatchId, this.loginUserDetail[0]["orgId"])
+        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             //this.loading = false; this.PageLoading=false;
             //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -603,7 +609,7 @@ export class studentprimaryinfoComponent implements OnInit {
     return new Date(dateToAdjust.getTime() - offsetMs);
   }
   getFields(pModuleName) {
-    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.getSelectedReportColumn(this.FilterOrgSubOrg, this.SelectedApplicationId)
       .subscribe((data: any) => {
         debugger;
         var _baseReportId = 0;
@@ -616,13 +622,14 @@ export class studentprimaryinfoComponent implements OnInit {
           }
 
           var _orgStudentModuleObj = data.value.filter(f => f.ParentId == _studentModuleId
-            && f.OrgId == this.loginUserDetail[0]["orgId"] && f.Active == 1);
+            && f.SubOrgId==this.SubOrgId && f.OrgId == this.LoginUserDetail[0]["orgId"] && f.Active == 1);
           var _orgStudentModuleId = 0;
           if (_orgStudentModuleObj.length > 0) {
             _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId;
           }
 
-          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId && f.OrgId == this.loginUserDetail[0]["orgId"])
+          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId 
+            && f.SubOrgId == this.SubOrgId && f.OrgId == this.LoginUserDetail[0]["orgId"])
 
         }
 
@@ -656,7 +663,7 @@ export class studentprimaryinfoComponent implements OnInit {
               _className = this.Classes.filter(c => c.ClassId == stud.StudentClasses[0].ClassId)[0].ClassName;
               StudentName += _className + "-" + _sectionName + "-" + _rollNo
               this.StudentClassId = stud.StudentClasses[0].StudentClassId;
-              this.tokenService.saveStudentClassId(this.StudentClassId + "");
+              this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
             }
 
             this.PID =  stud.PID;
@@ -716,7 +723,7 @@ export class studentprimaryinfoComponent implements OnInit {
               this.displayContactPerson = false;
             if (stud.StorageFnPs.length > 0) {
               var fileNames = stud.StorageFnPs.sort((a, b) => b.FileId - a.FileId)
-              this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.loginUserDetail[0]["org"] +
+              this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.LoginUserDetail[0]["org"] +
                 "/StudentPhoto/" + fileNames[0].FileName;
             }
             else if (this.StudentId > 0)
@@ -783,11 +790,11 @@ export class studentprimaryinfoComponent implements OnInit {
         //this.Students.push(d);
       }
     })
-    this.Students = this.tokenService.getStudents();
+    this.Students = this.tokenStorage.getStudents();
     var indx = this.Students.findIndex(s => s.StudentId == _student[0].StudentId);
     if (indx == -1)
       this.Students.push(_student[0]);
-    this.tokenService.saveStudents(this.Students);
+    this.tokenStorage.saveStudents(this.Students);
   }
 
 }

@@ -26,7 +26,7 @@ export class AchievementandpointComponent implements OnInit {
   SelectedApplicationId = 0;
   ClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
   loading = false;
   Category = [];
   AchievementAndPointList: any[] = [];
@@ -54,7 +54,7 @@ export class AchievementandpointComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -73,7 +73,7 @@ export class AchievementandpointComponent implements OnInit {
       searchCategoryId: [0]
     });
 
-    this.ClassId = this.tokenstorage.getClassId();
+    this.ClassId = this.tokenStorage.getClassId();
     this.PageLoad();
 
   }
@@ -92,20 +92,20 @@ export class AchievementandpointComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        //this.GroupId = this.tokenstorage.getGroupId();
+        //this.GroupId = this.tokenStorage.getGroupId();
 
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
         // if (this.Classes.length == 0) {
         //   this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -144,14 +144,14 @@ export class AchievementandpointComponent implements OnInit {
       return;
     }
 
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     let checkFilterString = "CategoryId eq " + row.CategoryId + " and Rank eq '" + row.Rank + "'"
     this.RowsToUpdate = 0;
 
     if (row.AchievementAndPointId > 0)
       checkFilterString += " and AchievementAndPointId ne " + row.AchievementAndPointId;
-    checkFilterString += " and " + this.StandardFilter;
+    checkFilterString += " and " + this.FilterOrgSubOrg;
     let list: List = new List();
     list.fields = ["AchievementAndPointId"];
     list.PageName = "AchievementAndPoints";
@@ -203,7 +203,7 @@ export class AchievementandpointComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   insert(row) {
-    console.log("this.AchievementAndPointForUpdate", this.AchievementAndPointForUpdate)
+    //console.log("this.AchievementAndPointForUpdate", this.AchievementAndPointForUpdate)
     this.dataservice.postPatch('AchievementAndPoints', this.AchievementAndPointForUpdate[0], 0, 'post')
       .subscribe(
         (data: any) => {
@@ -220,7 +220,7 @@ export class AchievementandpointComponent implements OnInit {
         });
   }
   update(row) {
-    console.log("updating", this.AchievementAndPointForUpdate[0]);
+    //console.log("updating", this.AchievementAndPointForUpdate[0]);
     this.dataservice.postPatch('AchievementAndPoints', this.AchievementAndPointForUpdate[0], this.AchievementAndPointForUpdate[0].AchievementAndPointId, 'patch')
       .subscribe(
         (data: any) => {
@@ -233,7 +233,7 @@ export class AchievementandpointComponent implements OnInit {
 
   GetAchievementAndPoint() {
     debugger;
-    var filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterStr = this.FilterOrgSubOrg;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     if (_categoryId > 0) {
       filterStr += " and CategoryId eq " + _categoryId;
@@ -255,7 +255,7 @@ export class AchievementandpointComponent implements OnInit {
     this.AchievementAndPointList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var _subCategory = [];
+        //var _subCategory = [];
         this.AchievementAndPointList = data.value.map(m => {
           m.Action = false;
           return m;
@@ -279,7 +279,7 @@ export class AchievementandpointComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
     this.PageLoading = false;
     this.loading = false;
@@ -307,7 +307,7 @@ export class AchievementandpointComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 

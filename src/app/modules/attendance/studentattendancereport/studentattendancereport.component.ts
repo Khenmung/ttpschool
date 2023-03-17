@@ -35,7 +35,8 @@ export class StudentattendancereportComponent implements OnInit {
   StudentDetailToDisplay = '';
   SelectedApplicationId = 0;
   StudentClassId = 0;
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   ClassSubjectList = [];
   Sections = [];
@@ -68,7 +69,7 @@ export class StudentattendancereportComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -91,21 +92,22 @@ export class StudentattendancereportComponent implements OnInit {
   PageLoad() {
     //debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.Months = this.contentservice.GetSessionFormattedMonths();
     this.StudentClassId = 1;
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         
         this.GetMasterData();
         //this.SubjectTypes();
@@ -137,7 +139,7 @@ export class StudentattendancereportComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
@@ -179,7 +181,7 @@ export class StudentattendancereportComponent implements OnInit {
       this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg;
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -323,7 +325,7 @@ export class StudentattendancereportComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
 
     let list: List = new List();
     list.fields = ["HolidayId,StartDate,EndDate"];
@@ -344,7 +346,7 @@ export class StudentattendancereportComponent implements OnInit {
   GetExistingStudentClassSubjects() {
     this.loading = true;
     var clssubjectid = this.searchForm.get("searchClassSubjectId").value;
-    var orgIdSearchstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    var orgIdSearchstr = this.FilterOrgSubOrgBatchId;
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
 
@@ -696,7 +698,7 @@ export class StudentattendancereportComponent implements OnInit {
   SubjectTypes = [];
   GetSubjectTypes() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and Active eq 1';
+    var orgIdSearchstr = this.FilterOrgSubOrg + ' and Active eq 1';
 
     let list: List = new List();
 
@@ -714,12 +716,13 @@ export class StudentattendancereportComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
-      this.Students = this.tokenstorage.getStudents();
+      this.Students = this.tokenStorage.getStudents();
       this.AssignNameClassSection(this.Students);
     })
     this.GetSubjectTypes();
@@ -727,7 +730,7 @@ export class StudentattendancereportComponent implements OnInit {
     this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownDataNoConfidentail(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownDataNoConfidentail(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

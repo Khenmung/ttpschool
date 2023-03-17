@@ -9,7 +9,6 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,8 +28,10 @@ export class ClassgroupComponent implements OnInit {
   Permission = '';
   loading = false;
   SelectedApplicationId = 0;
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   ClassGroupType = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   classgroupList: IClassgroup[] = [];
   filteredOptions: Observable<IClassgroup[]>;
   dataSource: MatTableDataSource<IClassgroup>;
@@ -41,7 +42,7 @@ export class ClassgroupComponent implements OnInit {
     GroupName: '',
     ClassGroupTypeId: 0,
     BatchId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0,
     //Deleted: 0
   };
@@ -56,7 +57,7 @@ export class ClassgroupComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private dialog: MatDialog,
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -79,25 +80,27 @@ export class ClassgroupComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.IscurrentBatchSelect = +this.tokenstorage.getCheckEqualBatchId();
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUP);
+      this.IscurrentBatchSelect = +this.tokenStorage.getCheckEqualBatchId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUP);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
-
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       if (this.Permission == 'deny') {
         //this.nav.navigate(['/edu']);
       }
       else if (this.ClassMasters.length == 0) {
         this.GetMasterData();
         this.Getclassgroups();
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.ClassMasters = [...data.value];
           this.loading = false;
           this.PageLoading = false;
@@ -118,7 +121,7 @@ export class ClassgroupComponent implements OnInit {
       ClassGroupId: 0,
       GroupName: '',
       ClassGroupTypeId: 0,
-      OrgId: 0,SubOrgId: 0,
+      OrgId: 0, SubOrgId: 0,
       Active: 0,
       Action: false
     };
@@ -191,7 +194,7 @@ export class ClassgroupComponent implements OnInit {
     }
 
     this.loading = true;
-    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]['orgId'] + " and GroupName eq '" + row.GroupName + "'"
+    let checkFilterString = this.FilterOrgSubOrg + " and GroupName eq '" + row.GroupName + "'"
 
     if (row.ClassGroupId > 0)
       checkFilterString += " and ClassGroupId ne " + row.ClassGroupId;
@@ -265,7 +268,7 @@ export class ClassgroupComponent implements OnInit {
     //debugger;
 
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
     let list: List = new List();
     list.fields = [
       "ClassGroupId",
@@ -293,13 +296,13 @@ export class ClassgroupComponent implements OnInit {
 
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ClassGroupType = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUPTYPE)
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-   
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
+
   }
 }
 export interface IClassgroup {

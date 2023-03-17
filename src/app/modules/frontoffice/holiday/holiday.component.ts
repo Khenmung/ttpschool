@@ -23,6 +23,8 @@ export class HolidayComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   SubOrgId = 0;
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   HolidayListName = 'Holidays';
   Applications = [];
   loading = false;
@@ -60,7 +62,7 @@ export class HolidayComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder
@@ -86,15 +88,17 @@ export class HolidayComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    //this.EmployeeId = +this.tokenStorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.HOLIDAY);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.misc.HOLIDAY);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -151,7 +155,7 @@ export class HolidayComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "Title eq '" + row.Title + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and Title eq '" + row.Title + "'";
 
     if (row.HolidayId > 0)
       checkFilterString += " and HolidayId ne " + row.HolidayId;
@@ -226,7 +230,7 @@ export class HolidayComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
 
     let list: List = new List();
     list.fields = ["*"];
@@ -258,7 +262,7 @@ export class HolidayComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

@@ -22,7 +22,9 @@ export class AddstudentclassComponent implements OnInit {
   SaveDisable = false;
   StudentId = 0;
   StudentClassId = 0;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
+  FilterOrgSubOrgBatchId = '';
+  filterOrgSubOrg='';
   invalidId = false;
   allMasterData = [];
   Students = [];
@@ -55,7 +57,7 @@ export class AddstudentclassComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private aRoute: ActivatedRoute,
     private nav: Router,
     private fb: UntypedFormBuilder,
@@ -86,11 +88,11 @@ export class AddstudentclassComponent implements OnInit {
   }
   PageLoad() {
     debugger;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail.length == 0)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.STUDENTCLASS);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.STUDENTCLASS);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
@@ -98,23 +100,24 @@ export class AddstudentclassComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.contentservice.GetClasses(this.filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
         this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
         if (this.FeeType.length == 0)
           this.GetFeeTypes();
         this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
         this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
-        this.StudentId = this.tokenstorage.getStudentId();
-        this.StudentClassId = this.tokenstorage.getStudentClassId()
+        this.StudentId = this.tokenStorage.getStudentId();
+        this.StudentClassId = this.tokenStorage.getStudentClassId()
         this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
         this.GetMasterData();
         //this.GetStudentClass();
       }
@@ -123,7 +126,7 @@ export class AddstudentclassComponent implements OnInit {
   get f() { return this.studentclassForm.controls }
 
   GetMasterData() {
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
     this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
@@ -148,7 +151,7 @@ export class AddstudentclassComponent implements OnInit {
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.filterOrgSubOrg + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -159,7 +162,7 @@ export class AddstudentclassComponent implements OnInit {
   }
   GetStudent() {
     debugger;
-    var filterOrgId = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+    
     if (this.StudentId == 0) {
       this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
       this.invalidId = true;
@@ -168,7 +171,7 @@ export class AddstudentclassComponent implements OnInit {
     let list: List = new List();
     list.fields = ["StudentId", "FirstName", "LastName", "FatherName", "MotherName"];
     list.PageName = "Students";
-    list.filter = [filterOrgId + " and StudentId eq " + this.StudentId];
+    list.filter = [this.filterOrgSubOrg + " and StudentId eq " + this.StudentId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -196,7 +199,6 @@ export class AddstudentclassComponent implements OnInit {
   }
   GetStudentClass() {
     debugger;
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
 
     if (this.StudentId > 0 && this.StudentClassId > 0) {
 
@@ -207,7 +209,7 @@ export class AddstudentclassComponent implements OnInit {
         "BatchId", "FeeTypeId",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
-      list.filter = [filterOrgIdNBatchId + " and StudentClassId eq " + this.StudentClassId];
+      list.filter = [this.FilterOrgSubOrgBatchId + " and StudentClassId eq " + this.StudentClassId];
 
       this.dataservice.get(list)
         .subscribe((data: any) => {
@@ -288,7 +290,7 @@ export class AddstudentclassComponent implements OnInit {
           .subscribe((data: any) => {
             ClassStrength = data.value.length;
             ClassStrength += 1;
-            var _batchName = this.tokenstorage.getSelectedBatchName();
+            var _batchName = this.tokenStorage.getSelectedBatchName();
             var _admissionNo = this.studentclassForm.get("AdmissionNo").value;
             var _year = _batchName.split('-')[0].trim();
             this.loading = true;
@@ -327,7 +329,7 @@ export class AddstudentclassComponent implements OnInit {
           this.loading = false; this.PageLoading = false;
           this.StudentClassId = data.StudentClassId;
           this.studentclassForm.patchValue({ "AdmissionNo": this.studentclassData.AdmissionNo })
-          this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
+          this.tokenStorage.saveStudentClassId(this.StudentClassId + "")
           this.CreateInvoice();
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -349,12 +351,13 @@ export class AddstudentclassComponent implements OnInit {
   CreateInvoice() {
     debugger;
     this.loading = true;
-    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+
+    this.contentservice.GetClassFeeWithFeeDefinition(this.FilterOrgSubOrgBatchId, 0)
       .subscribe((datacls: any) => {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,0, this.StudentClassId,0)
+        this.contentservice.getStudentClassWithFeeType(this.FilterOrgSubOrgBatchId, 0, this.StudentClassId, 0)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
@@ -408,7 +411,7 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER

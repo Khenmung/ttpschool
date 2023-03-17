@@ -22,8 +22,9 @@ export class EmployeeComponent implements OnInit {
   ShortNameDuplicate = '';
   EmployeeCodeDuplicate = '';
   Edited = false;
+  FilterOrgSubOrg='';
   SelectedApplicationId = 0;
-  loginUserDetail = [];
+  LoginUserDetail = [];
   EmployeeLeaving = false;
   EmployeeName = '';
   selectedIndex: number = 0;
@@ -102,8 +103,9 @@ export class EmployeeComponent implements OnInit {
     this.formdata.append("parentId", "-1");
 
     this.formdata.append("batchId", "0");
-    this.formdata.append("orgName", this.loginUserDetail[0]["org"]);
-    this.formdata.append("orgId", this.loginUserDetail[0]["orgId"]);
+    this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
+    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("subOrgId", this.tokenService.getSubOrgId()+"");
     this.formdata.append("pageId", "0");
 
     if (this.EmployeeId != null && this.EmployeeId != 0)
@@ -211,12 +213,12 @@ export class EmployeeComponent implements OnInit {
     //   })
     // })
     debugger;
-    this.loginUserDetail = this.tokenService.getUserDetail();
+    this.LoginUserDetail = this.tokenService.getUserDetail();
     this.EmployeeId = this.tokenService.getEmployeeId();
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
 
     //if (this.EmployeeId > 0) {
-    if (this.loginUserDetail.length > 0) {
+    if (this.LoginUserDetail.length > 0) {
       var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.emp.employee.EMPLOYEEDETAIL);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -224,6 +226,7 @@ export class EmployeeComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
+        this.FilterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenService);
         this.getFields('Employee Module');
         if (this.EmployeeId > 0)
           this.GetEmployee();
@@ -270,7 +273,7 @@ export class EmployeeComponent implements OnInit {
   }
   ColumnsOfSelectedReports = [];
   getFields(pModuleName) {
-    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.getSelectedReportColumn(this.FilterOrgSubOrg, this.SelectedApplicationId)
       .subscribe((data: any) => {
         var _baseReportId = 0;
         if (data.value.length > 0) {
@@ -464,7 +467,8 @@ export class EmployeeComponent implements OnInit {
       DesignationId: this.EmployeeForm.get("Designation").value,
       WorkAccountId: this.EmployeeForm.get("WorkAccount").value,
       EmpGradeId: this.EmployeeForm.get("EmpGrade").value,
-      OrgId: this.loginUserDetail[0]["orgId"],
+      OrgId: this.LoginUserDetail[0]["orgId"],
+      SubOrgId: this.tokenService.getSubOrgId(),
       IDMark: this.EmployeeForm.get("IDMark").value
     }]
 
@@ -474,7 +478,7 @@ export class EmployeeComponent implements OnInit {
     if (this.EmployeeData["ConfirmationDate"] == "") {
       delete this.EmployeeData["ConfirmationDate"];
     }
-    var filterstr = "OrgId eq " + this.loginUserDetail[0]["orgId"];
+    var filterstr = this.FilterOrgSubOrg;// "OrgId eq " + this.LoginUserDetail[0]["orgId"];
     var _employeeCode = this.EmployeeForm.get("EmployeeCode").value;
 
     var _employeeCodefilter = '';
@@ -523,7 +527,7 @@ export class EmployeeComponent implements OnInit {
   }
   CheckDuplicate(fieldName) {
     debugger;
-    var filterstr = "OrgId eq " + this.loginUserDetail[0]["orgId"];
+    var filterstr = this.FilterOrgSubOrg;// "OrgId eq " + this.LoginUserDetail[0]["orgId"];
     //var _employeeCode = this.EmployeeForm.get("EmployeeCode").value;
     if (this.EmployeeId > 0) {
       filterstr += " and EmpEmployeeId ne " + this.EmployeeId
@@ -599,7 +603,7 @@ export class EmployeeComponent implements OnInit {
   SelectPresentState(value) {
     debugger;
     var commonId = this.contentservice.GetPermittedAppId('common');
-    this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
+    this.contentservice.GetDropDownDataFromDB(value, this.FilterOrgSubOrg, commonId)
       .subscribe((data: any) => {
         this.PresentState = [...data.value];
         this.Edited = true;
@@ -607,7 +611,7 @@ export class EmployeeComponent implements OnInit {
   }
   SelectPresentCity(value) {
     var commonId = this.contentservice.GetPermittedAppId('common');
-    this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
+    this.contentservice.GetDropDownDataFromDB(value, this.FilterOrgSubOrg, commonId)
       .subscribe((data: any) => {
         this.PresentCity = [...data.value];
         this.Edited = true;
@@ -615,7 +619,7 @@ export class EmployeeComponent implements OnInit {
   }
   SelectPermanentState(value) {
     var commonId = this.contentservice.GetPermittedAppId('common');
-    this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
+    this.contentservice.GetDropDownDataFromDB(value, this.FilterOrgSubOrg, commonId)
       .subscribe((data: any) => {
         this.PermanentState = [...data.value];
         this.Edited = true;
@@ -623,7 +627,7 @@ export class EmployeeComponent implements OnInit {
   }
   SelectPermanentCity(value) {
     var commonId = this.contentservice.GetPermittedAppId('common');
-    this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
+    this.contentservice.GetDropDownDataFromDB(value, this.FilterOrgSubOrg, commonId)
       .subscribe((data: any) => {
         this.PermanentCity = [...data.value];
         this.Edited = true;
@@ -715,7 +719,7 @@ export class EmployeeComponent implements OnInit {
               this.displayContactPerson = false;
             if (stud.StorageFnPs.length > 0) {
               var fileNames = stud.StorageFnPs.sort((a, b) => b.FileId - a.FileId);
-              this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.loginUserDetail[0]["org"] +
+              this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.LoginUserDetail[0]["org"] +
                 "/EmployeePhoto/" + fileNames[0].FileName;
             }
             else if (this.EmployeeId > 0)

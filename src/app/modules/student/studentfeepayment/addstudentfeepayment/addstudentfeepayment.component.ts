@@ -59,6 +59,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
   FeePayable = true;
   filteredOptions: Observable<string[]>;
   SelectedBatchId = 0;SubOrgId = 0;
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   NoOfBillItems = 0;
   studentInfoTodisplay = {
     StudentFeeReceiptId: 0,
@@ -178,7 +180,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private fb: UntypedFormBuilder,
     private nav: Router,
     private datepipe: DatePipe,
@@ -240,30 +242,32 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
       debugger;
       this.loading = true;
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
         this.TotalAmount = 0;
         this.Balance = 0;
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.MonthlyDueDetail = [];
         this.billdataSource = new MatTableDataSource<any>(this.MonthlyDueDetail);
         this.Months = this.contentservice.GetSessionFormattedMonths();
-        this.LoginUserDetail = this.tokenstorage.getUserDetail();
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-
-        this.studentInfoTodisplay.StudentId = this.tokenstorage.getStudentId()
-        this.studentInfoTodisplay.StudentClassId = this.tokenstorage.getStudentClassId();
+        this.LoginUserDetail = this.tokenStorage.getUserDetail();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.studentInfoTodisplay.StudentId = this.tokenStorage.getStudentId()
+        this.studentInfoTodisplay.StudentClassId = this.tokenStorage.getStudentClassId();
         this.shareddata.CurrentStudentName.subscribe(fy => (this.StudentName = fy));
 
-        this.Batches = this.tokenstorage.getBatches()
+        this.Batches = this.tokenStorage.getBatches()
         this.shareddata.CurrentLocation.subscribe(fy => (this.Locations = fy));
         this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
         this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.GetMasterData();
         });
@@ -325,11 +329,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
   //     })
   // }
   GetMasterData() {
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     //this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
     //  this.FeeDefinitions = [...f];
     //  if (this.FeeDefinitions.length == 0) {
-    this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
+    this.contentservice.GetFeeDefinitions(this.FilterOrgSubOrg, 1).subscribe((d: any) => {
       this.FeeDefinitions = [...d.value];
       this.FeeDefinitions.forEach(feedefn => {
         var indx = this.Months.findIndex(m => m.MonthName == feedefn.FeeName);
@@ -339,7 +343,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     })
     //  }
     //})
-    this.Batches = this.tokenstorage.getBatches();
+    this.Batches = this.tokenStorage.getBatches();
     this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
@@ -350,7 +354,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;
@@ -359,7 +363,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     // });
   }
   getAccountingVoucher(pLedgerId) {
-    let filterstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let filterstr =this.FilterOrgSubOrg +
       " and FeeReceiptId eq 0 and LedgerId eq " + pLedgerId + " and Balance gt 0";
     this.loading = true;
     let list: List = new List();
@@ -729,7 +733,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             AmountEditable: f.AmountEditable,
             ShortText: '',
             OrgId: this.LoginUserDetail[0]["orgId"],
-            
+            SubOrgId: this.SubOrgId,            
             Active: 1,
             Action: true
           })
@@ -966,6 +970,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             "Reference": '',
             "Active": 1,
             "OrgId": this.LoginUserDetail[0]["orgId"],
+            "SubOrgId": this.SubOrgId,
             "CreatedDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
             "DocDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
             "PostingDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
@@ -990,6 +995,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               "ShortText": paydetail.ShortText,
               "Active": 1,
               "OrgId": this.LoginUserDetail[0]["orgId"],
+              "SubOrgId": this.SubOrgId,
               "CreatedDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
               "DocDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
               "PostingDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),

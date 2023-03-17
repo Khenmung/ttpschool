@@ -30,6 +30,8 @@ export class ClassgroupmappingComponent implements OnInit {
   Applications = [];
   loading = false;
   SelectedBatchId = 0;SubOrgId = 0;
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   ClassGroupMappingList: IClassGroupMapping[] = [];
   filteredOptions: Observable<IClassGroupMapping[]>;
   dataSource: MatTableDataSource<IClassGroupMapping>;
@@ -57,7 +59,7 @@ export class ClassgroupmappingComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder,
@@ -84,15 +86,17 @@ export class ClassgroupmappingComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    //this.EmployeeId = +this.tokenStorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUPING);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUPING);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -183,8 +187,7 @@ export class ClassgroupmappingComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "ClassId eq " + row.ClassId +
-      " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let checkFilterString = this.FilterOrgSubOrg + " and ClassId eq " + row.ClassId +
       " and ClassGroupId eq " + row.ClassGroupId
 
     if (row.ClassGroupMappingId > 0)
@@ -211,7 +214,7 @@ export class ClassgroupmappingComponent implements OnInit {
           this.ClassGroupMappingData.BatchId = this.SelectedBatchId;
           this.ClassGroupMappingData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ClassGroupMappingData.SubOrgId = this.SubOrgId;
-          console.log("this.ClassGroupMappingData", this.ClassGroupMappingData)
+          //console.log("this.ClassGroupMappingData", this.ClassGroupMappingData)
           if (this.ClassGroupMappingData.ClassGroupMappingId == 0) {
             this.ClassGroupMappingData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             this.ClassGroupMappingData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -257,7 +260,7 @@ export class ClassgroupmappingComponent implements OnInit {
   classgroupList = [];
   Getclassgroups() {
     this.loading = true;
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrgBatchId)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
         this.loading = false;
@@ -291,7 +294,7 @@ export class ClassgroupmappingComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr =this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //  " and BatchId eq " + this.SelectedBatchId;
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
@@ -328,16 +331,17 @@ export class ClassgroupmappingComponent implements OnInit {
 
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ClassGroupTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUPTYPE)
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.loading = false; this.PageLoading = false;
     });
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

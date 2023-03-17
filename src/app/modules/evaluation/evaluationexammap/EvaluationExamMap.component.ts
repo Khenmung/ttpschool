@@ -30,13 +30,14 @@ export class EvaluationExamMapComponent implements OnInit {
   SelectedApplicationId = 0;
   StudentClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   EvaluationExamMapList: IEvaluationExamMap[] = [];
   //ExamModes = [];
   ExamNames = [];
   Sessions = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   //SelectedClassSubjects = [];
   //ClassGroups = [];
   ClassGroupMappings = [];
@@ -54,7 +55,7 @@ export class EvaluationExamMapComponent implements OnInit {
     //ClassSubjectId: 0,
     EvaluationMasterId: 0,
     ExamId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0,
   };
   EvaluationExamMapForUpdate = [];
@@ -72,7 +73,7 @@ export class EvaluationExamMapComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -85,7 +86,7 @@ export class EvaluationExamMapComponent implements OnInit {
     //     }
     //   })
     // })
-    this.StudentClassId = this.tokenstorage.getStudentClassId();
+    this.StudentClassId = this.tokenStorage.getStudentClassId();
     this.searchForm = this.fb.group({
       searchEvaluationMasterId: [0],
       searchClassGroupId: [0],
@@ -107,31 +108,32 @@ export class EvaluationExamMapComponent implements OnInit {
     debugger;
     console.log("EvaluationUpdatable", this.EvaluationUpdatable)
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EvaluationExamMap)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EvaluationExamMap)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetEvaluationNames();
         this.GetMasterData();
         if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
           });
         }
 
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
           .subscribe((data: any) => {
             this.ClassGroups = [...data.value];
           });
-        this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+        this.contentservice.GetClassGroupMapping(this.FilterOrgSubOrg, 1)
           .subscribe((data: any) => {
             this.ClassGroupMappings = [...data.value];
             this.loading = false;
@@ -198,7 +200,7 @@ export class EvaluationExamMapComponent implements OnInit {
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
 
     this.loading = true;
-    let checkFilterString = this.StandardFilter + " and Active eq true";
+    let checkFilterString = this.FilterOrgSubOrg + " and Active eq true";
     if (!this.EvaluationUpdatable) {
 
       if (row.ExamId > 0)
@@ -232,8 +234,8 @@ export class EvaluationExamMapComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+          this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+          this.SubOrgId = +this.tokenStorage.getSubOrgId();
           this.EvaluationExamMapForUpdate = [];
           this.EvaluationExamMapForUpdate.push(
             {
@@ -244,7 +246,8 @@ export class EvaluationExamMapComponent implements OnInit {
               EvaluationMasterId: this.searchForm.get("searchEvaluationMasterId").value,
               Active: row.Active,
               Deleted: false,
-              OrgId: this.LoginUserDetail[0]["orgId"]
+              OrgId: this.LoginUserDetail[0]["orgId"],
+              SubOrgId:this.SubOrgId
             });
 
           //console.log("for udpate",this.EvaluationExamMapForUpdate[0])
@@ -298,9 +301,9 @@ export class EvaluationExamMapComponent implements OnInit {
   GetEvaluationNames() {
     //debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = [
@@ -329,7 +332,7 @@ export class EvaluationExamMapComponent implements OnInit {
             d.EvaluationName = globalconstants.decodeSpecialChars(d.EvaluationName);
             return d;
           })
-          this.EvaluationNames = this.contentservice.getConfidentialData(this.tokenstorage, result, "EvaluationName");
+          this.EvaluationNames = this.contentservice.getConfidentialData(this.tokenStorage, result, "EvaluationName");
 
         }
         this.loadingFalse();
@@ -382,9 +385,9 @@ export class EvaluationExamMapComponent implements OnInit {
     debugger;
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    //let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     //var _classGroupId = this.searchForm.get("searchClassGroupId").value;
     //var _subjectId = this.searchForm.get("searchSubjectId").value;
@@ -420,7 +423,7 @@ export class EvaluationExamMapComponent implements OnInit {
       var _evaluationExamMapForSelectedEval = this.EvaluationExamMap.filter(f => {
         return _evaluationMappedForSelectedClassGroup.filter(e => e.EvaluationMasterId == f.EvaluationMasterId).length > 0
       });
-      var _filter = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+      var _filter = this.FilterOrgSubOrg;// "OrgId eq " + this.LoginUserDetail[0]["orgId"];
       var subfilter = '';
       _evaluationExamMapForSelectedEval.forEach((mapdata, indx) => {
         subfilter += 'EvaluationExamMapId eq ' + mapdata.EvaluationExamMapId
@@ -475,7 +478,7 @@ export class EvaluationExamMapComponent implements OnInit {
 
   }
   GetExams() {
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,2)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId, 2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {
@@ -520,7 +523,7 @@ export class EvaluationExamMapComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     //this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
     this.GetExams();
@@ -540,7 +543,7 @@ export class EvaluationExamMapComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

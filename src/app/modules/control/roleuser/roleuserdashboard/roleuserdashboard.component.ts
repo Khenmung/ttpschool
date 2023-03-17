@@ -51,7 +51,8 @@ export class roleuserdashboardComponent implements OnInit {
   });
   Permission = '';
   SelectedBatchId = 0;SubOrgId = 0;
-  filterOrgIdNBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   RoleUserId = 0;
   RoleUserData = {
     UserId: '',
@@ -70,7 +71,7 @@ export class roleuserdashboardComponent implements OnInit {
   ];
   currentRoute = '';
   constructor(private servicework: SwUpdate, private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private authservice: AuthService,
     private nav: Router,
@@ -94,8 +95,8 @@ export class roleuserdashboardComponent implements OnInit {
         map(UserName => UserName ? this._filter(UserName) : this.Users.slice())
       );
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.PageLoad();
   }
   private _filter(name: string): IUser[] {
@@ -110,15 +111,17 @@ export class roleuserdashboardComponent implements OnInit {
   PageLoad() {
     //debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0) {
 
-      this.tokenstorage.saveRedirectionUrl(window.location.pathname);
+      this.tokenStorage.saveRedirectionUrl(window.location.pathname);
       this.nav.navigate(['/auth/login']);
     }
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.ROLEUSER);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.ROLEUSER);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
@@ -164,21 +167,21 @@ export class roleuserdashboardComponent implements OnInit {
   // }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
     this.RolesTemp = [...this.Roles];
     this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
     this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
 
     this.shareddata.ChangeRoles(this.Roles);
-    this.Applications = this.tokenstorage.getPermittedApplications();
+    this.Applications = this.tokenStorage.getPermittedApplications();
     this.shareddata.ChangeDepartment(this.Departments);
     this.shareddata.ChangeLocation(this.Locations);
     this.GetUsers();
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
@@ -205,7 +208,7 @@ export class roleuserdashboardComponent implements OnInit {
     ];
 
     list.PageName = "AuthManagement";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrg];
     this.RoleUserList = [];
 
     this.authservice.get(list)
@@ -234,7 +237,7 @@ export class roleuserdashboardComponent implements OnInit {
       'Active'];
 
     list.PageName = "RoleUsers";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId  + filterstr];
+    list.filter = [this.FilterOrgSubOrg  + filterstr];
     this.RoleUserList = [];
 
     this.dataservice.get(list)
@@ -316,8 +319,7 @@ export class roleuserdashboardComponent implements OnInit {
       return;
     }
 
-    var StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
-    let checkFilterString = StandardFilter + " and UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId;
+    let checkFilterString = this.FilterOrgSubOrg + " and UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId;
 
     if (row.RoleUserId > 0)
       checkFilterString += " and RoleUserId ne " + row.RoleUserId;

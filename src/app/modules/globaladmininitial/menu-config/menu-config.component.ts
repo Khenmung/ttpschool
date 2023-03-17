@@ -35,6 +35,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
   columns: Array<any>;
   title: string;
   Id: number;
+  FilterOrgSubOrg='';
   query: string;//displayedColumns: Array<any>;
   list: List;
   SelectedApplicationId = 0;
@@ -90,6 +91,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
     //this.GetParentPage(this.Id);
   }
   PageLoad() {
+    this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.checklogin();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
@@ -344,9 +346,8 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
     // if (this.searchForm.get("searchTopMenuId").value > 0) {
     //   _ParentId = this.searchForm.get("searchTopMenuId").value;
     // }
-    var duplicatecheck = "ApplicationId eq " + this.SelectedAppId +
+    var duplicatecheck = this.FilterOrgSubOrg + " and ApplicationId eq " + this.SelectedAppId +
       " and PageTitle eq '" + row.PageTitle 
-      + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ApplicationId eq " + this.searchForm.get("searchApplicationId").value;
     if (row.PageId > 0)
       duplicatecheck += " and PageId ne " + row.PageId;

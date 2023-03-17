@@ -25,11 +25,13 @@ export class HomeDashboardComponent implements OnInit {
   toggle: boolean = false;
   userName: string = '';
   loggedIn: boolean;
-  loginUserDetail: any;
+  LoginUserDetail: any;
   CurrentBatchId = 0;
-  SelectedBatchId = 0; 
+  SelectedBatchId = 0;
   SubOrgId = 0;
   SelectedAppId = 0;
+  filterOrgSubOrgBatchId='';
+  filterOrgSubOrg='';
   Batches = [];
   PermittedApplications = [];
   SelectedAppName = '';
@@ -59,15 +61,16 @@ export class HomeDashboardComponent implements OnInit {
       searchBatchId: [0],
       searchSubOrgId: [0]
     })
-    this.loginUserDetail = this.tokenStorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //console.log("HOme dashboard init")
     //console.log('role',this.Role);
-    if (this.loginUserDetail.length == 0) {
+    if (this.LoginUserDetail.length == 0) {
       this.tokenStorage.signOut();
       this.route.navigate(['/auth/login']);
     }
     else {
-      this.Role = this.loginUserDetail[0]['RoleUsers'][0]['role'];
+      this.Role = this.LoginUserDetail[0]['RoleUsers'][0]['role'];
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
       this.CheckLocalStorage();
       this.GetOrganization()
         .subscribe((data: any) => {
@@ -76,7 +79,7 @@ export class HomeDashboardComponent implements OnInit {
             _validTo.setHours(0, 0, 0, 0);
             var _today = new Date();//
             _today.setHours(0, 0, 0, 0);
-            var _roleName = this.loginUserDetail[0]['RoleUsers'][0].role;
+            var _roleName = this.LoginUserDetail[0]['RoleUsers'][0].role;
             const diffTime = Math.abs(_validTo.getTime() - _today.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             //console.log("diffDays", diffDays)
@@ -106,7 +109,7 @@ export class HomeDashboardComponent implements OnInit {
             debugger;
             this.loading = true;
             this.userName = localStorage.getItem('username');
-            var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
+            var PermittedApps = this.LoginUserDetail[0]["applicationRolePermission"];
 
             if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {
               this.route.navigate(["/auth/selectplan"]);
@@ -133,7 +136,8 @@ export class HomeDashboardComponent implements OnInit {
                 this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
                 this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
                 this.SubOrgId = +this.tokenStorage.getSubOrgId();
-                this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
+                this.filterOrgSubOrgBatchId =globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+                this.filterOrgSubOrg =globalconstants.getOrgSubOrgFilter(this.tokenStorage);
                 this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
                 this.SelectedAppName = this.tokenStorage.getSelectedAppName();
                 this.getBatches();
@@ -182,7 +186,7 @@ export class HomeDashboardComponent implements OnInit {
     //let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
     //console.log("in dashboard")
-    strFilter = "PlanId eq " + this.loginUserDetail[0]["planId"] + " and Active eq 1 and ApplicationId eq " + pSelectedAppId;
+    strFilter = "PlanId eq " + this.LoginUserDetail[0]["planId"] + " and Active eq 1 and ApplicationId eq " + pSelectedAppId;
 
     let list: List = new List();
     list.fields = [
@@ -200,7 +204,7 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list).subscribe((data: any) => {
       this.sideMenu = [];
       data.value.forEach(m => {
-        permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
+        permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
         if (permission.length > 0 && permission[0].permission != 'deny') {
           m.PageId = m.Page.PageId;
           m.PageTitle = m.Page.PageTitle;
@@ -242,16 +246,29 @@ export class HomeDashboardComponent implements OnInit {
     let list: List = new List();
     list.fields = ["OrganizationId", "OrganizationName", "ValidTo", "ValidFrom"];
     list.PageName = "Organizations";
-    list.filter = ["Active eq 1 and OrganizationId eq " + this.loginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrganizationId eq " + this.LoginUserDetail[0]["orgId"]];
     //debugger;
     return this.dataservice.get(list)
 
   }
   ValueChanged = false;
   ChangeApplication() {
+    debugger;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     this.SelectedAppName = this.PermittedApplications.filter(f => f.applicationId == SelectedAppId)[0].applicationName
     this.ValueChanged = true;
+    if (SelectedAppId > 0) {
+      var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
+      this.SelectedAppName = selectedApp[0].applicationName;
+      this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, SelectedAppId)
+        .subscribe((data: any) => {
+          this.tokenStorage.saveMasterData([...data.value]);
+          this.allMasterData = [...data.value];
+          this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.SUBORGANIZAION)
+          this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
+        });
+    }
+
   }
   changebatch() {
     this.ValueChanged = true;
@@ -261,6 +278,9 @@ export class HomeDashboardComponent implements OnInit {
     this.SelectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     var _SubOrgId = this.searchForm.get("searchSubOrgId").value;
+    this.SubOrgId = _SubOrgId;
+    this.tokenStorage.saveSubOrgId(_SubOrgId);
+
     if (this.SelectedBatchId > 0)
       this.SaveBatchIds(this.SelectedBatchId);
     else {
@@ -290,8 +310,8 @@ export class HomeDashboardComponent implements OnInit {
       //   this.GetStudentClass(SelectedAppId, selectedApp[0]);
       // else
       this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
-      this.GetMasterData(SelectedAppId, selectedApp[0]);
-
+      //this.GetMasterData(SelectedAppId);
+      this.GetFeatureAndStudentDetail(SelectedAppId, selectedApp[0]);
     }
     else {
       this.loading = false; this.PageLoading = false;
@@ -299,63 +319,63 @@ export class HomeDashboardComponent implements OnInit {
       return;
     }
   }
+  AppSelected() {
+
+  }
   allMasterData = [];
   SubOrganization = [];
   Sections = [];
   Classes = [];
-  GetMasterData(SelectedAppId, selectedApp) {
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SubOrgId, SelectedAppId)
+  // GetMasterData(SelectedAppId) {
+  //   return this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, SelectedAppId)
+
+  // }
+  GetFeatureAndStudentDetail(SelectedAppId, selectedApp) {
+
+
+    this.contentservice.GetCustomFeature(SelectedAppId, this.LoginUserDetail[0]["RoleUsers"][0].roleId, this.SubOrgId, this.LoginUserDetail[0]['orgId'])
       .subscribe((data: any) => {
-        this.tokenStorage.saveMasterData([...data.value]);
-        ///
-        this.allMasterData = [...data.value];
-        this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.SUBORGANIZAION)
-        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        data.value.forEach(item => {
+          var feature = this.LoginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
+          if (feature.length == 0) {
+            this.LoginUserDetail[0]['applicationRolePermission'].push({
+              'planFeatureId': 0,
+              'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
+              'roleId': item.RoleId,
+              'permissionId': item.PermissionId,
+              'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
+              'applicationName': selectedApp.applicationName,
+              'applicationId': item.ApplicationId,
+              'appShortName': selectedApp.appShortName,
+              'faIcon': '',
+              'label': '',
+              'link': ''
+            })
+          }
+        });
+        this.tokenStorage.saveUserdetail(this.LoginUserDetail);
+        this.tokenStorage.saveCustomFeature(data.value);
+        this.SelectedAppName = selectedApp.applicationName;
 
-        this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
-          .subscribe((data: any) => {
-            data.value.forEach(item => {
-              var feature = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
-              if (feature.length == 0) {
-                this.loginUserDetail[0]['applicationRolePermission'].push({
-                  'planFeatureId': 0,
-                  'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
-                  'roleId': item.RoleId,
-                  'permissionId': item.PermissionId,
-                  'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
-                  'applicationName': selectedApp.applicationName,
-                  'applicationId': item.ApplicationId,
-                  'appShortName': selectedApp.appShortName,
-                  'faIcon': '',
-                  'label': '',
-                  'link': ''
-                })
-              }
-            });
-            this.tokenStorage.saveUserdetail(this.loginUserDetail);
-            this.tokenStorage.saveCustomFeature(data.value);
-            this.SelectedAppName = selectedApp.applicationName;
+        if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
+          this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+            this.Classes = [...data.value];
 
-            if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
-              this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-              this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-                this.Classes = [...data.value];
-
-                let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
-                //if selected batch is current batch.
-                if (this.CurrentBatchId == this.SelectedBatchId)
-                  this.GetStudents(obj);
-                else
-                  this.GetStudentClass(obj.appShortName);
-              })
-            }
-            else {
-              if (this.Submitted)
-                this.route.navigate(['/', selectedApp.appShortName]);
-            }
-          });
-      })
+            let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+            //if selected batch is current batch.
+            if (this.CurrentBatchId == this.SelectedBatchId)
+              this.GetStudents(obj);
+            else
+              this.GetStudentClass(obj.appShortName);
+          })
+        }
+        else {
+          if (this.Submitted)
+            this.route.navigate(['/', selectedApp.appShortName]);
+        }
+      });
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
@@ -401,6 +421,7 @@ export class HomeDashboardComponent implements OnInit {
     this.tokenStorage.saveNextBatchId(_nextBatchId.toString());
   }
   getBatches() {
+
     var currentbatchfilter = '';
     if (this.Role != 'Admin')
       currentbatchfilter = ' and CurrentBatch eq 1';
@@ -414,7 +435,7 @@ export class HomeDashboardComponent implements OnInit {
       "CurrentBatch",
       "Active"];
     list.PageName = "Batches";
-    list.filter = ["Active eq 1 and OrgId eq " + this.loginUserDetail[0]["orgId"] + currentbatchfilter];
+    list.filter = [this.filterOrgSubOrg + " and Active eq 1" + currentbatchfilter];
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
       this.tokenStorage.saveBatches(this.Batches)
@@ -437,7 +458,16 @@ export class HomeDashboardComponent implements OnInit {
       ////////////
 
       if (this.SelectedAppId > 0) {
-        this.GetMasterData(this.SelectedAppId, this.SelectedAppName);
+
+        this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
+          .subscribe((data: any) => {
+            this.tokenStorage.saveMasterData([...data.value]);
+            this.allMasterData = [...data.value];
+            this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.SUBORGANIZAION)
+            this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
+          });
+
+        this.GetMenuData(this.SelectedAppId);
       }
       //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
       if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
@@ -448,13 +478,13 @@ export class HomeDashboardComponent implements OnInit {
           this.GetStudentClass(obj.appShortName);
       }
 
-      if (this.SelectedAppId > 0) {
-        this.contentservice.GetCommonMasterData(this.loginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
-          .subscribe((data: any) => {
-            this.tokenStorage.saveMasterData(data.value);
-          })
-        this.GetMenuData(this.SelectedAppId);
-      }
+      // if (this.SelectedAppId > 0) {
+      //   // this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
+      //   //   .subscribe((data: any) => {
+      //   //     this.tokenStorage.saveMasterData(data.value);
+      //   //   })
+      //   this.GetMenuData(this.SelectedAppId);
+      // }
       /////////////
 
       this.loading = false; this.PageLoading = false;
@@ -463,14 +493,15 @@ export class HomeDashboardComponent implements OnInit {
   Students = [];
   StudentClasses = [];
   GetStudentClass(appShortName) {
-    var standardfilter = "OrgId eq " + this.loginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId + " and SubOrgId eq " + this.SubOrgId;
+    //var filterOrgSubOrgBatchId =globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+    //  this.FilterOrgSubOrg +
+    //   " and BatchId eq " + this.SelectedBatchId ;
     let list: List = new List();
     list.fields = [
       "StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active"
     ];
-    if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
-      standardfilter += " and StudentId eq " + localStorage.getItem("studentId");
+    if (this.LoginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
+      this.filterOrgSubOrgBatchId += " and StudentId eq " + localStorage.getItem("studentId");
     }
     list.PageName = "StudentClasses";
     list.lookupFields = ["Student($select=StudentId," +
@@ -478,7 +509,7 @@ export class HomeDashboardComponent implements OnInit {
       "GenderId,HouseId,EmailAddress,UserId,ReasonForLeavingId,AdmissionStatusId)"];
 
 
-    list.filter = [standardfilter];
+    list.filter = [this.filterOrgSubOrgBatchId];
     this.loading = true;
     this.PageLoading = true;
     this.dataservice.get(list)
@@ -535,7 +566,7 @@ export class HomeDashboardComponent implements OnInit {
   }
 
   GetStudents(selectedApp) {
-
+    //var filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     this.Students = [];
     let list: List = new List();
     list.fields = [
@@ -558,14 +589,15 @@ export class HomeDashboardComponent implements OnInit {
       "AdmissionStatusId"
     ];
     list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + " and SubOrgId eq " + this.SubOrgId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
+    list.lookupFields = ["StudentClasses($filter="+ this.filterOrgSubOrgBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
 
-    var standardfilter = 'OrgId eq ' + this.loginUserDetail[0]["orgId"] +
-      ' and BatchId eq ' + this.SelectedBatchId + ' and SubOrgId eq ' + this.SubOrgId;
-    if (this.loginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
-      standardfilter += " and StudentId eq " + localStorage.getItem("studentId");
+    
+    //  'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+    //   ' and BatchId eq ' + this.SelectedBatchId + ' and SubOrgId eq ' + this.SubOrgId;
+    if (this.LoginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
+      this.filterOrgSubOrgBatchId += " and StudentId eq " + localStorage.getItem("studentId");
     }
-    list.filter = [standardfilter];
+    list.filter = [this.filterOrgSubOrgBatchId];
     this.loading = true;
     this.PageLoading = true;
     this.dataservice.get(list)

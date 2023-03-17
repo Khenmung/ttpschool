@@ -80,7 +80,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     
     private contentservice: ContentService,
     private nav: Router,
@@ -111,12 +111,12 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
       this.DropDownMonths = this.GetSessionFormattedMonths();
       this.GetOrganizations();
       this.GetCustomerPlans();
@@ -224,7 +224,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
   }
   GetCustomerInvoiceComponents() {
 
-    var orgIdSearchstr = " and OrgId eq " + this.LoginUserDetail[0]["orgId"]
+    var orgIdSearchstr = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     let list: List = new List();
     list.fields = [
       "CustomerInvoiceComponentId",
@@ -236,7 +236,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
 
     list.PageName = this.InvoiceComponentListName;
     //list.lookupFields = ["CustomerInvoice"]
-    list.filter = ["Active eq 1" + orgIdSearchstr];
+    list.filter = [orgIdSearchstr + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -419,7 +419,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {

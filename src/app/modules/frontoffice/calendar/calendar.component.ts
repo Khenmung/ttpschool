@@ -30,6 +30,7 @@ import * as moment from 'moment';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import {SwUpdate} from '@angular/service-worker';
 import { MatTableDataSource } from '@angular/material/table';
+import { getMatIconFailedToSanitizeUrlError } from '@angular/material/icon';
 
 const colors: any = {
   red: {
@@ -74,7 +75,8 @@ export class DemoComponent implements OnInit { PageLoading=true;
   EventsListName = 'Events';
   HolidayListName = 'Holidays';
   view: CalendarView = CalendarView.Month;
-
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   CalendarView = CalendarView;
   //CalendarView.setOption('height', 700);
 
@@ -155,6 +157,8 @@ export class DemoComponent implements OnInit { PageLoading=true;
   ) {
     this.LoginUserDetail = this.tokenservice.getUserDetail();
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+    this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenservice);
+    this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenservice);
     this.GetEvents();
   }
   ngOnInit(): void {
@@ -244,7 +248,7 @@ dataSource:MatTableDataSource<any>;
   async GetEvents() {
     //debugger;
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
 
     let list: List = new List();
     list.fields = ["*"];
@@ -380,7 +384,7 @@ dataSource:MatTableDataSource<any>;
   //   debugger;
 
   //   this.loading = true;
-  //   let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+  //   let filterStr = 'Active eq 1 and (' + this.FilterOrgSubOrg +") and BatchId eq " + this.SelectedBatchId;
 
   //   let list: List = new List();
   //   list.fields = ["*"];

@@ -45,7 +45,9 @@ export class PromoteclassComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StandardFilterWithBatchId = '';
+  
+  FilterOrgSubOrgBatchId= '';
+  FilterOrgSubOrg = '';
   StandardFilterWithPreviousBatchId = '';
   SameClassPreviousBatch = "SameClassPreviousBatch";
   PreviousClassPreviousBatch = "PreviousClassPreviousBatch";
@@ -119,7 +121,7 @@ export class PromoteclassComponent implements OnInit {
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private route: Router,
     private nav: Router,
     private shareddata: SharedataService,
@@ -173,31 +175,33 @@ export class PromoteclassComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
       })
-      this.Batches = this.tokenstorage.getBatches()
+      this.Batches = this.tokenStorage.getBatches()
 
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
-      this.CurrentBatchStudents = this.tokenstorage.getStudents();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      this.NextBatchId = +this.tokenstorage.getNextBatchId();
-      this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-      this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
-      this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
+      this.CurrentBatchStudents = this.tokenStorage.getStudents();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.NextBatchId = +this.tokenStorage.getNextBatchId();
+      this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage);
 
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
-      this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
+      this.checkBatchIdNSelectedIdEqual = +this.tokenStorage.getCheckEqualBatchId();
       ////console.log('selected batchid', this.SelectedBatchId);
       ////console.log('current batchid', this.CurrentBatchId)
       if (this.PromotePermission == 'read')
@@ -214,7 +218,7 @@ export class PromoteclassComponent implements OnInit {
       //this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
       this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
       //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-      this.Batches = this.tokenstorage.getBatches()
+      this.Batches = this.tokenStorage.getBatches()
 
       if (this.Classes.length == 0 || this.FeeTypes.length == 0 || this.Sections.length == 0) {
         this.GetMasterData();
@@ -302,7 +306,7 @@ export class PromoteclassComponent implements OnInit {
   }
   GenerateRollNo() {
 
-    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId;
+    let filterStr = this.FilterOrgSubOrgBatchId;// ' (' + this.FilterOrgSubOrg +") and SubOrgId eq " + this.SubOrgId;
     var _gendersort = this.searchForm.get("searchGenderAscDesc").value;
     var _namesort = this.searchForm.get("searchNameAscDesc").value;
     if (_gendersort == 0) {
@@ -331,7 +335,7 @@ export class PromoteclassComponent implements OnInit {
     //   this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
+    //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
       this.loading = false; this.PageLoading = false;
@@ -494,7 +498,7 @@ export class PromoteclassComponent implements OnInit {
   }
   // promotePreviousBatch() {
   //   //debugger;
-  //   var previousBatchId = +this.tokenstorage.getPreviousBatchId();
+  //   var previousBatchId = +this.tokenStorage.getPreviousBatchId();
   //   this.SelectedBatchId = previousBatchId;
   //   this.GetStudentClasses(0);
   // }
@@ -506,11 +510,11 @@ export class PromoteclassComponent implements OnInit {
   }
   GetFeeTypes() {
     this.loading = true;
-    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.SubOrgId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -523,7 +527,7 @@ export class PromoteclassComponent implements OnInit {
 
   SetLabel() {
     let _classId = this.searchForm.get("searchClassId").value;
-    let _previousBathId = +this.tokenstorage.getPreviousBatchId();
+    let _previousBathId = +this.tokenStorage.getPreviousBatchId();
     let _currentClassIndex = this.Classes.findIndex(s => s.ClassId == _classId);
     let _previousClassName = '', _sameClassName;
     if (_currentClassIndex > 0)
@@ -550,8 +554,8 @@ export class PromoteclassComponent implements OnInit {
   }
 
   GetExams() {
-    var previousBatchId = this.tokenstorage.getPreviousBatchId();
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, previousBatchId,1)
+    var previousBatchId = this.tokenStorage.getPreviousBatchId();
+    this.contentservice.GetExams(this.StandardFilterWithPreviousBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(e => {
@@ -599,7 +603,7 @@ export class PromoteclassComponent implements OnInit {
       }
     }
     else {
-      filterStr = this.StandardFilterWithBatchId;
+      filterStr = this.FilterOrgSubOrgBatchId;
       if (_classId > 0)
         filterStr += " and ClassId eq " + _classId;
     }
@@ -792,9 +796,9 @@ export class PromoteclassComponent implements OnInit {
     }
 
     this.StudentId = element.StudentId;
-    this.tokenstorage.saveStudentClassId(this.StudentClassId + "");
-    this.tokenstorage.saveClassId(_ClassId + "");
-    this.tokenstorage.saveStudentId(this.StudentId + "");
+    this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
+    this.tokenStorage.saveClassId(_ClassId + "");
+    this.tokenStorage.saveStudentId(this.StudentId + "");
 
   }
   generateDetail(element) {
@@ -819,8 +823,8 @@ export class PromoteclassComponent implements OnInit {
     this.shareddata.ChangeStudentName(StudentName);
 
     //this.shareddata.ChangeStudentClassId(this.StudentClassId);
-    this.tokenstorage.saveStudentClassId(this.StudentClassId.toString());
-    this.tokenstorage.saveStudentId(element.StudentId);
+    this.tokenStorage.saveStudentClassId(this.StudentClassId.toString());
+    this.tokenStorage.saveStudentId(element.StudentId);
     //this.shareddata.ChangeStudentId(element.StudentId);
     this.SaveIds(element);
     this.route.navigate(['/edu/feepayment']);
@@ -887,7 +891,7 @@ export class PromoteclassComponent implements OnInit {
 
               var ClassStrength = data.value.length;
               ClassStrength += 1;
-              var _batchName = this.tokenstorage.getSelectedBatchName();
+              var _batchName = this.tokenStorage.getSelectedBatchName();
               //var _admissionNo = this.searchForm.get("AdmissionNo").value;
               var _year = _batchName.split('-')[0].trim();
               //var _year = new Date().getFullYear();
@@ -960,8 +964,8 @@ export class PromoteclassComponent implements OnInit {
           else {
             this.CurrentBatchStudents.push(NewStudentFromPrevious[0]);
           }
-          this.tokenstorage.saveStudents(this.CurrentBatchStudents);
-          this.CurrentBatchStudents = this.tokenstorage.getStudents();
+          this.tokenStorage.saveStudents(this.CurrentBatchStudents);
+          this.CurrentBatchStudents = this.tokenStorage.getStudents();
 
           //this.RowsToUpdate--;
           if (this.RowsToUpdate == 0) {
@@ -991,12 +995,12 @@ export class PromoteclassComponent implements OnInit {
   CreateInvoice(row) {
     debugger;
     this.loading = true;
-    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+    this.contentservice.GetClassFeeWithFeeDefinition(this.FilterOrgSubOrgBatchId, 0)
       .subscribe((datacls: any) => {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0, row.StudentClassId, 0)
+        this.contentservice.getStudentClassWithFeeType(this.FilterOrgSubOrgBatchId, 0, row.StudentClassId, 0)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
@@ -1062,9 +1066,8 @@ export class PromoteclassComponent implements OnInit {
 
     //var _classId = this.searchForm.get("searchClassId").value;
     //var _sectionId = this.searchForm.get("searchSectionId").value;
-    let filterstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"]  + " and SubOrgId eq " + this.SubOrgId +
-      " and ExamId eq " + _examId +
-      " and BatchId eq " + pBatchId;
+    let filterstr = this.FilterOrgSubOrgBatchId +
+      " and ExamId eq " + _examId;
 
     if (_PId > 0) {
       let studId = this.PreviousBatchStudents.filter(s => s["PID"] == _PId);
@@ -1110,13 +1113,14 @@ export class PromoteclassComponent implements OnInit {
 
     list.PageName = "Students";
     //list.lookupFields = ["Student"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]  + " and SubOrgId eq " + this.SubOrgId + ' and BatchId eq ' + this.PreviousBatchId + ' and Active eq 1'];
+    // 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]  + " and SubOrgId eq " + this.SubOrgId + ' and BatchId eq ' + this.PreviousBatchId
+    list.filter = [this.StandardFilterWithPreviousBatchId + ' and Active eq 1'];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
-        var _students: any = [...data.value]; //this.tokenstorage.getStudents();
+        var _students: any = [...data.value]; //this.tokenStorage.getStudents();
         //_students = _students.filter(a => a.Active == 1);
         this.PreviousBatchStudents = _students.map(student => {
           var _lastname = student.LastName == null ? '' : " " + student.LastName;
@@ -1131,7 +1135,7 @@ export class PromoteclassComponent implements OnInit {
       })
   }
   GetMasterData() {
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     // this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
     //   .subscribe((data: any) => {
     //     debugger;
@@ -1149,7 +1153,7 @@ export class PromoteclassComponent implements OnInit {
     // });
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

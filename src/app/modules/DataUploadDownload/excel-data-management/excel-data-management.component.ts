@@ -30,7 +30,7 @@ export class ExcelDataManagementComponent implements OnInit {
     private dataservice: NaomitsuService,
     private fb: UntypedFormBuilder,
     private shareddata: SharedataService,
-    private tokenservice: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private employee: employee,
     private studentActivity: StudentActivity,
   ) {
@@ -60,7 +60,7 @@ export class ExcelDataManagementComponent implements OnInit {
     //this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
     //this.GetMasterData();
     this.loading = true;
-    this.loginDetail = this.tokenservice.getUserDetail();
+    this.loginDetail = this.tokenStorage.getUserDetail();
     this.shareddata.CurrentGenders.subscribe(c => (this.Genders = c));
     this.shareddata.CurrentBloodgroup.subscribe(c => (this.Bloodgroup = c));
     this.shareddata.CurrentCategory.subscribe(c => (this.Category = c));
@@ -69,29 +69,29 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentPrimaryContact.subscribe(c => (this.PrimaryContact = c));
     this.shareddata.CurrentLocation.subscribe(c => (this.Location = c));
 
-    this.contentservice.GetClasses(this.loginDetail[0]["orgId"]).subscribe((data: any) => {
+    this.contentservice.GetClasses(this.filterOrgId).subscribe((data: any) => {
       this.Classes = [...data.value];
 
     });
-    this.Batches = this.tokenservice.getBatches();
+    this.Batches = this.tokenStorage.getBatches();
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
     this.shareddata.CurrentUploadType.subscribe(c => (this.UploadTypes = c));
-    this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-    this.SubOrgId = +this.tokenservice.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
 
     this.uploadForm = this.fb.group({
       UploadTypeId: [0, [Validators.required]]
     })
-    this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenservice);
-    this.filterOrgId = globalconstants.getOrgSubOrgFilter(this.loginDetail,this.SubOrgId);
+    this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+    this.filterOrgId = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.PageLoad();
   }
   PageLoad() {
     debugger;
-    this.SelectedApplicationId = +this.tokenservice.getSelectedAPPId();
-    var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.DATA.UPLOAD);
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.UPLOAD);
     if (perObj.length > 0)
       this.Permission = perObj[0].permission;
     if (this.Permission == 'deny') {
@@ -99,7 +99,7 @@ export class ExcelDataManagementComponent implements OnInit {
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
-      var PermittedApplications = this.tokenservice.getPermittedApplications();
+      var PermittedApplications = this.tokenStorage.getPermittedApplications();
       var apps = PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)
       if (apps.length > 0) {
         this.SelectedApplicationName = apps[0].appShortName;
@@ -663,6 +663,7 @@ export class ExcelDataManagementComponent implements OnInit {
         element.IDMark = '';
 
       element.OrgId = this.loginDetail[0]["orgId"];
+      element.SubOrgId = this.SubOrgId;
 
       var _nonManadatory = this.ColumnsOfSelectedReports.filter(f => f.Active == 0);
       _nonManadatory.forEach(f => {
@@ -720,6 +721,7 @@ export class ExcelDataManagementComponent implements OnInit {
               element.StudentClassId = StudentClsFilter[0].StudentClassId;
             element.CreatedDate = element.ActivityDate;
             element.OrgId = this.loginDetail[0]["orgId"];
+            element.SubOrgId = this.SubOrgId;
             this.ELEMENT_DATA.push(element);
             //}
           })
@@ -1241,7 +1243,7 @@ export class ExcelDataManagementComponent implements OnInit {
   save() {
     var toInsert = [];
     this.loading = true;
-    this.contentservice.GetStudentMaxPID(this.loginDetail[0]["orgId"])
+    this.contentservice.GetStudentMaxPID(this.filterOrgId)
       .subscribe((data: any) => {
         var _MaxPID = 1;
         if (data.value.length > 0) {
@@ -1290,6 +1292,7 @@ export class ExcelDataManagementComponent implements OnInit {
             "MotherOccupation": row["MotherOccupation"],
             "NameOfContactPerson": row["NameOfContactPerson"],
             "OrgId": +row["OrgId"],
+            "SubOrgId": +row["SubOrgId"],
             "ParentDeclaration": +row["ParentDeclaration"],
             "PermanentAddress": row["PermanentAddress"],
             "PermanentAddressCityId": +row["PermanentAddressCityId"],
@@ -1377,7 +1380,7 @@ export class ExcelDataManagementComponent implements OnInit {
         })
   }
   GetStudentClasses() {
-    this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenservice);
+    this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
     list.fields = ["StudentId", "StudentClassId", "ClassId"];
@@ -1399,7 +1402,7 @@ export class ExcelDataManagementComponent implements OnInit {
   }
 
   GetClassEvaluations() {
-    //this.filterOrgIdNBatchId = globalconstants.gt.getOrgSubOrgBatchIdFilter(this.tokenservice);
+    //this.filterOrgIdNBatchId = globalconstants.gt.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
     list.fields = ["ClassEvaluationId", "Description", "ClassId"];
@@ -1439,7 +1442,7 @@ export class ExcelDataManagementComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var _students: any = [...data.value];// this.tokenservice.getStudents();
+        var _students: any = [...data.value];// this.tokenStorage.getStudents();
         this.StudentList = _students.filter(s => s.Active == 1);
         this.StudentList = this.StudentList.sort((a, b) => a.ParentId - b.ParentId);
         this.NoOfStudent = this.StudentList.length;
@@ -1489,8 +1492,8 @@ export class ExcelDataManagementComponent implements OnInit {
 
         }
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.tokenservice.getBatches();
-        this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+        this.Batches = this.tokenStorage.getBatches();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.loading = false;
         this.PageLoading = false;
 
@@ -1499,7 +1502,7 @@ export class ExcelDataManagementComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenservice, this.AllMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.AllMasterData);
     // let Id = this.AllMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;

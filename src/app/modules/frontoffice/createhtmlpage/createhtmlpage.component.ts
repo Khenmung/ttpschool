@@ -208,6 +208,7 @@ export class CreatehtmlpageComponent implements OnInit {
   Applications = [];
   ckeConfig: any;
   loading = false;
+  FilterOrgSubOrg='';
   SelectedBatchId = 0;SubOrgId = 0;
   RulesOrPolicyList: IRulesOrPolicy[] = [];
   filteredOptions: Observable<IRulesOrPolicy[]>;
@@ -238,7 +239,7 @@ export class CreatehtmlpageComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fileUploadService: FileUploadService,
     private fb: UntypedFormBuilder
@@ -270,15 +271,15 @@ export class CreatehtmlpageComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    //this.EmployeeId = +this.tokenStorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.CREATEHTMLPAGE);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.misc.CREATEHTMLPAGE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -287,6 +288,7 @@ export class CreatehtmlpageComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         //this.ckeConfig = {};
         this.ckeConfig = {
           allowedContent: false,
@@ -327,6 +329,7 @@ export class CreatehtmlpageComponent implements OnInit {
     this.formdata.append("batchId", "0");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
     this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("subOrgId", this.SubOrgId+"");
     this.formdata.append("pageId", "0");
 
     this.formdata.append("studentId", "0");
@@ -389,8 +392,7 @@ export class CreatehtmlpageComponent implements OnInit {
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     var _rulesOrPolicyId = this.searchForm.get("RulesOrPolicyId").value;
     var _active = this.searchForm.get("Active").value;
-    let checkFilterString = "Title eq '" + globalconstants.encodeSpecialChars(_title) +
-      "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString = this.FilterOrgSubOrg + " and Title eq '" + globalconstants.encodeSpecialChars(_title);
     if (_title.length == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -478,7 +480,7 @@ export class CreatehtmlpageComponent implements OnInit {
   FileNames = [];
   GetRulesOrPolicys() {
     debugger;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _fields = ["CategoryId", "RulesOrPolicyId", "Title"];
 
     this.loading = true;
@@ -505,7 +507,7 @@ export class CreatehtmlpageComponent implements OnInit {
   }
   GetRulesOrPolicy() {
     debugger;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _searchId = this.searchForm.get("searchId").value;
     //var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
     var _fields = ["RulesOrPolicyId", "CategoryId", "Title", "Description"];
@@ -541,7 +543,7 @@ export class CreatehtmlpageComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.PageCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.PAGECATEGORY)
     this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
 
@@ -549,7 +551,7 @@ export class CreatehtmlpageComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

@@ -30,7 +30,8 @@ export class StudentActivityComponent implements OnInit {
   StudentClassId = 0;
   ClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   AchievementAndPoints = [];
   ActivityCategory = [];
@@ -80,7 +81,7 @@ export class StudentActivityComponent implements OnInit {
     private dialog: MatDialog,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -109,7 +110,7 @@ export class StudentActivityComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Students.slice())
       );
-    this.ClassId = this.tokenstorage.getClassId();
+    this.ClassId = this.tokenStorage.getClassId();
     this.PageLoad();
 
   }
@@ -125,24 +126,26 @@ export class StudentActivityComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.StudentClassId = this.tokenstorage.getStudentClassId();
+        this.StudentClassId = this.tokenStorage.getStudentClassId();
 
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
 
         if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
             this.loading = false;
           });
@@ -239,20 +242,18 @@ export class StudentActivityComponent implements OnInit {
       return;
     }
 
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let checkFilterString = "RankId eq " + row.RankId +
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and RankId eq " + row.RankId +
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +
       " and CategoryId eq " + row.CategoryId +
       " and SubCategoryId eq " + row.SubCategoryId +
-      " and BatchId eq " + this.SelectedBatchId +
       " and Active eq " + row.Active;
     this.RowsToUpdate = 0;
 
     if (row.SportResultId > 0)
       checkFilterString += " and SportResultId ne " + row.SportResultId;
-    checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
     list.fields = ["SportResultId"];
     list.PageName = "SportResults";
@@ -288,6 +289,7 @@ export class StudentActivityComponent implements OnInit {
               SessionId: row.SessionId,
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"],
+              SubOrgId: this.SubOrgId,
               BatchId: row.BatchId
             });
 
@@ -347,7 +349,7 @@ export class StudentActivityComponent implements OnInit {
  
   GetSportsResult() {
     debugger;
-    var filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterStr = this.FilterOrgSubOrgBatchId;// "OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
 
     var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
@@ -367,34 +369,7 @@ export class StudentActivityComponent implements OnInit {
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;
     }
-    // if (_SportsNameId > 0) {
-    //   filterStr += " and SportsNameId eq " + _SportsNameId;
-    // }
-    // if(_SessionId==0) {
-    //   this.loading = false;
-    //   this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
-    // else
-    // if (_SessionId > 0) {
-    //   filterStr += " and SessionId eq " + _SessionId;
-    // }
-
-    // if (_categoryId > 0) {
-    //   filterStr += " and CategoryId eq " + _categoryId;
-    // }
-    // if (_subCategoryId > 0) {
-    //   filterStr += " and SubCategoryId eq " + _subCategoryId;
-    // }
-    // else {
-    //   this.loading = false;
-    //   this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
-    // if (_SessionId > 0) {
-    //   filterStr += " and SessionId eq " + _SessionId;
-    // }
-    
+   
     this.loading = true;
     this.SportsResultList = [];
 
@@ -466,7 +441,7 @@ export class StudentActivityComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
     this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
     this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
@@ -559,7 +534,7 @@ export class StudentActivityComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
@@ -577,7 +552,7 @@ export class StudentActivityComponent implements OnInit {
 
   GetStudentClasses() {
     //debugger;
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
@@ -593,7 +568,7 @@ export class StudentActivityComponent implements OnInit {
   GetStudents() {
     this.loading = true;
     this.Students = [];
-    var _students: any = this.tokenstorage.getStudents();
+    var _students: any = this.tokenStorage.getStudents();
     //if (_students.length > 0) {
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;

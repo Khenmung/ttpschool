@@ -35,7 +35,8 @@ export class GenerateCertificateComponent implements OnInit {
   Permission = '';
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   SelectedBatchId = 0;SubOrgId = 0;
   DisplayColumn = [];
   GeneratedCertificatelist = [];
@@ -103,7 +104,7 @@ export class GenerateCertificateComponent implements OnInit {
     @Inject(DOCUMENT) private document: Document,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -161,26 +162,29 @@ export class GenerateCertificateComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.StudentClassId = +this.tokenstorage.getStudentClassId();
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SPECIALFEATURE.GENERATECERTIFICATE);
+      this.StudentClassId = +this.tokenStorage.getStudentClassId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SPECIALFEATURE.GENERATECERTIFICATE);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
       if (this.Permission != 'deny') {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
         this.GetAllCertificateConfig();
@@ -197,8 +201,8 @@ export class GenerateCertificateComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>(this.GeneratedCertificatelist);
   }
   GetStudentAndGenerateCerts() {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1';
+    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var filterstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';
     let list: List = new List();
 
     if (this.StudentClassId == 0) {
@@ -257,7 +261,7 @@ export class GenerateCertificateComponent implements OnInit {
         "RelationWithContactPerson," +
         "ContactPersonContactNo," +
         "ReasonForLeavingId)"];
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [filterstr];
 
     this.dataservice.get(list).subscribe((data: any) => {
       if (this.StudentClassId == 0) {
@@ -428,7 +432,7 @@ export class GenerateCertificateComponent implements OnInit {
   ];
   GetExamGrandTotal() {
     debugger;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg + ' and Active eq 1';
     var _examId = this.searchForm.get("searchExamId").value;
 
     filterStr += ' and StudentClassId eq ' + this.StudentClassId;
@@ -580,7 +584,7 @@ export class GenerateCertificateComponent implements OnInit {
   
   GetGeneratedCertificate() {
     debugger;
-    var filterstr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var filterstr = this.FilterOrgSubOrg + ' and Active eq true';
     var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
     var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     var _certificationTypeId = this.searchForm.get("searchCertificateTypeId").value;
@@ -736,6 +740,7 @@ export class GenerateCertificateComponent implements OnInit {
             ActivityId: _SportsNameId,
             SessionId: _SessionId,
             OrgId: this.LoginUserDetail[0]["orgId"],
+            SubOrgId: this.SubOrgId,
             IssuedDate: new Date(),
             CreatedDate: new Date(),
             CreatedBy: this.LoginUserDetail[0]["userId"],
@@ -802,7 +807,7 @@ export class GenerateCertificateComponent implements OnInit {
   Groups = [];
   GetMasterData() {
     debugger;
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
     this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
     this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
@@ -846,11 +851,12 @@ export class GenerateCertificateComponent implements OnInit {
     this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
     this.GetPoints();
     //this.shareddata.ChangeBatch(this.Batches);
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClassGroups(filterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
       });
-    this.Batches = this.tokenstorage.getBatches()
+    this.Batches = this.tokenStorage.getBatches()
     //this.GetStudentClasses();
     this.GetOrganization();
     //this.GetTotalAttendance();
@@ -864,7 +870,7 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetStudentClasses() {
     debugger;
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
@@ -945,7 +951,7 @@ export class GenerateCertificateComponent implements OnInit {
     //this.Students = [...data.value];
     //  //console.log('data.value', data.value);
     this.Students = [];
-    var _students: any = this.tokenstorage.getStudents();
+    var _students: any = this.tokenStorage.getStudents();
     if (_students.length > 0) {
 
       //var _students = [...data.value];
@@ -991,7 +997,7 @@ export class GenerateCertificateComponent implements OnInit {
   ActivityDisplayColumn = ["GroupName", "SportsName", "Category", "SubCategory", "Session", "Action"];
   GetSportsResult() {
     debugger;
-    var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterStr = this.FilterOrgSubOrg + " and Active eq 1";
     var _searchStudentGroupId = this.searchForm.get("searchStudentGroupId").value;
     var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
@@ -1317,8 +1323,7 @@ export class GenerateCertificateComponent implements OnInit {
     ];
     list.PageName = "Attendances";
     //list.lookupFields = ["StudentClass($select=RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and StudentClassId eq " + this.StudentClassId + " and BatchId eq " + this.SelectedBatchId];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and StudentClassId eq " + this.StudentClassId];
 
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
@@ -1373,7 +1378,7 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetExams() {
 
-    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId,1)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId,1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {
@@ -1400,7 +1405,7 @@ export class GenerateCertificateComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 

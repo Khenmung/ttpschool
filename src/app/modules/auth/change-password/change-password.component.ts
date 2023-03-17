@@ -16,7 +16,7 @@ import { AuthService } from '../../../_services/auth.service';
 })
 export class ChangePasswordComponent implements OnInit { PageLoading=true;
   loading = false;
-  loginUserDetail = [];
+  LoginUserDetail = [];
   changepwdForm: UntypedFormGroup;
   isSuccessful = false;
   isSignUpFailed = false;
@@ -53,9 +53,9 @@ export class ChangePasswordComponent implements OnInit { PageLoading=true;
       this.deviceXs = result.mqAlias === "xs" ? true : false;
     });
 
-    this.loginUserDetail = this.tokenService.getUserDetail();
+    this.LoginUserDetail = this.tokenService.getUserDetail();
 
-    if (this.loginUserDetail.length == 0)
+    if (this.LoginUserDetail.length == 0)
       this.route.navigate(['/auth/login']);
     else {
       //this.SelectedApplicationName = this.tokenService.gets
@@ -77,7 +77,7 @@ export class ChangePasswordComponent implements OnInit { PageLoading=true;
     var OldPassword = this.changepwdForm.get("OldPassword").value;
     var NewPassword = this.changepwdForm.get("NewPassword").value;
     var payload = {
-      'UserId': this.loginUserDetail[0]["userId"],
+      'UserId': this.LoginUserDetail[0]["userId"],
       'OldPassword': OldPassword,
       'NewPassword': NewPassword,
       'ConfirmPassword': ConfirmPassword

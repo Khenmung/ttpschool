@@ -29,6 +29,7 @@ export class EvaluationMasterComponent implements OnInit {
   ClassGroups = [];
   loading = false;
   SelectedBatchId = 0;SubOrgId = 0;
+  FilterOrgSubOrg='';
   EvaluationMasterList: IEvaluationMaster[] = [];
   filteredOptions: Observable<IEvaluationMaster[]>;
   dataSource: MatTableDataSource<IEvaluationMaster>;
@@ -68,7 +69,7 @@ export class EvaluationMasterComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private datepipe: DatePipe,
     private dialog: MatDialog,
@@ -96,13 +97,13 @@ export class EvaluationMasterComponent implements OnInit {
     debugger;
     this.loading = true;
     console.log("environment", globalconstants.apiUrl);
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    //this.EmployeeId = +this.tokenStorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONTYPE);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONTYPE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -111,7 +112,7 @@ export class EvaluationMasterComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
         this.EvaluationMasterList=[];
         this.GetEvaluationMaster();
@@ -227,9 +228,8 @@ export class EvaluationMasterComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let checkFilterString = "EvaluationName eq '" + globalconstants.encodeSpecialChars(row.EvaluationName) +
-      " and ClassGroupId eq " + row.ClassGroupId +
-      "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString = this.FilterOrgSubOrg + " and EvaluationName eq '" + globalconstants.encodeSpecialChars(row.EvaluationName) +
+      " and ClassGroupId eq " + row.ClassGroupId ;
 
     if (row.EvaluationMasterId > 0)
       checkFilterString += " and EvaluationMasterId ne " + row.EvaluationMasterId;
@@ -311,7 +311,7 @@ export class EvaluationMasterComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _classGroupId = this.searchForm.get("searchClassGroupId").value;
     var _evaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     //console.log("classgroup",this.ClassGroups)
@@ -394,9 +394,9 @@ export class EvaluationMasterComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
 
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
       });
@@ -405,7 +405,7 @@ export class EvaluationMasterComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

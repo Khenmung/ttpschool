@@ -63,14 +63,13 @@ export class ContentService implements OnInit {
 
     return this.authservice.CallAPI(payload, 'EmailDuplicateCheck');
   }
-  GetExams(pOrgId,SubOrgId, pSelectedBatchId,pReleaseResult) {
+  GetExams(pOrgSubOrgBatchId, pReleaseResult) {
 
-    var _releaseResult='';
-    if(pReleaseResult==0 || pReleaseResult==1)
-    {
-      _releaseResult =" and ReleaseResult eq "+ pReleaseResult;
+    var _releaseResult = '';
+    if (pReleaseResult == 0 || pReleaseResult == 1) {
+      _releaseResult = " and ReleaseResult eq " + pReleaseResult;
     }
-    var orgIdSearchstr = 'OrgId eq ' + pOrgId + " and SubOrgId eq " + SubOrgId + ' and BatchId eq ' + pSelectedBatchId + _releaseResult +" and Active eq 1";
+    var orgIdSearchstr = pOrgSubOrgBatchId + _releaseResult + " and Active eq 1";
 
     let list: List = new List();
     list.fields = [
@@ -87,10 +86,10 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list)
 
   }
-  GetClasses(orgId) {
+  GetClasses(pOrgSubOrgFilter: string) {
     let list = new List();
     list.fields = ["ClassId,ClassName,Sequence,BatchId,OrgId,MinStudent,MaxStudent,StartDate,EndDate"];
-    list.filter = ["OrgId eq " + orgId + " and Active eq 1"];
+    list.filter = [pOrgSubOrgFilter + " and Active eq 1"];
     list.PageName = "ClassMasters";
     list.orderBy = "Sequence";
     return this.dataservice.get(list);
@@ -110,9 +109,9 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list);
 
   }
-  GetExamClassGroup(pOrgId, pExamId) {
+  GetExamClassGroup(pOrgSubOrg, pExamId) {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    var orgIdSearchstr = 'OrgId eq ' + pOrgId + " and Active eq true";
+    var orgIdSearchstr = pOrgSubOrg + " and Active eq true";
     if (pExamId > 0)
       orgIdSearchstr += " and ExamId eq " + pExamId;
 
@@ -126,9 +125,9 @@ export class ContentService implements OnInit {
     list.filter = [orgIdSearchstr];
     return this.dataservice.get(list)
   }
-  GetClassGroups(pOrgId) {
+  GetClassGroups(pOrgSubOrg: string) {
 
-    let filterStr = 'OrgId eq ' + pOrgId; // BatchId eq  + this.SelectedBatchId
+    //let filterStr = 'OrgId eq ' + pOrgId + " and SubOrgId eq " + pSubOrgId; // BatchId eq  + this.SelectedBatchId
     let list: List = new List();
     list.fields = [
       "ClassGroupId",
@@ -138,32 +137,32 @@ export class ContentService implements OnInit {
     ];
 
     list.PageName = "ClassGroups";
-    list.filter = [filterStr];
+    list.filter = [pOrgSubOrg];
     return this.dataservice.get(list);
   }
-  GetStudentGrade(pOrgId) {
-    var orgIdSearchstr = ' and OrgId eq ' + pOrgId
+  GetStudentGrade(pOrgSub) {
+    //var orgIdSearchstr = ' and OrgId eq ' + pOrgId
     //student grade is not batch wise
     //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
 
     list.fields = ["StudentGradeId,ExamId,GradeName,ClassGroupId,SubjectCategoryId,Formula,Sequence,Points"];
     list.PageName = "StudentGrades";
-    list.filter = ["Active eq 1" + orgIdSearchstr];
+    list.filter = [pOrgSub + " and Active eq 1"];
     return this.dataservice.get(list)
   }
-  GetStudentMaxPID(orgId) {
+  GetStudentMaxPID(pOrgSubOrgId) {
     let list: List = new List();
     list.fields = ["PID"];
     list.PageName = "Students";
-    list.filter = ["OrgId eq " + orgId];
+    list.filter = [pOrgSubOrgId];
     list.limitTo = 1;
     list.orderBy = "PID Desc";
 
     return this.dataservice.get(list);
   }
-  GetClassFeeWithFeeDefinition(pOrgId, pMonth, pBatchId) {
-    var filter = "OrgId eq " + pOrgId + " and BatchId eq " + pBatchId + ' and Active eq 1';
+  GetClassFeeWithFeeDefinition(pOrgSubOrgBatchIdFilter, pMonth) {
+    var filter = pOrgSubOrgBatchIdFilter + ' and Active eq 1';
 
     if (pMonth > 0)
       filter += ' and Month eq ' + pMonth;
@@ -179,11 +178,11 @@ export class ContentService implements OnInit {
     list.filter = [filter];
     return this.dataservice.get(list);
   }
-  GetFeeDefinitions(orgId, active) {
+  GetFeeDefinitions(pOrgSubOrg, active) {
     //Fee definition is not batch wise.      
     //let filterStr = 'BatchId eq ' + SelectedBatchId + ' and OrgId eq ' + orgId;
     var activefilter = active == 1 ? ' and Active eq 1' : '';
-    let filterStr = 'OrgId eq ' + orgId + activefilter;
+    let filterStr = pOrgSubOrg + activefilter;
     let list: List = new List();
     list.fields = [
       "FeeDefinitionId",
@@ -200,7 +199,7 @@ export class ContentService implements OnInit {
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
-  getSelectedReportColumn(pOrgId, pSelectedApplicationId) {
+  getSelectedReportColumn(pOrgSubOrg, pSelectedApplicationId) {
 
     debugger;
     //var MyReportNameId = this.searchForm.get("searchReportName").value;
@@ -221,11 +220,12 @@ export class ContentService implements OnInit {
       "ColumnSequence",
       "TableNames",
       "OrgId",
+      "SubOrgId",
       "UserId",
       "Active"]
     list.PageName = 'ReportConfigItems';
-    list.filter = ["Deleted eq false and (OrgId eq 0 or OrgId eq " + pOrgId +
-      ") and (ApplicationId eq 0 or ApplicationId eq " + pSelectedApplicationId + ')'];
+    list.filter = ["Deleted eq false and (OrgId eq 0 or (" +pOrgSubOrg +
+      ")) and (ApplicationId eq 0 or ApplicationId eq " + pSelectedApplicationId + ')'];
 
     return this.dataservice.get(list)
 
@@ -253,9 +253,9 @@ export class ContentService implements OnInit {
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
-  GetClassGroupMapping(orgId, active) {
+  GetClassGroupMapping(pOrgSubOrg: string, active) {
     var activefilter = active == 1 ? ' and Active eq 1' : '';
-    let filterStr = 'OrgId eq ' + orgId + activefilter;
+    let filterStr = pOrgSubOrg + activefilter;
     let list: List = new List();
     list.fields = [
       "ClassGroupMappingId",
@@ -269,9 +269,9 @@ export class ContentService implements OnInit {
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
-  GetEvaluationExamMaps(orgId, active) {
+  GetEvaluationExamMaps(orgSubOrg, active) {
     var activefilter = active == 1 ? ' and Active eq true' : '';
-    let filterStr = 'OrgId eq ' + orgId + activefilter;
+    let filterStr = orgSubOrg + activefilter;
     let list: List = new List();
     list.fields = [
       'EvaluationExamMapId',
@@ -322,7 +322,7 @@ export class ContentService implements OnInit {
     var _StartYear = new Date(_sessionStartEnd["StartDate"]).getFullYear();
     var _EndYear = new Date(_sessionStartEnd["EndDate"]).getFullYear();
     var startMonth = new Date(_sessionStartEnd["StartDate"]).getMonth();
-    var noOfMonths = globalconstants.MonthDiff(new Date(_sessionStartEnd["StartDate"]),new Date(_sessionStartEnd["EndDate"]));
+    var noOfMonths = globalconstants.MonthDiff(new Date(_sessionStartEnd["StartDate"]), new Date(_sessionStartEnd["EndDate"]));
     for (var month = 0; month <= noOfMonths; month++, startMonth++) {
       monthArray.push({
         MonthName: Months[startMonth] + " " + _StartYear,
@@ -335,7 +335,7 @@ export class ContentService implements OnInit {
     }
     return monthArray;
   }
-  
+
   ReSequence(editedrow, MasterList: any[]) {
     debugger;
     var diff = editedrow.OldSequence - editedrow.DisplayOrder;
@@ -378,7 +378,7 @@ export class ContentService implements OnInit {
     // this.datasource.paginator = this.paginator;
 
   }
-  GetDropDownDataFromDB(ParentId, OrgId, AppIds, activeMaster = 1) {
+  GetDropDownDataFromDB(ParentId, pOrgSubOrg, AppIds, activeMaster = 1) {
     //debugger;
     var _active = activeMaster == 0 ? '' : "Active eq 1 and ";
     var applicationparam = '';
@@ -390,7 +390,7 @@ export class ContentService implements OnInit {
     if (ParentId == 0)
       applicationFilter = "(" + applicationparam + ")";
     else
-      applicationFilter = "OrgId eq " + OrgId + " and (" + applicationparam + ")";
+      applicationFilter = pOrgSubOrg + " and (" + applicationparam + ")";
 
     let list: List = new List();
     list.fields = [
@@ -405,7 +405,7 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list)
 
   }
-  GetDropDownDataWithOrgIdnParent(ParentId, OrgId, activeMaster = 1) {
+  GetDropDownDataWithOrgIdnParent(ParentId, pOrgSubOrg, activeMaster = 1) {
     //debugger;
     var _active = activeMaster == 0 ? '' : "Active eq 1 and ";
 
@@ -416,7 +416,7 @@ export class ContentService implements OnInit {
       "ApplicationId", "Active", "Confidential"
     ];
     list.PageName = "MasterItems";
-    list.filter = [_active + "ParentId eq " + ParentId + " and OrgId eq " + OrgId];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
+    list.filter = [_active + "ParentId eq " + ParentId + " and "+ pOrgSubOrg];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     return this.dataservice.get(list)
 
   }
@@ -532,7 +532,7 @@ export class ContentService implements OnInit {
   //   Ids.push(item);
   // }
   /////
-  getInvoice(pOrgId, pSelectedBatchId, pStudentClassId) {
+  getInvoice(pOrgId,pSubOrgId, pSelectedBatchId, pStudentClassId) {
     //var selectedMonth = this.searchForm.get("searchMonth").value;
     var _function = "";
     if (pStudentClassId == 0)
@@ -542,6 +542,7 @@ export class ContentService implements OnInit {
     var OrgIdAndbatchId = {
       StudentClassId: pStudentClassId,
       OrgId: pOrgId,
+      SubOrgId:pSubOrgId,
       BatchId: pSelectedBatchId,
       //Month: pSelectedMonth
     }
@@ -549,10 +550,10 @@ export class ContentService implements OnInit {
     return this.authservice.CallAPI(OrgIdAndbatchId, _function);
   }
 
-  getStudentClassWithFeeType(pOrgId, pBatchId,pClassId, pStudentClassId,pFeeTypeId) {
+  getStudentClassWithFeeType(pOrgSubOrgBatchId, pClassId, pStudentClassId, pFeeTypeId) {
 
     var filterstr = '';
-    filterstr = "Active eq 1 and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
+    filterstr = pOrgSubOrgBatchId + " and Active eq 1";
 
     if (pStudentClassId > 0)
       filterstr += " and StudentClassId eq " + pStudentClassId;
@@ -687,8 +688,9 @@ export class ContentService implements OnInit {
 
     list.PageName = "RoleUsers";
     list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
-
-    list.filter = ["Active eq 1 and UserId eq '" + userdetail[0]["userId"] + "' and OrgId eq " + userdetail[0]["orgId"]];
+    var _subOrgId= +this.tokenService.getSubOrgId();
+    list.filter = ["Active eq 1 and UserId eq '" + userdetail[0]["userId"] + 
+    "' and OrgId eq " + userdetail[0]["orgId"] + ' and SubOrgId eq ' + _subOrgId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -771,7 +773,7 @@ export class ContentService implements OnInit {
         }
       })
   }
-  GetCustomFeature(pSelectedAppId, pRoleId) {
+  GetCustomFeature(pSelectedAppId, pRoleId, pSubOrgId, pOrgId) {
     let list: List = new List();
     list.fields = [
       'CustomFeatureId',
@@ -779,10 +781,11 @@ export class ContentService implements OnInit {
       'PermissionId',
       'ApplicationId'
     ];
+    var _orgSubOrgFilter = "OrgId eq " + pOrgId + " and SubOrgId eq " + pSubOrgId; //globalconstants.getOrgSubOrgFilter(pOrgId,pSubOrgId);
     var _denyPermissionId = globalconstants.PERMISSIONTYPES.filter(f => f.type == 'deny')[0].val;
     list.PageName = "CustomFeatureRolePermissions";
     list.lookupFields = ["CustomFeature($select=CustomFeatureName)"]
-    list.filter = ["Active eq true and ApplicationId eq " + pSelectedAppId + " and RoleId eq " + pRoleId];
+    list.filter = [_orgSubOrgFilter + " and ApplicationId eq " + pSelectedAppId + " and RoleId eq " + pRoleId + " and Active eq true"];
     //"PermissionId ne "+ _denyPermissionId+" and
     debugger;
     return this.dataservice.get(list);
@@ -922,7 +925,7 @@ export class ContentService implements OnInit {
     return appId;
   }
 
-  GetCommonMasterData(orgId,SubOrgId, appIds) {
+  GetCommonMasterData(orgId, SubOrgId, appIds) {
 
     var applicationparam = '';
     (appIds + "").split(',').forEach(id => {
@@ -931,7 +934,7 @@ export class ContentService implements OnInit {
 
     var commonAppId = this.GetPermittedAppId('common');
     var orgIdSearchstr = '(ApplicationId eq ' + commonAppId + applicationparam + ")" +
-      ' and (ParentId eq 0  or (OrgId eq ' + orgId + ' and SubOrgId eq ' + SubOrgId +')) and Active eq 1 ';
+      ' and (ParentId eq 0  or (OrgId eq ' + orgId + ' and SubOrgId eq ' + SubOrgId + ')) and Active eq 1 ';
 
     let list: List = new List();
 

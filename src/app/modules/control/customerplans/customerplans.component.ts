@@ -60,7 +60,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) {
@@ -86,11 +86,11 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail.length != 0) {
       this.UserId = this.LoginUserDetail[0]["userId"];
       this.OrgId = this.LoginUserDetail[0]["orgId"];
-      this.SubOrgId = this.tokenstorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       
       if (this.LoginUserDetail[0]['org'].toLowerCase() == 'ttp') {
         this.displayedColumns = [
@@ -183,7 +183,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
   }
   logout() {
     //debugger;
-    this.tokenstorage.signOut();
+    this.tokenStorage.signOut();
     this.nav.navigate(['/auth/login']);
   }
   update(row) {
@@ -390,7 +390,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
   // }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

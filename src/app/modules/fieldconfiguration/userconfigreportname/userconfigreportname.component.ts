@@ -36,7 +36,8 @@ export class UserconfigreportnameComponent implements OnInit {
   SubOrgId=0;
   SelectedApplicationId = 0;
   ColumnsOfAvailableReports = [];
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   AvailableReportNames = [];
   AppReportNames = [];
@@ -66,7 +67,7 @@ export class UserconfigreportnameComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -88,24 +89,25 @@ export class UserconfigreportnameComponent implements OnInit {
       searchAvailableReportName: [0]
     });
     //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
-    this.Applications = this.tokenstorage.getPermittedApplications();
-    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-    this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.Applications = this.tokenStorage.getPermittedApplications();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.PageLoad();
   }
 
   PageLoad() {
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin)
+      // var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin)
       // if (perObj.length > 0) {
       //   this.Permission = perObj[0].permission;
       // }
       // if (this.Permission != 'deny') {
       this.ApplicationName = this.LoginUserDetail[0]["org"];
-
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetBaseReportId();
       //}
     }
@@ -161,8 +163,8 @@ export class UserconfigreportnameComponent implements OnInit {
       AvailableReportId = this.BaseReportId;
     }
     this.loading = true;
-    let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
-      " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let checkFilterString = this.FilterOrgSubOrg + " and ReportName eq '" + row.ReportName + "'" +
+      " and ApplicationId eq " + row.ApplicationId + //+ " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ParentId eq " + AvailableReportId;
 
     if (row.ReportConfigItemId > 0)
@@ -280,7 +282,7 @@ export class UserconfigreportnameComponent implements OnInit {
   GetReportConfigItem() {
     debugger;
     this.ReportConfigItemList = [];
-    var filterstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var filterstr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     //var ApplicationId = this.searchForm.get("searchApplicationId").value;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
@@ -388,7 +390,7 @@ export class UserconfigreportnameComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

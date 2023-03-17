@@ -38,7 +38,8 @@ export class LedgerBalanceComponent implements OnInit {
   AccountingPeriod = [];
   SelectedApplicationId = 0;
   Permission = '';
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   GLAccounts = [];
   GeneralLedgers = [];
@@ -77,7 +78,7 @@ export class LedgerBalanceComponent implements OnInit {
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private contentservice: ContentService,
   ) { }
@@ -125,22 +126,23 @@ export class LedgerBalanceComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.AccountingPeriod = JSON.parse(this.tokenStorage.getSelectedBatchStartEnd());
 
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.TRIALBALANCE);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.TRIALBALANCE);
       if (perObj.length > 0) {
 
         this.Permission = perObj[0].permission;
         if (this.Permission != 'deny') {
-          this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+          this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+          this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
           //this.GetMasterData();
           this.GetGLAccounts();
           this.GetGeneralLedgerAutoComplete();
@@ -173,7 +175,7 @@ export class LedgerBalanceComponent implements OnInit {
   DebitBalance = 0;
   GetAccountingVoucher() {
     debugger;
-    let filterStr = 'LedgerId eq 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId;
+    let filterStr = this.FilterOrgSubOrg + " and LedgerId eq 0 and Active eq 1";
     filterStr += " and PostingDate ge " + this.datepipe.transform(this.searchForm.get("searchFromDate").value, 'yyyy-MM-dd') + //T00:00:00.000Z
       " and  PostingDate le " + this.datepipe.transform(this.searchForm.get("searchToDate").value, 'yyyy-MM-dd');//T00:00:00.000Z
     this.loading = true;
@@ -296,7 +298,7 @@ export class LedgerBalanceComponent implements OnInit {
     ];
 
     list.PageName = "GeneralLedgers";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -400,7 +402,7 @@ export class LedgerBalanceComponent implements OnInit {
 
     list.PageName = "GeneralLedgers";
     list.lookupFields = ["AccountNature($select=Active,AccountNatureId,DebitType)"];
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and SubOrgId eq ' + this.SubOrgId];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -427,7 +429,7 @@ export class LedgerBalanceComponent implements OnInit {
     ];
 
     list.PageName = "AccountingPeriods";
-    list.filter = ["CurrentPeriod eq 1 and Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrg + "and CurrentPeriod eq 1 and Active eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -444,11 +446,11 @@ export class LedgerBalanceComponent implements OnInit {
 
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

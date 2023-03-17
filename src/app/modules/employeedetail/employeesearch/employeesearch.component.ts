@@ -76,7 +76,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
 
     private fb: UntypedFormBuilder,
     private shareddata: SharedataService,
-    private token: TokenStorageService) { }
+    private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
     // this.servicework.activateUpdate().then(() => {
@@ -88,22 +88,22 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
     // })
     //debugger;
     this.loading = true;
-    this.LoginUserDetail = this.token.getUserDetail();
-    var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.emp.employee.EMPLOYEEDETAIL);
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPLOYEEDETAIL);
     if (perObj.length > 0)
       this.Permission = perObj[0].permission;
     if (this.Permission == 'deny') {
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
-      this.SubOrgId = +this.token.getSubOrgId();
-      this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
-      this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.EmployeeSearchForm = this.fb.group({
         searchemployeeName: [''],
         searchEmployeeCode: ['']
       })
-      this.SelectedApplicationId = +this.token.getSelectedAPPId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
      
       this.filteredEmployees = this.EmployeeSearchForm.get("searchemployeeName").valueChanges
         .pipe(
@@ -145,8 +145,8 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
 
-        this.SelectedBatchId = +this.token.getSelectedBatchId();
-        this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
@@ -155,7 +155,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
         this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.token.getBatches()
+        this.Batches = this.tokenStorage.getBatches()
 
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
@@ -199,7 +199,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.token, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // });
@@ -233,12 +233,12 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
     let EmployeeName = element.EmployeeCode + ' ' + element.Name;
     this.shareddata.ChangeEmployeeName(EmployeeName);
 
-    this.token.saveEmployeeId(element.EmpEmployeeId);
+    this.tokenStorage.saveEmployeeId(element.EmpEmployeeId);
 
   }
   addNew() {
     //var url = this.route.url;
-    this.token.saveEmployeeId("0");
+    this.tokenStorage.saveEmployeeId("0");
     this.route.navigate(['/employee/info']);
   }
   ExportTOExcel() {
@@ -348,7 +348,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
     list.fields = ["ManagerId", "ReportingTo"];
     //list.PageName = "EmpEmployees";
     //list.filter = [
-    var checkFilterString = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var checkFilterString = this.filterOrgIdOnly;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     if(this.LoginUserDetail[0]["RoleUsers"][0].role=="Employee")
     {      
       checkFilterString += " and IsCurrent eq 1 and Active eq 1 and (ManagerId eq " + localStorage.getItem("employeeId") + 

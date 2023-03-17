@@ -39,7 +39,8 @@ export class StudentEvaluationComponent implements OnInit {
   StudentClassId = 0;
   ClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   RelevantEvaluationListForSelectedStudent = [];
   StudentEvaluationList: any[] = [];
@@ -96,7 +97,7 @@ export class StudentEvaluationComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -121,7 +122,7 @@ export class StudentEvaluationComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Students.slice())
       );
-    this.ClassId = this.tokenstorage.getClassId();
+    this.ClassId = this.tokenStorage.getClassId();
     this.PageLoad();
 
   }
@@ -137,20 +138,21 @@ export class StudentEvaluationComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
         this.StudentId = +localStorage.getItem('studentId');
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
-        this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.contentservice.GetClassGroupMapping(this.FilterOrgSubOrg, 1)
           .subscribe((data: any) => {
             this.ClassGroupMappings = [...data.value];
           })
@@ -256,7 +258,7 @@ export class StudentEvaluationComponent implements OnInit {
     debugger;
     this.loading = true;
     var _sectionId= this.searchForm.get("searchSectionId").value;
-    let checkFilterString = "ClassEvaluationId eq " + row.ClassEvaluationId;
+    let checkFilterString = this.FilterOrgSubOrg + " and ClassEvaluationId eq " + row.ClassEvaluationId;
     if (!row.Updatable) {
       checkFilterString += " and EvaluationExamMapId eq " + row.EvaluationExamMapId +
         " and StudentClassId eq " + this.StudentClassId
@@ -267,8 +269,8 @@ export class StudentEvaluationComponent implements OnInit {
 
     if (row.StudentEvaluationResultId > 0)
       checkFilterString += " and StudentEvaluationResultId ne " + row.StudentEvaluationResultId;
-    checkFilterString += " and " + this.StandardFilter;
-    let list: List = new List();
+
+      let list: List = new List();
     list.fields = ["StudentEvaluationResultId"];
     list.PageName = "StudentEvaluationResults";
     list.filter = [checkFilterString];
@@ -283,8 +285,8 @@ export class StudentEvaluationComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+          this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
 
           var _toappend = '', _answerText = '', _history = '', _studentClassId = 0;
           _answerText = row.AnswerText;
@@ -328,7 +330,8 @@ export class StudentEvaluationComponent implements OnInit {
               StudentEvaluationAnswers: row.StudentEvaluationAnswers,
               Active: 1,
               Submitted: this.EvaluationSubmitted,
-              OrgId: this.LoginUserDetail[0]["orgId"]
+              OrgId: this.LoginUserDetail[0]["orgId"],
+              SubOrgId: this.SubOrgId
             });
 
           var _lastIndex = this.StudentEvaluationForUpdate.length - 1;
@@ -415,15 +418,15 @@ export class StudentEvaluationComponent implements OnInit {
     this.loading = true;
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
 
     var objstudent = this.searchForm.get("searchStudentName").value;
     this.ClassId = this.searchForm.get("searchClassId").value;
     this.StudentClassId = objstudent.StudentClassId;
     this.StudentId = objstudent.StudentId;
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg + " and Active eq 1";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += ' and StudentClassId eq ' + this.StudentClassId
     filterStr += ' and EvaluationExamMapId eq ' + row.EvaluationExamMapId
 
@@ -566,15 +569,15 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and BatchId eq ' + this.SelectedBatchId //+
+    // var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+    //   ' and BatchId eq ' + this.SelectedBatchId //+
 
 
     let list: List = new List();
     this.Exams = [];
     list.fields = ["ExamId", "ExamNameId", "ClassGroupId"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.forEach(e => {
@@ -589,7 +592,7 @@ export class StudentEvaluationComponent implements OnInit {
             })
           }
         })
-        this.contentservice.GetEvaluationExamMaps(this.LoginUserDetail[0]["orgId"], 1)
+        this.contentservice.GetEvaluationExamMaps(this.FilterOrgSubOrg, 1)
           .subscribe((data: any) => {
             data.value.forEach(m => {
               let EvaluationObj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == m.EvaluationMasterId);
@@ -625,7 +628,7 @@ export class StudentEvaluationComponent implements OnInit {
     list.PageName = "ClassSubjects";
     list.fields = ["ClassSubjectId,ClassId,SubjectId"];
     //list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [ this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(m => {
@@ -643,7 +646,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
     //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
     this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
@@ -654,7 +657,8 @@ export class StudentEvaluationComponent implements OnInit {
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = data.value;
     });
 
@@ -678,7 +682,7 @@ export class StudentEvaluationComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
@@ -696,9 +700,9 @@ export class StudentEvaluationComponent implements OnInit {
   GetEvaluationNames() {
     //debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = [
@@ -724,7 +728,7 @@ export class StudentEvaluationComponent implements OnInit {
       .subscribe((data: any) => {
 
         var result = [...data.value];
-        this.EvaluationMaster = this.contentservice.getConfidentialData(this.tokenstorage, result, "EvaluationName");
+        this.EvaluationMaster = this.contentservice.getConfidentialData(this.tokenStorage, result, "EvaluationName");
         this.loadingFalse();
       });
 
@@ -829,7 +833,7 @@ export class StudentEvaluationComponent implements OnInit {
     ];
 
     list.PageName = "ClassEvaluationOptions";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     this.ClassEvaluationOptionList = [];
     this.dataSource = new MatTableDataSource<any>([]);
     this.dataservice.get(list)
@@ -884,7 +888,7 @@ export class StudentEvaluationComponent implements OnInit {
   GetStudentClasses() {
     //debugger;
     var _filter = '';
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
 
@@ -950,7 +954,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    var _students: any = this.tokenstorage.getStudents();
+    var _students: any = this.tokenStorage.getStudents();
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       this.StudentList = _students.filter(a => a.Active == 1 && a.StudentId == this.StudentId)
       //_filter = ' and StudentId eq ' + this.StudentId

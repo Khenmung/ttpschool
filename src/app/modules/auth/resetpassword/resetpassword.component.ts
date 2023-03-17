@@ -12,7 +12,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class ResetpasswordComponent implements OnInit { PageLoading=true;
   loading = false;
-  loginUserDetail = [];
+  LoginUserDetail = [];
   resetpwdForm: UntypedFormGroup;
   isSuccessful = false;
   isSignUpFailed = false;
@@ -48,8 +48,8 @@ export class ResetpasswordComponent implements OnInit { PageLoading=true;
       this.Code = param.get("code");
       this.UserId = param.get("userid");
     })
-    // this.loginUserDetail = this.tokenService.getUserDetail();
-    // if (this.loginUserDetail == null)
+    // this.LoginUserDetail = this.tokenService.getUserDetail();
+    // if (this.LoginUserDetail == null)
     //   this.route.navigate(['/auth/login']);
     // else {
       this.resetpwdForm = this.fb.group({

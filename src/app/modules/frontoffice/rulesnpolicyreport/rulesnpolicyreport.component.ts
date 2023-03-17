@@ -28,6 +28,8 @@ export class RulesnpolicyreportComponent implements OnInit {
   ckeConfig: any;
   loading = false;
   SelectedBatchId = 0;SubOrgId = 0;
+  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId='';
   RulesOrPolicyList: IRulesOrPolicy[] = [];
   filteredOptions: Observable<IRulesOrPolicy[]>;
   dataSource: MatTableDataSource<IRulesOrPolicy>;
@@ -57,7 +59,7 @@ export class RulesnpolicyreportComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -88,15 +90,15 @@ export class RulesnpolicyreportComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.EmployeeId = +this.tokenstorage.getEmployeeId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    //this.EmployeeId = +this.tokenStorage.getEmployeeId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.RULESORPOLICYREPORT);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.misc.RULESORPOLICYREPORT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -105,6 +107,8 @@ export class RulesnpolicyreportComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.ckeConfig = {
           allowedContent: false,
           extraPlugins: 'divarea',
@@ -159,8 +163,7 @@ export class RulesnpolicyreportComponent implements OnInit {
     var _description = this.searchForm.get("Description").value;
     var _rulesOrPolicyId = this.searchForm.get("RulesOrPolicyId").value;
     var _active = this.searchForm.get("Active").value;
-    let checkFilterString = "Title eq '" + globalconstants.encodeSpecialChars(_title) +
-      "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString = this.FilterOrgSubOrg + " and Title eq '" + globalconstants.encodeSpecialChars(_title) +"'";
     if (_title.length == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -239,7 +242,7 @@ export class RulesnpolicyreportComponent implements OnInit {
   FileNames = [];
   GetRulesOrPolicys() {
     debugger;
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true";
     var _fields = ["RulesOrPolicyId", "Title"];
 
     this.loading = true;
@@ -261,7 +264,7 @@ export class RulesnpolicyreportComponent implements OnInit {
   }
   GetRulesOrPolicy() {
     debugger;
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true";
     var _searchId = this.searchForm.get("searchId").value;
     //var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
     var _fields = ["RulesOrPolicyId", "Title", "Description"];
@@ -297,7 +300,7 @@ export class RulesnpolicyreportComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.PageCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.PAGECATEGORY)
     this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
 
@@ -305,7 +308,7 @@ export class RulesnpolicyreportComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 }

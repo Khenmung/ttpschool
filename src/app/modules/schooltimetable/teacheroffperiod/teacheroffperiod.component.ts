@@ -25,7 +25,8 @@ export class TeacheroffperiodComponent implements OnInit {
   SelectedApplicationId = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   rowCount = -1;
   DataToSave = 0;
@@ -67,7 +68,7 @@ export class TeacheroffperiodComponent implements OnInit {
     private datepipe: DatePipe,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) {
@@ -92,23 +93,25 @@ export class TeacheroffperiodComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.TIMETABLE.CLASSTIMETABLE)
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.CLASSTIMETABLE)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
 
       }
@@ -118,7 +121,6 @@ export class TeacheroffperiodComponent implements OnInit {
   WorkAccounts = [];
   GetTeachers() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     var _workAccountId = 0;
     if (_WorkAccount.length > 0)
@@ -129,7 +131,7 @@ export class TeacheroffperiodComponent implements OnInit {
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName", "LastName)"]
-    list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
     //list.orderBy = "ParentId";
     this.Teachers = [];
     this.dataservice.get(list)
@@ -267,8 +269,8 @@ export class TeacheroffperiodComponent implements OnInit {
   PeriodStatistics = [];
   GetSchoolTimeTable() {
     debugger;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.SchoolTimeTableList = [];
 
     this.loading = true;
@@ -453,10 +455,10 @@ export class TeacheroffperiodComponent implements OnInit {
   }
   GetAllSchoolTimeTable() {
     debugger;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1';
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var filterstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';
 
     let list: List = new List();
     list.fields = [
@@ -470,7 +472,7 @@ export class TeacheroffperiodComponent implements OnInit {
     ];
     list.PageName = this.SchoolTimeTableListName;
     list.lookupFields = ["TeacherSubject($select=TeacherSubjectId,EmployeeId),SchoolClassPeriod($select=PeriodId)"]
-    list.filter = [filterstr + orgIdSearchstr];
+    list.filter = [filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -511,7 +513,7 @@ export class TeacheroffperiodComponent implements OnInit {
     //debugger;
     this.loading = true;
 
-    filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    filterStr = this.FilterOrgSubOrg + ' and Active eq 1';
     let list: List = new List();
     list.fields = [
       'TeacherSubjectId',
@@ -549,11 +551,9 @@ export class TeacheroffperiodComponent implements OnInit {
       });
   }
   GetAllClassPeriods() {
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     this.SchoolTimeTableList = [];
-    var orgIdSearchstr = ' Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-
     this.loading = true;
 
     let list: List = new List();
@@ -567,7 +567,7 @@ export class TeacheroffperiodComponent implements OnInit {
       "Active"
     ];
     list.PageName = "SchoolClassPeriods";
-    list.filter = [orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrgBatchId];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
@@ -596,7 +596,7 @@ export class TeacheroffperiodComponent implements OnInit {
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
     //+ ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
@@ -725,7 +725,7 @@ export class TeacheroffperiodComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
     this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
@@ -735,7 +735,7 @@ export class TeacheroffperiodComponent implements OnInit {
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-    this.Batches = this.tokenstorage.getBatches();
+    this.Batches = this.tokenStorage.getBatches();
     this.GetTeachers();
 
     this.GetClassSubject();
@@ -743,7 +743,7 @@ export class TeacheroffperiodComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
 
 }

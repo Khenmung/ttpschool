@@ -27,7 +27,8 @@ export class CertificateconfigComponent implements OnInit {
   SelectedApplicationId = 0;
   ClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   //Category = [];
   CertificateConfigList: any[] = [];
@@ -61,7 +62,7 @@ export class CertificateconfigComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -85,7 +86,7 @@ export class CertificateconfigComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.MasterDataName),
         map(Name => Name ? this._filter(Name) : this.AllCertificateConfig.slice())
       );
-    this.ClassId = this.tokenstorage.getClassId();
+    this.ClassId = this.tokenStorage.getClassId();
     this.PageLoad();
 
   }
@@ -101,20 +102,21 @@ export class CertificateconfigComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        //this.GroupId = this.tokenstorage.getGroupId();
+        //this.GroupId = this.tokenStorage.getGroupId();
         this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetAllCertificateConfig();
       }
@@ -154,14 +156,13 @@ export class CertificateconfigComponent implements OnInit {
       this.contentservice.openSnackBar("Please select parent.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let checkFilterString = "Title eq '" + row.Title + "' and ParentId eq " + row.ParentId
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let checkFilterString = this.FilterOrgSubOrg + " and Title eq '" + row.Title + "' and ParentId eq " + row.ParentId
     this.RowsToUpdate = 0;
 
     if (row.CertificateConfigId > 0)
       checkFilterString += " and CertificateConfigId ne " + row.CertificateConfigId;
-    checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
     list.fields = ["CertificateConfigId"];
     list.PageName = "CertificateConfigs";
@@ -247,7 +248,7 @@ export class CertificateconfigComponent implements OnInit {
   TopCertificateConfig = [];
   GetAllCertificateConfig() {
     debugger;
-    var filterStr = "Active eq true and (OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")";
+    var filterStr = "Active eq true and (OrgId eq 0 or (" + this.FilterOrgSubOrg + "))";
     this.loading = true;
     this.CertificateConfigList = [];
 
@@ -278,7 +279,7 @@ export class CertificateconfigComponent implements OnInit {
   }
   GetCertificateConfig() {
     debugger;
-    var filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterStr = this.FilterOrgSubOrg;// "OrgId eq " + this.LoginUserDetail[0]["orgId"];
     var _searchCertificateConfigId = this.searchForm.get("searchTitleId").value.CertificateConfigId;
     if (_searchCertificateConfigId > 0) {
       filterStr += " and ParentId eq " + _searchCertificateConfigId;
@@ -332,7 +333,7 @@ export class CertificateconfigComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     //this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
     this.PageLoading = false;
     this.loading = false;
@@ -366,7 +367,7 @@ export class CertificateconfigComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 

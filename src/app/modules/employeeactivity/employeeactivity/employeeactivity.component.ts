@@ -25,10 +25,11 @@ export class EmployeeactivityComponent implements OnInit {
   SelectedApplicationId = 0;
   EmployeeId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   EmployeeActivityList: IEmployeeActivity[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   EmployeeActivity = [];
   EmployeeActivitySession = [];
   EmployeeActivityCategories = [];
@@ -52,7 +53,7 @@ export class EmployeeactivityComponent implements OnInit {
     AchievementDate: new Date(),
     SessionId: 0,
     BatchId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0,
   };
   EmployeeActivityForUpdate = [];
@@ -71,7 +72,7 @@ export class EmployeeactivityComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder,
@@ -97,7 +98,7 @@ export class EmployeeactivityComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Employees.slice())
       );
-    this.EmployeeId = this.tokenstorage.getEmployeeId();
+    this.EmployeeId = this.tokenStorage.getEmployeeId();
     this.PageLoad();
   }
   private _filter(name: string): IEmployee[] {
@@ -112,18 +113,19 @@ export class EmployeeactivityComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EMPLOYEEPROFILE)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPLOYEEPROFILE)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
 
       }
@@ -177,7 +179,7 @@ export class EmployeeactivityComponent implements OnInit {
       this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let checkFilterString = "Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString = this.FilterOrgSubOrg + " and Active eq true";// and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     if (row.CategoryId > 0)
       checkFilterString += " and CategoryId eq " + row.CategoryId
     if (row.SubCategoryId > 0)
@@ -203,8 +205,8 @@ export class EmployeeactivityComponent implements OnInit {
         }
         else {
           //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+          this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+          this.SubOrgId = +this.tokenStorage.getSubOrgId();
           this.EmployeeActivityForUpdate = [];;
           //console.log("inserting-1",this.EmployeeActivityForUpdate);
 
@@ -214,8 +216,9 @@ export class EmployeeactivityComponent implements OnInit {
           this.EmployeeActivityData.SubCategoryId = row.SubCategoryId;
           this.EmployeeActivityData.AchievementDate = row.AchievementDate;
           this.EmployeeActivityData.EmployeeId = this.EmployeeId;
-          this.EmployeeActivityData.OrgId = this.LoginUserDetail[0]["orgId"],
-            this.EmployeeActivityData.Achievement = row.Achievement;
+          this.EmployeeActivityData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmployeeActivityData.SubOrgId = this.SubOrgId;
+          this.EmployeeActivityData.Achievement = row.Achievement;
           this.EmployeeActivityData.SessionId = row.SessionId;
           this.EmployeeActivityData.BatchId = row.BatchId;
           this.EmployeeActivityData.Active = row.Active;
@@ -273,9 +276,9 @@ export class EmployeeactivityComponent implements OnInit {
       this.contentservice.openSnackBar("Please select employee.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += ' and EmployeeId eq ' + _employeeId
     let list: List = new List();
     list.fields = [
@@ -318,8 +321,8 @@ export class EmployeeactivityComponent implements OnInit {
 
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
-    this.Batches = this.tokenstorage.getBatches()
+    this.allMasterData = this.tokenStorage.getMasterData();
+    this.Batches = this.tokenStorage.getBatches()
     this.EmployeeActivity = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITY);
     this.EmployeeActivityCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYCATEGORY);
     this.EmployeeActivitySession = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSESSION);
@@ -346,7 +349,7 @@ export class EmployeeactivityComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
@@ -366,7 +369,7 @@ export class EmployeeactivityComponent implements OnInit {
     let list: List = new List();
     list.fields = ["EmpEmployeeId", "EmployeeCode", "FirstName", "LastName", "ContactNo"];
     list.PageName = "EmpEmployees";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrg];//'OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

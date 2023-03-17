@@ -60,6 +60,8 @@ export class TodayCollectionComponent implements OnInit {
     "Status",
     "TotalAmount"
   ]
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   SelectedApplicationId = 0;
   Permission = 'deny';
   DateWiseCollection = [];
@@ -115,7 +117,9 @@ export class TodayCollectionComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
         this.GetMasterData();
@@ -148,8 +152,7 @@ export class TodayCollectionComponent implements OnInit {
     filterstring += "ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
       " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd');
 
-    filterstring += " and BatchId eq " + this.SelectedBatchId +
-      " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+
 
     if (this.SearchForm.get("searchStudentName").value.StudentClassId > 0)
       filterstring += " and StudentClassId eq " + this.SearchForm.get("searchStudentName").value.StudentClassId;
@@ -262,7 +265,7 @@ export class TodayCollectionComponent implements OnInit {
     this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
       this.FeeDefinitions = [...f];
       if (this.FeeDefinitions.length == 0) {
-        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
+        this.contentservice.GetFeeDefinitions(this.FilterOrgSubOrg, 1).subscribe((d: any) => {
           this.FeeDefinitions = [...d.value];
         })
       }

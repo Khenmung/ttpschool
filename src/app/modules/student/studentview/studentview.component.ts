@@ -29,9 +29,9 @@ export class StudentviewComponent implements OnInit {
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
   Edit = false;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   SelectedApplicationId = 0;
-  loginUserDetail = [];
+  LoginUserDetail = [];
   StudentLeaving = false;
   StudentName = '';
   StudentClassId = 0;
@@ -62,6 +62,8 @@ export class StudentviewComponent implements OnInit {
   AdmissionStatuses = [];
   ColumnsOfSelectedReports = [];
   CountryId = 0;
+  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId='';
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
@@ -111,8 +113,9 @@ export class StudentviewComponent implements OnInit {
     this.formdata.append("parentId", "-1");
 
     this.formdata.append("batchId", "0");
-    this.formdata.append("orgName", this.loginUserDetail[0]["org"]);
-    this.formdata.append("orgId", this.loginUserDetail[0]["orgId"]);
+    this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
+    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("subOrgId", this.SubOrgId+"");
     this.formdata.append("pageId", "0");
 
     if (this.StudentId != null && this.StudentId != 0)
@@ -143,14 +146,14 @@ export class StudentviewComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
-    private tokenService: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private sanitizer: DomSanitizer
 
   ) {
 
-    this.StudentId = this.tokenService.getStudentId();
-    this.StudentClassId = this.tokenService.getStudentClassId();
-    this.SubOrgId = this.tokenService.getSubOrgId();
+    this.StudentId = this.tokenStorage.getStudentId();
+    this.StudentClassId = this.tokenStorage.getStudentClassId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
   }
 
   ngOnInit(): void {
@@ -162,25 +165,28 @@ export class StudentviewComponent implements OnInit {
     //   })
     // })
     this.imgURL = '';
-    this.loginUserDetail = this.tokenService.getUserDetail();
-    if (this.loginUserDetail.length == 0)
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    if (this.LoginUserDetail.length == 0)
       this.route.navigate(['/auth/login'])
     else {
-      var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.STUDENT.STUDENTDETAIL);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.STUDENTDETAIL);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
         //this.tabNames
       }
       if (this.Permission != 'deny') {
-        this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.getFields('Student Module');
-        this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         //this.GetEvaluationNames();
         this.GetMasterData();
         this.GetFeeTypes();
         this.GetStudentAttendance();
         this.GetAchievementAndPoint();
-        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+       
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.loading = false;
           this.PageLoading = false;
@@ -240,7 +246,7 @@ export class StudentviewComponent implements OnInit {
   StudentClasses = [];
   GetStudentClass() {
     debugger;
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenService);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     if (this.StudentId > 0 && this.StudentClassId > 0) {
 
@@ -272,7 +278,7 @@ export class StudentviewComponent implements OnInit {
               _feeType = _feeTypeObj[0].FeeTypeName;
 
             var _batch = ''
-            this.Batches = this.tokenService.getBatches();
+            this.Batches = this.tokenStorage.getBatches();
             var _batchObj = this.Batches.filter(f => f.BatchId == data.value[0].BatchId);
             if (_batchObj.length > 0)
               _batch = _batchObj[0].BatchName;
@@ -334,8 +340,7 @@ export class StudentviewComponent implements OnInit {
     ];
     list.PageName = "Attendances";
     list.lookupFields = ["StudentClass($select=RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
-    list.filter = ["OrgId eq " + this.loginUserDetail[0]["orgId"] +
-      " and StudentClassId eq " + this.StudentClassId + " and BatchId eq " + this.SelectedBatchId];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and StudentClassId eq " + this.StudentClassId];
 
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
@@ -377,7 +382,7 @@ export class StudentviewComponent implements OnInit {
 
   GetSportsResult() {
     debugger;
-    var filterStr = "OrgId eq " + this.loginUserDetail[0]["orgId"] + " and Active eq 1";
+    var filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1";
     filterStr += " and StudentClassId eq " + this.StudentClassId;
 
     this.loading = true;
@@ -426,7 +431,7 @@ export class StudentviewComponent implements OnInit {
   AchievementAndPoints = [];
   GetAchievementAndPoint() {
     //debugger;
-    var filterOrgId = "OrgId eq " + this.loginUserDetail[0]['orgId'] + " and Active eq true";
+    var filterOrgId = "OrgId eq " + this.LoginUserDetail[0]['orgId'] + " and Active eq true";
 
     let list: List = new List();
     list.fields = ["AchievementAndPointId,Rank"];
@@ -445,7 +450,7 @@ export class StudentviewComponent implements OnInit {
   GetStudentFamilyNFriends() {
 
     var _ParentStudentId = 0;
-    let filterStr = 'StudentId eq ' + this.StudentId + ' and OrgId eq ' + this.loginUserDetail[0]['orgId']
+    let filterStr = 'StudentId eq ' + this.StudentId + ' and OrgId eq ' + this.LoginUserDetail[0]['orgId']
     let list: List = new List();
     list.fields = [
       'ParentStudentId'
@@ -498,7 +503,7 @@ export class StudentviewComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
@@ -527,7 +532,7 @@ export class StudentviewComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenService, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;
@@ -659,11 +664,12 @@ export class StudentviewComponent implements OnInit {
       EmailAddress: _email,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeaving").value,
-      OrgId: this.loginUserDetail[0]["orgId"],
+      OrgId: this.LoginUserDetail[0]["orgId"],
+      SubOrgId: this.SubOrgId,
       IdentificationMark: this.studentForm.get("IdentificationMark").value,
       Height: this.studentForm.get("Height").value,
       Weight: this.studentForm.get("Weight").value,
-      BatchId: this.tokenService.getSelectedBatchId()
+      BatchId: this.tokenStorage.getSelectedBatchId()
     });
     //debugger;
     console.log("studentData", this.studentData)
@@ -680,7 +686,7 @@ export class StudentviewComponent implements OnInit {
   save() {
     debugger;
     this.studentForm.patchValue({ AlternateContact: "" });
-    this.contentservice.GetStudentMaxPID(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    this.contentservice.GetStudentMaxPID(this.FilterOrgSubOrg).subscribe((data: any) => {
       var _MaxPID = 1;
       if (data.value.length > 0) {
         _MaxPID = +data.value[0].PID + 1;
@@ -702,8 +708,8 @@ export class StudentviewComponent implements OnInit {
 
             //this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
             this.loading = false; this.PageLoading = false;
-            this.tokenService.saveStudentId(this.StudentId + "")
-            //this.tokenService.saveStudentClassId(this.StudentClassId + "");
+            this.tokenStorage.saveStudentId(this.StudentId + "")
+            //this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
             this.CreateInvoice();
             this.GetStudent();
             this.Edited = false;
@@ -736,10 +742,10 @@ export class StudentviewComponent implements OnInit {
       })
   }
   CreateInvoice() {
-    this.contentservice.getInvoice(+this.loginUserDetail[0]["orgId"], this.SelectedBatchId, this.StudentClassId)
+    this.contentservice.getInvoice(this.LoginUserDetail[0]['orgId'],this.SubOrgId,this.SelectedBatchId, this.StudentClassId)
       .subscribe((data: any) => {
 
-        this.contentservice.createInvoice(data, this.SelectedBatchId, this.loginUserDetail[0]["orgId"])
+        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             //this.loading = false; this.PageLoading=false;
             //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -766,7 +772,7 @@ export class StudentviewComponent implements OnInit {
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["Active eq 1 and OrgId eq " + this.loginUserDetail[0]["orgId"]];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -775,7 +781,7 @@ export class StudentviewComponent implements OnInit {
       })
   }
   getFields(pModuleName) {
-    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.getSelectedReportColumn(this.FilterOrgSubOrg, this.SelectedApplicationId)
       .subscribe((data: any) => {
         var _baseReportId = 0;
         if (data.value.length > 0) {
@@ -787,7 +793,7 @@ export class StudentviewComponent implements OnInit {
           }
 
           var _orgStudentModuleObj = data.value.filter(f => f.ParentId == _studentModuleId
-            && f.OrgId == this.loginUserDetail[0]["orgId"] && f.Active == 1);
+            && f.SubOrgId == this.SubOrgId && f.OrgId == this.LoginUserDetail[0]["orgId"] && f.Active == 1);
           var _orgStudentModuleId = 0;
           if (_orgStudentModuleObj.length > 0) {
             _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId;
@@ -826,7 +832,7 @@ export class StudentviewComponent implements OnInit {
           data.value.forEach(stud => {
             if (stud.StudentClasses.length > 0) {
               this.StudentClassId = stud.StudentClasses[0].StudentClassId;
-              this.tokenService.saveStudentClassId(this.StudentClassId + "");
+              this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
             }
             var _lastname = stud.LastName == null || stud.LastName == '' ? '' : " " + stud.LastName;
             let StudentName = stud.PID + ' ' + stud.FirstName + _lastname + ' ' + stud.FatherName +
@@ -953,7 +959,7 @@ export class StudentviewComponent implements OnInit {
               this.displayContactPerson = false;
             if (stud.StorageFnPs.length > 0) {
               var fileNames = stud.StorageFnPs.sort((a, b) => b.FileId - a.FileId)
-              this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.loginUserDetail[0]["org"] +
+              this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.LoginUserDetail[0]["org"] +
                 "/StudentPhoto/" + fileNames[0].FileName;
             }
             else if (this.StudentId > 0)

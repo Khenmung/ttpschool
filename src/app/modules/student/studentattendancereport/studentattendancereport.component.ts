@@ -46,7 +46,8 @@ export class StudentattendancereportComponent implements OnInit {
   NoOfRecordToUpdate = -1;
   StudentDetailToDisplay = '';
   StudentClassId = 0;
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   Sections = [];
   Classes = [];
@@ -89,7 +90,7 @@ export class StudentattendancereportComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -107,27 +108,29 @@ export class StudentattendancereportComponent implements OnInit {
     // })
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCERECORD)
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCERECORD)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.StudentClassId = this.tokenstorage.getStudentClassId();
+        this.StudentClassId = this.tokenStorage.getStudentClassId();
         if (this.StudentClassId == 0) {
           this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar("Student class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          this.SubOrgId = +this.tokenstorage.getSubOrgId();
-          this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail, this.SubOrgId);
+          this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+          this.SubOrgId = +this.tokenStorage.getSubOrgId();
+          this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
           this.GetMasterData();
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
           })
           this.GetClassSubject();
@@ -172,8 +175,7 @@ export class StudentattendancereportComponent implements OnInit {
     ];
     list.PageName = "Attendances";
     list.lookupFields = ["StudentClass($select=RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and StudentClassId eq " + this.StudentClassId + " and BatchId eq " + this.SelectedBatchId];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and StudentClassId eq " + this.StudentClassId];
 
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
@@ -245,7 +247,7 @@ export class StudentattendancereportComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
     this.dataservice.get(list)
@@ -277,7 +279,7 @@ export class StudentattendancereportComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
@@ -285,7 +287,7 @@ export class StudentattendancereportComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

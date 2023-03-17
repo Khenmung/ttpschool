@@ -30,7 +30,8 @@ export class OrganizationComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   StorageFnPList = [];
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   Applications = [];
   Organizations = [];
@@ -78,7 +79,7 @@ export class OrganizationComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private fileUploadService: FileUploadService,
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -118,7 +119,7 @@ export class OrganizationComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail.length != 0) {
       this.UserId = this.LoginUserDetail[0]["userId"];
       this.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -129,12 +130,14 @@ export class OrganizationComponent implements OnInit {
       this.OrgId = +localStorage.getItem("orgId");
     }
 
-    var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.ORGANIZATION)
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.ORGANIZATION)
     if (perObj.length > 0) {
       this.Permission = perObj[0].permission;
     }
     if (this.Permission != 'deny') {
-      this.Applications = this.tokenstorage.getPermittedApplications();
+      this.FilterOrgSubOrg =globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.FilterOrgSubOrgBatchId =globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.Applications = this.tokenStorage.getPermittedApplications();
       var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
       //var TopMasters=[];
       this.contentservice.GetParentZeroMasters().subscribe((data: any) => {
@@ -305,11 +308,11 @@ export class OrganizationComponent implements OnInit {
           this.searchForm.patchValue(data.value[0])
           this.OrganizationId = data.value[0].OrganizationId;
           this.imgURL = globalconstants.apiUrl + "/uploads/" + this.LoginUserDetail[0]["org"] + "/organization logo/" + data.value[0].LogoPath;
-          this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].CountryId, this.LoginUserDetail[0]["orgId"])
+          this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].CountryId,this.FilterOrgSubOrg)
             .subscribe((data: any) => {
               this.States = [...data.value];
             });
-          this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].StateId, this.LoginUserDetail[0]["orgId"])
+          this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].StateId, this.FilterOrgSubOrg)
             .subscribe((data: any) => {
               this.City = [...data.value];
             });
@@ -360,6 +363,7 @@ export class OrganizationComponent implements OnInit {
     this.formdata.append("batchId", "0");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
     this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("subOrgId", this.tokenStorage.getSubOrgId()+"");
     this.formdata.append("pageId", "0");
 
     this.formdata.append("studentId", "0");
@@ -406,7 +410,7 @@ export class OrganizationComponent implements OnInit {
     }
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

@@ -34,7 +34,8 @@ export class EmployeeAttendanceComponent implements OnInit {
   NoOfRecordToUpdate = -1;
   StudentDetailToDisplay = '';
   StudentClassId = 0;
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   SelectedBatchId = 0;SubOrgId = 0;
   Batches = [];
@@ -74,7 +75,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -91,19 +92,20 @@ export class EmployeeAttendanceComponent implements OnInit {
     // })
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.StudentClassId = 0;
-    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetEmployees();
 
@@ -149,7 +151,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   GetEmployeeAttendance() {
     debugger;
 
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
 
     var filterStrClsSub = '';
 
@@ -304,7 +306,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     let list: List = new List();
     list.fields = ["EmployeeAttendanceId"];
     list.PageName = "EmployeeAttendances";
-    list.filter = [checkFilterString + " and " + this.StandardFilter];
+    list.filter = [checkFilterString + " and " + this.FilterOrgSubOrg];
     this.loading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -418,12 +420,12 @@ export class EmployeeAttendanceComponent implements OnInit {
   // }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

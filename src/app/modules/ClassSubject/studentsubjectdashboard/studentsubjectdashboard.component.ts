@@ -36,16 +36,17 @@ export class studentsubjectdashboardComponent implements OnInit {
   StudentDetailToDisplay = '';
   SelectedApplicationId = 0;
   StudentClassId = 0;
-  StandardFilter = '';
+  //StandardFilter = '';
   loading = false;
   ClassSubjectList = [];
   Sections = [];
   Classes = [];
   Subjects = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
   StudentClassSubjects = [];
-
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   StudentSubjectList: IStudentSubject[] = [];
   dataSource: MatTableDataSource<IStudentSubject>;
   allMasterData = [];
@@ -65,7 +66,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     SectionId: 0,
     ClassSubjectId: 0,
     BatchId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 1
   };
   nameFilter = new UntypedFormControl('');
@@ -80,7 +81,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -101,22 +102,24 @@ export class studentsubjectdashboardComponent implements OnInit {
   PageLoad() {
     //debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.StudentClassId = 1;
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+
+        //var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
 
         });
@@ -145,13 +148,10 @@ export class studentsubjectdashboardComponent implements OnInit {
     //   this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1" +
       ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
 
-
     filterStr += ' and SectionId eq ' + this.searchForm.get("searchSectionId").value;
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -195,7 +195,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   }
   GetExistingStudentClassSubjects() {
 
-    var orgIdSearchstr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    var orgIdSearchstr = this.FilterOrgSubOrgBatchId; //"OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
     orgIdSearchstr += ' and ClassId eq ' + _classId;
@@ -221,7 +221,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentClassSubjects = [];
-        var filteredClassSubjects = this.ClassSubjectList.filter(clssubj => clssubj.ClassId == _classId && clssubj.SelectHowMany>0);
+        var filteredClassSubjects = this.ClassSubjectList.filter(clssubj => clssubj.ClassId == _classId && clssubj.SelectHowMany > 0);
         filteredClassSubjects.forEach(clssubj => {
           var existing = data.value.filter(db => db.ClassSubjectId == clssubj.ClassSubjectId);
           if (existing.length > 0) {
@@ -249,13 +249,13 @@ export class studentsubjectdashboardComponent implements OnInit {
             })
           }
         })
-     
+
 
         //////////////
         //var _studentDetail: any = {};
         this.StoreForUpdate = [];
-        var _students: any = this.tokenstorage.getStudents();
-        var _filteredStudent = _students.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId 
+        var _students: any = this.tokenStorage.getStudents();
+        var _filteredStudent = _students.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId
           && s.StudentClasses[0].SectionId == _sectionId);
         if (_filteredStudent.length > 0) {
           //for all student in student class table for the selected class.
@@ -279,7 +279,7 @@ export class studentsubjectdashboardComponent implements OnInit {
               }
 
               var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClasses[0].StudentClassId);
-              var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value && f.SelectHowMany>0)
+              var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value && f.SelectHowMany > 0)
               //console.log("specificclasssubjects",specificclasssubjects)
               specificclasssubjects.forEach((subjectTypes, indx) => {
                 var clssubject = takensubjects.filter(c => c.ClassSubjectId == subjectTypes.ClassSubjectId)
@@ -400,7 +400,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     list.lookupFields = ["SubjectType($select=SubjectTypeName,SelectHowMany)"];
 
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.orderBy = "ParentId";
     this.ClassSubjectList = [];
     this.dataservice.get(list)
@@ -416,7 +416,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             'SelectHowMany': fromdb.SubjectType.SelectHowMany
           })
         })
-        this.ClassSubjectList = this.ClassSubjectList.sort((a,b)=>a.SubjectTypeId-b.SubjectTypeId);
+        this.ClassSubjectList = this.ClassSubjectList.sort((a, b) => a.SubjectTypeId - b.SubjectTypeId);
         //console.log("this.ClassSubjectList", this.ClassSubjectList)
       });
 
@@ -585,14 +585,14 @@ export class studentsubjectdashboardComponent implements OnInit {
   }
   UpdateOrSave(row, element) {
     //debugger; 
-    let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
-      " and StudentClassId eq " + row.StudentClassId +
-      " and BatchId eq " + this.SelectedBatchId
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and ClassSubjectId eq " + row.ClassSubjectId +
+      " and StudentClassId eq " + row.StudentClassId;
+     // " and BatchId eq " + this.SelectedBatchId
 
 
     if (row.StudentClassSubjectId > 0)
       checkFilterString += " and StudentClassSubjectId ne " + row.StudentClassSubjectId;
-    checkFilterString += " and " + this.StandardFilter
+    checkFilterString += " and " + this.FilterOrgSubOrg;
     let list: List = new List();
     list.fields = ["ClassSubjectId"];
     list.PageName = "StudentClassSubjects";
@@ -683,7 +683,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.shareddata.ChangeSubjects(this.Subjects);
@@ -691,7 +691,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownDataNoConfidentail(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownDataNoConfidentail(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

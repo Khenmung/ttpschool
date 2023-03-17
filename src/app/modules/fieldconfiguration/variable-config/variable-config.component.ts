@@ -70,7 +70,7 @@ export class VariableConfigComponent implements OnInit {
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private nav: Router,
     private contentservice: ContentService,
@@ -111,11 +111,11 @@ export class VariableConfigComponent implements OnInit {
   Permission = '';
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
@@ -123,9 +123,9 @@ export class VariableConfigComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
       }
 
@@ -316,13 +316,13 @@ export class VariableConfigComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
     this.GetVariables();
   }
   GetVariableConfigs() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = this.StandardFilter;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var filter = '';
     if (this.searchForm.get("searchTypeId").value > 0)
@@ -368,7 +368,7 @@ export class VariableConfigComponent implements OnInit {
   }
   GetVariables() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = this.StandardFilter;//'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     let list: List = new List();
 
     list.fields = [
@@ -395,7 +395,7 @@ export class VariableConfigComponent implements OnInit {
       })
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

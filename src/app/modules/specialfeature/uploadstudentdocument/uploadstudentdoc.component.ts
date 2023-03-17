@@ -62,7 +62,7 @@ export class StudentDocumentComponent implements OnInit {
     private dataservice: NaomitsuService,
     private fb: UntypedFormBuilder,
     private nav: Router,
-    private tokenService: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
   ) { }
 
@@ -86,7 +86,7 @@ export class StudentDocumentComponent implements OnInit {
         map(Name => Name ? this._filter(Name) : this.Students.slice())
       );
     debugger;
-    //this.StudentClassId = this.tokenService.getStudentClassId();
+    //this.StudentClassId = this.tokenStorage.getStudentClassId();
 
     // if (this.StudentClassId == 0) {
     //   this.contentservice.openSnackBar("Student Class Id not found.",globalconstants.ActionText,globalconstants.RedBackground);
@@ -95,17 +95,17 @@ export class StudentDocumentComponent implements OnInit {
     //   // }, 2000);      
     // }
     // else {
-    this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-    var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.SPECIALFEATURE.DOCUMENT);
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SPECIALFEATURE.DOCUMENT);
     if (perObj.length > 0)
       this.Permission = perObj[0].permission;
     if (this.Permission != 'deny') {
-      this.StudentId = this.tokenService.getStudentId();
-      this.LoginUserDetail = this.tokenService.getUserDetail();
-      this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
-      this.SubOrgId = +this.tokenService.getSubOrgId();
-      this.FilterOrgnBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenService);
-      this.FilterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+      this.StudentId = this.tokenStorage.getStudentId();
+      this.LoginUserDetail = this.tokenStorage.getUserDetail();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.FilterOrgnBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.FilterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.PageLoad();
     }
     //}
@@ -120,7 +120,8 @@ export class StudentDocumentComponent implements OnInit {
     return user && user.Name ? user.Name : '';
   }
   PageLoad() {
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.GetMasterData();
     });
@@ -168,6 +169,7 @@ export class StudentDocumentComponent implements OnInit {
     this.formdata.append("description", "");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
     this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("subOrgId", this.SubOrgId+"");
     this.formdata.append("pageId", "0");
 
     if (this.StudentId != null && this.StudentId != 0)
@@ -246,16 +248,16 @@ export class StudentDocumentComponent implements OnInit {
   }
   GetMasterData() {
     debugger;
-    this.allMasterData = this.tokenService.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTDOCUMENTTYPE);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-    this.Batches = this.tokenService.getBatches();
+    this.Batches = this.tokenStorage.getBatches();
     this.GetStudentClasses();
 
   }
   GetStudentClasses() {
     //debugger;
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenService);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
@@ -292,7 +294,7 @@ export class StudentDocumentComponent implements OnInit {
     //debugger;
     //this.Students = [...data.value];
     //  //console.log('data.value', data.value);
-    var _students = this.tokenService.getStudents();
+    var _students = this.tokenStorage.getStudents();
     if (_students.length > 0) {
 
       //var _students = [...data.value];
@@ -334,7 +336,7 @@ export class StudentDocumentComponent implements OnInit {
     //})
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenService, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;

@@ -23,7 +23,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   
   PagePermission = '';
   LeavePolicyListName = 'LeavePolicies';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
   loading = false;
   rowCount = 0;
   LeavePolicies = [];
@@ -63,7 +63,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     private shareddata: SharedataService,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -85,14 +85,14 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenstorage.getSubOrgId();
-      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMasterData();
 
     }
@@ -177,12 +177,11 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     //debugger;
 
     this.loading = true;
-    let checkFilterString = "LeaveNameId eq " + row.LeaveNameId +
+    let checkFilterString = this.FilterOrgSubOrg + " and LeaveNameId eq " + row.LeaveNameId +
       " and LeaveOpenAdjustCloseId eq " + row.LeaveOpenAdjustCloseId
 
     if (row.LeavePolicyId > 0)
       checkFilterString += " and LeavePolicyId ne " + row.LeavePolicyId;
-    checkFilterString += " and " + this.StandardFilter;
 
     let list: List = new List();
     list.fields = ["LeavePolicyId"];
@@ -308,7 +307,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   UpdateAll() { }
   GetEmployees() {
     this.loading = true;
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
@@ -318,7 +317,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
       "FirstName",
       "LastName"];
     list.PageName = "EmpEmployees";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
@@ -336,7 +335,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   }
   GetLeavePolicy() {
 
-    var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     //var _employeeId = 0;
     //var EmployeeFilter = '';
@@ -391,7 +390,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {

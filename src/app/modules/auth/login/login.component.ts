@@ -64,9 +64,9 @@ export class LoginComponent implements OnInit {
     })
 
     debugger;
-    var loginUserDetail = this.tokenStorage.getUserDetail();
+    var LoginUserDetail = this.tokenStorage.getUserDetail();
     //if (this.tokenStorage.getToken()) {
-    if (loginUserDetail.length > 0) {
+    if (LoginUserDetail.length > 0) {
       this.isLoggedIn = true;
       this.route.navigate(['/dashboard']);
     }
@@ -210,12 +210,13 @@ export class LoginComponent implements OnInit {
               var __organization = '';
               if (UserRole[0].OrgId != null)
                 __organization = UserRole[0].Org.OrganizationName;
-
+              this.tokenStorage.saveSubOrgId(this.userInfo["subOrgId"]);
               this.UserDetail = [{
-                employeeId: this.userInfo["nameid"],
+                employeeId: this.userInfo["employeeId"],
                 userId: this.userInfo["Id"],
                 userName: this.userInfo["email"],
                 email: this.userInfo["email"],
+                subOrgId: this.userInfo["subOrgId"],
                 orgId: UserRole[0].OrgId,
                 org: __organization,
                 planId: localStorage.getItem("planId"),

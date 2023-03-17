@@ -43,7 +43,8 @@ export class UserReportConfigColumnsComponent implements OnInit {
     keepAfterRouteChange: true
   };
   ColumnsOfAvailableReports = [];
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   ToUpateCount = -1;
   AvailableReportNames = [];
@@ -82,7 +83,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -105,17 +106,18 @@ export class UserReportConfigColumnsComponent implements OnInit {
       searchReportName: [0]
     });
     //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
-    this.Applications = this.tokenstorage.getPermittedApplications();
-    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.Applications = this.tokenStorage.getPermittedApplications();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     this.PageLoad()
   }
 
   PageLoad() {
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     this.ApplicationName = this.LoginUserDetail[0]["org"];
-
+    this.FilterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.FilterOrgSubOrgBatchId= globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     this.GetBaseReportId();
   }
   updateActive(row, value) {
@@ -194,8 +196,8 @@ export class UserReportConfigColumnsComponent implements OnInit {
     }
 
     this.loading = true;
-    let checkFilterString = "Active eq 1 and ReportName eq '" + row.ReportName + "'" +
-      " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and Active eq 1 and ReportName eq '" + row.ReportName + "'" +
+      " and ApplicationId eq " + row.ApplicationId + 
       " and ParentId eq " + MyReportNameId;
 
     if (row.ReportConfigItemId > 0)
@@ -327,7 +329,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
 
     this.ReportConfigItemList = [];
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var filterstr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var ApplicationId = this.SelectedApplicationId;  //this.SelectedApplicationId;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
@@ -456,7 +458,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       "Active"]
     list.PageName = this.ReportConfigItemListName;
     list.filter = ["Active eq 1 and (ParentId eq " + this.BaseReportId +
-      " or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
+      " or ("+ this.FilterOrgSubOrg + "))"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -506,7 +508,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

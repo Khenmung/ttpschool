@@ -32,7 +32,8 @@ export class ClassmasterdashboardComponent implements OnInit {
   CurrentRow: any = {};
   PreviousBatchId = 0;
   SelectedApplicationId = 0;
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   StandardFilterWithPreviousBatchId = '';
   loading = false;
   Permission = '';
@@ -76,7 +77,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private dialog: MatDialog,
     private nav: Router,
@@ -111,7 +112,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   PageLoad() {
 
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     this.filteredOptions = this.searchForm.get("searchTeacherId").valueChanges
       .pipe(
@@ -123,8 +124,8 @@ export class ClassmasterdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSTEACHER);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSTEACHER);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
@@ -136,16 +137,18 @@ export class ClassmasterdashboardComponent implements OnInit {
       else {
 
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        //this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        //this.CheckPermission = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
         ////console.log(this.CheckPermission);
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
-        this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenstorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage);
 
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
 
@@ -165,7 +168,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   }
   CopyFromPreviousBatch() {
     //console.log("here ", this.PreviousBatchId)
-    this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
+    this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
     if (this.PreviousBatchId == -1)
       this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else
@@ -186,7 +189,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     if (previousbatch == 1)
       filterStr = this.StandardFilterWithPreviousBatchId
     else
-      filterStr = this.StandardFilterWithBatchId
+      filterStr = this.FilterOrgSubOrgBatchId;
 
     if (_teacherId != undefined)
       filterStr += " and TeacherId eq " + _teacherId;
@@ -346,7 +349,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     //debugger;
     this.loading = true;
 
-    let checkFilterString = "TeacherId eq " + row.TeacherId +
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and TeacherId eq " + row.TeacherId +
       " and ClassId eq " + row.ClassId +
       " and SectionId eq " + row.SectionId +
       " and Active eq 1 ";
@@ -354,7 +357,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     if (row.TeacherClassMappingId > 0)
       checkFilterString += " and TeacherClassMappingId ne " + row.TeacherClassMappingId;
 
-    checkFilterString += ' and ' + this.StandardFilterWithBatchId;
+    //checkFilterString += ' and ' + this.StandardFilterWithBatchId;
 
     let list: List = new List();
     list.fields = ["TeacherClassMappingId"];
@@ -433,7 +436,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
   GetTeachers() {
 
-    var orgIdSearchstr = 'IsCurrent eq 1 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var orgIdSearchstr = this.FilterOrgSubOrg + " and IsCurrent eq 1 and Active eq 1";
     var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching" || f.MasterDataName.toLowerCase() == "helper");
     var _workAccountIdFilter = '';
     if (_WorkAccount.length == 2) {
@@ -487,7 +490,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
     this.dataservice.get(list)
@@ -507,14 +510,14 @@ export class ClassmasterdashboardComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Sections = this.Sections.filter(s=>s.MasterDataName !='N/A');
     //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-    this.Batches = this.tokenstorage.getBatches()
+    this.Batches = this.tokenStorage.getBatches()
 
     //this.shareddata.ChangeClasses(this.Classes);
     this.shareddata.ChangeSubjects(this.Subjects);
@@ -524,7 +527,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
 
 }

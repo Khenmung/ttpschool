@@ -29,7 +29,7 @@ export class StudentDatadumpComponent implements OnInit {
 
   loading = false;
   filterOrgIdNBatchId = '';
-  filterOrgIdOnly = '';
+  filterOrgSubOrgIdOnly = '';
   filterBatchIdNOrgId = '';
   ELEMENT_DATA: IStudent[] = [];
   dataSource: MatTableDataSource<IStudent>;
@@ -79,7 +79,7 @@ export class StudentDatadumpComponent implements OnInit {
 
     private fb: UntypedFormBuilder,
     private shareddata: SharedataService,
-    private token: TokenStorageService) { }
+    private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
     // this.servicework.activateUpdate().then(() => {
@@ -91,31 +91,31 @@ export class StudentDatadumpComponent implements OnInit {
     // })
 
     this.loading = true;
-    this.LoginUserDetail = this.token.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == "") {
       this.route.navigate(['/auth/login']);
     }
     else {
-      var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
       if (perObj.length > 0) {
         this.FeePaymentPermission = perObj[0].permission;
       }
-      //var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
-      this.SelectedBatchId = +this.token.getSelectedBatchId();
-      this.SubOrgId = +this.token.getSubOrgId();
-      this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
-      this.SelectedApplicationId = +this.token.getSelectedAPPId();
-      this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
-      this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
+      //var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      //this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.filterOrgSubOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.studentSearchForm = this.fb.group({
         searchRemarkId: [0],
         searchGroupId: [0],
       })
-      this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+      this.contentservice.GetClassGroups(this.filterOrgSubOrgIdOnly)
         .subscribe((data: any) => {
           this.ClassGroups = [...data.value];
         });
-      this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
         .subscribe((data: any) => {
           this.ClassGroupMapping = data.value.map(f => {
             f.ClassName = f.Class.ClassName;
@@ -123,7 +123,8 @@ export class StudentDatadumpComponent implements OnInit {
           });
         })
 
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
 
@@ -175,7 +176,7 @@ export class StudentDatadumpComponent implements OnInit {
         this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Batches = this.token.getBatches()
+        this.Batches = this.tokenStorage.getBatches()
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
 
@@ -205,7 +206,7 @@ export class StudentDatadumpComponent implements OnInit {
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
         this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
-        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((f: any) => {
+        this.contentservice.GetFeeDefinitions(this.filterOrgSubOrgIdOnly, 1).subscribe((f: any) => {
           this.FeeDefinitions = [...f.value];
           this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
         });
@@ -253,7 +254,7 @@ export class StudentDatadumpComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.token, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // });
@@ -283,9 +284,9 @@ export class StudentDatadumpComponent implements OnInit {
 
     this.StudentId = element.StudentId;
 
-    this.token.saveStudentClassId(this.StudentClassId + "");
-    this.token.saveClassId(_ClassId + "");
-    this.token.saveStudentId(this.StudentId + "");
+    this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
+    this.tokenStorage.saveClassId(_ClassId + "");
+    this.tokenStorage.saveStudentId(this.StudentId + "");
 
     this.route.navigate(['/edu/addstudent/' + element.StudentId]);
   }
@@ -314,15 +315,15 @@ export class StudentDatadumpComponent implements OnInit {
     this.shareddata.ChangeStudentName(StudentName);
 
     //this.shareddata.ChangeStudentClassId(this.StudentClassId);
-    this.token.saveStudentClassId(this.StudentClassId.toString());
-    this.token.saveStudentId(element.StudentId);
+    this.tokenStorage.saveStudentClassId(this.StudentClassId.toString());
+    this.tokenStorage.saveStudentId(element.StudentId);
     //this.shareddata.ChangeStudentId(element.StudentId);
 
   }
   new() {
     //var url = this.route.url;
-    this.token.saveStudentId("0");
-    this.token.saveStudentClassId("0");
+    this.tokenStorage.saveStudentId("0");
+    this.tokenStorage.saveStudentClassId("0");
     this.shareddata.ChangeStudentName("");
     this.route.navigate(['/edu/addstudent']);
   }
@@ -355,11 +356,11 @@ export class StudentDatadumpComponent implements OnInit {
   GetFeeTypes() {
     debugger;
     this.loading = true;
-    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
+    //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [this.filterOrgSubOrgIdOnly + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -410,7 +411,7 @@ export class StudentDatadumpComponent implements OnInit {
     list.fields = ["Remarks,StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId"];
     list.lookupFields = ["Student($select=*)"];
     list.PageName = "StudentClasses";
-    list.filter = [this.filterOrgIdOnly + " and " + classfilter];
+    list.filter = [this.filterOrgSubOrgIdOnly + " and " + classfilter];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -743,7 +744,7 @@ export class StudentDatadumpComponent implements OnInit {
   }
   GetStudentClasses() {
     //debugger;
-    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
+    var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
@@ -786,7 +787,7 @@ export class StudentDatadumpComponent implements OnInit {
   GetStudents() {
     this.loading = true;
 
-    var _students: any = this.token.getStudents();
+    var _students: any = this.tokenStorage.getStudents();
 
     this.Students = _students.map(student => {
       var _RollNo = '';

@@ -25,10 +25,11 @@ export class ExamsComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   Students = [];
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   Exams: IExams[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   ClassGroups = [];
   SelectedApplicationId = 0;
   StudentGradeFormula = [];
@@ -50,7 +51,7 @@ export class ExamsComponent implements OnInit {
     ReleaseResult: 0,
     ReleaseDate: null,
     AttendanceStartDate: null,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     Active: 1
   };
@@ -69,7 +70,7 @@ export class ExamsComponent implements OnInit {
   StudentGrades = [];
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -91,23 +92,24 @@ export class ExamsComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       var feature = globalconstants.AppAndMenuAndFeatures.edu.examination.exam;
 
-      var perObj = globalconstants.getPermission(this.tokenstorage, feature);
+      var perObj = globalconstants.getPermission(this.tokenStorage, feature);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission == 'deny')
         this.nav.navigate(['/auth/login']);
       else {
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetSubjectComponents();
         //this.GetStudentSubjects();
@@ -130,7 +132,7 @@ export class ExamsComponent implements OnInit {
       AttendanceStartDate: new Date(),
       //AttendanceModeId: 0,
       BatchId: 0,
-      OrgId: 0,SubOrgId: 0,
+      OrgId: 0, SubOrgId: 0,
       Active: 0,
       Action: false
 
@@ -164,31 +166,11 @@ export class ExamsComponent implements OnInit {
     debugger;
     this.loading = true;
 
-    let checkFilterString = "ExamNameId eq " + row.ExamNameId +
-      " and BatchId eq " + this.SelectedBatchId
-    //" and Active eq 1"
-
-    //" and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
-    //" and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
-
-    // if (row.ClassGroupId == 0 || row.ClassGroupId == null) {
-    //   this.loading = false;
-    //   this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
-    // if (row.AttendanceModeId == 0) {
-    //   this.loading = false;
-    //   this.contentservice.openSnackBar("Please select attendance mode.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
-    // if (row.Sequence == 0 ) {
-    //   this.loading = false;
-    //   this.contentservice.openSnackBar("Please enter sequence.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and ExamNameId eq " + row.ExamNameId;
+   
     if (row.ExamId > 0)
       checkFilterString += " and ExamId ne " + row.ExamId;
-    checkFilterString += " and " + this.StandardFilter;
+
     let list: List = new List();
     list.fields = ["ExamId"];
     list.PageName = "Exams";
@@ -265,7 +247,7 @@ export class ExamsComponent implements OnInit {
   }
   GetExams() {
 
-    //var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+    //var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
 
@@ -274,8 +256,7 @@ export class ExamsComponent implements OnInit {
       "EndDate", "ClassGroupId", "AttendanceStartDate",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId];
+    list.filter = [this.FilterOrgSubOrgBatchId];
     //list.orderBy = "Active desc";
 
     this.dataservice.get(list)
@@ -303,7 +284,7 @@ export class ExamsComponent implements OnInit {
               EndDate: new Date(),
               ReleaseResult: 0,
               ReleaseDate: null,
-              OrgId: 0,SubOrgId: 0,
+              OrgId: 0, SubOrgId: 0,
               ClassGroupId: 0,
               Active: 0,
               Action: false
@@ -328,7 +309,7 @@ export class ExamsComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.StudentGradeFormula = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
     this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
@@ -345,14 +326,13 @@ export class ExamsComponent implements OnInit {
   }
   GetSubjectComponents() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
     this.loading = true;
     let list: List = new List();
 
     list.fields = ["ClassSubjectMarkComponentId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark"];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=ClassId)"];
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -425,7 +405,7 @@ export class ExamsComponent implements OnInit {
     element.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
 
@@ -441,7 +421,7 @@ export interface IExams {
   ClassGroupId: number;
   ReleaseResult: number;
   ReleaseDate: Date;
-  OrgId: number;SubOrgId: number;
+  OrgId: number; SubOrgId: number;
   BatchId: number;
   Active: number;
 }

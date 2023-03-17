@@ -27,7 +27,8 @@ export class ExammarkconfigComponent implements OnInit {
   CurrentRow: any = {};
   ClassSubjects = [];
   AllowedSubjectIds = [];
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   loading = false;
   rowCount = 0;
   ExamMarkConfigList: IExamMarkConfig[] = [];
@@ -68,7 +69,7 @@ export class ExammarkconfigComponent implements OnInit {
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private contentservice: ContentService,
     private nav: Router,
@@ -94,19 +95,20 @@ export class ExammarkconfigComponent implements OnInit {
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMMARKCONFIG)
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAMMARKCONFIG)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenstorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetClassGroupMapping();
         this.GetStudentGradeDefn();
@@ -131,8 +133,7 @@ export class ExammarkconfigComponent implements OnInit {
     var _classId = this.searchForm.get("searchClassId").value;
     //var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
     var _examId = this.searchForm.get("searchExamId").value
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    filterStr += " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = this.FilterOrgSubOrgBatchId;
 
     if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
@@ -242,7 +243,7 @@ export class ExammarkconfigComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value;
     var _classId = this.searchForm.get("searchClassId").value;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let checkFilterString = "ExamId eq " + _examId +
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and ExamId eq " + _examId +
       " and ClassSubjectId eq " + row.ClassSubjectId +
       " and ClassId eq " + _classId;
 
@@ -250,7 +251,6 @@ export class ExammarkconfigComponent implements OnInit {
 
     if (row.ExamMarkConfigId > 0)
       checkFilterString += " and ExamMarkConfigId ne " + row.ExamMarkConfigId;
-    checkFilterString += " and " + this.StandardFilterWithBatchId;
 
     let list: List = new List();
     list.fields = ["ExamMarkConfigId"];
@@ -331,7 +331,7 @@ export class ExammarkconfigComponent implements OnInit {
         });
   }
   GetClassGroupMapping() {
-    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMapping = data.value.map(f => {
           f.ClassName = f.Class.ClassName;
@@ -384,7 +384,7 @@ export class ExammarkconfigComponent implements OnInit {
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1";
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
@@ -425,7 +425,7 @@ export class ExammarkconfigComponent implements OnInit {
             }
           }
         })
-        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage, this.ClassSubjects, "ClassSubject");
+        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenStorage, this.ClassSubjects, "ClassSubject");
         this.loading = false;
       })
   }
@@ -436,7 +436,8 @@ export class ExammarkconfigComponent implements OnInit {
   ClassGroupMapping = [];
 
   GetStudentGradeDefn() {
-    this.contentservice.GetStudentGrade(this.LoginUserDetail[0]["orgId"])
+    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetStudentGrade(filterOrgSubOrg)
       .subscribe((data: any) => {
         this.StudentGrades = [...data.value];
       })
@@ -505,15 +506,16 @@ export class ExammarkconfigComponent implements OnInit {
   SubjectCategory = [];
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
       });
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.GetClassSubject();
     })
@@ -590,7 +592,7 @@ export class ExammarkconfigComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

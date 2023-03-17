@@ -28,6 +28,8 @@ export class EventComponent implements OnInit {
   Applications = [];
   loading = false;
   SelectedBatchId = 0; SubOrgId = 0;
+  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg='';
   EventsList: IEvent[] = [];
   filteredOptions: Observable<IEvent[]>;
   dataSource: MatTableDataSource<IEvent>;
@@ -62,7 +64,7 @@ export class EventComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     public datepipe: DatePipe,
     private fb: UntypedFormBuilder
@@ -87,16 +89,18 @@ export class EventComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.EmployeeId = +this.tokenstorage.getEmployeeId();
-    this.SubOrgId = +this.tokenstorage.getSubOrgId();
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.EmployeeId = +this.tokenStorage.getEmployeeId();
+    this.SubOrgId = +this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.EVENT);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.misc.EVENT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -158,7 +162,7 @@ export class EventComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "EventName eq '" + row.EventName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and EventName eq '" + row.EventName + "'";
     checkFilterString += " and EventStartDate eq " + moment(row.EventStartDate).format('YYYY-MM-DD');
     if (row.EventId > 0)
       checkFilterString += " and EventId ne " + row.EventId;
@@ -236,7 +240,7 @@ export class EventComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
 
     let list: List = new List();
     list.fields = ["*"];
@@ -273,7 +277,7 @@ export class EventComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

@@ -34,7 +34,8 @@ export class AttendancepercentComponent implements OnInit {
   NoOfRecordToUpdate = -1;
   StudentDetailToDisplay = '';
   StudentClassId = 0;
-  StandardFilter = '';
+  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId='';
   loading = false;
   Sections = [];
   Classes = [];
@@ -82,7 +83,7 @@ export class AttendancepercentComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
 
     private route: ActivatedRoute,
     private nav: Router,
@@ -100,21 +101,24 @@ export class AttendancepercentComponent implements OnInit {
     // })
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.StudentClassId = 0;
-    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        //var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
       }
@@ -133,7 +137,7 @@ export class AttendancepercentComponent implements OnInit {
   distinctStudent = [];
   GetStudentAttendance() {
     debugger;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId;
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId;
     //' and StudentClassId eq ' + this.StudentClassId;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0) {
@@ -215,7 +219,7 @@ export class AttendancepercentComponent implements OnInit {
     this.StudentClassList = [];
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
-        var _AllStudents: any = this.tokenstorage.getStudents();
+        var _AllStudents: any = this.tokenStorage.getStudents();
         _AllStudents = _AllStudents.filter(all => all.StudentClasses
           && all.StudentClasses.length > 0
           && all.StudentClasses[0].Active == 1)
@@ -352,7 +356,7 @@ export class AttendancepercentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["AttendanceId"];
     list.PageName = "Attendances";
-    list.filter = [checkFilterString + " and " + this.StandardFilter];
+    list.filter = [checkFilterString + " and " + this.FilterOrgSubOrg];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -434,8 +438,7 @@ export class AttendancepercentComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"]+ " and SubOrgId eq " + this.SubOrgId + 
-                   " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     //list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
@@ -458,7 +461,7 @@ export class AttendancepercentComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
@@ -468,7 +471,7 @@ export class AttendancepercentComponent implements OnInit {
     this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
 
 }

@@ -26,7 +26,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
     keepAfterRouteChange: true
   };
   Permission='';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
   loading = false;
   rowCount = 0;
   EmployeeGradeHistoryList: IEmployeeGradeHistory[] = [];
@@ -80,7 +80,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   SelectedApplicationId=0;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private contentservice: ContentService,
     private fb: UntypedFormBuilder
@@ -120,13 +120,13 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
 
   PageLoad() {
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    //this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    //this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.WORKHISTORY);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.WORKHISTORY);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
@@ -134,9 +134,9 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SubOrgId= +this.tokenstorage.getSubOrgId();
-      this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SubOrgId= +this.tokenStorage.getSubOrgId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMasterData();
       }
     }
@@ -169,7 +169,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let checkFilterString = "EmployeeId eq " + this.searchForm.get("searchEmployeeName").value.EmployeeId +
+    let checkFilterString = this.FilterOrgSubOrg + " and EmployeeId eq " + this.searchForm.get("searchEmployeeName").value.EmployeeId +
       " and JobTitleId eq " + row.JobTitleId +
       " and EmpGradeId eq " + row.EmpGradeId +
       " and DepartmentId eq " + row.DepartmentId +
@@ -177,7 +177,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
 
     if (row.EmployeeGradeHistoryId > 0)
       checkFilterString += " and EmployeeGradeHistoryId ne " + row.EmployeeGradeHistoryId;
-    checkFilterString += " and " + this.StandardFilter;
+    //checkFilterString += " and " + this.StandardFilter;
 
     let list: List = new List();
     list.fields = ["EmployeeGradeHistoryId"];
@@ -325,7 +325,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   }
   GetGradeComponents() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = this.FilterOrgSubOrg;//;
 
     let list: List = new List();
 
@@ -335,7 +335,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
       "FormulaOrAmount",
       "CommonComponent"];
     list.PageName = "EmpGradeComponents";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg +" and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
@@ -344,7 +344,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   }
   GetEmployees() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
@@ -353,7 +353,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
       "FirstName",
       "LastName"];
     list.PageName = "EmpEmployees";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = [this.FilterOrgSubOrg +" and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
@@ -385,9 +385,9 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   GetEmployeeGradeHistory() {
     this.loading = true;
     //debugger;
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    var filterstr = 'EmployeeId eq ' + this.searchForm.get("searchEmployeeName").value.EmployeeId;
+    var filterstr = this.FilterOrgSubOrg + ' and Active eq 1 and EmployeeId eq ' + this.searchForm.get("searchEmployeeName").value.EmployeeId;
     let list: List = new List();
 
     list.fields = [
@@ -406,7 +406,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
 
     list.PageName = "EmpEmployeeGradeSalHistories";
     //list.lookupFields = ["EmpEmployeeSalaryComponents", "EmpGradeComponents"];
-    list.filter = ["Active eq 1 and " + filterstr + orgIdSearchstr];
+    list.filter = [filterstr];
     list.orderBy = "EmployeeGradeHistoryId desc";
     //list.orderBy = "ParentId";
     this.EmployeeGradeHistoryList = [];
@@ -428,9 +428,9 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   }
   GetSalaryComponents() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    var filterstr = 'EmployeeId eq ' + this.searchForm.get("searchEmployeeId").value;
+    var filterstr = this.FilterOrgSubOrg + " and Active eq 1 and EmployeeId eq " + this.searchForm.get("searchEmployeeId").value;
     let list: List = new List();
 
     list.fields = [
@@ -442,7 +442,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
     list.PageName = "EmpEmployeeGradeSalHistory";
     list.lookupFields = ["EmpEmployeeSalaryComponents", "EmpGradeComponents"];
 
-    list.filter = ["Active eq 1 and " + filterstr + orgIdSearchstr];
+    list.filter = [filterstr];
     //list.orderBy = "ParentId";
     //this.EmployeeSalaryComponentList = [];
     this.dataservice.get(list)
@@ -452,7 +452,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

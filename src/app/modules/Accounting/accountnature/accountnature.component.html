@@ -66,23 +66,53 @@
             </mat-checkbox>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="BalanceSheetSequence">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>BS Sequence
+    <ng-container matColumnDef="TBSequence">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>TB Sequence
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <input matInput autocomplete="Off" [max]="255" (blur)="onBlur(element)"
-                    [value]="element.BalanceSheetSequence" [(ngModel)]="element.BalanceSheetSequence">
+                    [value]="element.TBSequence" [(ngModel)]="element.TBSequence">
             </mat-form-field>
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="IncomeStatementSequence">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>P&L Sequence
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Income Sequence
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
                     [value]="element.IncomeStatementSequence" [(ngModel)]="element.IncomeStatementSequence">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ExpenseSequence">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Expense Sequence
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+                <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
+                    [value]="element.ExpenseSequence" [(ngModel)]="element.ExpenseSequence">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="AssetSequence">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Asset Sequence
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+                <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
+                    [value]="element.AssetSequence" [(ngModel)]="element.AssetSequence">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="LnESequence">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>LnE Sequence
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+                <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
+                    [value]="element.LnESequence" [(ngModel)]="element.LnESequence">
             </mat-form-field>
         </mat-cell>
     </ng-container>

@@ -34,7 +34,8 @@ export class SyllabusComponent implements OnInit {
   SelectedApplicationId = 0;
   StudentClassId = 0;
   Permission = '';
-  StandardFilter = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   SyllabusOptionList = [];
   SyllabusList: ISyllabus[] = [];
@@ -76,7 +77,7 @@ export class SyllabusComponent implements OnInit {
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private nav: Router,
     private fb: UntypedFormBuilder,
     private fileUploadService: FileUploadService,
@@ -92,7 +93,7 @@ export class SyllabusComponent implements OnInit {
     // })
     debugger;
     this.imgURL = '';
-    this.StudentClassId = this.tokenstorage.getStudentClassId();
+    this.StudentClassId = this.tokenStorage.getStudentClassId();
     this.searchForm = this.fb.group({
       searchClassId: [0],
       searchSubjectId: [0],
@@ -110,28 +111,30 @@ export class SyllabusComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONQUESTIONNAIRE)
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONQUESTIONNAIRE)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-        this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         //this.GetEvaluationNames();
         this.GetMasterData();
         if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
             this.loading = false; this.PageLoading = false;
           });
           //this.GetSyllabus();
         }
-        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
           .subscribe((data: any) => {
             this.ClassGroups = [...data.value];
           });
@@ -355,7 +358,7 @@ export class SyllabusComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString =this.FilterOrgSubOrg;// "OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
     if (row.Lesson.length == 0) {
       this.loading = false; this.PageLoading = false;
@@ -407,8 +410,8 @@ export class SyllabusComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
+          this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
           this.SyllabusForUpdate = [];;
           this.SyllabusData.SyllabusId = row.SyllabusId;
           this.SyllabusData.ContentUnitId = row.ContentUnitId;
@@ -491,9 +494,9 @@ export class SyllabusComponent implements OnInit {
   GetSyllabus() {
     debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr =this.FilterOrgSubOrg //'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
@@ -567,9 +570,9 @@ export class SyllabusComponent implements OnInit {
   GetEvaluationNames() {
     //debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr =this.FilterOrgSubOrg + " and Active eq true";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = [
@@ -604,9 +607,9 @@ export class SyllabusComponent implements OnInit {
   GetSyllabusOption() {
     //debugger;
     this.loading = true;
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenstorage.getSubOrgId();
-    let filterStr = 'ParentId eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg + " and ParentId eq 0";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = [
@@ -639,7 +642,7 @@ export class SyllabusComponent implements OnInit {
     list.fields = ["ClassSubjectId,ClassId,SubjectId"];
     //list.lookupFields = ["ClassMaster($select=ClassId,ClassName)"];
     //list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(m => {
@@ -661,7 +664,7 @@ export class SyllabusComponent implements OnInit {
 
   GetMasterData() {
     debugger;
-    this.allMasterData = this.tokenstorage.getMasterData();
+    this.allMasterData = this.tokenStorage.getMasterData();
     //var result = this.allMasterData.filter(f=>f.MasterDataName =='Question Bank ContentUnit')
     //console.log("result",result)
     //this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
@@ -711,7 +714,7 @@ export class SyllabusComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
   }
 
 }

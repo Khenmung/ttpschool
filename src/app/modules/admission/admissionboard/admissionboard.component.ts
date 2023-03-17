@@ -43,8 +43,8 @@ export class AdmissionboardComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
 
     debugger;
-    var loginUserDetail = this.tokenStorage.getUserDetail();
-    this.contentservice.GetApplicationRoleUser(loginUserDetail);
+    var LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.contentservice.GetApplicationRoleUser(LoginUserDetail);
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.Admission.ADMISSION);
     if (perObj.length > 0)

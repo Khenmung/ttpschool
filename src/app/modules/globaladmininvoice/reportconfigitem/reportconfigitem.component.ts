@@ -69,7 +69,7 @@ export class ReportConfigItemComponent implements OnInit { PageLoading=true;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,    
-    private tokenstorage: TokenStorageService,
+    private tokenStorage: TokenStorageService,
     
     private nav: Router,
     private fb: UntypedFormBuilder
@@ -95,11 +95,11 @@ export class ReportConfigItemComponent implements OnInit { PageLoading=true;
   }
 
   PageLoad() {
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     this.ApplicationName = this.LoginUserDetail[0]["org"];
-    this.Applications = this.tokenstorage.getPermittedApplications();
+    this.Applications = this.tokenStorage.getPermittedApplications();
     this.loading = true;
     this.GetBaseReportId();
   }
@@ -396,7 +396,7 @@ export class ReportConfigItemComponent implements OnInit { PageLoading=true;
   }
 
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
     
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {

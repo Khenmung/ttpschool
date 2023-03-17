@@ -28,8 +28,8 @@ export class searchstudentComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
   filterOrgIdNBatchId = '';
-  filterOrgIdOnly = '';
-  filterBatchIdNOrgId = '';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   ELEMENT_DATA: IStudent[];
   dataSource: MatTableDataSource<IStudent>;
   displayedColumns = [
@@ -94,7 +94,7 @@ export class searchstudentComponent implements OnInit {
     private route: Router,
     private fb: UntypedFormBuilder,
     private shareddata: SharedataService,
-    private token: TokenStorageService) { }
+    private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
     this.servicework.activateUpdate().then(() => {
@@ -106,23 +106,23 @@ export class searchstudentComponent implements OnInit {
     })
     debugger;
     this.loading = true;
-    this.LoginUserDetail = this.token.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == "") {
       this.route.navigate(['/auth/login']);
     }
     else {
-      var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
       if (perObj.length > 0) {
         this.FeePaymentPermission = perObj[0].permission;
       }
       //var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
       this.ELEMENT_DATA = [];
-      this.SelectedBatchId = +this.token.getSelectedBatchId();
-      this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
-      this.SelectedApplicationId = +this.token.getSelectedAPPId();
-      this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.LoginUserDetail,this.SubOrgId);
-      this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.token);
-      this.StudentsFromCache = this.token.getStudents();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.StudentsFromCache = this.tokenStorage.getStudents();
       this.studentSearchForm = this.fb.group({
         searchSectionId: [0],
         searchRemarkId: [0],
@@ -137,10 +137,11 @@ export class searchstudentComponent implements OnInit {
       //var searchstudent = this.token.getStudentSearch();
       //if (searchstudent.length > 0)
 
-      this.allMasterData = this.token.getMasterData();
-      this.StudentSearch = this.token.getStudentSearch();
+      this.allMasterData = this.tokenStorage.getMasterData();
+      this.StudentSearch = this.tokenStorage.getStudentSearch();
 
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
         this.GetMasterData();
       });
@@ -200,7 +201,7 @@ export class searchstudentComponent implements OnInit {
     this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-    this.Batches = this.token.getBatches()
+    this.Batches = this.tokenStorage.getBatches()
     this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
     this.shareddata.ChangeCategory(this.Category);
 
@@ -230,7 +231,7 @@ export class searchstudentComponent implements OnInit {
     this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
     this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
     this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
-    this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((f: any) => {
+    this.contentservice.GetFeeDefinitions(this.FilterOrgSubOrg, 1).subscribe((f: any) => {
       this.FeeDefinitions = [...f.value];
       this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
     });
@@ -302,7 +303,7 @@ export class searchstudentComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype, this.token, this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
   }
   fee(id) {
@@ -350,7 +351,7 @@ export class searchstudentComponent implements OnInit {
     var StudentDetail = '"StudentName":"' + StudentName + '","ClassName":"' + _clsName + '", "Section":"' + _sectionName + '","RollNo":"' + studentclass[0].RollNo + '"';
     localStorage.setItem("StudentDetail", StudentDetail + "");
     //this.shareddata.ChangeStudentName(StudentName);
-    this.token.saveStudentClassId(this.StudentClassId + "");
+    this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
     this.SaveIds(element);
     this.route.navigate(['/edu/progressreport/']);
   }
@@ -402,8 +403,8 @@ export class searchstudentComponent implements OnInit {
     this.shareddata.ChangeStudentName(StudentName);
 
     //this.shareddata.ChangeStudentClassId(this.StudentClassId);
-    this.token.saveStudentClassId(this.StudentClassId.toString());
-    this.token.saveStudentId(element.StudentId);
+    this.tokenStorage.saveStudentClassId(this.StudentClassId.toString());
+    this.tokenStorage.saveStudentId(element.StudentId);
     //this.shareddata.ChangeStudentId(element.StudentId);
 
   }
@@ -418,15 +419,15 @@ export class searchstudentComponent implements OnInit {
 
     this.StudentId = element.StudentId;
 
-    this.token.saveStudentClassId(this.StudentClassId + "");
-    this.token.saveClassId(_ClassId + "");
-    this.token.saveStudentId(this.StudentId + "");
+    this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
+    this.tokenStorage.saveClassId(_ClassId + "");
+    this.tokenStorage.saveStudentId(this.StudentId + "");
 
   }
   new() {
     //var url = this.route.url;
-    this.token.saveStudentId("0");
-    this.token.saveStudentClassId("0");
+    this.tokenStorage.saveStudentId("0");
+    this.tokenStorage.saveStudentClassId("0");
     this.shareddata.ChangeStudentName("");
     this.route.navigate(['/edu/addstudent']);
   }
@@ -569,50 +570,16 @@ export class searchstudentComponent implements OnInit {
     }
 
     if (this.StudentSearch.length > 0)
-      this.token.saveStudentSearch(this.StudentSearch);
+      this.tokenStorage.saveStudentSearch(this.StudentSearch);
     else
-      this.token.saveStudentSearch([]);
-    // if (_ClassId == 0 && _fathername == undefined && _mothername == undefined 
-    //   && _PID ==0 && _sectionId==0 && _searchAdmissionNo==0 && _remarkId==0 && _studentId==0) {
-    //   this.ELEMENT_DATA = [];
-    //   var admittedStatusId = this.AdmissionStatus.filter(a => a.MasterDataName.toLowerCase() == 'admitted')[0].MasterDataId;
-    //   var _student = filteredStudents.filter(s => s.AdmissionStatusId != admittedStatusId)
-    //   _student.forEach(item => {
-    //     var _lastname = item.LastName == null ? '' : " " + item.LastName;
-    //     item.Name = item.FirstName + _lastname;
-    //     var _remark = '';
-    //     var objremark = this.Remarks.filter(f => f.MasterDataId == item.RemarkId);
-    //     if (objremark.length > 0) {
-    //       _remark = objremark[0].MasterDataName
-    //       item.Remarks = _remark;
-    //     }
-    //     else
-    //       item.Remarks = '';
-    //     //item.StudentClasses = {};
-    //     item.ClassName = '';
-    //     item.Action = "";
-    //     this.ELEMENT_DATA.push(item);
-
-    //   })
-    //   if (this.ELEMENT_DATA.length == 0)
-    //     this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
-    //   //}
-    //   //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
-    //   this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
-    //   this.dataSource.paginator = this.paginator;
-    //   this.dataSource.sort = this.sort;
-    //   this.loading = false; this.PageLoading = false;
-    // }
-    // else {
-
-
-    let list: List = new List();
+      this.tokenStorage.saveStudentSearch([]);
+       let list: List = new List();
 
     list.fields = ["StudentId,StudentClassId,HouseId,BatchId,SectionId,ClassId,RollNo,FeeTypeId,Remarks"];
 
     //list.lookupFields = ["StudentClasses($filter=" + classfilter + "BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,SectionId,ClassId,RollNo,FeeTypeId,Remarks)"];
     list.PageName = "StudentClasses";
-    var filterstr = this.filterOrgIdOnly + classfilter + checkFilterString + " and BatchId eq " + this.SelectedBatchId;
+    var filterstr = this.FilterOrgSubOrgBatchId + classfilter + checkFilterString;
     list.filter = [filterstr];
     //list.orderBy = "ParentId";
 
