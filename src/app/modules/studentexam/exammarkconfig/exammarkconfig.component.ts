@@ -331,7 +331,8 @@ export class ExammarkconfigComponent implements OnInit {
         });
   }
   GetClassGroupMapping() {
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMapping = data.value.map(f => {
           f.ClassName = f.Class.ClassName;
@@ -357,7 +358,7 @@ export class ExammarkconfigComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased = 0;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+    this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, _examId)
       .subscribe((data: any) => {
         this.ExamClassGroups = [...data.value];
         var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);

@@ -264,7 +264,7 @@ export class HomeDashboardComponent implements OnInit {
         .subscribe((data: any) => {
           this.tokenStorage.saveMasterData([...data.value]);
           this.allMasterData = [...data.value];
-          this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.SUBORGANIZAION)
+          this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
           this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
         });
     }
@@ -463,7 +463,7 @@ export class HomeDashboardComponent implements OnInit {
           .subscribe((data: any) => {
             this.tokenStorage.saveMasterData([...data.value]);
             this.allMasterData = [...data.value];
-            this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.SUBORGANIZAION)
+            this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
             this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
           });
 

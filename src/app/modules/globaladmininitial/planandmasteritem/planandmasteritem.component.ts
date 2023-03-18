@@ -413,9 +413,9 @@ export class PlanandmasteritemComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-
+        var FilterOrgSubOrg = "OrgId eq 0 and SubOrgId eq 0";
         var applicationId = this.allMasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
-        this.contentservice.GetDropDownDataFromDB(applicationId, 0, 0, 1)
+        this.contentservice.GetDropDownDataFromDB(applicationId, FilterOrgSubOrg, 0, 1)
           .subscribe((data: any) => {
             this.Applications = [...data.value];
           })

@@ -40,6 +40,8 @@ export class LoginComponent implements OnInit {
   password;
   show = false;
   IsSubmitted = false;
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   constructor(
     private authService: AuthService,
     private dataservice: NaomitsuService,
@@ -97,6 +99,7 @@ export class LoginComponent implements OnInit {
         this.userInfo = JSON.parse(JSON.stringify(decodedUser));
 
         localStorage.setItem('orgId', decodedUser.orgId);
+        localStorage.setItem('subOrgId', this.userInfo["subOrgId"]);
         localStorage.setItem('userId', decodedUser.Id);
         localStorage.setItem('planId', decodedUser.planId);
         localStorage.setItem('username', decodedUser.username);
@@ -105,7 +108,10 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('studentId', decodedUser.studentId);
         localStorage.setItem('role', decodedUser.role);
 
-        //console.log("decodedUser.iss",decodedUser.iss)
+        this.tokenStorage.saveSubOrgId(this.userInfo["subOrgId"]);
+        this.FilterOrgSubOrg = "OrgId eq " + localStorage.getItem("orgId") + " and SubOrgId eq " + localStorage.getItem("subOrgId");// globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        //this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+
         //if PlanId is zero, redirect to select plan.
         if (+decodedUser.planId == 0 && decodedUser.role.toLowerCase() == 'admin')
           this.route.navigate(['/auth/selectplan']);
@@ -191,17 +197,18 @@ export class LoginComponent implements OnInit {
   GetMasterData(UserRole) {
     debugger;
     //this.Applications = this.tokenStorage.getPermittedApplications();
-
+    
     this.contentservice.GetParentZeroMasters().subscribe((data: any) => {
       var TopMasters = [...data.value];
       var countryparentId = TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
       var appId = TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].ApplicationId;
-      this.contentservice.GetDropDownDataFromDB(countryparentId, 0, 0)
+      var filterorgsuborg='OrgId eq 0 and SubOrgId eq 0';
+      this.contentservice.GetDropDownDataFromDB(countryparentId,filterorgsuborg , 0)
         .subscribe((data: any) => {
           this.Applications = [...data.value];
           var commonappId = this.Applications.filter(f => f.MasterDataName.toLowerCase() == 'common')[0].MasterDataId;
           var roleparentId = TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'role')[0].MasterDataId;
-          this.contentservice.GetDropDownDataFromDB(roleparentId, localStorage.getItem('orgId'), commonappId)
+          this.contentservice.GetDropDownDataFromDB(roleparentId, this.FilterOrgSubOrg, commonappId)
             .subscribe((data: any) => {
               this.Roles = [...data.value];
 
@@ -210,7 +217,7 @@ export class LoginComponent implements OnInit {
               var __organization = '';
               if (UserRole[0].OrgId != null)
                 __organization = UserRole[0].Org.OrganizationName;
-              this.tokenStorage.saveSubOrgId(this.userInfo["subOrgId"]);
+              
               this.UserDetail = [{
                 employeeId: this.userInfo["employeeId"],
                 userId: this.userInfo["Id"],

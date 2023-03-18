@@ -316,7 +316,7 @@ export class AppuserdashboardComponent implements OnInit {
       "EmpEmployeeId",
       "FirstName",
       "LastName",
-      "EmailAddress"
+      "EmailAddress",
     ];
     list.PageName = "EmpEmployees";
     list.filter = ["Active eq 1 and EmailAddress ne '' and OrgId eq " + this.LoginDetail[0]['orgId']];
@@ -421,7 +421,7 @@ export class AppuserdashboardComponent implements OnInit {
         //var _UserName ='';
         if (data.length > 0) {
           this.UserDetail.forEach(filteredstudent => {
-            var exist = data.filter(d => d.UserName == filteredstudent.FirstName.replaceAll(" ",""));
+            var exist = data.filter(d => d.Email.toLowerCase() == filteredstudent.EmailAddress.toLowerCase());
             if (exist.length > 0) {
               this.AppUsers.push({
                 "Id": exist[0].Id,

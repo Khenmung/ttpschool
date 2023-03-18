@@ -144,7 +144,7 @@ export class OrganizationComponent implements OnInit {
         this.TopMasters = [...data.value];
         //console.log("this.TopMasters",this.TopMasters)
         var countryparentId = this.TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'country')[0].MasterDataId;
-        this.contentservice.GetDropDownDataFromDB(countryparentId, this.OrgId, commonAppId)
+        this.contentservice.GetDropDownDataFromDB(countryparentId, this.FilterOrgSubOrg, commonAppId)
           .subscribe((data: any) => {
             this.Country = [...data.value];
           })
@@ -160,7 +160,7 @@ export class OrganizationComponent implements OnInit {
   //}
   PopulateState(element) {
     var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
-    this.contentservice.GetDropDownDataFromDB(element.value, this.OrgId, commonAppId)
+    this.contentservice.GetDropDownDataFromDB(element.value,this.FilterOrgSubOrg, commonAppId)
       .subscribe((data: any) => {
         this.States = [...data.value];
         this.Action = true;
@@ -168,7 +168,7 @@ export class OrganizationComponent implements OnInit {
   }
   PopulateCity(element) {
     var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
-    this.contentservice.GetDropDownDataFromDB(element.value, this.OrgId, commonAppId)
+    this.contentservice.GetDropDownDataFromDB(element.value, this.FilterOrgSubOrg, commonAppId)
       .subscribe((data: any) => {
         this.City = [...data.value];
         this.Action = true;

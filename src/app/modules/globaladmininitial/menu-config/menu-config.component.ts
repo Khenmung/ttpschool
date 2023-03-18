@@ -155,8 +155,9 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
+        
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-        this.contentservice.GetDropDownDataFromDB(_ParentId, 0, 0)
+        this.contentservice.GetDropDownDataFromDB(_ParentId, this.FilterOrgSubOrg, 0)
           .subscribe((data: any) => {
             this.Applications = [...data.value];
           });

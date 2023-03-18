@@ -191,7 +191,7 @@ export class StudentgradeComponent implements OnInit {
       return;
     }
     let checkFilterString = this.FilterOrgSubOrg + " and GradeName eq '" + row.GradeName +
-      " and ClassGroupId eq " + row.ClassGroupId +
+      "' and ClassGroupId eq " + row.ClassGroupId +
       " and ExamId eq " + row.ExamId;
 
     if (row.SubjectCategoryId == null || row.SubjectCategoryId == 0) {
@@ -324,7 +324,7 @@ export class StudentgradeComponent implements OnInit {
   }
   SelectClassGroup() {
     var _examId = this.searchForm.get("searchExamId").value;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+    this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, _examId)
       .subscribe((data: any) => {
         this.ExamClassGroups = data.value.map(e => {
           e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
@@ -338,7 +338,7 @@ export class StudentgradeComponent implements OnInit {
   SelectCopyFromClassGroup() {
     debugger;
     var _examId = this.searchForm.get("searchCopyFromExamId").value;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+    this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, _examId)
       .subscribe((data: any) => {
         this.ExamClassGroups = data.value.map(e => {
           e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;

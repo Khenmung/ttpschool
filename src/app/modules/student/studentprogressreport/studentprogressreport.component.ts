@@ -148,7 +148,7 @@ export class StudentprogressreportComponent implements OnInit {
           this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-        this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], 0)
+        this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, 0)
           .subscribe((data: any) => {
             this.ExamClassGroups = [...data.value];
             //var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
@@ -299,7 +299,8 @@ export class StudentprogressreportComponent implements OnInit {
     this.nav.navigate(['/edu']);
   }
   GetClassGroupMapping() {
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         //debugger;
         data.value.map(f => {
@@ -658,7 +659,8 @@ export class StudentprogressreportComponent implements OnInit {
     this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
     this.Batches = this.tokenStorage.getBatches()
     this.CommonHeader = this.getDropDownData(globalconstants.MasterDefinitions.common.COMMONPRINTHEADING);
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMappings = [...data.value];
       })

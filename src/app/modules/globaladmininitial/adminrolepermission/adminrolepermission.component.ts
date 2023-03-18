@@ -11,13 +11,14 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-adminrolepermission',
   templateUrl: './adminrolepermission.component.html',
   styleUrls: ['./adminrolepermission.component.scss']
 })
-export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
+export class AdminrolepermissionComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   TopMenu = [];
@@ -32,7 +33,8 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
   NoOfRowsToUpdate = -1;
   PlanFeaturePages = [];
   FilteredPageFeatures = [];
-  FilterOrgSubOrg='';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   oldvalue = '';
   selectedData = '';
   SelectedCustomerPlanId = 0;
@@ -42,7 +44,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
     PlanFeatureId: 0,
     RoleId: 0,
     PermissionId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0
   };
   CustomerApps = [];
@@ -111,6 +113,8 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
       //this.Permission='rwd'
       if (this.Permission != 'deny') {
         //this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.Permissions = globalconstants.PERMISSIONTYPES;
         this.GetApplications();
         this.GetOrganizations();
@@ -125,11 +129,12 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
         if (data.value.length > 0) {
           this.MasterData = [...data.value];
           var applicationId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
-          this.contentservice.GetDropDownDataFromDB(applicationId, 0, 0)
+          var filterorgsuborg = 'OrgId eq 0 and SubOrgId eq 0';
+          this.contentservice.GetDropDownDataFromDB(applicationId, filterorgsuborg, 0)
             .subscribe((data: any) => {
               this.Applications = [...data.value];
             })
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
         }
       });
   }
@@ -143,10 +148,12 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
     //var applicationparentId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
     var RoleId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "role")[0].MasterDataId;
 
-    var OrgId = this.searchForm.get("searchCustomerId").value;
+    var Org = this.searchForm.get("searchCustomerId").value;
     var appId = this.Applications.filter(m => m.MasterDataName.toLowerCase() == 'common')[0].MasterDataId;
-    //debugger;
-    this.contentservice.GetDropDownDataFromDB(RoleId, OrgId, appId)
+    //debugger;this.
+
+    var filterOrgSubOrg = 'OrgId eq ' + Org.OrganizationId + ' and SubOrgId eq ' + Org.SubOrgId;
+    this.contentservice.GetDropDownDataFromDB(RoleId, filterOrgSubOrg, appId)
       .subscribe((data: any) => {
         this.Roles = [...data.value];
       })
@@ -159,13 +166,14 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
       "PlanId", "CustomerPlanId"
     ];
     list.PageName = "CustomerPlans";
-    list.lookupFields = ["Org($select=OrganizationId,OrganizationName)"];
+    list.lookupFields = ["Org($select=OrganizationId,OrganizationName,SubOrgId)"];
     list.filter = ["Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.Organizations = data.value.map(f => {
-          f.OrganizationId = f.Org.OrganizationId,
-            f.OrganizationName = f.Org.OrganizationName
+          f.OrganizationId = f.Org.OrganizationId;
+          f.OrganizationName = f.Org.OrganizationName;
+          f.SubOrgId = f.Org.SubOrgId;
           return f;
         })
       })
@@ -174,7 +182,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
     debugger;
     this.EmptyData();
     this.getCustomersData();
-    this.SelectedCustomerPlanId = this.Organizations.filter(f => f.OrganizationId == event.value)[0].PlanId;
+    this.SelectedCustomerPlanId = this.Organizations.filter(f => f.OrganizationId == event.value.Org.OrganizationId)[0].PlanId;
     var list = new List();
     list.fields = [
       "ApplicationId"
@@ -193,7 +201,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
           this.CustomerApps.push(objapp[0]);
         }
       })
-      this.searchForm.patchValue({"searchApplicationId":0});
+      this.searchForm.patchValue({ "searchApplicationId": 0 });
     })
   }
   getSettingStatus(data) {
@@ -256,7 +264,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
         }
         else
           this.PlanFeaturePages = [];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         console.log("PageFeatures", this.TopPageFeatures)
       })
   }
@@ -272,10 +280,10 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
   GetApplicationFeatureRole() {
     debugger;
 
-    var _customerId = this.searchForm.get("searchCustomerId").value
+    var _customerId = this.searchForm.get("searchCustomerId").value.Org.OrganizationId;
     if (_customerId == 0) {
       this.contentservice.openSnackBar("Please select customer.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       return;
     }
 
@@ -432,9 +440,9 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
       return;
     }
     this.loading = true;
-    let checkFilterString =this.FilterOrgSubOrg + " and Active eq 1 " +
+    let checkFilterString = this.FilterOrgSubOrg + " and Active eq 1 " +
       " and RoleId eq " + row.RoleId +
-      " and PlanFeatureId eq " + row.PlanFeatureId ;
+      " and PlanFeatureId eq " + row.PlanFeatureId;
 
 
     if (row.ApplicationFeatureRoleId > 0)
@@ -450,7 +458,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
         //debugger;
         if (data.value.length > 0) {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
         }
         else {
           var _ParentId = 0;
@@ -467,7 +475,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
           //this.AppRoleData.ParentId = _ParentId;
           this.AppRoleData.RoleId = row.RoleId;
           this.AppRoleData.PermissionId = row.PermissionId;
-          this.AppRoleData.OrgId = this.searchForm.get("searchCustomerId").value;
+          this.AppRoleData.OrgId = this.searchForm.get("searchCustomerId").value.Org.OrganizationId;
 
           //console.log('data', this.AppRoleData);
           if (this.AppRoleData.ApplicationFeatureRoleId == 0) {
@@ -496,7 +504,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch('ApplicationFeatureRolesPerms', this.AppRoleData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.ApplicationFeatureRoleId = data.ApplicationFeatureRoleId;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
@@ -510,7 +518,7 @@ export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch('ApplicationFeatureRolesPerms', this.AppRoleData, this.AppRoleData.ApplicationFeatureRoleId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);

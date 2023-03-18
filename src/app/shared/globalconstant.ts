@@ -317,7 +317,7 @@ export class globalconstants {
                 "PAGECATEGORY": "page category",
                 "RULEORPOLICYCATEGORYDISPLAYTYPE": "rules or policy display type",
                 "COMMONPRINTHEADING": "common print heading",
-                "SUBORGANIZAION": "sub organization"
+                "COMPANY": "company"
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",

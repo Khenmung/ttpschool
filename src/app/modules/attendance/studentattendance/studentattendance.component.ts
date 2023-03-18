@@ -42,9 +42,9 @@ export class StudentAttendanceComponent implements OnInit {
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;SubOrgId = 0;
-  FilterOrgSubOrgBatchId='';
-  FilterOrgSubOrg='';
+  SelectedBatchId = 0; SubOrgId = 0;
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -122,8 +122,8 @@ export class StudentAttendanceComponent implements OnInit {
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         //this.GetSubjectTypes();
-        
-          this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
+
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
 
@@ -196,9 +196,9 @@ export class StudentAttendanceComponent implements OnInit {
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;
     }
-    if (_classSubjectId > 0) {
-      filterStr += " and ClassSubjectId eq " + _classSubjectId;
-    }
+    //if (_classSubjectId > 0) {
+    filterStr += " and ClassSubjectId eq " + _classSubjectId;
+    //}
 
     //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
@@ -309,6 +309,8 @@ export class StudentAttendanceComponent implements OnInit {
     var orgIdSearchstr = this.FilterOrgSubOrgBatchId;
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
+    this.StudentAttendanceList = [];
+    this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
 
     if (_classId > 0 && clssubjectid > 0 && _sectionId > 0) {
 
@@ -391,7 +393,7 @@ export class StudentAttendanceComponent implements OnInit {
     if (clssubjectid == undefined)
       clssubjectid = 0;
 
-    let checkFilterString = "StudentClassId eq " + row.StudentClassId +
+    let checkFilterString = this.FilterOrgSubOrg + " and StudentClassId eq " + row.StudentClassId +
       " and AttendanceDate ge " + moment(_AttendanceDate).format('YYYY-MM-DD') +
       " and AttendanceDate lt " + moment(_AttendanceDate).add(1, 'day').format('YYYY-MM-DD')
     if (clssubjectid > 0)
@@ -403,7 +405,7 @@ export class StudentAttendanceComponent implements OnInit {
     let list: List = new List();
     list.fields = ["AttendanceId"];
     list.PageName = "Attendances";
-    list.filter = [checkFilterString + " and " + this.OrgSubOrgFilter];
+    list.filter = [checkFilterString];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

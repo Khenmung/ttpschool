@@ -322,7 +322,8 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
 
   GetClassGroupMapping() {
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMapping = data.value.map(f => {
           f.ClassName = f.Class.ClassName;
@@ -343,7 +344,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       this.ExamReleased = obj[0].ReleaseResult == 1 ? true : false;
     }
 
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'],_examId)
+    this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg,_examId)
     .subscribe((data: any) => {
       this.ExamClassGroups = data.value.map(e => {
         e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;

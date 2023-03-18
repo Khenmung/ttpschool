@@ -8,7 +8,7 @@
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Customer</mat-label>
             <mat-select formControlName="searchCustomerId" (selectionChange)="SelectApplication($event)">
-                <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
+                <mat-option *ngFor="let item of Organizations" [value]="item">
                     {{item.OrganizationName}}
                 </mat-option>
             </mat-select>

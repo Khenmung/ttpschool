@@ -42,6 +42,8 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
   CustomerPlanFeatureList: ICustomerPlanFeature[] = [];
   filteredOptions: Observable<ICustomerPlanFeature[]>;
   dataSource: MatTableDataSource<ICustomerPlanFeature>;
+  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId='';
   allMasterData = [];
   CustomerPlanFeatures = [];
   Applications = [];
@@ -100,6 +102,8 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
       }
       else {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetPlans();
         this.GetMasterData();
 
@@ -344,7 +348,7 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
         var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-        this.contentservice.GetDropDownDataFromDB(_ParentId, 0, 0, 1)
+        this.contentservice.GetDropDownDataFromDB(_ParentId, this.FilterOrgSubOrg, 0, 1)
           .subscribe((data: any) => {
             this.Applications = [...data.value];
           });

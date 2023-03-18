@@ -275,7 +275,7 @@ export class AddMasterDataComponent implements OnInit {
     var _appId = this.MasterData.filter(f => f.MasterDataId == element.MasterDataId)[0].ApplicationId;
     this.SubMasters = [];
     this.emptyresult();
-    this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.UserDetails[0]["orgId"], _appId, 0)
+    this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.FilterOrgSubOrg, _appId, 0)
       .subscribe((data: any) => {
         this.SubMasters = [...data.value];
         this.searchForm.patchValue({ "SubId": 0 });

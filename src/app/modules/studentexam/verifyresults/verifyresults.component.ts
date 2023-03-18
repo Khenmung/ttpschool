@@ -167,7 +167,7 @@ export class VerifyResultsComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased = 0;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+    this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, _examId)
       .subscribe((data: any) => {
         this.ExamClassGroups = [...data.value];
         var objExamClassGroups = this.ExamClassGroups.filter(g => g.ExamId == _examId);
@@ -246,7 +246,7 @@ export class VerifyResultsComponent implements OnInit {
       })
   }
   // GetExamClassGroup() {
-  //   this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'])
+  //   this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg)
   //     .subscribe((data: any) => {
   //       this.ExamClassGroups = [...data.value];
   //     });

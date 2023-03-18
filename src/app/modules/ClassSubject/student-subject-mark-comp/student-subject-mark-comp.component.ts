@@ -30,7 +30,9 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   SelectedBatchId = 0;
   SubOrgId = 0;
   SelectedApplicationId = 0;
-  OrgIdSubOrgWithBatchIdFilter = '';
+  
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   StandardOrgIdWithPreviousBatchId = '';
   PreviousBatchId = 0;
   Classes = [];
@@ -85,7 +87,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SubOrgId = +this.tokenStorage.getSubOrgId();
-        this.OrgIdSubOrgWithBatchIdFilter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.StandardOrgIdWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage);
         this.searchForm = this.fb.group({
           searchExamId: [0],
@@ -106,7 +109,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
     this.GetMasterData();
     var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMappings = data.value.map(m => {
           m.ClassName = m.Class.ClassName;
@@ -159,7 +162,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //debugger;
     this.loading = true;
     var _examId = this.searchForm.get("searchExamId").value;
-    let checkFilterString = this.OrgIdSubOrgWithBatchIdFilter + //"OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    let checkFilterString = this.FilterOrgSubOrgBatchId + //"OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ClassSubjectId eq " + row.ClassSubjectId +
       " and SubjectComponentId eq " + row.SubjectComponentId +
       " and ExamId eq " + _examId;
@@ -259,7 +262,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.ClassGroups = [...data.value];
       })
     //this.shareddata.ChangeBatch(this.Batches);
-    this.contentservice.GetExams(this.OrgIdSubOrgWithBatchIdFilter, 2)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId, 2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(f => {
@@ -373,7 +376,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //var _copyExamId = this.searchForm.get("searchCopyExamId").value;
     var _examId = this.searchForm.get("searchExamId").value;
 
-    var filterstr = this.OrgIdSubOrgWithBatchIdFilter;
+    var filterstr = this.FilterOrgSubOrgBatchId;
     if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -508,7 +511,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     var _examId = this.searchForm.get("searchExamId").value
     //var _classGroupId = 0;
     this.ExamReleased = 0;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _examId)
+    this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, _examId)
       .subscribe((data: any) => {
         this.ExamClassGroups = [...data.value];
         this.FilteredClasses = this.ClassGroupMappings.filter(f => this.ExamClassGroups.findIndex(fi => fi.ClassGroupId == f.ClassGroupId) > -1);

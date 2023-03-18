@@ -82,7 +82,8 @@ export class StudenttotalattendanceComponent implements OnInit {
   ExamNames = [];
   ClassGroupMapping = [];
   GetClassGroupMapping() {
-    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage); this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage); 
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMapping = data.value.map(f => {
           f.ClassName = f.Class.ClassName;

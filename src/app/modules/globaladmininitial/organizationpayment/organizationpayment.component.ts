@@ -240,7 +240,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
         this.Applications = this.tokenStorage.getPermittedApplications();
         var globalAdminId = this.Applications.filter(f => f.appShortName.toLowerCase() == 'globaladmin')[0].applicationId;
         var PaymentModeParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == globalconstants.MasterDefinitions.ttpapps.PAYMENTSTATUS)[0].MasterDataId;
-
+        
         this.contentservice.GetDropDownDataFromDB(PaymentModeParentId, this.FilterOrgSubOrg, globalAdminId, 1)
           .subscribe((data: any) => {
             this.PaymentModes = [...data.value];

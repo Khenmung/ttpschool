@@ -384,7 +384,8 @@ GetMasterData() {
       //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
       var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-        this.contentservice.GetDropDownDataFromDB(_ParentId, 0, 0,1)
+        var FilterOrgSubOrg = "OrgId eq 0 and SubOrgId eq 0";
+        this.contentservice.GetDropDownDataFromDB(_ParentId, FilterOrgSubOrg, 0,1)
           .subscribe((data: any) => {
             this.Applications = [...data.value];
           });

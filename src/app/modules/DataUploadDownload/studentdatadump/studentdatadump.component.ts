@@ -59,7 +59,7 @@ export class StudentDatadumpComponent implements OnInit {
   AdmissionStatus = [];
   Clubs = [];
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
   StudentId = 0;
@@ -115,7 +115,8 @@ export class StudentDatadumpComponent implements OnInit {
         .subscribe((data: any) => {
           this.ClassGroups = [...data.value];
         });
-      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+
+      this.contentservice.GetClassGroupMapping(this.filterOrgSubOrgIdOnly, 1)
         .subscribe((data: any) => {
           this.ClassGroupMapping = data.value.map(f => {
             f.ClassName = f.Class.ClassName;
@@ -123,8 +124,7 @@ export class StudentDatadumpComponent implements OnInit {
           });
         })
 
-      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+      this.contentservice.GetClasses(this.filterOrgSubOrgIdOnly).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
 
@@ -454,7 +454,7 @@ export class StudentDatadumpComponent implements OnInit {
 
             delete element.RemarkId;
             element.SubOrgId = this.SubOrgId;
-        
+
             if (element.SectionId > 0) {
               let SectionFilter = this.Sections.filter(g => g.MasterDataId == element.SectionId);
               if (SectionFilter.length == 0)

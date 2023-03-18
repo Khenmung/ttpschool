@@ -119,7 +119,7 @@ export class DashboardclassfeeComponent implements OnInit {
       else {
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-        //console.log("this.StandardFilterWithBatchId",this.StandardFilterWithBatchId);
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         if (+this.tokenStorage.getPreviousBatchId() > 0)
           this.StandardFilterWithPreviousBatchId = globalconstants.getOrgSubOrgFilterWithPreviousBatchId(this.tokenStorage)
 
@@ -539,6 +539,7 @@ export class DashboardclassfeeComponent implements OnInit {
       });
   }
   ProcessClassFee(classFee, previousbatch) {
+    debugger;
     if (classFee.length > 0) {
       this.FeeDefinitions.forEach((mainFeeName, indx) => {
         var indx = this.Months.findIndex(m => m.MonthName == mainFeeName.FeeName);
@@ -577,6 +578,10 @@ export class DashboardclassfeeComponent implements OnInit {
     else if (previousbatch == 0 && this.SelectedMonth == 0) {
 
       this.ELEMENT_DATA = this.FeeDefinitions.map((fee, indx) => {
+        var indx = this.Months.findIndex(m => m.MonthName == fee.FeeName);
+        if (indx == -1)
+          this.Months.push({ "MonthName": fee.FeeName, "val": fee.FeeDefinitionId });
+
         return {
           "SlNo": indx + 1,
           "ClassFeeId": 0,

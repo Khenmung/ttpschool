@@ -574,7 +574,7 @@ export class ClassSubjectDetailComponent implements OnInit {
 
     list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
     list.PageName = "SubjectTypes";
-    list.filter = [this.OrgSubOrgBatchFilter + " and Active eq 1 "];
+    list.filter = [this.OrgSubOrgFilter + " and Active eq 1 "];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -586,7 +586,7 @@ export class ClassSubjectDetailComponent implements OnInit {
   }
   GetTeachers() {
 
-    var orgIdSearchstr = this.StandardFilterWithBatchId;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = this.OrgSubOrgFilter;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     var _workAccountId = 0;
     if (_WorkAccount.length > 0)
@@ -597,7 +597,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName", "LastName)"]
-    list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+    list.filter = [this.OrgSubOrgFilter + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
     //list.orderBy = "ParentId";
     this.Teachers = [];
     this.dataservice.get(list)

@@ -347,7 +347,7 @@ export class EvaluationExamMapComponent implements OnInit {
     //var allGroupsForAllTheSelectedClasses = this.ClassGroupMappings.filter(g => _classesForSelectedClassGroup.filter(i => i.ClassId == g.ClassId).length > 0)
     this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId)
     var _searchExamId = this.searchForm.get("searchExamId").value;
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], _searchExamId)
+    this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, _searchExamId)
       .subscribe((data: any) => {
         this.ExamClassGroups = [...data.value];
         var examIdsforselectedclsgroup = this.ExamClassGroups.filter(examclsgroup => examclsgroup.ClassGroupId == _searchClassGroupId)

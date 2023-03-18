@@ -136,8 +136,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 or ("+ this.FilterOrgSubOrg +"))" +
-      ") and Active eq 1"];
+    list.filter = ["(ParentId eq 0 or ("+ this.FilterOrgSubOrg +")) and Active eq 1"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {

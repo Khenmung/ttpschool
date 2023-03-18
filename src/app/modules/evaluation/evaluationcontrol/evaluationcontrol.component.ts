@@ -157,7 +157,7 @@ export class EvaluationControlComponent implements OnInit {
     }
   }
   getExamClassGroup(pExamId) {
-    this.contentservice.GetExamClassGroup(this.LoginUserDetail[0]['orgId'], pExamId)
+    this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, pExamId)
       .subscribe((data: any) => {
         this.ExamClassGroups = [...data.value];
       });
@@ -381,7 +381,7 @@ export class EvaluationControlComponent implements OnInit {
     this.GetExams();
     this.GetClassSubjects();
     this.GetClassEvaluations();
-    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage); this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMappings = data.value.map(m => {
           m.ClassName = m.Class.ClassName;
