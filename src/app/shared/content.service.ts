@@ -576,7 +576,7 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list);
 
   }
-  createInvoice(data, pSelectedBatchId, pOrgId) {
+  createInvoice(data, pSelectedBatchId, pOrgId,pSubOrgId) {
     var AmountAfterFormulaApplied = 0;
     var _VariableObjList = [];
     var _LedgerData = [];
@@ -604,16 +604,17 @@ export class ContentService implements OnInit {
         Month: inv.Month,
         StudentClassId: inv.StudentClassId,
         OrgId: pOrgId,
+        SubOrgId:pSubOrgId,
         TotalDebit: AmountAfterFormulaApplied,
         TotalCredit: 0,
       });
     });
     var query = "select SUM(BaseAmount) BaseAmount,SUM(TotalCredit) TotalCredit,SUM(TotalDebit) TotalDebit, SUM(Balance) Balance," +
-      "StudentClassId,LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
-      "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
+      "StudentClassId,LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId,SubOrgId " +
+      "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId,SubOrgId";
     var sumFeeData = alasql(query, [_LedgerData]);
     //console.log("_LedgerData", _LedgerData);
-    //console.log("sumFeeData",sumFeeData);
+    console.log("sumFeeData",sumFeeData);
     return this.authservice.CallAPI(sumFeeData, 'createinvoice')
   }
   ApplyVariables(formula, pVariableObjList) {

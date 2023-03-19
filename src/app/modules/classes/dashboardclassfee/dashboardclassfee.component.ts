@@ -37,7 +37,7 @@ export class DashboardclassfeeComponent implements OnInit {
   CurrentBatch = '';
   CurrentBatchId = 0;
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   PreviousBatchId = 0;
   FeeDefinitions = [];
   Classes = [];
@@ -59,7 +59,7 @@ export class DashboardclassfeeComponent implements OnInit {
     Amount: 0,
     BatchId: 0,
     Month: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0,
     LocationId: 0
   };
@@ -138,8 +138,8 @@ export class DashboardclassfeeComponent implements OnInit {
           })
           this.GetMasterData();
           if (this.Classes.length == 0) {
-            var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+            var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+            this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
               this.Classes = [...data.value];
               //this.GetMasterData();
             })
@@ -247,8 +247,8 @@ export class DashboardclassfeeComponent implements OnInit {
 
                 })
               })
-              //console.log("studentfeedetailxxxx", studentfeedetail)
-              this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+              console.log("studentfeedetailxxxx", studentfeedetail)
+              this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"],this.SubOrgId)
                 .subscribe((data: any) => {
                   this.loading = false;
                   this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
@@ -354,7 +354,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.loading = true;
     let checkFilterString = this.FilterOrgSubOrgBatchId +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
-      " and ClassId eq " + row.ClassId ;
+      " and ClassId eq " + row.ClassId;
 
     if (row.Month > 0)
       checkFilterString += " and Month eq " + row.Month
@@ -396,7 +396,7 @@ export class DashboardclassfeeComponent implements OnInit {
               LocationId: 0,
               Month: objDiscount[0].Month,
               OrgId: this.LoginUserDetail[0]["orgId"],
-              SubOrgId:this.SubOrgId
+              SubOrgId: this.SubOrgId
             })
             this.insert(objDiscount[0], insert[0]);
           }
@@ -446,7 +446,7 @@ export class DashboardclassfeeComponent implements OnInit {
     list.PageName = "ClassFees";
     //list.groupby = "ClassId";
     list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
-    this.loading=true;
+    this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -470,7 +470,7 @@ export class DashboardclassfeeComponent implements OnInit {
               }
           })
           ////console.log('classes', this.ClassStatuses);
-          this.loading = false; 
+          this.loading = false;
           this.PageLoading = false;
         }
       })
@@ -548,17 +548,17 @@ export class DashboardclassfeeComponent implements OnInit {
 
         let existing = classFee.filter(fromdb => fromdb.FeeDefinitionId == mainFeeName.FeeDefinitionId)
         if (existing.length > 0) {
-
-          existing[0].SlNo = indx + 1;
-          existing[0].FeeName = mainFeeName.FeeName;
-          existing[0].Action = false;
-          existing[0].ClassId = this.searchForm.get("ClassId").value
-          existing[0].ClassFeeId = previousbatch == 1 ? 0 : existing[0].ClassFeeId
-          existing[0].Active = previousbatch == 1 ? 0 : existing[0].Active
-          existing[0].Month = previousbatch == 1 ? 0 : existing[0].Month;
-          existing[0].BatchId = this.SelectedBatchId;
-
-          this.ELEMENT_DATA.push(existing[0]);
+          existing.forEach(ex => {
+            ex.SlNo = indx + 1;
+            ex.FeeName = mainFeeName.FeeName;
+            ex.Action = false;
+            ex.ClassId = this.searchForm.get("ClassId").value
+            ex.ClassFeeId = previousbatch == 1 ? 0 : ex.ClassFeeId
+            ex.Active = previousbatch == 1 ? 0 : ex.Active
+            ex.Month = previousbatch == 1 ? 0 : ex.Month;
+            ex.BatchId = this.SelectedBatchId;
+            this.ELEMENT_DATA.push(ex);
+          })
         }
         else if (previousbatch == 0 && this.SelectedMonth == 0)
           this.ELEMENT_DATA.push({

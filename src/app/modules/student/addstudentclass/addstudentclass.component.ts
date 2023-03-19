@@ -396,7 +396,7 @@ export class AddstudentclassComponent implements OnInit {
               })
             })
             // console.log("studentfeedetailxxxx",studentfeedetail)
-            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"],this.SubOrgId)
               .subscribe((data: any) => {
                 this.loading = false;
                 this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);

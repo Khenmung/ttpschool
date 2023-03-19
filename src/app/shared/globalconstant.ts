@@ -16,7 +16,7 @@ export class globalconstants {
     public static BlueBackground = { duration: 3000, panelClass: 'blue-snackbar' };
     public static RedBackground = { duration: 10000, panelClass: 'red-snackbar' };
     public static GreenBackground = { duration: 10000, panelClass: 'green-snackbar' };
-    public static AddedMessage = 'Data saved sucessfully.';
+    public static AddedMessage = 'Data saved sucessfully.'; 
     public static UpdatedMessage = 'Data updated sucessfully.';
     public static DeletedMessage = 'Data deleted sucessfully.';
     public static RecordAlreadyExistMessage = 'Record already exists!';

@@ -175,14 +175,14 @@ export class AccountNatureComponent implements OnInit {
 
   GetAccountNature() {
 
-    let filterStr = "OrgId eq 0 or (" + this.FilterOrgSubOrg + ")";
+    let filterStr = this.FilterOrgSubOrg;
     debugger;
     this.loading = true;
 
     var _searchAccountId = this.searchForm.get("searchAccountName").value.AccountNatureId;
     //var _searchParentId = this.searchForm.get("searchParentId").value;
     if (_searchAccountId == undefined) {
-      filterStr += " and ParentId eq 0"
+      filterStr = "ParentId eq 0";
     }
     else if (_searchAccountId >0) {
       filterStr += " and ParentId eq " + _searchAccountId

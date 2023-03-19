@@ -111,6 +111,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
     else {
       this.UserId = localStorage.getItem("userId");
       this.OrgId = +localStorage.getItem("orgId");
+      this.SubOrgId = +localStorage.getItem("suborgId");
 
     }
     this.GetOrganizations();

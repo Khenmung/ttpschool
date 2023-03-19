@@ -509,7 +509,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       return;
     }
 
-    let filterstr = "BatchId eq " + this.SelectedBatchId + " and ClassId eq " + pclassId + " and Active eq 1";
+    let filterstr = this.FilterOrgSubOrgBatchId + " and ClassId eq " + pclassId + " and Active eq 1";
 
     let list: List = new List();
     list.fields = [

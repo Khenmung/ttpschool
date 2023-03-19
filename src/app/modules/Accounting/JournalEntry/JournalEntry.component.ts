@@ -133,9 +133,10 @@ export class JournalEntryComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission && this.Permission != 'denied') {
-        this.GetAllAccountingVoucher();
+      
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.GetAllAccountingVoucher();
         this.GetGeneralLedgerAutoComplete();
       }
     }
@@ -220,7 +221,7 @@ export class JournalEntryComponent implements OnInit {
     //list.limitTo = 50;
     //list.orderBy = "ShortText";
     //list.lookupFields = ["AccountingLedgerTrialBalance"];
-    list.filter = ["GeneralLedgerAccountId ne null and " + filterStr];
+    list.filter = [filterStr + " and GeneralLedgerAccountId ne null"];
     this.AllAccountingVouchers = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -265,7 +266,7 @@ export class JournalEntryComponent implements OnInit {
     //list.limitTo = 50;
     //list.orderBy = "ShortText";
     //list.lookupFields = ["AccountingLedgerTrialBalance"];
-    list.filter = ["GeneralLedgerAccountId ne null and " + filterStr];
+    list.filter = [filterStr + " and GeneralLedgerAccountId ne null"];
     this.AccountingVoucherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
