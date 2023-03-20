@@ -49,8 +49,8 @@ export class AddMasterDataComponent implements OnInit {
   SelectedApplicationId = 0;
   DataToSaveCount = -1;
   SelectedApplicationName = '';
-  FilterOrgSubOrgBatchId='';
-  FilterOrgSubOrg='';
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   //ApplicationDataStatus = [];
   //SchoolDataStatus = [];
   StudentVariableNames = [];
@@ -70,7 +70,7 @@ export class AddMasterDataComponent implements OnInit {
   //enableAddNew = false;
   loading: boolean = false;
   error: string = '';
-
+  SubOrgId = 0;
   searchForm: UntypedFormGroup;
   nameFilter = new UntypedFormControl('');
   filterValues = {
@@ -147,6 +147,7 @@ export class AddMasterDataComponent implements OnInit {
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.OrgId = this.UserDetails[0]["orgId"];
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.searchForm.patchValue({ "OrgId": this.OrgId });
         this.GetMastersForAutoComplete();
         this.GetOrganizations();
@@ -168,7 +169,7 @@ export class AddMasterDataComponent implements OnInit {
   GetMastersForAutoComplete() {
     debugger;
     var apps = this.tokenStorage.getPermittedApplications();
-    
+
     var objcommon = apps.filter(f => f.appShortName == 'common')
     if (objcommon.length == 0) {
       this.contentservice.openSnackBar("User needs common panel access.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -177,7 +178,7 @@ export class AddMasterDataComponent implements OnInit {
       var commonAppId = objcommon[0].applicationId;
       var applicationFilter = '';
       //applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"]
-      var applicationFilter = "(OrgId eq 0 or ("+this.FilterOrgSubOrg+")" +
+      var applicationFilter = "(OrgId eq 0 or (" + this.FilterOrgSubOrg + ")" +
         ") and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
       let list: List = new List();
       list.fields = [
@@ -311,6 +312,7 @@ export class AddMasterDataComponent implements OnInit {
       "Sequence": 0,
       "ParentId": _ParentId,
       "OrgId": 0,
+      "SubOrgId": 0,
       "Active": 0,
       "Confidential": false,
       "ApplicationId": _appId,
@@ -420,6 +422,7 @@ export class AddMasterDataComponent implements OnInit {
             "ParentId": item.ParentId,
             "ApplicationId": item.ApplicationId,
             "OrgId": item.OrgId,
+            "SubOrgId": this.SubOrgId,
             "Confidential": item.Confidential == null ? false : item.Confidential,
             "Active": item.Active,
             "Action": false
@@ -540,7 +543,7 @@ export class AddMasterDataComponent implements OnInit {
     if (row.MasterDataId == 0) {
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
-      mastertoUpdate["SubOrgId"] = this.tokenStorage.getSubOrgId();
+      mastertoUpdate["SubOrgId"] = this.SubOrgId;
       //mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
       //console.log("kjhk", mastertoUpdate)
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
@@ -552,6 +555,7 @@ export class AddMasterDataComponent implements OnInit {
             mastertoUpdate.MasterDataId = res.MasterDataId;
             this.MasterList.push(mastertoUpdate)
             this.tokenStorage.saveMasterData(this.MasterList);
+            this.MasterList = this.tokenStorage.getMasterData();
             if (this.DataToSaveCount == 0) {
               this.loading = false;
               this.PageLoading = false;
@@ -574,6 +578,7 @@ export class AddMasterDataComponent implements OnInit {
           this.MasterList = this.tokenStorage.getMasterData();
           this.MasterList.push(mastertoUpdate)
           this.tokenStorage.saveMasterData(this.MasterList);
+          this.MasterList = this.tokenStorage.getMasterData();
           if (this.DataToSaveCount == 0) {
             this.loading = false;
             this.PageLoading = false;

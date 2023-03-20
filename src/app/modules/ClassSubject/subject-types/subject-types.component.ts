@@ -51,7 +51,7 @@ export class SubjectTypesComponent implements OnInit {
     'Action'
   ];
   Permission = '';
-  IsCurrentBatchSelected = 1;
+  //IsCurrentBatchSelected = 1;
   constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
@@ -91,7 +91,7 @@ export class SubjectTypesComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.IsCurrentBatchSelected = +this.tokenStorage.getCheckEqualBatchId();
+        //this.IsCurrentBatchSelected = +this.tokenStorage.getCheckEqualBatchId();
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         if (+this.tokenStorage.getPreviousBatchId() > 0)

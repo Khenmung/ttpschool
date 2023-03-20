@@ -65,7 +65,7 @@ export class NoOfStudentComponent implements OnInit {
   allMasterData = [];
   searchForm: UntypedFormGroup;
   SelectedApplicationId = 0;
-  checkBatchIdNSelectedIdEqual = 0;
+  //checkBatchIdNSelectedIdEqual = 0;
   StudentClassData = {
     StudentClassId: 0,
     ClassId: 0,
@@ -134,7 +134,7 @@ export class NoOfStudentComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
 
-        this.checkBatchIdNSelectedIdEqual = +this.tokenStorage.getCheckEqualBatchId();
+        //this.checkBatchIdNSelectedIdEqual = +this.tokenStorage.getCheckEqualBatchId();
         this.SubOrgId = +this.tokenStorage.getSubOrgId();
 
         this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);

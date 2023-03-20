@@ -22,7 +22,7 @@ export class ClassgroupComponent implements OnInit {
   PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  IscurrentBatchSelect = 1;
+  //IscurrentBatchSelect = 1;
   classgroupListName = 'ClassGroups';
   Applications = [];
   Permission = '';
@@ -86,7 +86,7 @@ export class ClassgroupComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.IscurrentBatchSelect = +this.tokenStorage.getCheckEqualBatchId();
+      //this.IscurrentBatchSelect = +this.tokenStorage.getCheckEqualBatchId();
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUP);
       if (perObj.length > 0)

@@ -30,8 +30,8 @@ export class HomeDashboardComponent implements OnInit {
   SelectedBatchId = 0;
   SubOrgId = 0;
   SelectedAppId = 0;
-  filterOrgSubOrgBatchId='';
-  filterOrgSubOrg='';
+  filterOrgSubOrgBatchId = '';
+  filterOrgSubOrg = '';
   Batches = [];
   PermittedApplications = [];
   SelectedAppName = '';
@@ -134,12 +134,10 @@ export class HomeDashboardComponent implements OnInit {
                   this.loggedIn = true;
                 //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
                 this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
-                this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
                 this.SubOrgId = +this.tokenStorage.getSubOrgId();
-                this.filterOrgSubOrgBatchId =globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
-                this.filterOrgSubOrg =globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-                this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-                this.SelectedAppName = this.tokenStorage.getSelectedAppName();
+                this.filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+                this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+
                 this.getBatches();
 
               }
@@ -291,6 +289,7 @@ export class HomeDashboardComponent implements OnInit {
 
     if (SelectedAppId > 0) {
       this.loading = true;
+     
       this.tokenStorage.saveSelectedAppId(SelectedAppId);
       var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 
@@ -304,7 +303,8 @@ export class HomeDashboardComponent implements OnInit {
       this.tokenStorage.saveSubOrgId(_SubOrgId);
       this.SubOrgId = _SubOrgId;
       //////for local storage
-
+      this.filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMenuData(SelectedAppId);
       // if (selectedApp[0].applicationName.toLowerCase() == 'education management')
       //   this.GetStudentClass(SelectedAppId, selectedApp[0]);
@@ -332,7 +332,7 @@ export class HomeDashboardComponent implements OnInit {
   // }
   GetFeatureAndStudentDetail(SelectedAppId, selectedApp) {
 
-
+    debugger;
     this.contentservice.GetCustomFeature(SelectedAppId, this.LoginUserDetail[0]["RoleUsers"][0].roleId, this.SubOrgId, this.LoginUserDetail[0]['orgId'])
       .subscribe((data: any) => {
         data.value.forEach(item => {
@@ -359,7 +359,7 @@ export class HomeDashboardComponent implements OnInit {
 
         if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
           this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
           this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
 
@@ -393,11 +393,11 @@ export class HomeDashboardComponent implements OnInit {
       this.tokenStorage.saveSelectedBatchStartEnd(
         { 'StartDate': _SelectedBatch[0].StartDate, 'EndDate': _SelectedBatch[0].EndDate });
     }
-    //this is for enabling promote student purpose. if selected value is >= current, promote should not be enable 
+    //this is for disabling all save button if old batch is selected. 
     if (selectedBatchId >= this.CurrentBatchId)
-      this.tokenStorage.saveCheckEqualBatchId("1");
+      this.tokenStorage.saveInCurrentBatch("1");
     else
-      this.tokenStorage.saveCheckEqualBatchId("0");
+      this.tokenStorage.saveInCurrentBatch("0");
 
     this.tokenStorage.saveSelectedBatchId(selectedBatchId);
     this.tokenStorage.saveSelectedBatchName(SelectedBatchName);
@@ -422,6 +422,9 @@ export class HomeDashboardComponent implements OnInit {
   }
   getBatches() {
 
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
+    this.SelectedAppName = this.tokenStorage.getSelectedAppName();
     var currentbatchfilter = '';
     if (this.Role != 'Admin')
       currentbatchfilter = ' and CurrentBatch eq 1';
@@ -446,9 +449,6 @@ export class HomeDashboardComponent implements OnInit {
         this.tokenStorage.saveCurrentBatchId(_currentBatchId + "");
         this.CurrentBatchId = _currentBatchId;
       }
-      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      //this.SubOrgId = +this.tokenStorage.getSubOrgId();
-      // this.tokenStorage.saveCurrentBatchId(this.SelectedBatchId + "");
 
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
@@ -589,9 +589,9 @@ export class HomeDashboardComponent implements OnInit {
       "AdmissionStatusId"
     ];
     list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter="+ this.filterOrgSubOrgBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
+    list.lookupFields = ["StudentClasses($filter=" + this.filterOrgSubOrgBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
 
-    
+
     //  'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
     //   ' and BatchId eq ' + this.SelectedBatchId + ' and SubOrgId eq ' + this.SubOrgId;
     if (this.LoginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {

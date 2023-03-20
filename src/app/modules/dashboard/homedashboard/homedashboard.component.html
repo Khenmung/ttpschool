@@ -20,7 +20,7 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field [style.width.px]="130" appearance="outline">
-                <mat-label>Sub Organization</mat-label>
+                <mat-label>Company</mat-label>
                 <mat-select formControlName="searchSubOrgId">
                     <mat-option *ngFor="let item of SubOrganization"
                         [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>

@@ -48,13 +48,13 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || IscurrentBatchSelect==0 || Permission=='deny'"
+                        <button [disabled]="loading || Permission=='read' || Permission=='deny'"
                             matTooltip="add new" mat-mini-fab (click)="AddNew()">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button style="margin-right:15px" [disabled]="loading || !element.Action || IscurrentBatchSelect==0 || Permission=='deny'"
+                        <button style="margin-right:15px" [disabled]="loading || !element.Action || Permission=='read' || Permission=='deny'"
                             matTooltip="save" mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">

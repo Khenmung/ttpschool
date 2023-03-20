@@ -765,7 +765,7 @@ export class ContentService implements OnInit {
               this.tokenService.saveUserdetail(this.UserDetail);
               if (this.RoleFilter.length > 0)
                 this.RoleFilter += ')';
-              this.tokenService.saveCheckEqualBatchId
+              //this.tokenService.saveCheckEqualBatchId
               this.GetApplicationRolesPermission();
             }, error => {
               console.log("getmasterdata error", error);

@@ -256,7 +256,7 @@ export class LoginComponent implements OnInit {
               this.tokenStorage.saveUserdetail(this.UserDetail);
               if (this.RoleFilter.length > 0)
                 this.RoleFilter += ')';
-              this.tokenStorage.saveCheckEqualBatchId
+              //this.tokenStorage.saveCheckEqualBatchId
               //this.GetCustomFeature();
               this.GetApplicationRolesPermission();
             })

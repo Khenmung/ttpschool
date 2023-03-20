@@ -16,13 +16,13 @@ export class globalconstants {
     public static BlueBackground = { duration: 3000, panelClass: 'blue-snackbar' };
     public static RedBackground = { duration: 10000, panelClass: 'red-snackbar' };
     public static GreenBackground = { duration: 10000, panelClass: 'green-snackbar' };
-    public static AddedMessage = 'Data saved sucessfully.'; 
+    public static AddedMessage = 'Data saved sucessfully.';
     public static UpdatedMessage = 'Data updated sucessfully.';
     public static DeletedMessage = 'Data deleted sucessfully.';
     public static RecordAlreadyExistMessage = 'Record already exists!';
     public static NoRecordFoundMessage = 'No record found!';
     public static NoEvaluationRecordFoundMessage = 'No evaluation record found!';
-    public static UserLoginCreated = 'User login created! Please check your email for email verification.'; 
+    public static UserLoginCreated = 'User login created! Please check your email for email verification.';
     public static TechnicalIssueMessage = 'There is a technical issue! Please contact your administrator.';
     public static PermissionDeniedMessage = 'Permission Denied!';
     public static ActionText = 'X';
@@ -155,10 +155,10 @@ export class globalconstants {
                 }
             },
             "edu": {
-                'Admission':{
-                    'ADMISSION':'Admission',
+                'Admission': {
+                    'ADMISSION': 'Admission',
                     'PROMOTESTUDENT': 'Promote Student',
-                    'AssignClass':'Assign Class'
+                    'AssignClass': 'Assign Class'
                 },
                 'STUDENT': {
                     'STUDENT': 'student',
@@ -222,7 +222,7 @@ export class globalconstants {
                     'CLASSSTUDENT': 'class student',
                     'SUBJECTTYPE': 'subject type',
                     'TEACHERSUBJECT': 'teacher subject',
-                    
+
                 },
                 'TIMETABLE': {
                     'TIMETABLE': 'time table',
@@ -548,7 +548,7 @@ export class globalconstants {
         var _selectedBathId = 0;
         var loginUserdetail = tokenService.getUserDetail();
         _selectedBathId = +tokenService.getSelectedBatchId();
-        var _subOrgId= +tokenService.getSubOrgId();
+        var _subOrgId = +tokenService.getSubOrgId();
         var filterstr = 'OrgId eq ' + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId + " and BatchId eq " + _selectedBathId;
         return filterstr;
 
@@ -558,7 +558,7 @@ export class globalconstants {
         var _previousBathId = 0;
         var loginUserdetail = tokenService.getUserDetail();
         _previousBathId = +tokenService.getPreviousBatchId();
-        var _subOrgId= +tokenService.getSubOrgId();
+        var _subOrgId = +tokenService.getSubOrgId();
         var filterstr = ''
         if (_previousBathId > -1)
             filterstr = "OrgId eq " + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId + " and BatchId eq " + _previousBathId;
@@ -588,9 +588,9 @@ export class globalconstants {
             { month: 'Dec', val: 12 },
         ];
     }
-    public static getOrgSubOrgFilter(tokenService:TokenStorageService) {
+    public static getOrgSubOrgFilter(tokenService: TokenStorageService) {
         var loginUserdetail = tokenService.getUserDetail();
-        var _subOrgId= +tokenService.getSubOrgId();
+        var _subOrgId = +tokenService.getSubOrgId();
         var filterstr = 'OrgId eq ' + loginUserdetail[0]["orgId"] + " and SubOrgId eq " + _subOrgId;
         return filterstr;
 
@@ -624,15 +624,23 @@ export class globalconstants {
         return errorMessage;
     }
     public static getPermission(tokenservice: TokenStorageService, feature: any) {
-        var checkBatchIdNSelectedId = 0;
+        var IsInCurrentBatch = 0;
         var LoginUserDetail = tokenservice.getUserDetail();
-        checkBatchIdNSelectedId = +tokenservice.getCheckEqualBatchId();
+        IsInCurrentBatch = +tokenservice.getInCurrentBatch();
 
+        //return ['readonly'];
+        // else {
         var _permission = LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
-        if (_permission.length > 0)
+        if (_permission.length > 0) {
+            if (IsInCurrentBatch == 0)//not in current batch, 1 means user is in current batch.
+            {
+                _permission[0].permission = 'read';
+            }
             return [_permission[0]];
+        }
         else
             return [];
+        //}
     }
     public static encodeSpecialChars(val) {
         var specialchars = globalconstants.SpecialCharEncodeCharacters()

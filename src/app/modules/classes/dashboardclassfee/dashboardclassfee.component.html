@@ -70,7 +70,7 @@
         <ng-container matColumnDef="Month">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Month Year </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-form-field appearance="outline" style="width: 200px;">
+                <mat-form-field appearance="outline">
                     <mat-label>Month Year</mat-label>
                     <mat-select [(ngModel)]="element.Month" [disabled]="element.FeeName=='Discount'"
                     (selectionChange)="UpdateActive(element,$event)">                

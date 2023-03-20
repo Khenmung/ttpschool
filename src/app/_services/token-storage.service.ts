@@ -159,7 +159,10 @@ export class TokenStorageService {
   public getRefreshToken(): string | null {
     return localStorage.getItem(REFRESHTOKEN_KEY);
   }
-  public saveCheckEqualBatchId(token: string): void {
+  public getInCurrentBatch(): string | null {
+    return localStorage.getItem(CHECKBATCHID);
+  }
+  public saveInCurrentBatch(token: string): void {
     localStorage.removeItem(CHECKBATCHID);
     localStorage.setItem(CHECKBATCHID, token);
   }
@@ -213,9 +216,7 @@ export class TokenStorageService {
     }
     return "";
   }
-  public getCheckEqualBatchId(): string | null {
-    return localStorage.getItem(CHECKBATCHID);
-  }
+ 
   public getPID(): number | null {
     return +localStorage.getItem(PID);
   }

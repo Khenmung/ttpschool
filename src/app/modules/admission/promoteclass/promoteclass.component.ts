@@ -77,7 +77,7 @@ export class PromoteclassComponent implements OnInit {
   searchForm: UntypedFormGroup;
   FeeCategories = [];
   SelectedApplicationId = 0;
-  checkBatchIdNSelectedIdEqual = 0;
+  //checkBatchIdNSelectedIdEqual = 0;
   StudentClassData = {
     StudentClassId: 0,
     ClassId: 0,
@@ -201,7 +201,7 @@ export class PromoteclassComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
-      this.checkBatchIdNSelectedIdEqual = +this.tokenStorage.getCheckEqualBatchId();
+      //this.checkBatchIdNSelectedIdEqual = +this.tokenStorage.getCheckEqualBatchId();
       ////console.log('selected batchid', this.SelectedBatchId);
       ////console.log('current batchid', this.CurrentBatchId)
       if (this.PromotePermission == 'read')
