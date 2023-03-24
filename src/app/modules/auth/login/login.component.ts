@@ -107,6 +107,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('employeeId', decodedUser.employeeId);
         localStorage.setItem('studentId', decodedUser.studentId);
         localStorage.setItem('role', decodedUser.role);
+        localStorage.setItem('customerPlanId', decodedUser.customerPlanId);
 
         this.tokenStorage.saveSubOrgId(this.userInfo["subOrgId"]);
         this.FilterOrgSubOrg = "OrgId eq " + localStorage.getItem("orgId") + " and SubOrgId eq " + localStorage.getItem("subOrgId");// globalconstants.getOrgSubOrgFilter(this.tokenStorage);
@@ -173,7 +174,7 @@ export class LoginComponent implements OnInit {
     list.PageName = "RoleUsers";
     list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
 
-    list.filter = ["Active eq 1 and UserId eq '" + localStorage.getItem("userId") + "' and OrgId eq " + localStorage.getItem("orgId")];
+    list.filter = ["OrgId eq " + localStorage.getItem("orgId") + " and SubOrgId eq "+ localStorage.getItem("subOrgId") + " and Active eq 1 and UserId eq '" + localStorage.getItem("userId") + "'"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -227,6 +228,7 @@ export class LoginComponent implements OnInit {
                 orgId: UserRole[0].OrgId,
                 org: __organization,
                 planId: localStorage.getItem("planId"),
+                customerPlanId: localStorage.getItem("customerPlanId"),
                 logoPath: globalconstants.apiUrl + "/uploads/" + __organization + "/organization logo/" + UserRole[0].Org.LogoPath,
                 RoleUsers: UserRole.map(roleuser => {
                   if (roleuser.Active == 1 && roleuser.RoleId != null) {
@@ -294,7 +296,8 @@ export class LoginComponent implements OnInit {
 
     list.PageName = "ApplicationFeatureRolesPerms";
     list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PageId;$expand=Page($select=Active,PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
-    list.filter = ["Active eq 1 " + this.RoleFilter];
+    
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1 " + this.RoleFilter];
     debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {

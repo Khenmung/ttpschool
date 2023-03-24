@@ -39,7 +39,8 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
     StartDate: Date,
     EndDate: Date,
     CurrentBatch:0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0,
+    //SubOrgId: 0,
     Active: 1
   };
   displayedColumns = [
@@ -95,7 +96,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
     row.Action = true;
   }
   GetBatches() {
-    let filterStr = this.FilterOrgSubOrg;
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
@@ -175,7 +176,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
     //   }
     // }
     this.loading = true;
-    let checkFilterString = this.FilterOrgSubOrg + " and BatchName eq '" + row.BatchName + "'";
+    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchName eq '" + row.BatchName + "'";
 
     if (row.BatchId > 0)
       checkFilterString += " and BatchId ne " + row.BatchId;
@@ -202,7 +203,7 @@ export class BatchdashboardComponent implements OnInit { PageLoading=true;
           this.BatchData.EndDate = row.EndDate;
           this.BatchData.CurrentBatch = row.CurrentBatch;
           this.BatchData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.BatchData.SubOrgId = this.SubOrgId;
+          //this.BatchData.SubOrgId = this.SubOrgId;
           if (this.BatchData.BatchId == 0) {
             this.BatchData["CreatedDate"] = new Date();
             this.BatchData["CreatedBy"] = this.LoginUserDetail[0]["userId"];

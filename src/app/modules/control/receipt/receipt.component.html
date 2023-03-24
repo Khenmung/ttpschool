@@ -1,0 +1,109 @@
+<div>
+    <div style="padding:15px 15px 10px 15px;">
+        <div><strong>Receipts</strong></div>
+    </div>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <!-- <alert></alert> -->
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <div style="width: 100%;">
+            <!-- <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
+                <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Customer</mat-label>
+                        <mat-select formControlName="searchCustomerId">
+                            <mat-option [value]="0">select</mat-option>
+                            <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
+                                {{item.OrganizationName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                        (click)="GetOrganizationPayment()">
+                        <mat-icon>search</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
+                </div>
+            </form> -->
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="OrganizationPaymentId">
+                    <mat-header-cell *matHeaderCellDef>Id
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.OrganizationPaymentId}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="PlanName">
+                    <mat-header-cell *matHeaderCellDef>Plan Name
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.PlanName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="PaymentDate">
+                    <mat-header-cell *matHeaderCellDef>Payment Date
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.PaymentDate|date:'dd/MM/yyyy'}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="AmountPerMonth">
+                    <mat-header-cell *matHeaderCellDef>Amount Per Month
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.AmountPerMonth}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="PaidMonths">
+                    <mat-header-cell *matHeaderCellDef>No. of Months
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.PaidMonths}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Amount">
+                    <mat-header-cell *matHeaderCellDef>Total Amount
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.Amount}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="PaymentStatus">
+                    <mat-header-cell *matHeaderCellDef>Payment Mode
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.PaymentStatus}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <!-- <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
+                            (click)="AddNew()">
+                            <mat-icon>add</mat-icon>
+                        </button> -->
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-raised-button
+                            color="accent" (click)="print(element)">
+                            <mat-icon>print</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+            <mat-paginator style="display: flex;justify-content: center;"
+                [pageSizeOptions]="[5,10,20,30]"></mat-paginator>
+        </div>
+        <div style="width:100%; display: flex;align-items: center; justify-content: center;padding: 15px 15px 15px 0px">
+            <button [disabled]="loading" class="mat-raised-button" matTooltip="login" (click)="login()">
+                <mat-icon>login</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>

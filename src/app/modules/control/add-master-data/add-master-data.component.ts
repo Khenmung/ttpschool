@@ -545,7 +545,7 @@ export class AddMasterDataComponent implements OnInit {
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
       mastertoUpdate["SubOrgId"] = this.SubOrgId;
       //mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
-      //console.log("kjhk", mastertoUpdate)
+      console.log("insert master", mastertoUpdate)
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
         .subscribe((res: any) => {
           if (res != undefined) {
@@ -571,7 +571,9 @@ export class AddMasterDataComponent implements OnInit {
         });
     }
     else {
-      //console.log('data to update', mastertoUpdate);
+      mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
+      mastertoUpdate["SubOrgId"] = this.SubOrgId;
+      console.log('update master', mastertoUpdate);
       this.dataservice.postPatch('MasterItems', mastertoUpdate, row.MasterDataId, 'patch')
         .subscribe(res => {
           row.Action = false;

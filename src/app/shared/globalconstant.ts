@@ -7,8 +7,10 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiU+++.*-=-0983`9556'nb656RL
-    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
+    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:5000";
     public static fileUrl: string = '';
+    public static CompanyParentId = 27762; //536870912; 
+    //public static BloodGroupParentId = 27762; //536870912;
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
     public static RowUploadLimit = 1000; //536870912;

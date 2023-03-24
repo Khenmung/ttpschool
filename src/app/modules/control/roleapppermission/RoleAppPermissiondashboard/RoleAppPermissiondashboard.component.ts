@@ -234,8 +234,9 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   }
   AllOrgPermittedFeatures=[];
   GetAdminPermissionFeatures(){
-    var _adminRoleId =this.Roles.filter(r=>r.MasterDataName.toLowerCase()=='admin')[0].MasterDataId;     
-    var rolefilter = "Active eq 1 and OrgId eq " + this.UserDetails[0]["orgId"] + " and RoleId eq " + _adminRoleId //this.searchForm.get("RoleId").value;
+    var _adminRoleId =this.Roles.filter(r=>r.MasterDataName.toLowerCase()=='admin')[0].MasterDataId;   
+      
+    var rolefilter = this.FilterOrgSubOrg + " and RoleId eq " + _adminRoleId + " and Active eq 1" //this.searchForm.get("RoleId").value;
 
   let list: List = new List();
   list.fields = [

@@ -398,7 +398,7 @@ export class ContentService implements OnInit {
       "MasterDataName", "Description",
       "Logic", "Sequence",
       "ApplicationId", "Active",
-      "Confidential"
+      "Confidential","SubOrgId","CustomerPlanId"
     ];
     list.PageName = "MasterItems";
     list.filter = [_active + "ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
@@ -944,7 +944,7 @@ export class ContentService implements OnInit {
       "MasterDataName",
       "ParentId",
       "Description",
-      //  "Logic",
+      "CustomerPlanId",
       "Sequence",
       "Confidential",
       "Active"];

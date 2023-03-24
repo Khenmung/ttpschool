@@ -72,6 +72,7 @@ export class HomeDashboardComponent implements OnInit {
       this.Role = this.LoginUserDetail[0]['RoleUsers'][0]['role'];
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
       this.CheckLocalStorage();
+      //this.GetCustomerPlans
       this.GetOrganization()
         .subscribe((data: any) => {
           if (data.value.length > 0) {
@@ -239,6 +240,62 @@ export class HomeDashboardComponent implements OnInit {
 
 
   }
+  CustomerPlansList = [];
+  GetCustomerPlans() {
+
+    this.CustomerPlansList = [];
+    var filterstr = 'Active eq 1';
+
+    let list: List = new List();
+    list.fields = [
+      "CustomerPlanId",
+      "PlanId",
+      "OrgId",
+      "SubOrgId"
+    ];
+    list.PageName = "CustomerPlans";
+    //list.lookupFields = [];
+    list.filter = [filterstr];
+    return this.dataservice.get(list);
+
+  }
+  SubOrgChange() {
+    debugger;
+    this.loading = true;
+    var _SubOrg = this.searchForm.get("searchSubOrgId").value;
+    if (!_SubOrg.CustomerPlanId) {
+      var CustomerPlansData = {
+        CustomerPlanId: this.LoginUserDetail[0]["customerPlanId"],
+        PlanId: this.LoginUserDetail[0]["planId"],
+        AmountPerMonth: 0,
+        Formula: '',
+        LoginUserCount: 0,
+        PersonOrItemCount: 0,
+        Active: 1,
+        OrgId: this.LoginUserDetail[0]["orgId"],
+        SubOrgId: _SubOrg.MasterDataId,
+        CreatedDate: new Date(),
+        UpdatedDate: new Date(),
+        CreatedBy: this.LoginUserDetail[0]["userId"]
+      }
+
+      this.dataservice.postPatch("CustomerPlans", CustomerPlansData, 0, 'post')
+        .subscribe(
+          (data: any) => {
+            this.loading = false;
+            this.ValueChanged = true;
+            this.tokenStorage.saveSubOrgId(_SubOrg.SubOrgId);
+          }, error => {
+            this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
+            console.log("customerplan insert error:", error.error);
+          });
+    }
+    else {
+      this.tokenStorage.saveSubOrgId(_SubOrg.SubOrgId);
+      this.loading = false;
+    }
+
+  }
   GetOrganization() {
     this.loading = true;
     let list: List = new List();
@@ -262,7 +319,14 @@ export class HomeDashboardComponent implements OnInit {
         .subscribe((data: any) => {
           this.tokenStorage.saveMasterData([...data.value]);
           this.allMasterData = [...data.value];
-          this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
+          // this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
+          // this.SubOrganization.forEach(s => {
+          //   var ex = this.CustomerPlansList.filter(c => c.SubOrgId == s.MasterDataId);
+          //   if (ex.length > 0)
+          //     s.CustomerPlanId = ex[0].CustomerPlanId;
+          //   else
+          //     s.CustomerPlanId = 0;
+          // })
           this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
         });
     }
@@ -275,7 +339,12 @@ export class HomeDashboardComponent implements OnInit {
     this.Submitted = true;
     this.SelectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
-    var _SubOrgId = this.searchForm.get("searchSubOrgId").value;
+    var _SubOrgId = this.searchForm.get("searchSubOrgId").value.MasterDataId;
+    if (!_SubOrgId) {
+      this.contentservice.openSnackBar("Please select company.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false;
+      return;
+    }
     this.SubOrgId = _SubOrgId;
     this.tokenStorage.saveSubOrgId(_SubOrgId);
 
@@ -289,7 +358,7 @@ export class HomeDashboardComponent implements OnInit {
 
     if (SelectedAppId > 0) {
       this.loading = true;
-     
+
       this.tokenStorage.saveSelectedAppId(SelectedAppId);
       var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 
@@ -300,8 +369,8 @@ export class HomeDashboardComponent implements OnInit {
       }
       else
         this.tokenStorage.saveSelectedBatchName('');
-      this.tokenStorage.saveSubOrgId(_SubOrgId);
-      this.SubOrgId = _SubOrgId;
+      // this.tokenStorage.saveSubOrgId(_SubOrgId);
+      // this.SubOrgId = _SubOrgId;
       //////for local storage
       this.filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
@@ -438,7 +507,8 @@ export class HomeDashboardComponent implements OnInit {
       "CurrentBatch",
       "Active"];
     list.PageName = "Batches";
-    list.filter = [this.filterOrgSubOrg + " and Active eq 1" + currentbatchfilter];
+    var filterBatch = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    list.filter = [filterBatch + " and Active eq 1" + currentbatchfilter];
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
       this.tokenStorage.saveBatches(this.Batches)
@@ -456,19 +526,28 @@ export class HomeDashboardComponent implements OnInit {
       if (this.SelectedBatchId > 0)
         this.generateBatchIds(this.SelectedBatchId);
       ////////////
+      //this.GetCustomerPlans()
+      //  .subscribe((data: any) => {
+      //    this.CustomerPlansList = [...data.value];
+          this.getDropdownFromDB(globalconstants.CompanyParentId, globalconstants.CommonPanelID)
+            .subscribe((data: any) => {
+              this.SubOrganization = [...data.value];              
+            })
 
-      if (this.SelectedAppId > 0) {
+          if (this.SelectedAppId > 0) {
 
-        this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
-          .subscribe((data: any) => {
-            this.tokenStorage.saveMasterData([...data.value]);
-            this.allMasterData = [...data.value];
-            this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
-            this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
-          });
+            this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
+              .subscribe((data: any) => {
+                this.tokenStorage.saveMasterData([...data.value]);
+                this.allMasterData = [...data.value];
+                //this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
 
-        this.GetMenuData(this.SelectedAppId);
-      }
+                this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
+              });
+
+            this.GetMenuData(this.SelectedAppId);
+          }
+      //  });
       //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
       if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
         let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
@@ -564,7 +643,11 @@ export class HomeDashboardComponent implements OnInit {
           this.route.navigate(['/', appShortName]);
       })
   }
+  getDropdownFromDB(pParentId, pAppId) {
+    var filterOrg = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
+    return this.contentservice.GetDropDownDataFromDB(pParentId, filterOrg, pAppId)
+  }
   GetStudents(selectedApp) {
     //var filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     this.Students = [];
