@@ -263,9 +263,14 @@ export class HomeDashboardComponent implements OnInit {
     debugger;
     this.loading = true;
     var _SubOrg = this.searchForm.get("searchSubOrgId").value;
+
+    var _customerPlanId = 0;
+    if (_SubOrg.MasterDataName.toLowerCase() != 'primary')
+      _customerPlanId = this.LoginUserDetail[0]["customerPlanId"];
+
     if (!_SubOrg.CustomerPlanId) {
       var CustomerPlansData = {
-        CustomerPlanId: this.LoginUserDetail[0]["customerPlanId"],
+        CustomerPlanId: _customerPlanId,
         PlanId: this.LoginUserDetail[0]["planId"],
         AmountPerMonth: 0,
         Formula: '',
@@ -284,16 +289,18 @@ export class HomeDashboardComponent implements OnInit {
           (data: any) => {
             this.loading = false;
             this.ValueChanged = true;
-            this.tokenStorage.saveSubOrgId(_SubOrg.SubOrgId);
+            //this.tokenStorage.saveSubOrgId(_SubOrg.SubOrgId);
           }, error => {
             this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
             console.log("customerplan insert error:", error.error);
           });
     }
     else {
-      this.tokenStorage.saveSubOrgId(_SubOrg.SubOrgId);
+      //this.tokenStorage.saveSubOrgId(_SubOrg.SubOrgId);
       this.loading = false;
+      this.ValueChanged = true;
     }
+    //this.tokenStorage.saveMenuData([]);
 
   }
   GetOrganization() {
@@ -313,6 +320,7 @@ export class HomeDashboardComponent implements OnInit {
     this.SelectedAppName = this.PermittedApplications.filter(f => f.applicationId == SelectedAppId)[0].applicationName
     this.ValueChanged = true;
     if (SelectedAppId > 0) {
+      this.tokenStorage.saveMenuData([]);
       var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
       this.SelectedAppName = selectedApp[0].applicationName;
       this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, SelectedAppId)
@@ -339,7 +347,8 @@ export class HomeDashboardComponent implements OnInit {
     this.Submitted = true;
     this.SelectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
-    var _SubOrgId = this.searchForm.get("searchSubOrgId").value.MasterDataId;
+    var SubOrg = this.searchForm.get("searchSubOrgId").value;
+    var _SubOrgId = SubOrg.MasterDataId;
     if (!_SubOrgId) {
       this.contentservice.openSnackBar("Please select company.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
@@ -347,6 +356,7 @@ export class HomeDashboardComponent implements OnInit {
     }
     this.SubOrgId = _SubOrgId;
     this.tokenStorage.saveSubOrgId(_SubOrgId);
+    this.tokenStorage.saveCompanyName(SubOrg.MasterDataName);
 
     if (this.SelectedBatchId > 0)
       this.SaveBatchIds(this.SelectedBatchId);
@@ -374,6 +384,14 @@ export class HomeDashboardComponent implements OnInit {
       //////for local storage
       this.filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+
+
+
+      this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
+        .subscribe((data: any) => {
+          this.tokenStorage.saveMasterData([...data.value]);
+          this.allMasterData = [...data.value];
+        });
       this.GetMenuData(SelectedAppId);
       // if (selectedApp[0].applicationName.toLowerCase() == 'education management')
       //   this.GetStudentClass(SelectedAppId, selectedApp[0]);
@@ -529,24 +547,27 @@ export class HomeDashboardComponent implements OnInit {
       //this.GetCustomerPlans()
       //  .subscribe((data: any) => {
       //    this.CustomerPlansList = [...data.value];
-          this.getDropdownFromDB(globalconstants.CompanyParentId, globalconstants.CommonPanelID)
-            .subscribe((data: any) => {
-              this.SubOrganization = [...data.value];              
-            })
+      this.getDropdownFromDB(globalconstants.CompanyParentId, globalconstants.CommonPanelID)
+        .subscribe((data: any) => {
+          this.SubOrganization = [...data.value];
+          var selectedItem = this.SubOrganization.filter(s => s.MasterDataId == this.SubOrgId);
+          this.searchForm.patchValue({ "searchSubOrgId": selectedItem[0] });
 
-          if (this.SelectedAppId > 0) {
+        })
 
-            this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
-              .subscribe((data: any) => {
-                this.tokenStorage.saveMasterData([...data.value]);
-                this.allMasterData = [...data.value];
-                //this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
+      if (this.SelectedAppId > 0) {
 
-                this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
-              });
+        this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
+          .subscribe((data: any) => {
+            this.tokenStorage.saveMasterData([...data.value]);
+            this.allMasterData = [...data.value];
+            //this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
 
-            this.GetMenuData(this.SelectedAppId);
-          }
+            //this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
+          });
+
+        this.GetMenuData(this.SelectedAppId);
+      }
       //  });
       //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
       if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {

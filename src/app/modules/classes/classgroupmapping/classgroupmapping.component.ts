@@ -29,9 +29,9 @@ export class ClassgroupmappingComponent implements OnInit {
   ClassGroupMappingListName = 'ClassGroupMappings';
   Applications = [];
   loading = false;
-  SelectedBatchId = 0;SubOrgId = 0;
-  FilterOrgSubOrgBatchId='';
-  FilterOrgSubOrg='';
+  SelectedBatchId = 0; SubOrgId = 0;
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   ClassGroupMappingList: IClassGroupMapping[] = [];
   filteredOptions: Observable<IClassGroupMapping[]>;
   dataSource: MatTableDataSource<IClassGroupMapping>;
@@ -43,7 +43,7 @@ export class ClassgroupmappingComponent implements OnInit {
     ClassGroupMappingId: 0,
     ClassId: 0,
     ClassGroupId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -63,7 +63,7 @@ export class ClassgroupmappingComponent implements OnInit {
     private nav: Router,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder,
-    private dialog:MatDialog
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -93,9 +93,9 @@ export class ClassgroupmappingComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
-        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUPING);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -294,7 +294,7 @@ export class ClassgroupmappingComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr =this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //  " and BatchId eq " + this.SelectedBatchId;
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
@@ -333,8 +333,8 @@ export class ClassgroupmappingComponent implements OnInit {
 
     this.allMasterData = this.tokenStorage.getMasterData();
     this.ClassGroupTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUPTYPE)
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.loading = false; this.PageLoading = false;
     });

@@ -73,7 +73,7 @@
                         autocomplete="Off"
                         [attr.name]="disCol" 
                         [value]="element[disCol]"
-                        [(ngModel)]="element[disCol]">
+                        [(ngModel)]="element[disCol]" [maxlength]="5">
                     </mat-form-field>
                     <button *ngIf="disCol=='Action'"
                         [disabled]="loading || Permission=='read' || !element.Action || ResultReleased==1"

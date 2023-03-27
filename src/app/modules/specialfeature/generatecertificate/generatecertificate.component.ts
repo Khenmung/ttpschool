@@ -37,7 +37,7 @@ export class GenerateCertificateComponent implements OnInit {
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
   FilterOrgSubOrgBatchId = '';
   FilterOrgSubOrg = '';
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   DisplayColumn = [];
   GeneratedCertificatelist = [];
 
@@ -92,7 +92,7 @@ export class GenerateCertificateComponent implements OnInit {
     ClassSubjectMarkComponentId: 0,
     Marks: 0,
     ExamStatus: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -175,16 +175,15 @@ export class GenerateCertificateComponent implements OnInit {
         this.Permission = perObj[0].permission;
 
       if (this.Permission != 'deny') {
-        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
-        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
-        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
-        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+        //var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
         this.GetAllCertificateConfig();
@@ -202,7 +201,7 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetStudentAndGenerateCerts() {
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';
+    var filterstr = this.FilterOrgSubOrgBatchId;// + ' and Active eq 1';
     let list: List = new List();
 
     if (this.StudentClassId == 0) {
@@ -581,7 +580,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.loading = false;
     this.PageLoading = false;
   }
-  
+
   GetGeneratedCertificate() {
     debugger;
     var filterstr = this.FilterOrgSubOrg + ' and Active eq true';
@@ -851,7 +850,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
     this.GetPoints();
     //this.shareddata.ChangeBatch(this.Batches);
-    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetClassGroups(filterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
@@ -1130,7 +1129,7 @@ export class GenerateCertificateComponent implements OnInit {
   AllCertificateConfig = [];
   GetAllCertificateConfig() {
     debugger;
-    var filterStr = "Active eq true and (OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")";
+    var filterStr = "Active eq true and (OrgId eq 0 or (" + this.FilterOrgSubOrg + "))";
     this.loading = true;
     this.AllCertificateConfig = [];
 
@@ -1378,7 +1377,7 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetExams() {
 
-    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId,1)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId, 1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.map(e => {

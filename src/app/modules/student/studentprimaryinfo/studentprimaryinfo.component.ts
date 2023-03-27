@@ -27,7 +27,7 @@ export class studentprimaryinfoComponent implements OnInit {
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
   Edit = false;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   SelectedApplicationId = 0;
   LoginUserDetail = [];
   StudentLeaving = false;
@@ -59,8 +59,8 @@ export class studentprimaryinfoComponent implements OnInit {
   AdmissionStatuses = [];
   ColumnsOfSelectedReports = [];
   CountryId = 0;
-  FilterOrgSubOrg='';
-  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
@@ -112,7 +112,7 @@ export class studentprimaryinfoComponent implements OnInit {
     this.formdata.append("batchId", "0");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
     this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
-    this.formdata.append("subOrgId", this.SubOrgId+"");
+    this.formdata.append("subOrgId", this.SubOrgId + "");
     this.formdata.append("pageId", "0");
 
     if (this.StudentId != null && this.StudentId != 0)
@@ -201,7 +201,7 @@ export class studentprimaryinfoComponent implements OnInit {
       Height: [0],
       Active: [1]
     });
-    this.PID =this.tokenStorage.getPID();
+    this.PID = this.tokenStorage.getPID();
     this.StudentId = this.tokenStorage.getStudentId();
     this.StudentClassId = this.tokenStorage.getStudentClassId()
   }
@@ -232,8 +232,8 @@ export class studentprimaryinfoComponent implements OnInit {
         //console.log("this.FeePaymentPermission ", this.FeePaymentPermission);
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.SubOrgId = +this.tokenStorage.getSubOrgId();
-        this.FilterOrgSubOrg =globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-        this.FilterOrgSubOrgBatchId =globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.getFields('Student Module');
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.GetMasterData();
@@ -338,7 +338,7 @@ export class studentprimaryinfoComponent implements OnInit {
   }
   Sections = [];
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
@@ -357,16 +357,45 @@ export class studentprimaryinfoComponent implements OnInit {
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
         this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "other")[0].MasterDataId;
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
-        this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
-        this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
-        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          if (this.StudentId > 0)
-            this.GetStudent();
+        if (this.Genders.length > 0)
+          this.studentForm.patchValue({ Gender: this.Genders[0].MasterDataId });
+
+        if (this.Bloodgroup.length > 0)
+          this.studentForm.patchValue({ Bloodgroup: this.Bloodgroup[0].MasterDataId });
+        if (this.Category.length > 0)
+          this.studentForm.patchValue({ Category: this.Category[0].MasterDataId });
+        var _admissionStatus = this.AdmissionStatuses.filter(r => r.MasterDataName.toLowerCase() == "admitted");
+
+        var _religion = this.Religion.filter(r => r.MasterDataName.toLowerCase() == "christian");
+        if (_religion.length > 0)
+          this.studentForm.patchValue({ Religion: _religion[0].MasterDataId });
+
+        if (_admissionStatus.length == 0) {
+          this.contentservice.openSnackBar("'Admitted' must be defined for admission status.", globalconstants.ActionText, globalconstants.RedBackground);
           this.loading = false;
           this.PageLoading = false;
-        });
+        }
+        else {
+          this.studentForm.patchValue({ AdmissionStatus: _admissionStatus[0].MasterDataId });
+          this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
+          this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
+          var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+            this.Classes = [...data.value];
+            if (this.Classes.length == 0) {
+              this.contentservice.openSnackBar("Please define classes first.", globalconstants.ActionText, globalconstants.RedBackground);
+              this.loading = false;
+              this.PageLoading = false;
+            }
+            else {
+              this.studentForm.patchValue({ ClassAdmissionSought: this.Classes[0].ClassId });
+              if (this.StudentId > 0)
+                this.GetStudent();
+              this.loading = false;
+              this.PageLoading = false;
+            }
+          });
+        }
       });
 
   }
@@ -392,7 +421,7 @@ export class studentprimaryinfoComponent implements OnInit {
     this.Edited = true;
   }
   ErrorMessage = '';
-  SaveOrUpdate() {
+  UpdateOrSave() {
 
     var _MandatoryColumns = this.ColumnsOfSelectedReports.filter(f => f.Active == 1);
     this.ErrorMessage = '';
@@ -459,7 +488,9 @@ export class studentprimaryinfoComponent implements OnInit {
         });
     }
     this.studentData = [];
-    //var _studentId = this.studentForm.get("StudentId").value;
+    var _genderId = this.studentForm.get("Gender").value;
+    if (!_genderId)
+      _genderId = 0;
     this.studentData.push({
       StudentId: this.StudentId,
       FirstName: this.studentForm.get("FirstName").value,
@@ -468,7 +499,7 @@ export class studentprimaryinfoComponent implements OnInit {
       FatherOccupation: this.studentForm.get("FatherOccupation").value,
       MotherName: this.studentForm.get("MotherName").value,
       MotherOccupation: this.studentForm.get("MotherOccupation").value,
-      GenderId: this.studentForm.get("Gender").value,
+      GenderId: _genderId,
       PermanentAddress: this.studentForm.get("PermanentAddress").value,
       PresentAddress: this.studentForm.get("PresentAddress").value,
       DOB: this.adjustDateForTimeOffset(this.studentForm.get("DOB").value),
@@ -585,10 +616,10 @@ export class studentprimaryinfoComponent implements OnInit {
       })
   }
   CreateInvoice() {
-    this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedBatchId, this.StudentClassId)
+    this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"], this.SubOrgId, this.SelectedBatchId, this.StudentClassId)
       .subscribe((data: any) => {
 
-        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"],this.SubOrgId)
+        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"], this.SubOrgId)
           .subscribe((data: any) => {
             //this.loading = false; this.PageLoading=false;
             //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -622,13 +653,13 @@ export class studentprimaryinfoComponent implements OnInit {
           }
 
           var _orgStudentModuleObj = data.value.filter(f => f.ParentId == _studentModuleId
-            && f.SubOrgId==this.SubOrgId && f.OrgId == this.LoginUserDetail[0]["orgId"] && f.Active == 1);
+            && f.SubOrgId == this.SubOrgId && f.OrgId == this.LoginUserDetail[0]["orgId"] && f.Active == 1);
           var _orgStudentModuleId = 0;
           if (_orgStudentModuleObj.length > 0) {
             _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId;
           }
 
-          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId 
+          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId
             && f.SubOrgId == this.SubOrgId && f.OrgId == this.LoginUserDetail[0]["orgId"])
 
         }
@@ -651,8 +682,8 @@ export class studentprimaryinfoComponent implements OnInit {
           this.GetStudentForStore(data.value);
           data.value.forEach(stud => {
             var _lastname = stud.LastName == null || stud.LastName == '' ? '' : " " + stud.LastName;
-            var fatherName=stud.FatherName?stud.FatherName:'';
-            var motherName=stud.MotherName?stud.MotherName:'';
+            var fatherName = stud.FatherName ? stud.FatherName : '';
+            var motherName = stud.MotherName ? stud.MotherName : '';
             let StudentName = stud.PID + ' ' + stud.FirstName + _lastname + ' ' + fatherName +
               ' ' + motherName + ", ";
             if (stud.StudentClasses.length > 0) {
@@ -666,7 +697,7 @@ export class studentprimaryinfoComponent implements OnInit {
               this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
             }
 
-            this.PID =  stud.PID;
+            this.PID = stud.PID;
             this.shareddata.ChangeStudentName(StudentName);
             this.studentForm.patchValue({
               StudentId: stud.StudentId,

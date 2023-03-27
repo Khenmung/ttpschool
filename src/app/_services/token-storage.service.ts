@@ -29,7 +29,7 @@ const STUDENTS = 'students';
 const MENUDATA = 'menudata';
 const MASTERDATA = 'masterdata';
 const SubOrgId = 'SubOrgId';
-
+const COMPANYNAME ='CompanyName';
 @Injectable({
   providedIn: 'root'
 })
@@ -127,6 +127,13 @@ export class TokenStorageService {
   public saveSelectedBatchName(token: string): void {
     localStorage.removeItem(SELECTEDBATCHNAME);
     localStorage.setItem(SELECTEDBATCHNAME, token);
+  }
+  public saveCompanyName(token: string): void {
+    localStorage.removeItem(COMPANYNAME);
+    localStorage.setItem(COMPANYNAME, token);
+  }
+  public getCompanyName(): string | null {
+    return localStorage.getItem(COMPANYNAME);
   }
   public getSelectedBatchName(): string | null {
     return localStorage.getItem(SELECTEDBATCHNAME);

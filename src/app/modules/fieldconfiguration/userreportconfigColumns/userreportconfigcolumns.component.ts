@@ -116,6 +116,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     this.ApplicationName = this.LoginUserDetail[0]["org"];
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.FilterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.FilterOrgSubOrgBatchId= globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     this.GetBaseReportId();

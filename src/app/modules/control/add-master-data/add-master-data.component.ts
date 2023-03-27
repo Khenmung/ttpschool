@@ -205,8 +205,12 @@ export class AddMasterDataComponent implements OnInit {
           });
           //}
         })
-
         this.MasterData = result.sort((a, b) => a.ParentId - b.ParentId);
+        var _company = this.tokenStorage.getCompanyName();
+        if (_company.toLowerCase() != 'primary')
+          this.MasterData = this.MasterData.filter(f => f.MasterDataName.toLowerCase() != 'company');
+
+       
       })
     }
   }

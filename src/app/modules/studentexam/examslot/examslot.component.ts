@@ -23,11 +23,11 @@ export class ExamslotComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   Permission = '';
-  StandardFilterWithBatchId = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   DataCountToUpdate = 0;
   ExamSlots: IExamSlots[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   SelectedApplicationId = 0;
   Exams = [];
   ExamNames = [];
@@ -45,7 +45,7 @@ export class ExamslotComponent implements OnInit {
     EndTime: '',
     ExamDate: Date,
     Sequence: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     Active: 1
   };
@@ -101,7 +101,7 @@ export class ExamslotComponent implements OnInit {
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.SubOrgId = +this.tokenStorage.getSubOrgId();
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-        this.StandardFilterWithBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.Batches = this.tokenStorage.getBatches();
         //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
         this.GetMasterData();
@@ -174,7 +174,7 @@ export class ExamslotComponent implements OnInit {
       }
     }
     var dateplusone = new Date(row.ExamDate).setDate(new Date(row.ExamDate).getDate() + 1)
-    let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
+    let checkFilterString = this.FilterOrgSubOrgBatchId + " and ExamId eq " + this.searchForm.get("searchExamId").value +
       " and SlotNameId eq " + row.SlotNameId +
       " and ExamDate ge " + this.datepipe.transform(row.ExamDate, 'yyyy-MM-dd') +
       " and ExamDate lt " + this.datepipe.transform(dateplusone, 'yyyy-MM-dd')
@@ -182,13 +182,13 @@ export class ExamslotComponent implements OnInit {
 
     if (row.ExamSlotId > 0)
       checkFilterString += " and ExamSlotId ne " + row.ExamSlotId;
-    checkFilterString += " and " + this.StandardFilterWithBatchId;
+    //checkFilterString += " and " + this.StandardFilterWithBatchId;
 
     let list: List = new List();
     list.fields = ["ExamSlotId"];
     list.PageName = "ExamSlots";
     list.filter = [checkFilterString];
-
+    console.log("query",checkFilterString)
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -228,6 +228,8 @@ export class ExamslotComponent implements OnInit {
             this.update(row);
           }
         }
+      }, error => {
+        console.log("error in examslot duplicate check", error)
       });
 
   }
@@ -261,7 +263,7 @@ export class ExamslotComponent implements OnInit {
         });
   }
   GetExams() {
-    this.contentservice.GetExams(this.StandardFilterWithBatchId,2)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId, 2)
       .subscribe((data: any) => {
         var _examName = '';
         this.Exams = [];
@@ -282,6 +284,8 @@ export class ExamslotComponent implements OnInit {
         //console.log("exam", this.Exams)
         this.loading = false;
         this.PageLoading = false;
+      },err=>{
+        console.log("error in get exams",err);
       })
   }
   GetExamSlots() {
@@ -332,7 +336,7 @@ export class ExamslotComponent implements OnInit {
       "BatchId",
       "Active"];
     list.PageName = "ExamSlots";
-    list.filter = [this.StandardFilterWithBatchId + filterstr];
+    list.filter = [this.FilterOrgSubOrgBatchId + filterstr];
     //list.orderBy = "ParentId";
     this.ExamSlots = [];
     this.dataservice.get(list)
@@ -389,7 +393,7 @@ export class ExamslotComponent implements OnInit {
     row.Action = true;
   }
   GetMasterData() {
-
+debugger;
     this.allMasterData = this.tokenStorage.getMasterData();
     this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);

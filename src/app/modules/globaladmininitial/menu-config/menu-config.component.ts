@@ -157,7 +157,8 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
         var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
         
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-        this.contentservice.GetDropDownDataFromDB(_ParentId, this.FilterOrgSubOrg, 0)
+        var _orgId ="OrgId eq 0";
+        this.contentservice.GetDropDownDataFromDB(_ParentId, _orgId, 0)
           .subscribe((data: any) => {
             this.Applications = [...data.value];
           });
@@ -348,7 +349,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
     //   _ParentId = this.searchForm.get("searchTopMenuId").value;
     // }
     var duplicatecheck = this.FilterOrgSubOrg + " and ApplicationId eq " + this.SelectedAppId +
-      " and PageTitle eq '" + row.PageTitle 
+      " and PageTitle eq '" + row.PageTitle + "'" + 
       " and ApplicationId eq " + this.searchForm.get("searchApplicationId").value;
     if (row.PageId > 0)
       duplicatecheck += " and PageId ne " + row.PageId;

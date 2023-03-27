@@ -392,7 +392,7 @@ export class CreatehtmlpageComponent implements OnInit {
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     var _rulesOrPolicyId = this.searchForm.get("RulesOrPolicyId").value;
     var _active = this.searchForm.get("Active").value;
-    let checkFilterString = this.FilterOrgSubOrg + " and Title eq '" + globalconstants.encodeSpecialChars(_title);
+    let checkFilterString = this.FilterOrgSubOrg + " and Title eq '" + globalconstants.encodeSpecialChars(_title) + "'";
     if (_title.length == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);

@@ -195,7 +195,7 @@
                 <button [disabled]="loading" (click)="back()" class="mat-raised-button" matTooltip="dashboard">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" matTooltip="save"
+                <button [disabled]="loading || Permission=='read' || !Edited" (click)="UpdateOrSave()" matTooltip="save"
                     mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                     <mat-icon *ngIf="loading">
@@ -303,7 +303,7 @@
                 <button [disabled]="loading" (click)="back()" class="mat-raised-button" matTooltip="back to search">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
+                <button [disabled]="loading || Permission=='read' || !Edited" (click)="UpdateOrSave()" alt="save"
                     mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                     <mat-icon *ngIf="loading">
@@ -354,7 +354,7 @@
                 <button [disabled]="loading" (click)="back()" matTooltip="dashboard" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
+                <button [disabled]="loading || Permission=='read' || !Edited" (click)="UpdateOrSave()" alt="save"
                     mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                     <mat-icon *ngIf="loading">
@@ -462,7 +462,7 @@
                 <button [disabled]="loading" (click)="back()" matTooltip="back" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
+                <button [disabled]="loading || Permission=='read' || !Edited" (click)="UpdateOrSave()" alt="save"
                     mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                     <mat-icon *ngIf="loading">

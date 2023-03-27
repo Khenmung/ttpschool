@@ -14,7 +14,7 @@ export class HeaderComponent implements OnInit {
   scrollTop = 0;
   hideNav = false;
 
-
+  CompanyName='';
   loading: false;
   userName: string = '';
   logoPath = '';
@@ -45,6 +45,7 @@ export class HeaderComponent implements OnInit {
       }
       this.OrganizationName = this.LoginUserDetails[0].org
       var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
+      this.CompanyName = this.tokenStorage.getCompanyName();
       this.SelectedApplicationName = '';
 
       var PermittedApplications = this.tokenStorage.getPermittedApplications();

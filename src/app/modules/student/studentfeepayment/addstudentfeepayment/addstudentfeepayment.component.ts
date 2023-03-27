@@ -126,7 +126,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
     ReceiptDate: new Date(),
     Discount: 0,
     BatchId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0,
+    SubOrgId: 0,
+    CreatedBy:'',
+    CreatedDate:new Date(),
     Active: 1,
     Ledgerdata: [],
     AccountingVouchers: []
@@ -465,7 +468,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     }
   }
   GetStudentFeePayment() {
-    //debugger;
+    debugger;
     if (this.studentInfoTodisplay.StudentId == 0) {
       this.nav.navigate(["/edu"]);
     }
@@ -486,7 +489,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         "Active"]
       list.PageName = this.AccountingLedgerTrialBalanceListName;
       //list.lookupFields = ["StudentClass", "PaymentDetails"];
-      list.filter = ['Active eq 1 and StudentClassId eq ' + this.studentInfoTodisplay.StudentClassId];
+      list.filter = ["StudentClassId eq " + this.studentInfoTodisplay.StudentClassId + " and Active eq 1"];
       //list.orderBy = "ParentId";
 
       this.dataservice.get(list)
@@ -770,6 +773,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     row.Action = false;
     this.loading = false;
     this.miscelenous();
+    this.calculateTotal();
   }
   miscelenous() {
     var _rowWithoutDiscount = this.MonthlyDueDetail.filter(f => f.FeeName != 'Discount');
@@ -912,6 +916,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.StudentReceiptData.Active = 1;
     this.StudentReceiptData.OffLineReceiptNo = this.OffLineReceiptNo;
     this.StudentReceiptData.Discount = 0;
+    this.StudentReceiptData.CreatedBy = this.LoginUserDetail[0]["userId"];
+    //this.StudentReceiptData.CreatedDate = new Date();
 
     this.FeePayment.StudentFeeReceipt = this.StudentReceiptData;
 
@@ -1006,7 +1012,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       });
     })
 
-    console.log("this.FeePayment", this.FeePayment);
+    //console.log("this.FeePayment", this.FeePayment);
     this.dataservice.postPatch(this.FeeReceiptListName, this.FeePayment, 0, 'post')
       .subscribe((data: any) => {
         this.StudentReceiptData.StudentFeeReceiptId = data.StudentFeeReceiptId;

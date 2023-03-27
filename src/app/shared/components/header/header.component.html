@@ -7,7 +7,10 @@
             </div> -->
             <div style="margin:10px 10px 10px 15px;" fxLayout="row" fxLayoutAlign="start center">
                 <a [routerLink]="['/']"><img src="{{logoPath}}" alt="{{OrganizationName}}" width="60px" /></a>
-                <span>{{SelectedApplicationName}}</span>
+                <div style="display:flex;flex-direction: column;">
+                    <span >{{SelectedApplicationName}}</span>
+                    <span style="position: absolute;font-size:14px;top: 1px;">{{CompanyName}}</span>
+                </div>
             </div>
             <div fxLayout="row" fxLayoutAlign="space-between center">
                 <div style="font-size: medium;margin-right: 15px;">{{userName}}</div>

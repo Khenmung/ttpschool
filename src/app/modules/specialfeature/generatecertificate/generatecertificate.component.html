@@ -191,3 +191,18 @@
         </div>
     </div>
 </div>
+<div style="margin-top:30px;" data-expand="false" #expandWrap>
+    <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
+        <mat-icon>info</mat-icon>
+        Guides..
+    </span>
+    <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
+        <ul>
+            <li>
+                <div><b>Certificates</b> can be generated even for inactive students.
+                </div>
+                <div>Activity needs to be first entered for <b>Moments and Sports</b> certificates</div>
+            </li>
+        </ul>
+    </span>
+</div>

@@ -145,11 +145,11 @@ export class TodayCollectionComponent implements OnInit {
     let fromDate = this.SearchForm.get("FromDate").value;
     let toDate = this.SearchForm.get("ToDate").value;
     let _classId = this.SearchForm.get("searchClassId").value;
-    let filterstring = '';
+    let filterstring = this.FilterOrgSubOrg;
     this.loading = true;
     //filterstring = " eq 1" 
 
-    filterstring += "ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
+    filterstring += " and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
       " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd');
 
 
@@ -206,10 +206,14 @@ export class TodayCollectionComponent implements OnInit {
         this.CancelledAmount = cancelledBill.reduce((acc, current) => acc + current.TotalAmount, 0);
 
         this.DateWiseCollection = result.map(d => {
+          var pm =this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId);
+          var _paymentType='';
+          if(pm.length>0)
+          _paymentType =pm[0].MasterDataName;
           //var _lastname = d.StudentClass.Student.LastName == null ? '' : " " + d.StudentClass.Student.LastName;
           d.Name = d.StudentClasses[0].Name;
           d.ClassName = d.StudentClasses[0].ClassName
-          d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
+          d.PaymentType = _paymentType;
           d.Status = d.Active == 0 ? 'Cancelled' : 'Active';
           //d.ReceiptDate = this.datepipe.transform(d.ReceiptDate,'dd/MM/yyyy') 
           //d.FeeName = this.FeeDefinitions.filter(f=>f.FeeDefinitionId == d.AccountingVouchers[0].ClassFeeId)[0].FeeName;

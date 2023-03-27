@@ -319,7 +319,7 @@ export class ExamsComponent implements OnInit {
 
   }
   GetClassGroup() {
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
       })
