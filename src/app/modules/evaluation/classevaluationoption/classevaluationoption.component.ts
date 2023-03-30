@@ -104,7 +104,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
             map(Title => Title ? this._filter(Title) : this.EvaluationOptionAutoComplete.slice())
           );
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.loading = false; this.PageLoading = false;
 
@@ -203,7 +203,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
           this.ClassEvaluationOptionForUpdate = [];
           this.ClassEvaluationOptionForUpdate.push(
             {

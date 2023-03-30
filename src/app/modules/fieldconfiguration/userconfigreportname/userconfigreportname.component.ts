@@ -91,7 +91,7 @@ export class UserconfigreportnameComponent implements OnInit {
     //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
     this.Applications = this.tokenStorage.getPermittedApplications();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.PageLoad();
   }
 

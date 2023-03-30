@@ -99,7 +99,7 @@ export class ExamslotComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.Batches = this.tokenStorage.getBatches();

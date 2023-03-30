@@ -94,7 +94,7 @@ export class WorkhistoryComponent implements OnInit { PageLoading=true;
 
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.EmployeeId = +this.tokenStorage.getEmployeeId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {

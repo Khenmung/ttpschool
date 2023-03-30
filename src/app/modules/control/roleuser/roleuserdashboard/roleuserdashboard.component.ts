@@ -96,7 +96,7 @@ export class roleuserdashboardComponent implements OnInit {
       );
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.PageLoad();
   }
   private _filter(name: string): IUser[] {

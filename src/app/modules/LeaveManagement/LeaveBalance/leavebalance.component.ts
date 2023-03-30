@@ -139,7 +139,7 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMasterData();
 

@@ -156,6 +156,7 @@ export class AdminrolepermissionComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(RoleId, filterOrgSubOrg, appId)
       .subscribe((data: any) => {
         this.Roles = [...data.value];
+        this.Roles = this.Roles.filter(r=>r.MasterDataName =="Admin");
       })
 
   }

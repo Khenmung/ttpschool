@@ -96,7 +96,7 @@ export class TeacherperiodComponent implements OnInit {
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -269,7 +269,7 @@ export class TeacherperiodComponent implements OnInit {
   GetSchoolTimeTable() {
     debugger;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.SchoolTimeTableList = [];
 
     this.loading = true;
@@ -455,7 +455,7 @@ export class TeacherperiodComponent implements OnInit {
   GetAllSchoolTimeTable() {
     debugger;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';
 
@@ -549,7 +549,7 @@ export class TeacherperiodComponent implements OnInit {
   }
   GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.SchoolTimeTableList = [];
     //var orgIdSearchstr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 

@@ -134,7 +134,7 @@ export class StudentprofilereportComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();

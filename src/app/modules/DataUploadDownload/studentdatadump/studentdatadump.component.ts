@@ -102,7 +102,7 @@ export class StudentDatadumpComponent implements OnInit {
       }
       //var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       //this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.filterOrgSubOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.tokenStorage);

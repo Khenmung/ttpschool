@@ -114,7 +114,7 @@ export class CertificateconfigComponent implements OnInit {
         //this.GroupId = this.tokenStorage.getGroupId();
         this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
@@ -157,7 +157,7 @@ export class CertificateconfigComponent implements OnInit {
       return;
     }
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let checkFilterString = this.FilterOrgSubOrg + " and Title eq '" + row.Title + "' and ParentId eq " + row.ParentId
     this.RowsToUpdate = 0;
 

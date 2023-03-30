@@ -47,8 +47,8 @@ export class ExcelDataManagementComponent implements OnInit {
     EMPLOYEEDETAIL: 'employee upload'
   }
   SelectedApplicationId = 0;
-  filterOrgIdNBatchId = '';
-  filterOrgId = '';
+  FilterOrgSubOrgNBatchId = '';
+  FilterOrgSubOrg = '';
   ClassEvaluations = [];
   loading = false;
   SelectedBatchId = 0;
@@ -69,23 +69,21 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentPrimaryContact.subscribe(c => (this.PrimaryContact = c));
     this.shareddata.CurrentLocation.subscribe(c => (this.Location = c));
 
-    this.contentservice.GetClasses(this.filterOrgId).subscribe((data: any) => {
-      this.Classes = [...data.value];
-
-    });
+    
     this.Batches = this.tokenStorage.getBatches();
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
     this.shareddata.CurrentUploadType.subscribe(c => (this.UploadTypes = c));
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
 
     this.uploadForm = this.fb.group({
       UploadTypeId: [0, [Validators.required]]
     })
-    this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
-    this.filterOrgId = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.FilterOrgSubOrgNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+    this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+
     this.PageLoad();
   }
   PageLoad() {
@@ -104,9 +102,12 @@ export class ExcelDataManagementComponent implements OnInit {
       if (apps.length > 0) {
         this.SelectedApplicationName = apps[0].appShortName;
       }
-      //if (this.UploadTypes.length == 0)
-      //var _moduleName = 'Student Module'
-      //this.getFields(_moduleName);
+      this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
+        this.Classes = [...data.value];
+  
+      });
+
+
       this.GetMasterData();
       //else
       // if (this.SelectedApplicationName == 'edu') {
@@ -775,9 +776,9 @@ export class ExcelDataManagementComponent implements OnInit {
 
       if (this.ErrorMessage.length == 0) {
         if (element.StudentClassId > 0) {
+          //if studentclassid already exist, dont update classid
           this.ELEMENT_DATA.push({
             StudentId: +studentFilter[0].StudentId,
-            ClassId: element.ClassId,
             SectionId: element.Section,
             RollNo: element.RollNo ? element.RollNo : '',
             StudentClassId: element.StudentClassId,
@@ -788,16 +789,18 @@ export class ExcelDataManagementComponent implements OnInit {
           });
         }
         else {
-          //without classId. dont update class.
+        
           this.ELEMENT_DATA.push({
             StudentId: +studentFilter[0].StudentId,
+            ClassId: element.ClassId,
             SectionId: element.Section,
             RollNo: element.RollNo ? element.RollNo : '',
             StudentClassId: element.StudentClassId,
             FeeTypeId: _regularFeeTypeId,
             BatchId: this.SelectedBatchId,
             OrgId: this.loginDetail[0]["orgId"],
-            SubOrgId:this.SubOrgId
+            SubOrgId:this.SubOrgId,
+            Active:0
           });
         }
       }
@@ -1243,7 +1246,7 @@ export class ExcelDataManagementComponent implements OnInit {
   save() {
     var toInsert = [];
     this.loading = true;
-    this.contentservice.GetStudentMaxPID(this.filterOrgId)
+    this.contentservice.GetStudentMaxPID(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         var _MaxPID = 1;
         if (data.value.length > 0) {
@@ -1360,7 +1363,8 @@ export class ExcelDataManagementComponent implements OnInit {
       }, error => console.log(error))
   }
   saveStudentClass() {
-    //console.log('data to save', this.studentData[0].element)
+    debugger;
+    //console.log('student class to save', this.studentData[0])
     this.dataservice.postPatch('StudentClasses', this.studentData[0], 0, 'post')
       .subscribe((result: any) => {
         //console.log('inserted');
@@ -1375,17 +1379,21 @@ export class ExcelDataManagementComponent implements OnInit {
       },
         error => {
           console.log(error);
+          this.loading=false;
+          var errmsg=globalconstants.formatError(error);
+          this.contentservice.openSnackBar(errmsg, globalconstants.ActionText, globalconstants.BlueBackground);
           this.ErrorCount += 1;
 
         })
   }
   GetStudentClasses() {
-    this.filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+    //select only current batch student class but students are from any batch
+    this.FilterOrgSubOrgNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();
     list.fields = ["StudentId", "StudentClassId", "ClassId"];
     list.PageName = "StudentClasses";
-    list.filter = ["Active eq 1 and " + this.filterOrgIdNBatchId];
+    list.filter = [this.FilterOrgSubOrgNBatchId + " and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -1418,7 +1426,7 @@ export class ExcelDataManagementComponent implements OnInit {
     let list: List = new List();
     list.fields = ["*"];
     list.PageName = "CustomerPlans";
-    list.filter = ["Active eq 1 and " + this.filterOrgId];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -1437,7 +1445,7 @@ export class ExcelDataManagementComponent implements OnInit {
     let list: List = new List();
     list.fields = ["PID,StudentId", "FirstName", "LastName", "Active"];
     list.PageName = "Students";
-    list.filter = ["Active eq 1 and " + this.filterOrgId];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

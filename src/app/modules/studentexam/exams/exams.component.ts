@@ -106,8 +106,9 @@ export class ExamsComponent implements OnInit {
       if (this.Permission == 'deny')
         this.nav.navigate(['/auth/login']);
       else {
+        
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
@@ -246,7 +247,7 @@ export class ExamsComponent implements OnInit {
         });
   }
   GetExams() {
-
+debugger;
     //var orgIdSearchstr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
     let list: List = new List();

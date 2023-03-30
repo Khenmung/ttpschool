@@ -90,10 +90,10 @@ export class EventComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.EmployeeId = +this.tokenStorage.getEmployeeId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {

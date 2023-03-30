@@ -145,7 +145,7 @@ export class AssetVendorComponent implements OnInit {
     }
 
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let checkFilterString =this.FilterOrgSubOrg + " and CategoryId eq " + row.CategoryId + " and Rank eq '" + row.Rank + "'"
     this.RowsToUpdate = 0;
 

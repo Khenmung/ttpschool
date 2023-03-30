@@ -138,7 +138,7 @@ export class StudentActivityComponent implements OnInit {
         this.StudentClassId = this.tokenStorage.getStudentClassId();
 
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
@@ -243,7 +243,7 @@ export class StudentActivityComponent implements OnInit {
     }
 
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let checkFilterString = this.FilterOrgSubOrgBatchId + " and RankId eq " + row.RankId +
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +

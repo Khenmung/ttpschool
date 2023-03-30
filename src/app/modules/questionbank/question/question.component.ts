@@ -128,7 +128,7 @@ export class QuestionComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
 
@@ -377,7 +377,7 @@ export class QuestionComponent implements OnInit {
       checkFilterString += " and DifficultyLevelId eq " + row.DifficultyLevelId
 
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.QuestionBankForUpdate = [];;
     this.QuestionBankData.QuestionBankId = row.QuestionBankId;
     this.QuestionBankData.SyllabusId = row.SyllabusId;
@@ -461,7 +461,7 @@ export class QuestionComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr = this.FilterOrgSubOrg + " and Active eq true";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _classId = this.searchForm.get("searchClassId").value;
@@ -543,7 +543,7 @@ export class QuestionComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr =this.FilterOrgSubOrg + " and Active eq true";// 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _classId = this.searchForm.get("searchClassId").value;
@@ -651,7 +651,7 @@ export class QuestionComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr =this.FilterOrgSubOrg + " and Active eq true";// 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     if (row.SyllabusId > 0)

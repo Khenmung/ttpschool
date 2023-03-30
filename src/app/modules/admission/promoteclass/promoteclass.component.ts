@@ -190,7 +190,7 @@ export class PromoteclassComponent implements OnInit {
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.CurrentBatchStudents = this.tokenStorage.getStudents();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.NextBatchId = +this.tokenStorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
       this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);

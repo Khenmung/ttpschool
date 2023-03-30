@@ -110,7 +110,7 @@ export class ClassdetailComponent implements OnInit {
 
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {

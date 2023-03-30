@@ -562,7 +562,7 @@ export class EmployeeComponent implements OnInit {
       });
   }
   save() {
-
+console.log("this.EmployeeData",this.EmployeeData)
     this.dataservice.postPatch('EmpEmployees', this.EmployeeData, 0, 'post')
       .subscribe((result: any) => {
         //debugger;

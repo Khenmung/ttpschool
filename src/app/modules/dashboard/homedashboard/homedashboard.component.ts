@@ -135,7 +135,7 @@ export class HomeDashboardComponent implements OnInit {
                   this.loggedIn = true;
                 //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
                 this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
-                this.SubOrgId = +this.tokenStorage.getSubOrgId();
+                this.SubOrgId = this.tokenStorage.getSubOrgId();
                 this.filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
                 this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
 
@@ -368,7 +368,7 @@ export class HomeDashboardComponent implements OnInit {
 
     if (SelectedAppId > 0) {
       this.loading = true;
-
+      this.SelectedAppId =SelectedAppId;
       this.tokenStorage.saveSelectedAppId(SelectedAppId);
       var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 

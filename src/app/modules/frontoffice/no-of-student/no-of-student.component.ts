@@ -122,7 +122,7 @@ export class NoOfStudentComponent implements OnInit {
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.Batches = this.tokenStorage.getBatches()
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.NextBatchId = +this.tokenStorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
       this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
@@ -135,7 +135,7 @@ export class NoOfStudentComponent implements OnInit {
       if (this.Permission != 'deny') {
 
         //this.checkBatchIdNSelectedIdEqual = +this.tokenStorage.getCheckEqualBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
 
         this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
         this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
@@ -374,7 +374,7 @@ export class NoOfStudentComponent implements OnInit {
     //set current batch id back to the actual one.
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
   }
   clear() {
     this.searchForm.patchValue({

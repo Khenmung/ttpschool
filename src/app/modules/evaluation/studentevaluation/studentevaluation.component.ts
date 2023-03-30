@@ -149,7 +149,7 @@ export class StudentEvaluationComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.StudentId = +localStorage.getItem('studentId');
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.contentservice.GetClassGroupMapping(this.FilterOrgSubOrg, 1)
@@ -286,7 +286,7 @@ export class StudentEvaluationComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
 
           var _toappend = '', _answerText = '', _history = '', _studentClassId = 0;
           _answerText = row.AnswerText;
@@ -419,7 +419,7 @@ export class StudentEvaluationComponent implements OnInit {
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
 
     var objstudent = this.searchForm.get("searchStudentName").value;
     this.ClassId = this.searchForm.get("searchClassId").value;
@@ -701,7 +701,7 @@ export class StudentEvaluationComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr = this.FilterOrgSubOrg + " and Active eq true";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();

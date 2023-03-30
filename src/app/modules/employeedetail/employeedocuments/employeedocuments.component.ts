@@ -90,7 +90,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.LoginUserDetail = this.tokenStorage.getUserDetail();
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgnBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.FilterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.PageLoad();

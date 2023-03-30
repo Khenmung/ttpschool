@@ -231,7 +231,7 @@ export class studentprimaryinfoComponent implements OnInit {
         }
         //console.log("this.FeePaymentPermission ", this.FeePaymentPermission);
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.getFields('Student Module');
@@ -606,6 +606,7 @@ export class studentprimaryinfoComponent implements OnInit {
       .subscribe((result: any) => {
         this.loading = false; this.PageLoading = false;
         this.Edited = false;
+        this.GetStudent();
         if (result != null && result.UserId != "")
           this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
         else

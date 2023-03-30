@@ -78,7 +78,7 @@ export class SubjectTypesComponent implements OnInit {
 
     debugger;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
 
     this.loading = true;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();

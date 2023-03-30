@@ -137,7 +137,7 @@ export class VerifyResultsComponent implements OnInit {
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -555,7 +555,7 @@ export class VerifyResultsComponent implements OnInit {
   GetExamStudentSubjectResults(pExamId, pClassId, pSectionId) {
     this.ClickedVerified = false;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.ExamStudentSubjectResult = [];
     this.ExamStudentSubjectGrading = [];
 

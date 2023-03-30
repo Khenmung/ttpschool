@@ -41,7 +41,7 @@ export class AppuserdashboardComponent implements OnInit {
   Permission = '';
   Users: IUser[] = [];
   filteredOptions: Observable<IUser[]>;
-  filterwithOrg = '';
+  FilterOrgSubOrg = '';
   allMasterData = [];
   Organizations = [];
   Departments = [];
@@ -132,10 +132,10 @@ export class AppuserdashboardComponent implements OnInit {
       this.Permission = perObj[0].permission;
     if (this.Permission != 'deny') {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.SelectedApplicationName = this.tokenStorage.getSelectedAppName();
-      this.filterwithOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-      this.contentservice.GetClasses(this.filterwithOrg).subscribe((data: any) => {
+      this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
       this.GetMasterData();
@@ -158,12 +158,12 @@ export class AppuserdashboardComponent implements OnInit {
         this.shareddata.CurrentOrganization.subscribe(o => this.Organizations = o);
         this.shareddata.CurrentDepartment.subscribe(d => this.Departments = d);
         this.shareddata.CurrentLocation.subscribe(l => this.Locations = l);
-        this.contentservice.GetClasses(this.filterwithOrg).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
           if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement) {
             this.RoleName = 'Student';
             this.Password = 'Student@1234';
-            //this.GetStudents();
+            this.GetStudents();
             //this.GetEmployees();
           }
           else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement) {
@@ -236,7 +236,7 @@ export class AppuserdashboardComponent implements OnInit {
     ];
 
     list.PageName = "AuthManagement";
-    list.filter = [this.filterwithOrg];
+    list.filter = [this.FilterOrgSubOrg];
     this.authservice.get(list)
       .subscribe((data: any) => {
         this.Users = [];
@@ -319,7 +319,7 @@ export class AppuserdashboardComponent implements OnInit {
       "EmailAddress",
     ];
     list.PageName = "EmpEmployees";
-    list.filter = ["Active eq 1 and EmailAddress ne '' and OrgId eq " + this.LoginDetail[0]['orgId']];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1 and EmailAddress ne ''"];
     this.UserDetail = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -385,10 +385,10 @@ export class AppuserdashboardComponent implements OnInit {
     //this.contentservice.openSnackBar(this.authservice.CallAPI("","SendSMS"),)
     debugger;
     this.loading = true;
-    let filterStr = this.filterwithOrg;// "OrgId eq " + this.LoginDetail[0]["orgId"];
+    let filterStr = this.FilterOrgSubOrg;// "OrgId eq " + this.LoginDetail[0]["orgId"];
     var searchObj = this.searchForm.get("searchUserName").value;
     if (searchObj != "") {
-      filterStr += " and Id eq '" + searchObj.Id + "'";
+      filterStr += " and Email eq '" + searchObj.Email + "'";
     }
 
     // var _userTypeId = 0;
@@ -458,6 +458,10 @@ export class AppuserdashboardComponent implements OnInit {
           });
         }
         //console.log("this.AppUsers", this.AppUsers)
+        if(this.AppUsers.length==0)
+        {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        }
         this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;

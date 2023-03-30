@@ -138,7 +138,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         //this.CheckPermission = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
         ////console.log(this.CheckPermission);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);

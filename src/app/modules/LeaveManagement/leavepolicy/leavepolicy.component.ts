@@ -91,7 +91,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMasterData();
 

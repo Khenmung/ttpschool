@@ -553,7 +553,8 @@ export class ContentService implements OnInit {
   getStudentClassWithFeeType(pOrgSubOrgBatchId, pClassId, pStudentClassId, pFeeTypeId) {
 
     var filterstr = '';
-    filterstr = pOrgSubOrgBatchId + " and Active eq 1";
+    //new student class is inactive but should be able to pay fee and will become active.
+    filterstr = pOrgSubOrgBatchId + " and (Active eq 1 or AdmissionDate lt 1970-01-01)";// + " and Active eq 1";
 
     if (pStudentClassId > 0)
       filterstr += " and StudentClassId eq " + pStudentClassId;

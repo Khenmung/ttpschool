@@ -28,7 +28,7 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     debugger;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     // this.shareddata.CurrentPagesData.subscribe((data:any)=>{

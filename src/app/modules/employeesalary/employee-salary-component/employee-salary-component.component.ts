@@ -143,7 +143,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
       }
       else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.getVariables();
       this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.GetMasterData();

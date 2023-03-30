@@ -123,7 +123,7 @@ export class EmployeeactivityComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
@@ -206,7 +206,7 @@ export class EmployeeactivityComponent implements OnInit {
         else {
           //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
           this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-          this.SubOrgId = +this.tokenStorage.getSubOrgId();
+          this.SubOrgId = this.tokenStorage.getSubOrgId();
           this.EmployeeActivityForUpdate = [];;
           //console.log("inserting-1",this.EmployeeActivityForUpdate);
 
@@ -277,7 +277,7 @@ export class EmployeeactivityComponent implements OnInit {
       return;
     }
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += ' and EmployeeId eq ' + _employeeId
     let list: List = new List();

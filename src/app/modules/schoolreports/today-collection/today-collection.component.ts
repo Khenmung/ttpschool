@@ -265,7 +265,7 @@ export class TodayCollectionComponent implements OnInit {
   GetMasterData() {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.SubOrgId = +this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
       this.FeeDefinitions = [...f];
       if (this.FeeDefinitions.length == 0) {

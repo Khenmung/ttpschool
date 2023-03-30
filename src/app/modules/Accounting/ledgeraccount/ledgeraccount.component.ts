@@ -148,7 +148,7 @@ export class LedgerAccountComponent implements OnInit {
       }
       debugger;
       if (this.Permission != 'deny') {
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);

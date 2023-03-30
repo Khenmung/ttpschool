@@ -128,7 +128,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.OrgSubOrgBatchFilter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.OrgSubOrgFilter = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.nameFilter.valueChanges

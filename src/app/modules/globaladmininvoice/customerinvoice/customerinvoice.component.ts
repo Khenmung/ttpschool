@@ -116,7 +116,7 @@ export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.DropDownMonths = this.GetSessionFormattedMonths();
       this.GetOrganizations();
       this.GetCustomerPlans();

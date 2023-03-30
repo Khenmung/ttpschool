@@ -124,7 +124,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
       }
       if (this.Permission != 'deny') {
         this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.GetMasterData();
       }
     }

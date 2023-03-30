@@ -110,7 +110,7 @@ export class AccountNatureComponent implements OnInit {
   }
 
   PageLoad() {
-
+debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
@@ -125,7 +125,7 @@ export class AccountNatureComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.ACCOUNTNATURE);
       if (perObj.length > 0)

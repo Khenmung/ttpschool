@@ -116,7 +116,7 @@ export class StudentAttendanceComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.Students = this.tokenStorage.getStudents();
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         //this.OrgSubOrgFilter = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);

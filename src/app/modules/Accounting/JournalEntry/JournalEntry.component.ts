@@ -127,7 +127,7 @@ export class JournalEntryComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.JOURNALENTRY);
       if (perObj.length > 0)

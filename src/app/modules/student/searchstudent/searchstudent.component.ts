@@ -66,7 +66,7 @@ export class searchstudentComponent implements OnInit {
   ReasonForLeaving = [];
   Siblings = [];
   SelectedApplicationId = 0;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   //SelectedBatchStudentIDRollNo = [];
   Clubs = [];
   StudentClassId = 0;
@@ -140,8 +140,8 @@ export class searchstudentComponent implements OnInit {
       this.allMasterData = this.tokenStorage.getMasterData();
       this.StudentSearch = this.tokenStorage.getStudentSearch();
 
-      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+      var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
         this.GetMasterData();
       });
@@ -463,6 +463,7 @@ export class searchstudentComponent implements OnInit {
   //       }
   //     })
   // }
+
   GetFeeTypes() {
     debugger;
     this.loading = true;
@@ -520,7 +521,8 @@ export class searchstudentComponent implements OnInit {
     }
     if (_PID > 0) {
       filteredStudents = filteredStudents.filter(fromallstud => fromallstud.PID == _PID)
-      checkFilterString += " and StudentId eq " + filteredStudents[0].StudentId;
+      if (filteredStudents.length > 0)
+        checkFilterString += " and StudentId eq " + filteredStudents[0].StudentId;
     }
     if (_fathername != undefined) {
       this.StudentSearch.push({ Text: "FatherName", Value: _fathername });
@@ -573,7 +575,7 @@ export class searchstudentComponent implements OnInit {
       this.tokenStorage.saveStudentSearch(this.StudentSearch);
     else
       this.tokenStorage.saveStudentSearch([]);
-       let list: List = new List();
+    let list: List = new List();
 
     list.fields = ["StudentId,StudentClassId,HouseId,BatchId,SectionId,ClassId,RollNo,FeeTypeId,Remarks"];
 
@@ -596,61 +598,58 @@ export class searchstudentComponent implements OnInit {
               formattedData.push(s);
             }
           })
-        }
-        else {
-          formattedData = [...filteredStudents];
-        }
-        formattedData = formattedData.filter(sc => {
-          let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
-          if (sc.StudentClasses != undefined && sc.StudentClasses.length > 0) {
-            var obj = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId);
-            if (obj.length > 0) {
-              sc.FeeType = obj[0].FeeTypeName
+
+          formattedData = formattedData.filter(sc => {
+            let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
+            if (sc.StudentClasses != undefined && sc.StudentClasses.length > 0) {
+              var obj = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId);
+              if (obj.length > 0) {
+                sc.FeeType = obj[0].FeeTypeName
+              }
+              else
+                sc.FeeType = '';
             }
             else
               sc.FeeType = '';
-          }
-          else
-            sc.FeeType = '';
 
-          sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
-          return sc;
-        });
-        this.ELEMENT_DATA = [];
-        formattedData.forEach(item => {
-          var _lastname = item.LastName == null ? '' : " " + item.LastName;
-          item.Name = item.FirstName + _lastname + "-" + item.RollNo;
-          var _remark = '';
-          var objremark = this.Remarks.filter(f => f.MasterDataId == item.RemarkId);
-          if (objremark.length > 0) {
-            _remark = objremark[0].MasterDataName
-            item.Remarks = _remark;
-          }
-          else
-            item.Remarks = '';
-          // if (item.StudentClasses.length == 0) 
-          if (item.StudentClasses == undefined) {
-            item.ClassName = '';
-          }
-          else {
-            item.RollNo = item.RollNo;
-            var clsobj = this.Classes.filter(cls => {
-              return cls.ClassId == item.ClassId
-            });
-            if (clsobj.length > 0) {
-              var objsection = this.Sections.filter(s => s.MasterDataId == item.StudentClasses[0].SectionId);
-              if (objsection.length > 0)
-                item.ClassName = clsobj[0].ClassName + "-" + objsection[0].MasterDataName;
-              else
-                item.ClassName = clsobj[0].ClassName;
+            sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
+            return sc;
+          });
+          this.ELEMENT_DATA = [];
+          formattedData.forEach(item => {
+            var _lastname = item.LastName == null ? '' : " " + item.LastName;
+            item.Name = item.FirstName + _lastname + "-" + item.RollNo;
+            var _remark = '';
+            var objremark = this.Remarks.filter(f => f.MasterDataId == item.RemarkId);
+            if (objremark.length > 0) {
+              _remark = objremark[0].MasterDataName
+              item.Remarks = _remark;
             }
             else
+              item.Remarks = '';
+            // if (item.StudentClasses.length == 0) 
+            if (item.StudentClasses == undefined) {
               item.ClassName = '';
-          }
-          item.Action = "";
-          this.ELEMENT_DATA.push(item);
-        })
-        //}
+            }
+            else {
+              item.RollNo = item.RollNo;
+              var clsobj = this.Classes.filter(cls => {
+                return cls.ClassId == item.ClassId
+              });
+              if (clsobj.length > 0) {
+                var objsection = this.Sections.filter(s => s.MasterDataId == item.StudentClasses[0].SectionId);
+                if (objsection.length > 0)
+                  item.ClassName = clsobj[0].ClassName + "-" + objsection[0].MasterDataName;
+                else
+                  item.ClassName = clsobj[0].ClassName;
+              }
+              else
+                item.ClassName = '';
+            }
+            item.Action = "";
+            this.ELEMENT_DATA.push(item);
+          })
+        }
         //else {
         if (this.ELEMENT_DATA.length == 0)
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -661,6 +660,9 @@ export class searchstudentComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
 
+        // else {
+        //   formattedData = [...filteredStudents];
+        // }
       });
 
     //}

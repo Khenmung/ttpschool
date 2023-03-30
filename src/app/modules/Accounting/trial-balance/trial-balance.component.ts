@@ -135,7 +135,7 @@ export class TrialBalanceComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.AccountingPeriod = JSON.parse(this.tokenStorage.getSelectedBatchStartEnd());
 
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.TRIALBALANCE);

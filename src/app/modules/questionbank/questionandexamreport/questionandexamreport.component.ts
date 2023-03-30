@@ -114,7 +114,7 @@ export class QuestionandexamreportComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         //this.GetEvaluationNames();
@@ -305,7 +305,7 @@ export class QuestionandexamreportComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
           this.QuestionBankNExamForUpdate = [];
           this.QuestionBankNExamData.QuestionBankNExamId = row.QuestionBankNExamId;
           this.QuestionBankNExamData.QuestionBankId = row.QuestionBankId;
@@ -405,7 +405,7 @@ export class QuestionandexamreportComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr = this.FilterOrgSubOrg+ " and Active eq true";// 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _examId = this.searchForm.get("searchExamId").value;
 
@@ -505,7 +505,7 @@ export class QuestionandexamreportComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr = this.FilterOrgSubOrg+ " and Active eq true";//"Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     if (pExamId > 0)
       filterStr += " and ExamId eq " + pExamId;

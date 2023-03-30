@@ -117,7 +117,7 @@ export class AddstudentclassComponent implements OnInit {
         this.StudentClassId = this.tokenStorage.getStudentClassId()
         this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.GetMasterData();
         //this.GetStudentClass();
       }

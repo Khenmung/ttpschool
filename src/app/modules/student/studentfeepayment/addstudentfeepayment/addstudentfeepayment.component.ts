@@ -258,7 +258,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.Months = this.contentservice.GetSessionFormattedMonths();
         this.LoginUserDetail = this.tokenStorage.getUserDetail();
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.studentInfoTodisplay.StudentId = this.tokenStorage.getStudentId()
@@ -394,7 +394,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     }
     else {
 
-      let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
+      let filterstr = "StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
       this.loading = true;
       let list: List = new List();
       list.fields = [

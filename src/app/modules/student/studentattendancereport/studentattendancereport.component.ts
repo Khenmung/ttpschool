@@ -125,7 +125,7 @@ export class StudentattendancereportComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-          this.SubOrgId = +this.tokenStorage.getSubOrgId();
+          this.SubOrgId = this.tokenStorage.getSubOrgId();
           this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
           this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
           this.GetMasterData();

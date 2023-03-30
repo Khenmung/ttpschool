@@ -96,7 +96,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.filterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.filterBatchIdNOrgId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.EmployeeSearchForm = this.fb.group({

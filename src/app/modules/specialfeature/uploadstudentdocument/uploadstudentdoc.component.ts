@@ -103,7 +103,7 @@ export class StudentDocumentComponent implements OnInit {
       this.StudentId = this.tokenStorage.getStudentId();
       this.LoginUserDetail = this.tokenStorage.getUserDetail();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      this.SubOrgId = +this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.FilterOrgnBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.FilterOrgIdOnly = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.PageLoad();

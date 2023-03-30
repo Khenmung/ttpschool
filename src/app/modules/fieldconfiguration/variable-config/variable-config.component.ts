@@ -124,7 +124,7 @@ export class VariableConfigComponent implements OnInit {
       }
       else {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-        this.SubOrgId = +this.tokenStorage.getSubOrgId();
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.StandardFilter = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
       }
