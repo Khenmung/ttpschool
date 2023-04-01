@@ -15,7 +15,7 @@
             </mat-form-field>          
             <mat-form-field [style.width.px]="130" appearance="outline">
                 <mat-label>Company</mat-label>
-                <mat-select formControlName="searchSubOrgId" (selectionChange)="SubOrgChange()">
+                <mat-select formControlName="searchSubOrgId" [compareWith]="compareWith" (selectionChange)="SubOrgChange()">
                     <mat-option *ngFor="let item of SubOrganization" 
                         [value]="item">{{item.MasterDataName}}</mat-option>
                 </mat-select>

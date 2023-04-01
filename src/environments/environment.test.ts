@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  apiURL:'https://ettest.ttpsolutions.in'
+  apiURL:'https://ettest.ttpsolutions.in',
+  CompanyParentId:27762,
+  PremiumPlusId:2
 };
 
 /*

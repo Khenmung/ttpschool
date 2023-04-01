@@ -51,7 +51,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   OffLineReceiptNo = '';
   CashAmount = 0;
   PaymentTypeId = 0;
-  StudentLedgerId = 0;
+  TuitionFeeLedgerId = 0;
   GeneralLedgerAccountId = 0;
   GeneralLedgerAccounts = [];
   expandedElement: any;
@@ -658,7 +658,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       var _generalAccountObj = this.GeneralLedgerAccounts.filter(f => f.GeneralLedgerName.toLowerCase() == "tuition fee")
 
       if (_generalAccountObj.length > 0)
-        this.StudentLedgerId = _generalAccountObj[0].GeneralLedgerId;
+        this.TuitionFeeLedgerId = _generalAccountObj[0].GeneralLedgerId;
       // .GeneralLedgerAccountId =_discountAccountId;
 
       //this means balance payment
@@ -678,7 +678,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 PostingDate: accVoucher.PostingDate,
                 Reference: accVoucher.Reference,
                 LedgerId: row.LedgerId,
-                GeneralLedgerAccountId: this.StudentLedgerId,
+                GeneralLedgerAccountId: this.TuitionFeeLedgerId,
                 Debit: false,
                 BaseAmount: accVoucher.Balance,
                 FeeName: _feeName,
@@ -722,7 +722,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             PostingDate: new Date(),
             Reference: row.Reference,
             LedgerId: row.LedgerId,
-            GeneralLedgerAccountId: this.StudentLedgerId,
+            GeneralLedgerAccountId: this.TuitionFeeLedgerId,
             Debit: false,
             FeeName: f.FeeName,
             FeeAmount: f.Amount,

@@ -556,7 +556,6 @@ export class HomeDashboardComponent implements OnInit {
           this.SubOrganization = [...data.value];
           var selectedItem = this.SubOrganization.filter(s => s.MasterDataId == this.SubOrgId);
           this.searchForm.patchValue({ "searchSubOrgId": selectedItem[0] });
-
         })
 
       if (this.SelectedAppId > 0) {
@@ -593,6 +592,9 @@ export class HomeDashboardComponent implements OnInit {
 
       this.loading = false; this.PageLoading = false;
     });
+  }
+  compareWith( option, value ) : boolean {
+    return option.MasterDataId === value.MasterDataId;
   }
   Students = [];
   StudentClasses = [];
@@ -669,7 +671,7 @@ export class HomeDashboardComponent implements OnInit {
       })
   }
   getDropdownFromDB(pParentId, pAppId) {
-    var filterOrg = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    var filterOrg = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.LoginUserDetail[0]["subOrgId"];
 
     return this.contentservice.GetDropDownDataFromDB(pParentId, filterOrg, pAppId)
   }
