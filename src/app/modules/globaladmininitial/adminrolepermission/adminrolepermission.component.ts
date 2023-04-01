@@ -44,7 +44,8 @@ export class AdminrolepermissionComponent implements OnInit {
     PlanFeatureId: 0,
     RoleId: 0,
     PermissionId: 0,
-    OrgId: 0, SubOrgId: 0,
+    OrgId: 0, 
+    SubOrgId: 0,
     Active: 0
   };
   CustomerApps = [];
@@ -280,8 +281,9 @@ export class AdminrolepermissionComponent implements OnInit {
   }
   GetApplicationFeatureRole() {
     debugger;
-
-    var _customerId = this.searchForm.get("searchCustomerId").value.Org.OrganizationId;
+    var _customer = this.searchForm.get("searchCustomerId").value;
+    var _subOrgId =_customer.SubOrgId;
+    var _customerId = _customer.Org.OrganizationId;
     if (_customerId == 0) {
       this.contentservice.openSnackBar("Please select customer.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false; this.PageLoading = false;
@@ -300,6 +302,7 @@ export class AdminrolepermissionComponent implements OnInit {
     if (_planFeatureId > 0) {
       _ParentId = this.PlanFeaturePages.filter(f => f.PlanFeatureId == _planFeatureId)[0].PageId;
     }
+    
     //rolefilter += " and ParentId eq " + _ParentId;
     var _roleId = this.searchForm.get("RoleId").value;
     if (_roleId == 0) {
@@ -321,7 +324,7 @@ export class AdminrolepermissionComponent implements OnInit {
     list.PageName = "ApplicationFeatureRolesPerms";
     //list.lookupFields = ["PlanFeature($select=FeatureId;$expand=Page($select=PageId,PageTitle,label))"];
 
-    list.filter = ["OrgId eq " + _customerId + rolefilter];
+    list.filter = ["OrgId eq " + _customerId + " and SubOrgId eq " + _subOrgId + rolefilter];
     this.ApplicationRoleList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -329,10 +332,10 @@ export class AdminrolepermissionComponent implements OnInit {
         //var _roleId = this.searchForm.get("RoleId").value;
         //var roleFilteredAssigned = data.value.filter(db => db.RoleId == _roleId);
         var filteredFeature = [];
-        if (_ParentId > 0)
+        //if (_ParentId > 0)
           filteredFeature = this.PlanFeaturePages.filter(f => f.ParentId == _ParentId);
-        else
-          filteredFeature = [...this.PlanFeaturePages];
+        //else
+        //  filteredFeature = [...this.PlanFeaturePages];
         // console.log("filteredFeature")
         // console.table(filteredFeature)
         // console.log("data.value")
@@ -477,6 +480,7 @@ export class AdminrolepermissionComponent implements OnInit {
           this.AppRoleData.RoleId = row.RoleId;
           this.AppRoleData.PermissionId = row.PermissionId;
           this.AppRoleData.OrgId = this.searchForm.get("searchCustomerId").value.Org.OrganizationId;
+          this.AppRoleData.SubOrgId = this.searchForm.get("searchCustomerId").value.SubOrgId;
 
           //console.log('data', this.AppRoleData);
           if (this.AppRoleData.ApplicationFeatureRoleId == 0) {

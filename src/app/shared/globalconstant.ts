@@ -631,10 +631,11 @@ export class globalconstants {
         var IsInCurrentBatch = 0;
         var LoginUserDetail = tokenservice.getUserDetail();
         IsInCurrentBatch = +tokenservice.getInCurrentBatch();
-
+        var selectedAppId = tokenservice.getSelectedAPPId();
         //return ['readonly'];
         // else {
-        var _permission = LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
+        var _permission = LoginUserDetail[0]["applicationRolePermission"]
+        .filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
         if (_permission.length > 0) {
             if (IsInCurrentBatch == 0)//not in current batch, 1 means user is in current batch.
             {

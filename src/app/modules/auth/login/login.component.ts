@@ -310,7 +310,7 @@ export class LoginComponent implements OnInit {
           }
         })
 
-        //console.log("fitlered",_allPermission)
+        console.log("all permission",_allPermission)
         if (_allPermission.length > 0) {
 
           var _applicationName = '';

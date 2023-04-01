@@ -203,6 +203,10 @@ export class HomeDashboardComponent implements OnInit {
     this.dataservice.get(list).subscribe((data: any) => {
       this.sideMenu = [];
       data.value.forEach(m => {
+        // if(m.Page.PageTitle=="Question Bank")
+        // {
+        //   debugger;
+        // }
         permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
         if (permission.length > 0 && permission[0].permission != 'deny') {
           m.PageId = m.Page.PageId;
