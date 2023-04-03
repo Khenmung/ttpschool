@@ -295,7 +295,8 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       .subscribe((data: any) => {
         var ResultedPermittedPageFeatures = [];
          
-        var objFiltered =data.value.filter(f => f.PlanFeature.ApplicationId == this.SelectedApplicationId && f.PlanFeature.Page.ParentId == _ParentId);
+        var objFiltered =data.value.filter(f => f.PlanFeature.ApplicationId == this.SelectedApplicationId 
+          && f.PlanFeature.Page.ParentId == _ParentId);
         var adminFeatures =objFiltered.filter(db => db.RoleId == _adminRoleId);
         var roleFilteredAssigned =objFiltered.filter(db => db.RoleId == _selectedRoleId);
         debugger;
@@ -407,7 +408,8 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       " and RoleId eq " + row.RoleId +
       // " and PermissionId eq " + row.PermissionId +
       " and PlanFeatureId eq " + row.PlanFeatureId +
-      " and OrgId eq " + this.UserDetails[0]["orgId"];
+      " and OrgId eq " + this.UserDetails[0]["orgId"]+
+      " and SubOrgId eq " + this.UserDetails[0]["subOrgId"];
 
     if (row.ApplicationFeatureRoleId > 0)
       checkFilterString += " and ApplicationFeatureRoleId ne " + row.ApplicationFeatureRoleId;

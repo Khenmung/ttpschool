@@ -145,7 +145,7 @@ export class AppuserdashboardComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
@@ -249,7 +249,7 @@ export class AppuserdashboardComponent implements OnInit {
                 {
                   Id: existinglogin[0].Id,
                   UserName: existinglogin[0].UserName,
-                  FirstName:userdetail.FirstName,
+                  FirstName: userdetail.FirstName,
                   Email: existinglogin[0].Email,
                   Active: existinglogin[0].Active
                 }
@@ -260,7 +260,7 @@ export class AppuserdashboardComponent implements OnInit {
                 {
                   Id: '',
                   UserName: userdetail.FirstName.replaceAll(' ', ''),
-                  FirstName:userdetail.FirstName,
+                  FirstName: userdetail.FirstName,
                   Email: userdetail.EmailAddress,
                   Active: 0
                 }
@@ -354,28 +354,28 @@ export class AppuserdashboardComponent implements OnInit {
     // this.UserDetail = [];
     // this.dataservice.get(list)
     //   .subscribe((data: any) => {
-        debugger;
-        var _students: any = this.tokenStorage.getStudents();
-        this.UserDetail =[];
-        //_students = _students.filter(student => data.value.findIndex(fi => fi.StudentId == student.StudentId) > -1);
-        _students = _students.filter(student => student.StudentClasses.findIndex(e=>e.ClassId == _classId)>-1);
+    debugger;
+    var _students: any = this.tokenStorage.getStudents();
+    this.UserDetail = [];
+    //_students = _students.filter(student => data.value.findIndex(fi => fi.StudentId == student.StudentId) > -1);
+    _students = _students.filter(student => student.StudentClasses.findIndex(e => e.ClassId == _classId) > -1);
 
-        _students.forEach(student => {
+    _students.forEach(student => {
 
-          var _lastname = student.LastName == null ? '' : " " + student.LastName;
-          //var matchstudcls = data.value.filter(d => d.StudentId == student.StudentId);
+      var _lastname = student.LastName == null ? '' : " " + student.LastName;
+      //var matchstudcls = data.value.filter(d => d.StudentId == student.StudentId);
 
-          if (student.EmailAddress != null && student.EmailAddress.length > 0) {
-            student.ClassName = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId)[0].ClassName;
-            student.EmailAddress = student.EmailAddress;
-            student.FullName = student.FirstName + _lastname;
-            student.FirstName = student.FirstName.replaceAll(' ', '');
-            student.ContactNo = student.ContactNo;
-            this.UserDetail.push(student);
-          }
-        })
-        this.GetUsers()
-      //});
+      if (student.EmailAddress != null && student.EmailAddress.length > 0) {
+        student.ClassName = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId)[0].ClassName;
+        student.EmailAddress = student.EmailAddress;
+        student.FullName = student.FirstName + _lastname;
+        student.FirstName = student.FirstName.replaceAll(' ', '');
+        student.ContactNo = student.ContactNo;
+        this.UserDetail.push(student);
+      }
+    })
+    this.GetUsers()
+    //});
   }
   GetAppUsers() {
     // this.authservice.CallAPI("","SendSMS").subscribe((data:any)=>{
@@ -420,21 +420,24 @@ export class AppuserdashboardComponent implements OnInit {
         this.AppUsers = [];
         //var _UserName ='';
         if (data.length > 0) {
+
           this.UserDetail.forEach(filteredstudent => {
-            var exist = data.filter(d => d.Email.toLowerCase() == filteredstudent.EmailAddress.toLowerCase());
-            if (exist.length > 0) {
-              this.AppUsers.push({
-                "Id": exist[0].Id,
-                "UserName": exist[0].UserName,
-                "FirstName":filteredstudent.FirstName,
-                "EmailAddress": exist[0].Email,
-                "PhoneNumber": exist[0].PhoneNumber,
-                "OrgId": exist[0].OrgId,
-                "ValidFrom": exist[0].ValidFrom,
-                "ValidTo": exist[0].ValidTo,
-                "Active": exist[0].Active,
-                "Action": false
-              });
+            if (filteredstudent.EmailAddress) {
+              var exist = data.filter(d => d.Email.toLowerCase() == filteredstudent.EmailAddress.toLowerCase());
+              if (exist.length > 0) {
+                this.AppUsers.push({
+                  "Id": exist[0].Id,
+                  "UserName": exist[0].UserName,
+                  "FirstName": filteredstudent.FirstName,
+                  "EmailAddress": exist[0].Email,
+                  "PhoneNumber": exist[0].PhoneNumber,
+                  "OrgId": exist[0].OrgId,
+                  "ValidFrom": exist[0].ValidFrom,
+                  "ValidTo": exist[0].ValidTo,
+                  "Active": exist[0].Active,
+                  "Action": false
+                });
+              }
             }
           })
         }
@@ -446,7 +449,7 @@ export class AppuserdashboardComponent implements OnInit {
             this.AppUsers.push({
               "Id": "",
               "UserName": login.FirstName.replaceAll(' ', ''),
-              "FirstName":login.FirstName,
+              "FirstName": login.FirstName,
               "EmailAddress": login.EmailAddress,
               "PhoneNumber": login.ContactNo,
               "OrgId": login.OrgId,
@@ -458,9 +461,8 @@ export class AppuserdashboardComponent implements OnInit {
           });
         }
         //console.log("this.AppUsers", this.AppUsers)
-        if(this.AppUsers.length==0)
-        {
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        if (this.AppUsers.length == 0) {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
         this.datasource.paginator = this.paginator;
@@ -695,7 +697,7 @@ export interface IAppUser {
 export interface IUser {
   Id: string;
   UserName: string;
-  FirstName:string;
+  FirstName: string;
   Email: string;
   Active: number;
   //Action:boolean;
