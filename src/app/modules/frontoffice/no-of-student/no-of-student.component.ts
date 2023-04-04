@@ -34,14 +34,6 @@ export class NoOfStudentComponent implements OnInit {
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   FilterOrgSubOrgBatchId = '';
   FilterOrgSubOrg = '';
   StandardFilterWithPreviousBatchId = '';

@@ -396,7 +396,7 @@ export class StudentAttendanceComponent implements OnInit {
     let checkFilterString = this.FilterOrgSubOrg + " and StudentClassId eq " + row.StudentClassId +
       " and AttendanceDate ge " + moment(_AttendanceDate).format('YYYY-MM-DD') +
       " and AttendanceDate lt " + moment(_AttendanceDate).add(1, 'day').format('YYYY-MM-DD')
-    if (clssubjectid > 0)
+    //if (clssubjectid > 0)
       checkFilterString += " and ClassSubjectId eq " + clssubjectid
 
     if (row.AttendanceId > 0)
@@ -491,7 +491,7 @@ export class StudentAttendanceComponent implements OnInit {
       'ClassId',
       'SubjectTypeId'
     ];
-
+    this.loading=true;
     list.PageName = "ClassSubjects";
     list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
@@ -514,6 +514,7 @@ export class StudentAttendanceComponent implements OnInit {
             }
           }
         })
+        this.loading=false;
       })
   }
   GetSubjectTypes() {
@@ -521,7 +522,7 @@ export class StudentAttendanceComponent implements OnInit {
     var orgIdSearchstr = this.FilterOrgSubOrg + ' and Active eq 1';
 
     let list: List = new List();
-
+    this.loading=true;
     list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
     list.PageName = "SubjectTypes";
     list.filter = [orgIdSearchstr];

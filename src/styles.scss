@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Ewert&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Smooch&display=swap');
-
+@import url('https://fonts.cdnfonts.com/css/f25-bank-printer');
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 @import '~@angular/material/theming';
@@ -9,6 +9,7 @@
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
 //@import '~quill/dist/quill.snow.css';
+
 
 
 @include mat-core();
@@ -238,7 +239,9 @@ body {
         padding: 0px;
         height: 100%;
         min-width: auto !important;
-        
+        //font-family: Arial, Helvetica, sans-serif;
+        font-family: 'F25 Bank Printer', Arial, Helvetica, sans-serif;
+        //font-family: Roboto, "Helvetica Neue", sans-serif;
     }
     .element-row{
         min-height: 29px;   
@@ -249,7 +252,8 @@ body {
     mat-table,mat-cell,div,span{
         //font-size: 12pt;
         box-sizing: border-box;
-        font-family: 'VT323', monospace;
+        //font-family: Arial, Helvetica, sans-serif;
+        font-family: 'F25 Bank Printer', Arial, Helvetica, sans-serif;
 
         //width:100%;
     }

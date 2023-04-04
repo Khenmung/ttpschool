@@ -3,7 +3,7 @@
 <div style="display:flex;flex-direction:column">
 
     <div style="display: flex;flex-direction: row;align-items: start;">
-        <div style="display: flex;flex-direction: column;padding: 15px 15px 15px 0px;">
+        <div style="display: flex;flex-direction: column;padding: 15px 15px 15px 0px;width:40%">
             <div style="padding: 5px;"><b>Receipts</b></div>
             <div style="border:1px solid lightgray;">
                 <mat-table [dataSource]="dataReceiptSource" matSort>
@@ -16,6 +16,10 @@
                     <ng-container matColumnDef="ReceiptDate">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Receipt Date </mat-header-cell>
                         <mat-cell *matCellDef="let element"> {{element.ReceiptDate|date:'dd/MM/yyyy'}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="PaymentType">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Type </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.PaymentType}} </mat-cell>
                     </ng-container>
                     <ng-container matColumnDef="Active">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
@@ -35,7 +39,7 @@
                 </mat-table>
             </div>
         </div>
-        <div style="display: flex; flex-direction: column; width: 100%;padding: 15px 0px 15px 0px;">
+        <div style="display: flex; flex-direction: column; width: 60%;padding: 15px 0px 15px 0px;">
             <div style="padding: 5px;"><b>Print/Cancel Receipt</b></div>
             <div style="border:1px solid lightgray;padding: 15px;" class="divCls" id="printSection">
                 <div fxLayout="column" fxLayoutAlign="space-around center">

@@ -108,6 +108,7 @@ export class FeereceiptComponent implements OnInit {
     'ReceiptNo',
     'ReceiptDate',
     'TotalAmount',
+    'PaymentType',
     'Active'
   ]
   PageLoad() {
