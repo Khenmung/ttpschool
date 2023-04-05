@@ -50,6 +50,7 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
   displayedColumns = [
     "PlanName",
     "Description",
+    "PCPM",
     "PersonOrItemCount",
     "AmountPerMonth",
     "Action"

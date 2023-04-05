@@ -42,7 +42,7 @@ mat-footer-row {
 .mat-column-Balance {
     display        : flex;
     justify-content: flex-end;
-    flex           : 1 1 80px;
+    flex           : 1 0 80px;
 }
 
 .mat-column-ReceiptNo,.mat-column-PaymentType {
@@ -50,7 +50,7 @@ mat-footer-row {
 }
 
 .mat-column-FeeName {
-    flex: 1 0 250px;
+    flex: 1 1 200px;
 }
 
 .mat-column-PaymentAmount,

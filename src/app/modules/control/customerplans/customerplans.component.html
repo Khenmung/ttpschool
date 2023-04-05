@@ -43,7 +43,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="PCPM">
-                    <mat-header-cell *matHeaderCellDef>PCPM
+                    <mat-header-cell *matHeaderCellDef>PSPM
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.PCPM}}
@@ -129,7 +129,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <button [disabled]="loading || !element.Action || SelectedCustomer=='TTP' || PlanSelected"
-                            matTooltip="trial" mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                            matTooltip="select" mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon>beenhere</mat-icon>
                         </button>
                     </mat-cell>

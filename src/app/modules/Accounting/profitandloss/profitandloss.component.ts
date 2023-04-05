@@ -66,7 +66,7 @@ export class ProfitandlossComponent implements OnInit {
     Debit: false,
     Amount: '',
     ShortText: '',
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0,
   };
 
@@ -215,7 +215,7 @@ export class ProfitandlossComponent implements OnInit {
             f.GeneralLedgerName = _generalaccount[0].GeneralLedgerName;
             f.IncomeStatementSequence = _generalaccount[0].IncomeStatementSequence;
             f.IncomeStatementPlus = _generalaccount[0].IncomeStatementPlus;
-            f.ExpenseSequence = _generalaccount[0].Expenseequence;
+            f.ExpenseSequence = _generalaccount[0].ExpenseSequence;
             f.ExpensePlus = _generalaccount[0].ExpensePlus;
             this.TrialBalance.push(f);
           }
@@ -242,19 +242,13 @@ export class ProfitandlossComponent implements OnInit {
 
         this.Income = this.Income.sort((a, b) => a.IncomeStatementSequence - b.IncomeStatementSequence);
 
-        this.TotalIncome = this.Income.reduce((acc, current) => {
-          if (current.IncomeStatementPlus == 1)
-            acc += current.Balance
-          else if (current.IncomeStatementPlus == -1)
-            acc -= current.Balance;
-        }, 0);
+        this.TotalIncome = this.Income.reduce((acc, current) => current.IncomeStatementPlus == 1?acc += current.Balance:current.IncomeStatementPlus == -1?acc -= current.Balance:acc, 0);
         this.Income = this.Income.sort((a, b) => a.ExpenseSequence - b.ExpenseSequence);
-        this.TotalExpense = this.Expense.reduce((acc, current) => {
-          if (current.ExpensePlus == 1)
-            acc += current.Balance
-          else if (current.ExpensePlus == -1)
-            acc -= current.Balance;
-        }, 0);
+        this.TotalExpense = this.Expense.reduce((acc, current) => current.ExpensePlus == 1?acc += current.Balance:current.ExpensePlus == -1?acc -= current.Balance:acc, 0);
+        if (!this.TotalExpense)
+          this.TotalExpense = 0;
+        if (!this.TotalIncome)
+          this.TotalIncome = 0
 
         this.NetIncome = this.TotalIncome - this.TotalExpense;
 
@@ -313,10 +307,12 @@ export class ProfitandlossComponent implements OnInit {
       if (row.Dr > row.Cr) {
         row.Balance = row.Dr - row.Cr;
         row.DrBalance = row.Dr - row.Cr;
+        row.CrBalance = 0;
       }
       else {
         row.Balance = row.Cr - row.Dr;
         row.CrBalance = row.Cr - row.Dr;
+        row.DrBalance =0; 
       }
     })
     return result;
@@ -361,7 +357,7 @@ export class ProfitandlossComponent implements OnInit {
   AccountNatureList = [];
   GetAccountNature() {
 
-    let filterStr = '(OrgId eq 0 or ('+ this.FilterOrgSubOrg +"))";
+    let filterStr = '(OrgId eq 0 or (' + this.FilterOrgSubOrg + "))";
     debugger;
     this.loading = true;
 
@@ -443,7 +439,7 @@ export class ProfitandlossComponent implements OnInit {
     ];
 
     list.PageName = "AccountingPeriods";
-    list.filter = [ this.FilterOrgSubOrg + " and Active eq 1 and CurrentPeriod eq 1"];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1 and CurrentPeriod eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {

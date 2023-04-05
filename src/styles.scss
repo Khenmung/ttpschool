@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Ewert&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Smooch&display=swap');
-@import url('https://fonts.cdnfonts.com/css/f25-bank-printer');
+//@import url('https://fonts.cdnfonts.com/css/f25-bank-printer');
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 @import '~@angular/material/theming';
@@ -240,8 +240,8 @@ body {
         height: 100%;
         min-width: auto !important;
         //font-family: Arial, Helvetica, sans-serif;
-        font-family: 'F25 Bank Printer', Arial, Helvetica, sans-serif;
-        //font-family: Roboto, "Helvetica Neue", sans-serif;
+        //font-family: 'F25 Bank Printer', Arial, Helvetica, sans-serif;
+        font-family: Roboto, "Helvetica Neue", sans-serif;
     }
     .element-row{
         min-height: 29px;   
@@ -252,9 +252,8 @@ body {
     mat-table,mat-cell,div,span{
         //font-size: 12pt;
         box-sizing: border-box;
-        //font-family: Arial, Helvetica, sans-serif;
-        font-family: 'F25 Bank Printer', Arial, Helvetica, sans-serif;
-
+        font-family: Roboto, "Helvetica Neue", sans-serif;
+        //font-family: 'F25 Bank Printer', Arial, Helvetica, sans-serif;
         //width:100%;
     }
     
@@ -263,3 +262,5 @@ body {
 .ck-editor__editable_inline {
     min-height: 500px !important;
 }
+
+
