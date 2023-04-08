@@ -122,6 +122,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     Balance: 0,
     ReceiptNo: 0,
     PaymentTypeId: 0,
+    AdjustedAccountId:0,
     OffLineReceiptNo: '',
     ReceiptDate: new Date(),
     Discount: 0,
@@ -219,7 +220,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     return user && user.GeneralLedgerName ? user.GeneralLedgerName : '';
   }
   getGeneralAccounts() {
-    this.contentservice.GetGeneralAccounts(this.LoginUserDetail[0]['orgId'], 1, '')
+    this.contentservice.GetGeneralAccounts(this.FilterOrgSubOrg, 1, '')
       .subscribe((data: any) => {
         this.GeneralLedgerAccounts = [...data.value];
       })
@@ -900,7 +901,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     var list = new List();
     list.fields = ["ReceiptNo"];
     list.PageName = this.FeeReceiptListName;
-
+    var _adjustedAccountId = this.paymentform.get("GeneralLedgerAccountId").value.GeneralLedgerId
     this.studentInfoTodisplay.ReceiptNo = this.StudentReceiptData.ReceiptNo;
     this.StudentReceiptData.StudentFeeReceiptId = 0;
     this.StudentReceiptData.TotalAmount = +this.TotalAmount;
@@ -911,6 +912,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.StudentReceiptData.StudentClassId = this.studentInfoTodisplay.StudentClassId;
     this.StudentReceiptData.ClassId = this.studentInfoTodisplay.ClassId;
     this.StudentReceiptData.SectionId = this.studentInfoTodisplay.SectionId;
+    this.StudentReceiptData.AdjustedAccountId = _adjustedAccountId;
 
     this.StudentReceiptData.Balance = this.Balance;
     this.StudentReceiptData.Active = 1;

@@ -94,6 +94,7 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;" style="display: flex;align-items: baseline;"
                 class="element-row"></mat-row>
         </mat-table>
+        <mat-paginator style="display:flex;justify-content: center;" [pageSizeOptions]="[10,20,50]"></mat-paginator>
         <div style="width:100%;background-color: lightgray;font-size: medium;padding: 10px;margin:15px 15px 15px 0px">
             Below variables can be
             applied within square bracket '[]' in the formula.

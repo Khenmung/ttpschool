@@ -86,14 +86,14 @@
                             <mat-header-cell *matHeaderCellDef> Particulars </mat-header-cell>
                             <mat-cell *matCellDef="let element"> {{element.FeeName}} </mat-cell>
                             <mat-footer-cell *matFooterCellDef>
-                                <b>Total:</b>
+                                <b>Total &#x20b9;:</b>
                             </mat-footer-cell>
                             <mat-footer-cell>
                                 <b>Payment Type:</b>
                             </mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="BaseAmount">
-                            <mat-header-cell *matHeaderCellDef style="display:flex;justify-content:center"> Fee &#x20b9;
+                            <mat-header-cell *matHeaderCellDef style="display:flex;justify-content:center"> Fee
                             </mat-header-cell>
                             <mat-cell *matCellDef="let element"> {{element.BaseAmount}} </mat-cell>
                             <mat-footer-cell *matFooterCellDef>
@@ -103,8 +103,7 @@
                         </ng-container>
                         <ng-container matColumnDef="Amount">
                             <mat-header-cell *matHeaderCellDef style="display:flex;justify-content:center"> Paid
-                                &#x20b9;
-                            </mat-header-cell>
+                                </mat-header-cell>
                             <mat-cell *matCellDef="let element"> {{element.Amount}} </mat-cell>
                             <mat-footer-cell *matFooterCellDef>
                                 <b>{{TotalAmount}}</b>
@@ -114,7 +113,7 @@
                             </mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="Balance">
-                            <mat-header-cell *matHeaderCellDef> Balance &#x20b9;</mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef>Balance</mat-header-cell>
                             <mat-cell *matCellDef="let element" style="justify-content:flex-end;">
                                 {{element.Balance}}
                             </mat-cell>

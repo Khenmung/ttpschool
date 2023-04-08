@@ -12,6 +12,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import alasql from 'alasql';
 @Component({
   selector: 'app-customfeaturerolepermission',
   templateUrl: './customfeaturerolepermission.component.html',
@@ -34,8 +35,8 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   FilteredPageFeatures = [];
   oldvalue = '';
   selectedData = '';
-  FilterOrgSubOrg='';
-  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   filteredFeatures: Observable<ICustomFeature[]>;
   nameFilter = new UntypedFormControl('');
   datasource: MatTableDataSource<ICustomFeatureRolePermission>;
@@ -45,7 +46,9 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
     RoleId: 0,
     PermissionId: 0,
     ApplicationId: 0,
-    OrgId: 0,SubOrgId: 0,
+    TableNameId:0,
+    OrgId: 0, 
+    SubOrgId: 0,
     Active: 0
   };
   CustomFeatures = [];
@@ -97,14 +100,16 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   searchForm = this.fb.group(
     {
       searchFeatureName: [''],
+      searchTableName: [0],
       searchRoleId: [0],
       //PermissionId: [0]
     })
   filterValues = {
     FeatureName: ''
   };
+  FilteredCustomFeatures = [];
   PageLoad() {
-    //debugger;
+    debugger;
     this.loading = true;
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails == null) {
@@ -121,15 +126,18 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.filteredFeatures = this.searchForm.get("searchFeatureName").valueChanges
-        .pipe(
-          startWith(''),
-          map(value => typeof value === 'string' ? value : value.CustomFeatureName),
-          map(Name => Name ? this._filter(Name) : this.CustomFeatures.slice())
-        );
+          .pipe(
+            startWith(''),
+            map(value => typeof value === 'string' ? value : value.CustomFeatureName),
+            map(Name => Name ? this._filter(Name) : this.FilteredCustomFeatures.slice())
+          );
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.Permissions = globalconstants.PERMISSIONTYPES;
+        this.MasterData = this.tokenStorage.getMasterData();
+        this.TableNames = this.getDropDownData(globalconstants.MasterDefinitions.common.TABLENAMES)
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
         this.GetCustomFeatures();
-        this.GetTopMasters();
+        //this.GetTopMasters();
         this.GetPageFeatures();
       }
     }
@@ -137,7 +145,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   private _filter(name: string): ICustomFeature[] {
 
     const filterValue = name.toLowerCase();
-    return this.CustomFeatures.filter(option => option.CustomFeatureName.toLowerCase().includes(filterValue));
+    return this.FilteredCustomFeatures.filter(option => option.CustomFeatureName.toLowerCase().includes(filterValue));
 
   }
   displayFn(customfeature: ICustomFeature): string {
@@ -153,12 +161,15 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
     }
     return filterFunction;
   }
+  TableNames = [];
   GetCustomFeatures() {
     let list: List = new List();
     list.fields = [
       "CustomFeatureId",
       "CustomFeatureName",
+      "TableName",
       "ApplicationId",
+      "TableNameId",
       "Active",
       "OrgId"];
     list.PageName = "CustomFeatures";
@@ -168,6 +179,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.CustomFeatures = [...data.value];
+          //this.TableNames = alasql("select distinct TableName,CustomerFeatureId from ? ",[this.CustomFeatures]);
         }
         //console.log("custom feature",this.CustomFeatures);
       });
@@ -182,7 +194,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 or (" + this.FilterOrgSubOrg +")) and Active eq 1"];
+    list.filter = ["(ParentId eq 0 or (" + this.FilterOrgSubOrg + ")) and Active eq 1"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -222,11 +234,13 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
 
   }
   enable(elment) {
-    //debugger;
+    debugger;
     if (elment.value > 0)
       this.enableTopEdit = true;
     else
       this.enableTopEdit = false;
+    var _tableNameId = this.searchForm.get("searchTableName").value;
+    this.FilteredCustomFeatures = this.CustomFeatures.filter(c => c.TableNameId == _tableNameId);
   }
   GetPageFeatures() {
     //debugger;
@@ -276,18 +290,24 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       return;
     }
     var _roleId = this.searchForm.get("searchRoleId").value;
+    var _tableNameId = this.searchForm.get("searchTableName").value;
     var _featureId = this.searchForm.get("searchFeatureName").value.CustomFeatureId;
-    // if(_roleId==0 && )
-    // {
-    //   this.contentservice.openSnackBar("Please select role.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
+    if(_tableNameId==0 )
+    {
+      this.contentservice.openSnackBar("Please select table name.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    else
+    {
+      rolefilter += " and TableNameId eq " + _tableNameId;
+    }
     if (_roleId > 0) {
       rolefilter += " and RoleId eq " + _roleId;
     }
     if (_featureId > 0) {
       rolefilter += " and CustomFeatureId eq " + _featureId;
     }
+         
 
     let list: List = new List();
     list.fields = [
@@ -296,6 +316,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       "RoleId",
       "PermissionId",
       "ApplicationId",
+      "TableNameId",
       "Active"
     ];
     list.PageName = "CustomFeatureRolePermissions";
@@ -320,6 +341,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
                 CustomFeatureRolePermissionId: obj[0].CustomFeatureRolePermissionId,
                 ApplicationId: obj[0].ApplicationId,
                 CustomFeatureId: obj[0].CustomFeatureId,
+                TableNameId:obj[0].TableNameId,
                 Active: obj[0].Active,
                 FeatureName: custom.CustomFeatureName
               })
@@ -331,6 +353,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
                 CustomFeatureRolePermissionId: 0,
                 ApplicationId: this.SelectedApplicationId,
                 CustomFeatureId: custom.CustomFeatureId,
+                TableNameId:_tableNameId,
                 Active: 0,
                 FeatureName: custom.CustomFeatureName
               })
@@ -376,8 +399,13 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   }
   AddNew() {
     var _roleId = this.searchForm.get("searchRoleId").value;
+    var _tableNameId = this.searchForm.get("searchTableName").value;
     if (_roleId == 0) {
       this.contentservice.openSnackBar("Please select role.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_tableNameId == 0) {
+      this.contentservice.openSnackBar("Please select table name.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var _featureId = this.searchForm.get("searchFeatureName").value.CustomFeatureId;
@@ -395,6 +423,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       PermissionId: 0,
       CustomFeatureId: _featureId,
       ApplicationId: this.SelectedApplicationId,
+      TableNameId:_tableNameId,
       Active: false,
       Action: true
     }
@@ -414,7 +443,11 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
     this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
-
+    if(!row.TableNameId)
+    {
+      this.contentservice.openSnackBar("Please select table name.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (row.FeatureName.length == 0) {
       this.contentservice.openSnackBar("Please enter feature name.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -425,7 +458,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
     }
     this.loading = true;
     let checkFilterString = this.FilterOrgSubOrg + " and RoleId eq " + row.RoleId +
-      " and CustomFeatureId eq " + row.CustomFeatureId ;
+      " and CustomFeatureId eq " + row.CustomFeatureId;
 
     if (row.CustomFeatureRolePermissionId > 0)
       checkFilterString += " and CustomFeatureRolePermissionId ne " + row.CustomFeatureRolePermissionId;
@@ -450,6 +483,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
           this.AppRoleData.RoleId = row.RoleId;
           this.AppRoleData.PermissionId = row.PermissionId;
           this.AppRoleData.ApplicationId = row.ApplicationId;
+          this.AppRoleData.TableNameId = row.TableNameId;
           this.AppRoleData.OrgId = this.UserDetails[0]["orgId"];
           this.AppRoleData.SubOrgId = this.tokenStorage.getSubOrgId();
 

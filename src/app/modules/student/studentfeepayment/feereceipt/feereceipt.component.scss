@@ -34,23 +34,25 @@ mat-footer-row {
 .mat-column-SlNo {
     display    : grid;
     place-items: center;
-    flex       : 1 1 50px;
+    flex       : 1 0 70px;
 }
 
 .mat-column-Amount,
-.mat-column-BaseAmount,
-.mat-column-Balance {
+.mat-column-BaseAmount
+ {
     display        : flex;
     justify-content: flex-end;
-    flex           : 1 0 80px;
+    flex           : 1 1 80px;
 }
-
+.mat-column-Balance{
+    flex           : 1 1 100px;
+}
 .mat-column-ReceiptNo,.mat-column-PaymentType {
     flex: 1 1 130px;
 }
 
 .mat-column-FeeName {
-    flex: 1 1 200px;
+    flex: 1 0 180px;
 }
 
 .mat-column-PaymentAmount,
@@ -58,7 +60,7 @@ mat-footer-row {
 .mat-column-TotalAmount {
     display        : flex;
     justify-content: center;
-    flex           : 1 1 150px;
+    flex           : 1 0 150px;
 }
 
 .mat-column-ReceiptDate,

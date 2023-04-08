@@ -7,10 +7,10 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiU+++.*-=-0983`9556'nb656RL
-    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:5000";
+    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:5000";
     public static fileUrl: string = '';
-    public static CompanyParentId = 31850;//31850;// 27762; //536870912; 
-    public static PremiumPlusId = 5;//5;//2 
+    public static CompanyParentId = 27762;//31850;// 27762; //536870912; 
+    public static PremiumPlusId = 2;//5;//2 
     
     //public static BloodGroupParentId = 27762; //536870912;
     public static RequestLimit = 20971520; //536870912;
@@ -321,7 +321,8 @@ export class globalconstants {
                 "PAGECATEGORY": "page category",
                 "RULEORPOLICYCATEGORYDISPLAYTYPE": "rules or policy display type",
                 "COMMONPRINTHEADING": "common print heading",
-                "COMPANY": "company"
+                "COMPANY": "company",
+                "TABLENAMES": "table names"
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",

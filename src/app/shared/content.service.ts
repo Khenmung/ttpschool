@@ -230,9 +230,10 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list)
 
   }
-  GetGeneralAccounts(orgId, active, type) {
+  GetGeneralAccounts(OrgSubOrg, active, type) {
     var activefilter = active == 1 ? ' and Active eq 1' : '';
-    let filterStr = 'OrgId eq ' + orgId + activefilter;
+    //let filterStr = 'OrgId eq ' + orgId + activefilter;
+    let filterStr = OrgSubOrg + activefilter;
     if (type == "employee")
       filterStr += " and (EmployeeId ne 0 && EmployeeId ne null)"
     else if (type == "student")

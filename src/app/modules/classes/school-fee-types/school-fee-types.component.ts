@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -9,6 +9,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-school-fee-types',
@@ -16,6 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./school-fee-types.component.scss']
 })
 export class SchoolFeeTypesComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -372,6 +374,7 @@ export class SchoolFeeTypesComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource<IFeeType>(this.FeeTypeList);
+        this.dataSource.paginator = this.paginator;
         this.loadingFalse();
 
       });

@@ -160,6 +160,18 @@ export class searchstudentComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.StudentsFromCache.slice())
       );
+    this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.FatherName),
+        map(Name => Name ? this._filterF(Name) : this.StudentsFromCache.slice())
+      );
+    this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.MotherName),
+        map(Name => Name ? this._filterM(Name) : this.StudentsFromCache.slice())
+      );
     // this.StudentSearch.forEach(fr=>{
     //   this.studentSearchForm.patchValue({[fr.Text]:fr.Value})
     // })
@@ -174,14 +186,16 @@ export class searchstudentComponent implements OnInit {
   private _filterF(name: string): IStudent[] {
 
     const filterValue = name.toLowerCase();
-    return this.Students.filter(option => option.FatherName.toLowerCase().includes(filterValue));
-
+    var arr = this.StudentsFromCache.filter(option => option.FatherName.toLowerCase().includes(filterValue));
+    return arr;
   }
   private _filterM(name: string): IStudent[] {
 
     const filterValue = name.toLowerCase();
-    return this.Students.filter(option => option.MotherName.toLowerCase().includes(filterValue));
-
+    var arr = [];
+    if (name)
+      arr = this.StudentsFromCache.filter(option => option.MotherName.toLowerCase().includes(filterValue));
+    return arr;
   }
   displayFn(user: IStudent): string {
     return user && user.Name ? user.Name : '';
@@ -191,6 +205,10 @@ export class searchstudentComponent implements OnInit {
   }
   displayFnM(stud: IStudent): string {
     return stud && stud.MotherName ? stud.MotherName : '';
+  }
+  RemoveDuplicates(arr) {
+    return arr.filter((item,
+      index) => arr.indexOf(item) === index);
   }
   Groups = [];
   AdmissionStatus = [];
@@ -541,7 +559,7 @@ export class searchstudentComponent implements OnInit {
       this.StudentSearch.push({ Text: "ClassId", Value: _ClassId });
 
     }
-    if (_studentId == 0 && _PID == 0) {
+    if (_studentId == 0 && _PID == 0 && !_mothername && !_fathername) {
       if (_ClassId == 0) {
         this.loading = false;
         this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);

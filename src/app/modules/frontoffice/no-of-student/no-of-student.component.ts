@@ -61,7 +61,7 @@ export class NoOfStudentComponent implements OnInit {
   StudentClassData = {
     StudentClassId: 0,
     ClassId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     StudentId: 0,
     RollNo: 0,
@@ -107,8 +107,8 @@ export class NoOfStudentComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+      var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
       })
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
@@ -187,7 +187,7 @@ export class NoOfStudentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = [ this.FilterOrgSubOrg + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -247,18 +247,25 @@ export class NoOfStudentComponent implements OnInit {
 
           student.PID = _pid;
           student.Gender = _gender;
-          student.ClassName = student.Class.ClassName + " - " + _sectionname;
+          student.ClassName = student.Class.ClassName + (_sectionname==""?"":" - " + _sectionname);
           student.Section = _sectionname;
           student.Sequence = student.Class.Sequence;
           student.MaxStudent = student.Class.MaxStudent;
           return student;
         })
-        if (errormsg.length > 0) {
-          errormsg = "Section not defined for PID: " + errormsg;
-          this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);
-        }
-        var _classStudentCount = alasql("select ClassId,ClassName,Section,Gender,MaxStudent,sum(1) NoOfStudent from ? group by ClassId,ClassName,Section,Gender,MaxStudent",
+        // if (errormsg.length > 0) {
+        //   errormsg = "Section not defined for PID: " + errormsg;
+        //   this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);
+        // }
+        var _classStudentCount = [];
+        //if (errormsg.length == 0) {
+        _classStudentCount = alasql("select ClassId,ClassName,Section,Gender,MaxStudent,sum(1) NoOfStudent from ? group by ClassId,ClassName,Section,Gender,MaxStudent",
           [this.StudentClassList])
+        //}
+        // else {
+        //   _classStudentCount = alasql("select ClassId,ClassName,Gender,MaxStudent,sum(1) NoOfStudent from ? group by ClassId,ClassName,Gender,MaxStudent",
+        //     [this.StudentClassList])
+        // }
         var pivottedClass = [];
         var _filteredClasses = [];
         if (_classId > 0)
@@ -268,9 +275,17 @@ export class NoOfStudentComponent implements OnInit {
 
         var classNSection = [];
         _filteredClasses.forEach((c, indx) => {
-          this.Sections.forEach(s => {
-            classNSection.push({ MaxStudent: c.MaxStudent, Sequence: indx, ClassId: c.ClassId, ClassName: c.ClassName + " - " + s.MasterDataName, Section: s.MasterDataName });
-          })
+          var currentCls = _classStudentCount.filter(s => s.ClassId == c.ClassId);
+          var _noOfSections = alasql("select distinct Section,ClassName from ?", [currentCls]);
+          if (_noOfSections.length > 0) {
+            _noOfSections.forEach(s => {
+              classNSection.push({ MaxStudent: c.MaxStudent, Sequence: indx, ClassId: c.ClassId, ClassName: c.ClassName + "-" + s.Section, Section: s.Section });
+            })
+          }
+          else {
+
+            classNSection.push({ MaxStudent: c.MaxStudent, Sequence: indx, ClassId: c.ClassId, ClassName: c.ClassName, Section: "" });
+          }
         })
         var _tempClassId = 0;
         var _classTotal = 0;
@@ -280,12 +295,18 @@ export class NoOfStudentComponent implements OnInit {
           //this.Sections.forEach(s => {
 
           this.Genders.forEach(g => {
-
-            var sectionGenderRow = _classStudentCount.filter(cls =>
+            var sectionGenderRow = [];
+            //if (errormsg.length == 0) {
+            sectionGenderRow = _classStudentCount.filter(cls =>
               cls.Section == c.Section
               && cls.ClassId == c.ClassId
               && cls.Gender == g.MasterDataName)
-
+            // }
+            // else {
+            //   sectionGenderRow = _classStudentCount.filter(cls =>
+            //     cls.ClassId == c.ClassId
+            //     && cls.Gender == g.MasterDataName)
+            // }
             if (this.displayedColumns.indexOf(g.MasterDataName) == -1)
               this.displayedColumns.push(g.MasterDataName)
 
@@ -315,24 +336,24 @@ export class NoOfStudentComponent implements OnInit {
               this.BoyGirlTotal[g.MasterDataName] = 0;
             this.BoyGirlTotal[g.MasterDataName] += sectionGenderRow[0].NoOfStudent
             newClassRow[0][g.MasterDataName] = sectionGenderRow[0].NoOfStudent;
-            newClassRow[0].Total = newClassRow[0].Total == undefined ? sectionGenderRow[0].NoOfStudent : newClassRow[0].Total + sectionGenderRow[0].NoOfStudent;
+            newClassRow[0].Total = newClassRow[0].Total ? newClassRow[0].Total + (+sectionGenderRow[0].NoOfStudent):sectionGenderRow[0].NoOfStudent;
 
           })
           if (newClassRow.length > 0) {
             if (cindx < classNSection.length - 1) {
               if (_tempClassId == c.ClassId && _tempClassId != classNSection[cindx + 1].ClassId) {
-                _classTotal += newClassRow[0].Total;
+                _classTotal += (+newClassRow[0].Total);
                 newClassRow[0].ClassTotal = _classTotal;
                 _classTotal = 0;
               }
               else {
-                _classTotal += newClassRow[0].Total;
+                _classTotal += (+newClassRow[0].Total);
               }
             }
             else {
               //if last one
               if (cindx == classNSection.length - 1) {
-                _classTotal += newClassRow[0].Total;
+                _classTotal += (+newClassRow[0].Total);
                 newClassRow[0].ClassTotal = _classTotal;
                 _classTotal = 0;
               }
