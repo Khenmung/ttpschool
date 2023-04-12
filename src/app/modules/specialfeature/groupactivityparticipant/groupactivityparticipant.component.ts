@@ -138,7 +138,7 @@ export class GroupactivityparticipantComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
@@ -177,7 +177,7 @@ export class GroupactivityparticipantComponent implements OnInit {
     this.loading = true;
 
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.SubOrgId = this.tokenStorage.getSubOrgId();
+    //this.SubOrgId = this.tokenStorage.getSubOrgId();
     let checkFilterString = this.FilterOrgSubOrg + " and SportResultId eq " + row.SportResultId +
       " and StudentClassId eq " + row.StudentClassId
 

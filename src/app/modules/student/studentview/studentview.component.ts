@@ -935,7 +935,7 @@ export class StudentviewComponent implements OnInit {
               { Text: 'Last School Percentage', Value: stud.LastSchoolPercentage },
               { Text: 'Class Admission Sought', Value: _classAdmissionSought },
               { Text: 'Transfer From School', Value: stud.TransferFromSchool },
-              { Text: 'Transfer From School Board', Value: stud.TransferFromSchoolBoard },
+              //{ Text: 'Transfer From School Board', Value: stud.TransferFromSchoolBoard },
               { Text: 'Club', Value: _club },
               { Text: 'House', Value: _house },
               { Text: 'Admission Status', Value: _admissionStatus },

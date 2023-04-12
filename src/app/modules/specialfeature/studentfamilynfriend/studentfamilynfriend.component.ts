@@ -169,6 +169,7 @@ export class StudentfamilynfriendComponent implements OnInit {
       }
       else {
         this.FilterOrgSubOrgBatchId= globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.GetFeeTypes();

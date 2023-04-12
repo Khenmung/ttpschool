@@ -260,7 +260,7 @@ export class ClassgroupmappingComponent implements OnInit {
   classgroupList = [];
   Getclassgroups() {
     this.loading = true;
-    this.contentservice.GetClassGroups(this.FilterOrgSubOrgBatchId)
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
         this.loading = false;

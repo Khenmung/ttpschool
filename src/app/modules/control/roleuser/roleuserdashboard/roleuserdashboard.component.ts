@@ -96,7 +96,7 @@ export class roleuserdashboardComponent implements OnInit {
       );
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.PageLoad();
   }
   private _filter(name: string): IUser[] {
@@ -119,6 +119,7 @@ export class roleuserdashboardComponent implements OnInit {
     }
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.ROLEUSER);

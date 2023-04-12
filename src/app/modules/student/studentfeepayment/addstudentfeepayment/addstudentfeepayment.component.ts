@@ -58,9 +58,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
   CurrentRow: any = {};
   FeePayable = true;
   filteredOptions: Observable<string[]>;
-  SelectedBatchId = 0;SubOrgId = 0;
-  FilterOrgSubOrgBatchId='';
-  FilterOrgSubOrg='';
+  SelectedBatchId = 0; SubOrgId = 0;
+  FilterOrgSubOrgBatchId = '';
+  FilterOrgSubOrg = '';
   NoOfBillItems = 0;
   studentInfoTodisplay = {
     StudentFeeReceiptId: 0,
@@ -122,15 +122,15 @@ export class AddstudentfeepaymentComponent implements OnInit {
     Balance: 0,
     ReceiptNo: 0,
     PaymentTypeId: 0,
-    AdjustedAccountId:0,
+    AdjustedAccountId: 0,
     OffLineReceiptNo: '',
     ReceiptDate: new Date(),
     Discount: 0,
     BatchId: 0,
     OrgId: 0,
     SubOrgId: 0,
-    CreatedBy:'',
-    CreatedDate:new Date(),
+    CreatedBy: '',
+    CreatedDate: new Date(),
     Active: 1,
     Ledgerdata: [],
     AccountingVouchers: []
@@ -148,8 +148,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     Amount: 0,
     ClassFeeId: 0,
     ShortText: '',
-    OrgId: 0,SubOrgId: 0,
-    
+    OrgId: 0, SubOrgId: 0,
+
     Active: 1
   }
   StudentLedgerData = {
@@ -160,7 +160,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     TotalCredit: 0,
     Balance: 0,
     BatchId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 1
   };
 
@@ -226,7 +226,12 @@ export class AddstudentfeepaymentComponent implements OnInit {
       })
   }
   setPaymentType() {
-    this.PaymentName = this.PaymentTypes.filter(f => f.MasterDataId == this.PaymentTypeId)[0].MasterDataName.toLowerCase();
+    debugger;
+    //this.PaymentTypeId = this.paymentform.get("GeneralLedgerAccountId").value;
+
+    var obj = this.PaymentTypes.filter(f => f.MasterDataId == this.PaymentTypeId)
+    if (obj.length > 0)
+      this.PaymentName = obj[0].MasterDataName.toLowerCase();
 
   }
   detail() {
@@ -270,8 +275,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.shareddata.CurrentLocation.subscribe(fy => (this.Locations = fy));
         this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
         this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
-        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+        var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.GetMasterData();
         });
@@ -367,7 +372,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     // });
   }
   getAccountingVoucher(pLedgerId) {
-    let filterstr =this.FilterOrgSubOrg +
+    let filterstr = this.FilterOrgSubOrg +
       " and FeeReceiptId eq 0 and LedgerId eq " + pLedgerId + " and Balance gt 0";
     this.loading = true;
     let list: List = new List();
@@ -605,13 +610,12 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.contentservice.openSnackBar("Fees not defined for this class", globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.StudentLedgerList = this.StudentLedgerList.filter(f => f.MonthName != 'Discount')
-        this.StudentLedgerList.forEach(d=>{
-            if(d.TotalDebit==0)
-            {
-              d.TotalCredit=0;
-              d.Balance1=0;
+        this.StudentLedgerList.forEach(d => {
+          if (d.TotalDebit == 0) {
+            d.TotalCredit = 0;
+            d.Balance1 = 0;
 
-            }
+          }
         })
         this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
         //console.log("this.StudentLedgerList", this.StudentLedgerList)
@@ -693,7 +697,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 ShortText: '',
                 BalancePayment: true,
                 OrgId: this.LoginUserDetail[0]["orgId"],
-                SubOrgId:this.SubOrgId,
+                SubOrgId: this.SubOrgId,
                 Active: 1,
                 Action: true
               })
@@ -737,7 +741,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             AmountEditable: f.AmountEditable,
             ShortText: '',
             OrgId: this.LoginUserDetail[0]["orgId"],
-            SubOrgId: this.SubOrgId,            
+            SubOrgId: this.SubOrgId,
             Active: 1,
             Action: true
           })
@@ -902,6 +906,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
     list.fields = ["ReceiptNo"];
     list.PageName = this.FeeReceiptListName;
     var _adjustedAccountId = this.paymentform.get("GeneralLedgerAccountId").value.GeneralLedgerId
+    if (!_adjustedAccountId)
+      _adjustedAccountId = 0;
+
     this.studentInfoTodisplay.ReceiptNo = this.StudentReceiptData.ReceiptNo;
     this.StudentReceiptData.StudentFeeReceiptId = 0;
     this.StudentReceiptData.TotalAmount = +this.TotalAmount;
@@ -1124,7 +1131,7 @@ export interface IPaymentDetail {
   PaymentDate: Date;
   ParentId: number;
   ClassFeeId: number;
-  OrgId: number;SubOrgId: number;
+  OrgId: number; SubOrgId: number;
   Active: number;
 }
 export interface IGeneralLedger {

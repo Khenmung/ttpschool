@@ -383,7 +383,7 @@ export class EvaluationresultlistComponent implements OnInit {
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.AssessmentPrintHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.ASSESSMENTPRINTHEADING);
     //console.log("this.AssessmentPrintHeading",this.AssessmentPrintHeading)
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
       });

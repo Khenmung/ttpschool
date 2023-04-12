@@ -339,7 +339,8 @@ export class HomeDashboardComponent implements OnInit {
           //   else
           //     s.CustomerPlanId = 0;
           // })
-          this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
+          var _orgSubOrg = this.SubOrganization.filter(f => f.MasterDataId == this.SubOrgId);
+          this.searchForm.patchValue({ "searchSubOrgId": _orgSubOrg[0] });
         });
     }
 
@@ -372,7 +373,7 @@ export class HomeDashboardComponent implements OnInit {
 
     if (SelectedAppId > 0) {
       this.loading = true;
-      this.SelectedAppId =SelectedAppId;
+      this.SelectedAppId = SelectedAppId;
       this.tokenStorage.saveSelectedAppId(SelectedAppId);
       var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 
@@ -593,7 +594,7 @@ export class HomeDashboardComponent implements OnInit {
       this.loading = false; this.PageLoading = false;
     });
   }
-  compareWith( option, value ) : boolean {
+  compareWith(option, value): boolean {
     return option.MasterDataId === value.MasterDataId;
   }
   Students = [];
@@ -671,7 +672,11 @@ export class HomeDashboardComponent implements OnInit {
       })
   }
   getDropdownFromDB(pParentId, pAppId) {
-    var filterOrg = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.LoginUserDetail[0]["subOrgId"];
+    var filterOrg = "";
+    if (globalconstants.CompanyParentId == pParentId)
+      filterOrg = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    else
+      filterOrg = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and SubOrgId eq " + this.LoginUserDetail[0]["subOrgId"];
 
     return this.contentservice.GetDropDownDataFromDB(pParentId, filterOrg, pAppId)
   }

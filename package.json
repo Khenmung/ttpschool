@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.Conf.json",
-    "build": "ng build --proxy-config proxy.prod.conf.json",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "start": "nx serve --proxy-config proxy.Conf.json",
+    "build": "nx build --proxy-config proxy.prod.conf.json",
+    "test": "nx test",
+    "lint": "nx lint",
+    "e2e": "nx e2e"
   },
   "private": true,
   "dependencies": {
@@ -70,8 +70,14 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.1.2",
+    "@angular-devkit/core": "^14.1.2",
+    "@angular-devkit/schematics": "^14.1.2",
     "@angular/cli": "^14.1.2",
     "@angular/compiler-cli": "^14.1.2",
+    "@nrwl/angular": "15.9.2",
+    "@nrwl/nx-cloud": "latest",
+    "@nrwl/workspace": "15.9.2",
+    "@schematics/angular": "^14.1.2",
     "@types/jasmine": "~3.6.0",
     "@types/node": "^12.11.1",
     "codelyzer": "^0.0.28",
@@ -82,6 +88,7 @@
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "nx": "15.9.2",
     "protractor": "^7.0.0",
     "ts-node": "~8.3.0",
     "tslib": "^2.3.1",

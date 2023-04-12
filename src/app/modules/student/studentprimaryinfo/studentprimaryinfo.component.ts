@@ -362,13 +362,13 @@ export class studentprimaryinfoComponent implements OnInit {
 
         if (this.Bloodgroup.length > 0)
           this.studentForm.patchValue({ Bloodgroup: this.Bloodgroup[0].MasterDataId });
-        if (this.Category.length > 0)
-          this.studentForm.patchValue({ Category: this.Category[0].MasterDataId });
+        // if (this.Category.length > 0)
+        //   this.studentForm.patchValue({ Category: this.Category[0].MasterDataId });
         var _admissionStatus = this.AdmissionStatuses.filter(r => r.MasterDataName.toLowerCase() == "admitted");
 
-        var _religion = this.Religion.filter(r => r.MasterDataName.toLowerCase() == "christian");
-        if (_religion.length > 0)
-          this.studentForm.patchValue({ Religion: _religion[0].MasterDataId });
+        //var _religion = this.Religion.filter(r => r.MasterDataName.toLowerCase() == "christian");
+        //if (_religion.length > 0)
+        //  this.studentForm.patchValue({ Religion: _religion[0].MasterDataId });
 
         if (_admissionStatus.length == 0) {
           this.contentservice.openSnackBar("'Admitted' must be defined for admission status.", globalconstants.ActionText, globalconstants.RedBackground);

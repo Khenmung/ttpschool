@@ -113,6 +113,7 @@ export class EvaluationMasterComponent implements OnInit {
       }
       else {
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.GetMasterData();
         this.EvaluationMasterList=[];
         this.GetEvaluationMaster();
@@ -228,8 +229,8 @@ export class EvaluationMasterComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let checkFilterString = this.FilterOrgSubOrg + " and EvaluationName eq '" + globalconstants.encodeSpecialChars(row.EvaluationName) +
-      " and ClassGroupId eq " + row.ClassGroupId ;
+    let checkFilterString = this.FilterOrgSubOrg + " and EvaluationName eq '" + 
+    globalconstants.encodeSpecialChars(row.EvaluationName) + "' and ClassGroupId eq " + row.ClassGroupId ;
 
     if (row.EvaluationMasterId > 0)
       checkFilterString += " and EvaluationMasterId ne " + row.EvaluationMasterId;

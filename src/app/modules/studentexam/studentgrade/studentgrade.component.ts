@@ -284,7 +284,7 @@ export class StudentgradeComponent implements OnInit {
         });
   }
   Getclassgroups() {
-    this.contentservice.GetClassGroups(this.FilterOrgSubOrgBatchId)
+    this.contentservice.GetClassGroups(this.FilterOrgSubOrg)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassGroups = [...data.value];
@@ -327,7 +327,10 @@ export class StudentgradeComponent implements OnInit {
     this.contentservice.GetExamClassGroup(this.FilterOrgSubOrg, _examId)
       .subscribe((data: any) => {
         this.ExamClassGroups = data.value.map(e => {
-          e.GroupName = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)[0].GroupName;
+          e.GroupName = "";
+          var _group = this.ClassGroups.filter(c => c.ClassGroupId == e.ClassGroupId)
+          if (_group.length > 0)
+            e.GroupName = _group[0].GroupName;
           return e;
         })
         this.FilteredClassGroup = this.ExamClassGroups.filter(e => e.ExamId == _examId);

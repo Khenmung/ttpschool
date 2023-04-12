@@ -23,11 +23,13 @@ export class HeaderComponent implements OnInit {
   SelectedApplicationName = '';
   SelectedBatchName = '';
   LoginUserDetails = [];
+  SubOrgId=0;
   constructor(
     private route: Router,
     private tokenStorage: TokenStorageService
   ) {
   }
+
   ngOnInit(): void {
     debugger;
     this.LoginUserDetails = this.tokenStorage.getUserDetail();
@@ -46,6 +48,7 @@ export class HeaderComponent implements OnInit {
       this.OrganizationName = this.LoginUserDetails[0].org
       var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
       this.CompanyName = this.tokenStorage.getCompanyName();
+      this.SubOrgId= this.tokenStorage.getSubOrgId();
       this.SelectedApplicationName = '';
 
       var PermittedApplications = this.tokenStorage.getPermittedApplications();

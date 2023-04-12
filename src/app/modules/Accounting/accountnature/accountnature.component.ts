@@ -131,7 +131,7 @@ debugger;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {       
-
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetAccountNatureAutoComplete();

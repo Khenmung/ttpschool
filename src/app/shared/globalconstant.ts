@@ -11,6 +11,7 @@ export class globalconstants {
     public static fileUrl: string = '';
     public static CompanyParentId = 27762;//31850;// 27762; //536870912; 
     public static PremiumPlusId = 2;//5;//2 
+    public static globalAdminBillingSubOrgId = 30880;//5;//2 
     
     //public static BloodGroupParentId = 27762; //536870912;
     public static RequestLimit = 20971520; //536870912;
@@ -122,7 +123,8 @@ export class globalconstants {
                     'MASTERS': 'Essential Data',
                     'ORGANIZATION': 'organization',
                     'MYPLAN': 'my plan',
-                    'CUSTOMFEATUREPERMISSION': 'custom feature permission'
+                    'CUSTOMFEATUREPERMISSION': 'custom feature permission',
+                    'INVOICENRECEIPT': 'invoice n receipt'
                 },
                 "misc": {
                     "FRONTOFFICE": "front office",

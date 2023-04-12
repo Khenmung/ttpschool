@@ -100,6 +100,7 @@ export class AddstudentclassComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.contentservice.GetClasses(this.filterOrgSubOrg).subscribe((data: any) => {
@@ -117,7 +118,7 @@ export class AddstudentclassComponent implements OnInit {
         this.StudentClassId = this.tokenStorage.getStudentClassId()
         this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+       
         this.GetMasterData();
         //this.GetStudentClass();
       }

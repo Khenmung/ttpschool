@@ -37,7 +37,7 @@ export class ResultComponent implements OnInit {
   ExamStudentResult: IExamStudentResult[] = [];
   ClassFullMark = 0;
   ClassSubjectComponents = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
   MarkComponents = [];
@@ -67,7 +67,7 @@ export class ResultComponent implements OnInit {
     TotalMarks: 0,
     Grade: 0,
     Rank: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     Active: 0,
     Action: false
@@ -122,7 +122,7 @@ export class ResultComponent implements OnInit {
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -133,8 +133,8 @@ export class ResultComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         debugger;
-        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+        var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
@@ -224,10 +224,10 @@ export class ResultComponent implements OnInit {
   GetExamStudentResults() {
 
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    //this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.ExamStudentResult = [];
     //var orgIdSearchstr = this.FilterOrgSubOrgBatchId;
-    var filterstr = ' and Active eq 1 ';
+    var filterstr = '';
     var _examId = this.searchForm.get("searchExamId").value
 
     if (_examId == 0) {
@@ -248,15 +248,15 @@ export class ResultComponent implements OnInit {
     this.ExamName = "Exam: " + this.Exams.filter(c => c.ExamId == _examId)[0].ExamName;
     this.loading = true;
 
-    filterstr = "ClassId eq " + _classId;
+    filterstr = " and ClassId eq " + _classId;
     if (_sectionId > 0) {
       filterstr += " and SectionId eq " + _sectionId
     }
-
+    filterstr += " and Active eq 1";
     let list: List = new List();
     list.fields = [
       //"StudentId,ClassId,SectionId,RollNo"
-    "ExamStudentResultId,ExamId,ClassId,SectionId,StudentClassId,TotalMarks,Division,MarkPercent,Rank,Active"
+      "ExamStudentResultId,ExamId,ClassId,SectionId,StudentClassId,TotalMarks,Division,MarkPercent,Rank,Active"
     ];
     //list.PageName = "StudentClasses";
     list.PageName = "ExamStudentResults";
@@ -273,29 +273,29 @@ export class ResultComponent implements OnInit {
         //  console.log("data.value",data.value)
         this.ExamStudentResult = [];
         data.value.forEach(studcls => {
-          var stud = _students.filter(st => st.StudentClasses.length>0 && st.StudentClasses[0].StudentClassId == studcls.StudentClassId)
+          var stud = _students.filter(st => st.StudentClasses.length > 0 && st.StudentClasses[0].StudentClassId == studcls.StudentClassId)
           //studcls.forEach(res => {
-            this.ExamStudentResult.push({
-              ExamStudentResultId: studcls.ExamStudentResultId,
-              ExamId: studcls.ExamId,
-              StudentClassId: studcls.StudentClassId,
-              Student: stud[0].FirstName + " " + (stud[0].LastName == null ? '' : stud[0].LastName),
-              SectionId:studcls.SectionId,
-              RollNo:stud[0].StudentClasses[0].RollNo,
-              TotalMarks: studcls.TotalMarks,
-              Division: studcls.Division,
-              MarkPercent: studcls.MarkPercent,
-              Rank: studcls.Rank,
-              Active: studcls.Active,
-              StudentClass: "",
-              GradeId: 0,
-              GradeType: ''
-            })
+          this.ExamStudentResult.push({
+            ExamStudentResultId: studcls.ExamStudentResultId,
+            ExamId: studcls.ExamId,
+            StudentClassId: studcls.StudentClassId,
+            Student: stud[0].FirstName + " " + (stud[0].LastName == null ? '' : stud[0].LastName),
+            SectionId: studcls.SectionId,
+            RollNo: stud[0].StudentClasses[0].RollNo,
+            TotalMarks: studcls.TotalMarks,
+            Division: studcls.Division,
+            MarkPercent: studcls.MarkPercent,
+            Rank: studcls.Rank,
+            Active: studcls.Active,
+            StudentClass: "",
+            GradeId: 0,
+            GradeType: ''
+          })
           //})
         })
 
         //console.log("this.ExamStudentResult",this.ExamStudentResult);
-        this.ExamStudentResult = this.ExamStudentResult.map((d:any) => {
+        this.ExamStudentResult = this.ExamStudentResult.map((d: any) => {
           var _section = '';
           //var _gradeObj = this.SelectedClassStudentGrades[0].grades.filter(f => f.StudentGradeId == d.Grade);
           var _sectionObj = this.Sections.filter(s => s.MasterDataId == d["SectionId"]);
@@ -338,7 +338,7 @@ export class ResultComponent implements OnInit {
         PassStudent = PassStudent.sort((a, b) => b["Percent"] - a["Percent"])
         PassStudent.forEach(p => {
           if (_previouspercent != p["Percent"]) {
-            _rank+=1;
+            _rank += 1;
           }
           p.Rank = _rank;
           _previouspercent = p["Percent"];
@@ -370,7 +370,7 @@ export class ResultComponent implements OnInit {
   // }
   GetStudentGradeDefn() {
     this.StudentGrades = [];
-    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetStudentGrade(filterOrgSubOrg)
       .subscribe((data: any) => {
         debugger;
@@ -403,7 +403,7 @@ export class ResultComponent implements OnInit {
   ClassGroupMapping = [];
   FilteredClasses = [];
   GetClassGroupMapping() {
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMapping = data.value.map(f => {
@@ -444,14 +444,14 @@ export class ResultComponent implements OnInit {
 
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-    this.Sections =this.Sections.filter(s=>s.MasterDataName !='N/A');
+    this.Sections = this.Sections.filter(s => s.MasterDataName != 'N/A');
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
     this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
     this.Batches = this.tokenStorage.getBatches()
-    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetClassGroups(filterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
@@ -463,7 +463,7 @@ export class ResultComponent implements OnInit {
 
   GetExams() {
 
-    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId,1)
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId, 1)
       .subscribe((data: any) => {
         this.Exams = [];
         var result = data.value.filter(f => f.ReleaseResult == 1);
@@ -524,8 +524,8 @@ export interface IExamStudentResult {
   ExamStudentResultId: number;
   ExamId: number;
   StudentClassId: number;
-  SectionId:number;
-  RollNo:number;
+  SectionId: number;
+  RollNo: number;
   StudentClass: {},
   TotalMarks: number;
   MarkPercent: number;

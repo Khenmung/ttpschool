@@ -11,6 +11,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { OrganizationComponent } from '../organization/organization.component';
 import { CustomerPlansComponent } from '../customerplans/customerplans.component';
 import { CustomfeaturerolepermissionComponent } from '../customfeaturerolepermission/customfeaturerolepermission.component';
+import { InvoiceComponent } from '../invoice/invoice.component';
 
 @Component({
   selector: 'app-signup',
@@ -26,7 +27,8 @@ export class settingboardComponent implements AfterViewInit {
     BatchdashboardComponent,
     OrganizationComponent,
     CustomerPlansComponent,
-    CustomfeaturerolepermissionComponent
+    CustomfeaturerolepermissionComponent,
+    InvoiceComponent
   ];
 
   tabNames = [
@@ -34,6 +36,7 @@ export class settingboardComponent implements AfterViewInit {
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
+    { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' },
@@ -105,6 +108,10 @@ export class settingboardComponent implements AfterViewInit {
       
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.CUSTOMFEATUREPERMISSION);
       var comindx = this.components.indexOf(CustomfeaturerolepermissionComponent);
+      this.GetComponents(perObj, comindx);
+      
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.INVOICENRECEIPT);
+      var comindx = this.components.indexOf(InvoiceComponent);
       this.GetComponents(perObj, comindx);
     }
     else {

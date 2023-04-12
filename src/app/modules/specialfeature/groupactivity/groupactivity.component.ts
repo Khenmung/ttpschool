@@ -193,7 +193,7 @@ export class GroupactivityComponent implements OnInit {
     }
 
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    //    this.SubOrgId = this.tokenStorage.getSubOrgId();
     let checkFilterString = this.FilterOrgSubOrgBatchId + " and GroupId eq " + row.GroupId +
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +

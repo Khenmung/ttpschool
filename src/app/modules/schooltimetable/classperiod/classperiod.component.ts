@@ -100,7 +100,7 @@ export class ClassperiodComponent implements OnInit {
           this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-
+        this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.GetMasterData();
@@ -239,7 +239,7 @@ export class ClassperiodComponent implements OnInit {
 
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    //    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.SchoolClassPeriodList = [];
 
     var filterstr = this.FilterOrgSubOrgBatchId + ' and Active eq 1';

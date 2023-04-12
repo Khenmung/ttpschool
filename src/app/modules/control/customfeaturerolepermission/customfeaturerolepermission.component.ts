@@ -173,7 +173,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "CustomFeatures";
-    list.filter = [this.FilterOrgSubOrg + " and Active eq true and (ApplicationId eq " + globalconstants.CommonPanelID + " or ApplicationId eq " + this.SelectedApplicationId + ")"];
+    list.filter = [this.FilterOrgSubOrg + " and (ApplicationId eq " + globalconstants.CommonPanelID + " or ApplicationId eq " + this.SelectedApplicationId + ")"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -282,7 +282,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   }
   CustomerFeaturePermissionList = [];
   GetCustomerFeatures() {
-    //debugger;
+    debugger;
 
     var rolefilter = this.FilterOrgSubOrg + " and ApplicationId eq " + this.SelectedApplicationId;
     if (this.SelectedApplicationId == 0) {
@@ -332,7 +332,8 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
           })
         }
         else {
-          this.CustomFeatures.forEach(custom => {
+          var filteredFeatures= this.CustomFeatures.filter(f=>f.TableNameId ==_tableNameId);
+          filteredFeatures.forEach(custom => {
             var obj = data.value.filter(e => e.CustomFeatureId == custom.CustomFeatureId);
             if (obj.length > 0) {
               this.CustomerFeaturePermissionList.push({

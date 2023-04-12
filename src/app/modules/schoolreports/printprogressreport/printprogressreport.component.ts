@@ -581,7 +581,7 @@ export class PrintprogressreportComponent implements OnInit {
         this.ClassGroupMappings = [...data.value];
       })
       
-    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+    this.contentservice.GetClassGroups(this.filterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
       });
