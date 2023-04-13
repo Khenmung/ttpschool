@@ -289,6 +289,7 @@ export class FeereceiptComponent implements OnInit {
     list.fields = [
       "EmpEmployeeId",
       "FirstName",
+      "ShortName",
       "UserId"
     ];
 
@@ -333,7 +334,7 @@ export class FeereceiptComponent implements OnInit {
 
           var received = this.Employees.filter(e => e.UserId == f.CreatedBy);
           if (received.length > 0)
-            f.ReceivedBy = received[0].FirstName;
+            f.ReceivedBy = received[0].ShortName;
           else
             f.ReceivedBy = '';
 

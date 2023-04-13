@@ -244,7 +244,7 @@ export class ExcelDataManagementComponent implements OnInit {
     //    this.uploadedFile(event);
   }
   getFields(pModuleName) {
-    this.contentservice.getSelectedReportColumn(this.loginDetail[0]["orgId"], this.SelectedApplicationId)
+    this.contentservice.getSelectedReportColumn(this.FilterOrgSubOrg, this.SelectedApplicationId)
       .subscribe((data: any) => {
         var _baseReportId = 0;
         if (data.value.length > 0) {
