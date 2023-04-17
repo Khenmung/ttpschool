@@ -28,7 +28,7 @@ export class settingboardComponent implements AfterViewInit {
     OrganizationComponent,
     CustomerPlansComponent,
     CustomfeaturerolepermissionComponent,
-    InvoiceComponent
+    //InvoiceComponent
   ];
 
   tabNames = [
@@ -40,7 +40,6 @@ export class settingboardComponent implements AfterViewInit {
     { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' },
-    { "label": "Khat peuhpeuh", "faIcon": '' }
   ];
   LoginUserDetail = [];
   Permissions =
@@ -110,9 +109,9 @@ export class settingboardComponent implements AfterViewInit {
       var comindx = this.components.indexOf(CustomfeaturerolepermissionComponent);
       this.GetComponents(perObj, comindx);
       
-      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.INVOICENRECEIPT);
-      var comindx = this.components.indexOf(InvoiceComponent);
-      this.GetComponents(perObj, comindx);
+      // perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.INVOICENRECEIPT);
+      // var comindx = this.components.indexOf(InvoiceComponent);
+      // this.GetComponents(perObj, comindx);
     }
     else {
       var comindx = this.components.indexOf(BatchdashboardComponent);
@@ -132,6 +131,10 @@ export class settingboardComponent implements AfterViewInit {
       this.tabNames.splice(comindx, 1);
 
       comindx = this.components.indexOf(CustomerPlansComponent);
+      this.components.splice(comindx, 1);
+      this.tabNames.splice(comindx, 1);
+      
+      comindx = this.components.indexOf(CustomfeaturerolepermissionComponent);
       this.components.splice(comindx, 1);
       this.tabNames.splice(comindx, 1);
 

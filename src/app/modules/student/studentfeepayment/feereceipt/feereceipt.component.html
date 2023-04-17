@@ -66,13 +66,14 @@
                     </div>
                 </div>
                 <br>
-                <div fxLayout="row" fxLayoutAlign="space-between center">
-                    <span style="padding: 0px 15px 15px 0px;">
-                        Received with thanks from <b>{{studentInfoTodisplay.StudentName}}</b>,
-                        PID - <b>{{studentInfoTodisplay.PID}}</b>,
+                <div style="display:flex;flex-direction: column;justify-content: space-between;padding: 0px 15px 15px 0px;">
+                    <div>
+                        Received with thanks from <b>{{studentInfoTodisplay.StudentName}}.</b>
+                    </div>
+                    <div *ngIf="CompanyName!='Billing'">PID - <b>{{studentInfoTodisplay.PID}}</b>,
                         {{studentInfoTodisplay.StudentClassName}}, Sec - <b>{{studentInfoTodisplay.SectionName}}</b>,
                         Roll no. -<b> {{studentInfoTodisplay.RollNo}}</b>.
-                    </span>
+                    </div>
                 </div>
                 <div style="border-collapse: collapse;">
                     <mat-table [dataSource]="dataSource">
@@ -103,7 +104,7 @@
                         </ng-container>
                         <ng-container matColumnDef="Amount">
                             <mat-header-cell *matHeaderCellDef style="display:flex;justify-content:center"> Paid
-                                </mat-header-cell>
+                            </mat-header-cell>
                             <mat-cell *matCellDef="let element"> {{element.Amount}} </mat-cell>
                             <mat-footer-cell *matFooterCellDef>
                                 <b>{{TotalAmount}}</b>
@@ -137,7 +138,8 @@
                         <div style="margin-left:15px">{{PaymentType}}</div>
                     </div>
                     <div style="display: flex;justify-content: flex-end; padding: 15px;margin-right:30px;">
-                       <div style="padding-right: 15px;">Received by:</div><div style="font-weight:bold;"> {{ReceivedBy}}</div>
+                        <div style="padding-right: 15px;">Received by:</div>
+                        <div style="font-weight:bold;"> {{ReceivedBy}}</div>
                     </div>
                 </div>
                 <div style="margin:15px;justify-content: center;width: 100%;display: flex;">

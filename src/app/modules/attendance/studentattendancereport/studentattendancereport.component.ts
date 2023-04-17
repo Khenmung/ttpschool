@@ -42,7 +42,7 @@ export class StudentattendancereportComponent implements OnInit {
   Sections = [];
   Classes = [];
   Subjects = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
   StudentClassSubjects = [];
 
@@ -108,7 +108,7 @@ export class StudentattendancereportComponent implements OnInit {
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        
+
         this.GetMasterData();
         //this.SubjectTypes();
         //this.GetClassSubject();
@@ -240,6 +240,7 @@ export class StudentattendancereportComponent implements OnInit {
         debugger;
         if (SelectedClassSubjectId > 0)
           this.StudentAttendanceList = this.StudentAttendanceList.filter(s => this.StudentClassSubjects.findIndex(d => d.StudentClassId == s.StudentClassId) > -1);
+        var today = new Date().getDay();
         this.StudentAttendanceList.forEach(stud => {
           absent = 0;
           Present = 0;
@@ -259,14 +260,15 @@ export class StudentattendancereportComponent implements OnInit {
               var dayattendance = existing.filter(e => new Date(e.AttendanceDate).getDate() == dayCount);
               if (dayattendance.length > 0) {
                 stud[dayHead] = dayattendance[0].AttendanceStatus == 1 ? 'P' : dayattendance[0].Approved ? 'L' : '-';
-                if (dayattendance[0].AttendanceStatus == 0 || !dayattendance[0].AttendanceStatus)
+                if (today <= dayCount && this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun' && (dayattendance[0].AttendanceStatus == 0 || !dayattendance[0].AttendanceStatus))
                   absent += 1;
-                else
+                else if (this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun')
                   Present += 1;
               }
               else {
                 stud[dayHead] = '-';
-                absent += 1;
+                if (today <= dayCount && this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun')
+                  absent += 1;
               }
             }
           }
@@ -283,7 +285,8 @@ export class StudentattendancereportComponent implements OnInit {
                   }
 
                   stud[dayHead] = '-';
-                  absent += 1;
+                  if (today <= day && this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun')
+                    absent += 1;
                 }
               }
             }
@@ -719,8 +722,8 @@ export class StudentattendancereportComponent implements OnInit {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.Students = this.tokenStorage.getStudents();
       this.AssignNameClassSection(this.Students);

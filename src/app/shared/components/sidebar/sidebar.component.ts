@@ -68,7 +68,8 @@ export class SidebarComponent implements OnInit {
     this.dataservice.get(list).subscribe((data: any) => {
       //this.sideMenu = [...data.value];
       data.value.forEach(m => {
-        permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
+        permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim()
+        && m.Page.ParentId == 0)
         if (permission.length > 0 && permission[0].permission != 'deny') {
           m.PageId = m.Page.PageId;
           m.PageTitle = m.Page.PageTitle;

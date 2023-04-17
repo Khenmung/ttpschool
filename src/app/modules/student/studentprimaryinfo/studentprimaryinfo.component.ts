@@ -16,6 +16,8 @@ import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { environment } from 'src/environments/environment';
 import { SwUpdate } from '@angular/service-worker';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-studentprimaryinfo',
   templateUrl: './studentprimaryinfo.component.html',
@@ -68,6 +70,7 @@ export class studentprimaryinfoComponent implements OnInit {
   Remarks = [];
   studentForm: UntypedFormGroup;
   Edited = false;
+  StudentActivatePermission = '';
   public files: NgxFileDropEntry[] = [];
   @ViewChild(ImageCropperComponent, { static: true }) imageCropper: ImageCropperComponent;
 
@@ -146,6 +149,7 @@ export class studentprimaryinfoComponent implements OnInit {
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private tokenStorage: TokenStorageService,
+    private dialog:MatDialog
 
   ) {
     //this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
@@ -219,11 +223,17 @@ export class studentprimaryinfoComponent implements OnInit {
     if (this.LoginUserDetail.length == 0)
       this.route.navigate(['/auth/login'])
     else {
+      var perStudentActivate = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.ACTIVATESTUDENT);
+      if (perStudentActivate.length > 0) {
+        this.StudentActivatePermission = perStudentActivate[0].permission;
+        //this.tabNames
+      }
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.STUDENTDETAIL);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
         //this.tabNames
       }
+
       if (this.Permission != 'deny') {
         var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
         if (perObj.length > 0) {
@@ -279,35 +289,67 @@ export class studentprimaryinfoComponent implements OnInit {
     this.route.navigate(['/edu']);
   }
   deActivate(event) {
-    if (!event.checked)
-      this.StudentLeaving = true;
-    else {
-      this.StudentLeaving = false;
-      this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
-    }
-    this.OnBlur();
+    debugger;
+    if (this.StudentActivatePermission !="deny" && this.StudentActivatePermission !="read") {
+      if (!event.checked)
+        this.StudentLeaving = true;
+      else {
+        this.StudentLeaving = false;
+        this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
+      }
+      this.OnBlur();
+    }   
   }
   feepayment() {
     this.generateDetail();
     //this.SaveIds();
     this.route.navigate(['/edu/feepayment']);
   }
-  // SaveIds() {
-  //   debugger;
-  //   var _ClassId = 0;
-  //   //if (element.StudentClasses.length > 0) {
-  //   if (element.StudentClasses != undefined) {
-  //     this.StudentClassId = element.StudentClassId;
-  //     _ClassId = element.ClassId;
-  //   }
+  Delete(StudentId) {
 
-  //   this.StudentId = element.StudentId;
+    this.openDialog(StudentId)
+  }
+  openDialog(StudentId) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
 
-  //   this.tokenStorage.saveStudentClassId(this.StudentClassId + "");
-  //   this.tokenStorage.saveClassId(_ClassId + "");
-  //   this.tokenStorage.saveStudentId(this.StudentId + "");
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(StudentId);
+        }
+      });
+  }
 
-  // }
+  UpdateAsDeleted(StudentId) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch('Students', toUpdate, StudentId, 'patch')
+      .subscribe(res => {
+        //row.Action = false;
+        this.loading = false; this.PageLoading = false;
+        this.Students = this.tokenStorage.getStudents();
+        var indx = this.Students.findIndex(s => s.StudentId == StudentId);
+        if (indx > -1)
+          this.Students.splice(indx,1);
+        this.tokenStorage.saveStudents(this.Students);
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
   generateDetail() {
     let StudentName = this.PID + ' ' + this.studentForm.get("FirstName").value +
       this.studentForm.get("LastName").value + ',' + this.studentForm.get("FatherName").value + ', ' +

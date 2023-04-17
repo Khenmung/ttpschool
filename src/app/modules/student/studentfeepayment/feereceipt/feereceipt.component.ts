@@ -111,6 +111,7 @@ export class FeereceiptComponent implements OnInit {
     'PaymentType',
     'Active'
   ]
+  CompanyName='';
   PageLoad() {
     debugger;
     this.loading = true;
@@ -124,6 +125,7 @@ export class FeereceiptComponent implements OnInit {
     if (this.Permission != 'deny') {
       this.TotalAmount = 0;
       this.Balance = 0;
+      this.CompanyName = this.tokenStorage.getCompanyName();
       this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {

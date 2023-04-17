@@ -40,6 +40,20 @@
                 {{element.ApplicationFeatureRoleId}}
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="Role">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Role </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <!-- <span [innerHTML]="element.FeatureName"></span> -->
+                {{element.Role}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="PlanId">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> PlanId </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <!-- <span [innerHTML]="element.FeatureName"></span> -->
+                {{element.PlanId}}
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="FeatureName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Feature </mat-header-cell>
             <mat-cell *matCellDef="let element">

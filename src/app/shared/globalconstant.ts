@@ -177,6 +177,7 @@ export class globalconstants {
                     'FEERECEIPT': 'fee receipt',
                     'STUDENTAPROFILE': 'student profile',
                     'STUDENTVIEW': 'student view',
+                    'ACTIVATESTUDENT': 'activate student',
                 },
                 "SPECIALFEATURE": {
                     'GENERATECERTIFICATE': 'generate certificate',

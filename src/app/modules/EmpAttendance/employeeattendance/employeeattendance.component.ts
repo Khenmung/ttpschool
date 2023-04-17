@@ -37,15 +37,17 @@ export class EmployeeAttendanceComponent implements OnInit {
   FilterOrgSubOrg = '';
   FilterOrgSubOrgBatchId = '';
   loading = false;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
   EmployeeAttendanceList: IEmployeeAttendance[] = [];
   dataSource: MatTableDataSource<IEmployeeAttendance>;
   allMasterData = [];
+  Departments = [];
   searchForm = this.fb.group({
-    searchAttendanceDate: [new Date()]
+    searchAttendanceDate: [new Date()],
+    searchDepartment: [0]
   });
   StudentClassSubjectId = 0;
   EmployeeAttendanceData = {
@@ -56,7 +58,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     ReportedTo: 0,
     Approved: false,
     ApprovedBy: '',
-    Active:true,
+    Active: true,
     Remarks: '',
     BatchId: 0,
     OrgId: 0,
@@ -117,20 +119,21 @@ export class EmployeeAttendanceComponent implements OnInit {
 
   }
   GetEmployees() {
-    var filterStr = "OrgId eq " + this.LoginUserDetail[0]['orgId'] + " and Active eq 1";
+    var filterStr = this.FilterOrgSubOrg + " and Active eq 1";
     let list: List = new List();
     list.fields = [
       'EmpEmployeeId',
       'FirstName',
       'LastName',
-      'ShortName'
+      'ShortName',
+      'DepartmentId'
     ];
 
     list.PageName = "EmpEmployees";
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((employee: any) => {
-          this.Employees = [...employee.value];
+        this.Employees = [...employee.value];
       })
   }
 
@@ -143,7 +146,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       else
         record.AttendanceStatus = 0;
       record.Action = true;
-      record["Active"] =true;
+      record["Active"] = true;
     })
     //this.AnyEnableSave=true;
   }
@@ -160,6 +163,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
 
     var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
+    var _Department = this.searchForm.get("searchDepartment").value
     _AttendanceDate.setHours(0, 0, 0, 0);
     if (_AttendanceDate.getTime() > today.getTime()) {
       this.loading = false; this.PageLoading = false;
@@ -171,7 +175,10 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
     else
       this.EnableSave = true;
-
+    // if (_Department == 0) {
+    //   this.contentservice.openSnackBar("Please select department.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
 
@@ -181,7 +188,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     }
     this.EmployeeAttendanceList = [];
     this.dataSource = new MatTableDataSource<IEmployeeAttendance>(this.EmployeeAttendanceList);
-    
+
     var datefilterStr = filterStr + ' and AttendanceDate ge ' + moment(this.searchForm.get("searchAttendanceDate").value).format('yyyy-MM-DD')
     datefilterStr += ' and AttendanceDate lt ' + moment(this.searchForm.get("searchAttendanceDate").value).add(1, 'day').format('yyyy-MM-DD')
 
@@ -204,13 +211,18 @@ export class EmployeeAttendanceComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((employeeAttendance: any) => {
+        var _employeeDepartment = [];
+        if (_Department > 0)
+          _employeeDepartment = this.Employees.filter(f => f.DepartmentId == _Department)
+        else
+          _employeeDepartment = [...this.Employees];
 
-        this.Employees.forEach(emp => {
+        _employeeDepartment.forEach(emp => {
           var empName = emp.FirstName + (emp.LastName ? " " + emp.LastName : "");
           let existing = employeeAttendance.value.filter(db => db.EmployeeId == emp.EmpEmployeeId);
           if (existing.length > 0) {
             this.EmployeeAttendanceList.push({
-              Employee:empName,
+              Employee: empName,
               EmployeeAttendanceId: existing[0].EmployeeAttendanceId,
               EmployeeId: existing[0].EmployeeId,
               Approved: existing[0].Approved,
@@ -226,7 +238,7 @@ export class EmployeeAttendanceComponent implements OnInit {
             this.EmployeeAttendanceList.push({
               EmployeeAttendanceId: 0,
               EmployeeId: emp.EmpEmployeeId,
-              Employee:empName,
+              Employee: empName,
               Approved: false,
               ApprovedBy: '',
               ReportedTo: 0,
@@ -253,7 +265,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   }
   UpdateActive(element, event) {
     element.Action = true;
-    element.Active=true;
+    element.Active = true;
     element.AttendanceStatus = event.checked == true ? 1 : 0;
   }
   onChangeEvent(row, value) {
@@ -307,7 +319,7 @@ export class EmployeeAttendanceComponent implements OnInit {
     list.fields = ["EmployeeAttendanceId"];
     list.PageName = "EmployeeAttendances";
     list.filter = [checkFilterString + " and " + this.FilterOrgSubOrg];
-    this.loading=true;
+    this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -332,16 +344,16 @@ export class EmployeeAttendanceComponent implements OnInit {
             this.EmployeeAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.EmployeeAttendanceData["UpdatedDate"];
             delete this.EmployeeAttendanceData["UpdatedBy"];
-            console.log("EmployeeAttendanceData",this.EmployeeAttendanceData);
+            console.log("EmployeeAttendanceData", this.EmployeeAttendanceData);
             this.insert(row);
           }
           else {
-            
+
             delete this.EmployeeAttendanceData["CreatedDate"];
             delete this.EmployeeAttendanceData["CreatedBy"];
             this.EmployeeAttendanceData["UpdatedDate"] = new Date();
             this.EmployeeAttendanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            console.log("EmployeeAttendanceData",this.EmployeeAttendanceData);
+            console.log("EmployeeAttendanceData", this.EmployeeAttendanceData);
             this.update(row);
           }
           row.Action = false;
@@ -355,7 +367,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       .subscribe(
         (data: any) => {
           //this.edited = false;
-          row.AttendanceId = data.AttendanceId;
+          row.EmployeeAttendanceId = data.EmployeeAttendanceId;
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
@@ -418,10 +430,12 @@ export class EmployeeAttendanceComponent implements OnInit {
   //       })
   //     })
   // }
+
   GetMasterData() {
 
     this.allMasterData = this.tokenStorage.getMasterData();
     this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {
@@ -445,7 +459,7 @@ export class EmployeeAttendanceComponent implements OnInit {
 export interface IEmployeeAttendance {
   EmployeeAttendanceId: number;
   EmployeeId: number;
-  Employee:string;
+  Employee: string;
   AttendanceStatus: number;
   AttendanceDate: Date;
   Remarks: string;

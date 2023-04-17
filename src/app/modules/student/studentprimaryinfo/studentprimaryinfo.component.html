@@ -441,7 +441,8 @@
                         <textarea rows="4" cols="20" (blur)="OnBlur()" [maxlength]="50" matInput autocomplete="Off"
                             formControlName="Notes"></textarea>
                     </mat-form-field>
-                    <mat-checkbox (click)="deActivate($event)" formControlName="Active">
+                    <mat-checkbox [disabled]="StudentActivatePermission=='read' || StudentActivatePermission=='deny'"
+                        (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active
                     <mat-form-field *ngIf="StudentLeaving" appearance="outline">
                         <mat-label>Reason For Leaving</mat-label>
@@ -469,11 +470,19 @@
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
                 </button>
+                <button [disabled]="loading || Permission!='rwd' || StudentId==0" matTooltip="delete" mat-mini-fab
+                    color="accent" (click)="Delete(StudentId)">
+                    <mat-icon>delete</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
                 <button [disabled]="loading || StudentClassId==0" mat-raised-button color="accent"
                     *ngIf="FeePaymentPermission !='' && FeePaymentPermission!='deny'" matTooltip="Fees"
                     (click)="feepayment()">
                     <mat-icon>payments</mat-icon> Fees
                 </button>
+
             </mat-card-actions>
         </mat-tab>
 

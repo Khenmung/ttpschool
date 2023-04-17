@@ -533,7 +533,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       //"PaymentOrder"
     ];
     list.PageName = "ClassFees";
-    list.lookupFields = ["FeeDefinition($select=FeeCategoryId,FeeName,AmountEditable)"];
+    list.lookupFields = ["FeeDefinition($select=FeeCategoryId,FeeSubCategoryId,FeeName,AmountEditable)"];
     //list.orderBy = "Month";
     list.filter = [filterstr];
 
@@ -687,6 +687,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 Debit: false,
                 BaseAmount: accVoucher.Balance,
                 FeeName: _feeName,
+                FeeCategory: obj[0].FeeCategory,
+                FeeSubCategory: obj[0].FeeSubCategory,
                 BaseAmountForCalc: accVoucher.Balance,
                 FeeAmount: accVoucher.Amount,
                 Amount: accVoucher.Balance,
@@ -719,33 +721,45 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.VariableObjList.push(f);
           var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
           this.VariableObjList.splice(this.VariableObjList.indexOf(f), 1);
-          AmountAfterFormulaApplied = evaluate(formula);
-          _newCount += 1;
-          this.MonthlyDueDetail.push({
-            SlNo: _newCount,
-            AccountingVoucherId: 0,
-            PostingDate: new Date(),
-            Reference: row.Reference,
-            LedgerId: row.LedgerId,
-            GeneralLedgerAccountId: this.TuitionFeeLedgerId,
-            Debit: false,
-            FeeName: f.FeeName,
-            FeeAmount: f.Amount,
-            BaseAmount: f.Amount,
-            BaseAmountForCalc: +AmountAfterFormulaApplied,
-            Amount: +AmountAfterFormulaApplied,
-            BalancePayment: false,
-            Balance: 0,
-            Month: row.Month,
-            ClassFeeId: f.ClassFeeId,
-            AmountEditable: f.AmountEditable,
-            ShortText: '',
-            OrgId: this.LoginUserDetail[0]["orgId"],
-            SubOrgId: this.SubOrgId,
-            Active: 1,
-            Action: true
-          })
+          AmountAfterFormulaApplied = evaluate(formula).toFixed(2);
+          // if (AmountAfterFormulaApplied > f.Amount)
+          //   f.Amount = AmountAfterFormulaApplied;
+          var alreadyadded = this.MonthlyDueDetail.filter(x => x.FeeName == f.FeeName)
+          if (alreadyadded.length > 0) {
+            alreadyadded[0].Amount += +AmountAfterFormulaApplied
+          }
+          else {
+            _newCount += 1;
+            this.MonthlyDueDetail.push({
+              SlNo: _newCount,
+              AccountingVoucherId: 0,
+              PostingDate: new Date(),
+              Reference: row.Reference,
+              LedgerId: row.LedgerId,
+              GeneralLedgerAccountId: this.TuitionFeeLedgerId,
+              Debit: false,
+              FeeName: f.FeeName,
+              FeeCategory: f.FeeCategory,
+              FeeSubCategory: f.FeeSubCategory,
+              FeeAmount: f.Amount,
+              BaseAmount: f.Amount,
+              BaseAmountForCalc: +AmountAfterFormulaApplied,
+              Amount: +AmountAfterFormulaApplied,
+              BalancePayment: false,
+              Balance: 0,
+              Month: row.Month,
+              ClassFeeId: f.ClassFeeId,
+              AmountEditable: f.AmountEditable,
+              ShortText: '',
+              OrgId: this.LoginUserDetail[0]["orgId"],
+              SubOrgId: this.SubOrgId,
+              Active: 1,
+              Action: true
+            })
+          }
         })
+        this.MonthlyDueDetail = this.MonthlyDueDetail.sort((a, b) => b.BaseAmount - a.BaseAmount)
+        //console.log("this.MonthlyDueDetail", this.MonthlyDueDetail)
         this.miscelenous();
       }//if (row.TotalDebit>0 && row.TotalDebit != row.Balance) 
       if (row.BaseAmount == 0)
@@ -764,8 +778,6 @@ export class AddstudentfeepaymentComponent implements OnInit {
       this.loading = false;
       this.miscelenous();
     }
-
-
   }
   remove(row) {
     debugger;
@@ -814,7 +826,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     }
 
 
-    this.MonthlyDueDetail.sort((a, b) => a.SlNo - b.SlNo);
+    //this.MonthlyDueDetail = this.MonthlyDueDetail.sort((a, b) => a.Amount - b.Amount);
     this.MonthlyDueDetail.forEach((row, indx) => {
       row.SlNo = indx + 1;
     });

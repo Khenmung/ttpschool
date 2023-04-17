@@ -37,19 +37,20 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   FilterOrgSubOrg = '';
   FilterOrgSubOrgBatchId = '';
   loading = false;
-  ClassSubjectList = [];
-  Sections = [];
-  Classes = [];
-  Subjects = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  //ClassSubjectList = [];
+  //Sections = [];
+  //Classes = [];
+  //Subjects = [];
+  SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
   StudentClassSubjects = [];
-
+  Departments = [];
   //StudentSubjectList: IStudentSubject[] = [];
   dataSource: MatTableDataSource<IEmployeeAttendance>;
   allMasterData = [];
   searchForm = this.fb.group({
     searchMonth: [0],
+    searchDepartment: [0]
   });
   StudentSubjectData = {
     StudentClassSubjectId: 0,
@@ -59,7 +60,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
     SectionId: 0,
     ClassSubjectId: 0,
     BatchId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 1
   };
   nameFilter = new UntypedFormControl('');
@@ -84,6 +85,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   ) { }
   Months = [];
   Employees = [];
+  WeekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   ngOnInit(): void {
 
     this.nameFilter.valueChanges
@@ -114,7 +116,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        
+        this.GetMasterData();
         this.GetEmployees();
         this.GetHoliday();
       }
@@ -124,7 +126,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
       }
     }
   }
-  HolidayList=[];
+  HolidayList = [];
   GetHoliday() {
     debugger;
 
@@ -149,41 +151,20 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   }
   EmployeeAttendanceList = [];
   GetEmployeeAttendance() {
-    //debugger;
+    debugger;
     var SelectedMonth = this.searchForm.get("searchMonth").value;
+    var _Department = this.searchForm.get("searchDepartment").value;
     if (SelectedMonth == 0) {
       this.contentservice.openSnackBar("Please select month", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let filterStr = this.FilterOrgSubOrg+ " and Active eq true";
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true";
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
-
-    //var filterStrClsSub = '';
-
-    //this.loading = true;
-    // var today = new Date();
-    // today.setHours(0, 0, 0, 0);
-
-    // var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
-    // _AttendanceDate.setHours(0, 0, 0, 0);
-    // if (_AttendanceDate.getTime() > today.getTime()) {
-    //   this.loading = false; this.PageLoading = false;
-    //   this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
-    // if (this.LoginUserDetail[0]['RoleUsers'][0]['role'].toLowerCase() != 'admin' && _AttendanceDate.getTime() != today.getTime()) {
-    //   this.EnableSave = false;
-    // }
-    // else
-    //   this.EnableSave = true;
-
-    //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -223,49 +204,78 @@ export class EmployeeAttendanceReportComponent implements OnInit {
           }
         }
         let absent = 0;
+        let Present = 0;
+        let today = new Date().getDay();
         //var lastDateOfMonth = new Date(moment(fromDate).endOf('month').format('YYYY-MM-DD')).getDate();
-        this.Employees.forEach(emp => {
+        var _employeeDepartmentWise = [];
+        if (_Department > 0)
+          this.EmployeeAttendanceList = this.Employees.filter(f => f.DepartmentId == _Department)
+        else
+          this.EmployeeAttendanceList = [...this.Employees];
+
+        this.EmployeeAttendanceList.forEach(emp => {
           absent = 0;
+          Present = 0;
           var empName = emp.FirstName + (emp.LastName ? " " + emp.LastName : "");
           emp.Employee = empName;
-
+          var dayHead = '';
           let existing = employeeAttendance.value.filter(db => db.EmployeeId == emp.EmpEmployeeId);
           if (existing.length > 0) {
             //the whole month for an employee.
-            for (let day = 1; day <= lastDateOfMonth; day++) {
-              if (this.displayedColumns.indexOf(day + "") == -1)
-                this.displayedColumns.push(day + "");
-              var dayattendance = existing.filter(e => new Date(e.AttendanceDate).getDate() == day);
+            for (let dayCount = 1; dayCount <= lastDateOfMonth; dayCount++) {
+              tempdate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 2), dayCount);
+              var wd = tempdate.getDay();
+              dayHead = dayCount + " " + this.WeekDays[wd];
+              if (this.displayedColumns.indexOf(dayHead) == -1) {
+                this.displayedColumns.push(dayHead);
+              }
+
+              var dayattendance = existing.filter(e => new Date(e.AttendanceDate).getDate() == dayCount);
               if (dayattendance.length > 0) {
-                emp[day] = dayattendance[0].AttendanceStatus;
-                if (dayattendance[0].AttendanceStatus == 0)
+                emp[dayHead] = dayattendance[0].AttendanceStatus == 1 ? 'P' : dayattendance[0].Approved ? 'L' : '-';
+                if (this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun' && today <= dayCount && (dayattendance[0].AttendanceStatus == 0 || !dayattendance[0].AttendanceStatus))
                   absent += 1;
+                else if (this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun')
+                  Present += 1;
               }
               else {
-                emp[day] = 0;
-                absent += 1;
+                emp[dayHead] = '-';
+                if (today <= dayCount && this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun')
+                  absent += 1;
               }
             }
           }
           else {
             for (let day = 1; day <= lastDateOfMonth; day++) {
-              if (this.displayedColumns.indexOf(day + "") == -1)
-                this.displayedColumns.push(day + "");
+              tempdate = new Date(SelectedMonth.substr(0, 4), SelectedMonth.substr(4, 2), day);
+              var wd = tempdate.getDay();
+              dayHead = day + " " + this.WeekDays[wd];
+              if (this.displayedColumns.indexOf(dayHead) == -1) {
+                this.displayedColumns.push(dayHead);
+              }
 
-              emp[day] = 0;
-              absent += 1;
+              emp[dayHead] = '-';
+              if (today <= day && (this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun'))
+                absent += 1;
             }
+            // for (let day = 1; day <= lastDateOfMonth; day++) {
+            //   if (this.displayedColumns.indexOf(day + "") == -1)
+            //     this.displayedColumns.push(day + "");
+
+            //   emp[day] = 0;
+            //   absent += 1;
+            // }
           }
           if (this.displayedColumns.indexOf("Pre") == -1)
             this.displayedColumns.push("Pre");
           if (this.displayedColumns.indexOf("Ab") == -1)
             this.displayedColumns.push("Ab");
-          emp["Pre"] = toDate.getDate() - absent;
-          emp["Ab"] = absent-(weekdaysCount + Holidays);
+          emp["Pre"] = Present;//toDate.getDate() - absent;
+          emp["Ab"] = absent - (weekdaysCount + Holidays);
         })
         //console.log("employee",this.Employees)
         //this.EmployeeAttendanceList = this.EmployeeAttendanceList.sort((a, b) => a.RollNo - b.RollNo)
-        this.dataSource = new MatTableDataSource<IEmployeeAttendance>(this.Employees);
+        this.dataSource = new MatTableDataSource<IEmployeeAttendance>(this.EmployeeAttendanceList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
@@ -281,7 +291,8 @@ export class EmployeeAttendanceReportComponent implements OnInit {
       'EmpEmployeeId',
       'FirstName',
       'LastName',
-      'ShortName'
+      'ShortName',
+      'DepartmentId'
     ];
 
     list.PageName = "EmpEmployees";
@@ -303,36 +314,6 @@ export class EmployeeAttendanceReportComponent implements OnInit {
     }
     return filterFunction;
   }
-  formatData(clssubject) {
-    var _subjectName = '';
-    var topush = {};
-    //var subjectTypes = [];
-
-    topush = this.StudentDetail;
-
-    _subjectName = this.Subjects.filter(s => s.MasterDataId == clssubject.SubjectId)[0].MasterDataName;
-    if (this.displayedColumns.indexOf(_subjectName) == -1)
-      this.displayedColumns.push(_subjectName);
-
-    topush = {
-      "StudentClassSubjectId": clssubject.StudentClassSubjectId,
-      "StudentClassId": this.StudentDetail["StudentClassId"],
-      "Student": this.StudentDetail["Student"],
-      "RollNo": this.StudentDetail["RollNo"],
-      "SubjectTypeId": clssubject.SubjectTypeId,
-      "SubjectType": clssubject.SubjectType,
-      "SelectHowMany": clssubject.SelectHowMany,
-      "SubjectId": clssubject.SubjectId,
-      "Subject": _subjectName,
-      "ClassSubjectId": clssubject.ClassSubjectId,
-      "ClassId": clssubject.ClassId,
-      "ClassName": this.Classes.filter(c => c.ClassId == clssubject.ClassId)[0].ClassName,
-      "Action": false,
-      "Active": clssubject.Active,
-    }
-    this.StudentDetail[_subjectName] = clssubject.Active;
-    topush[_subjectName] = clssubject.Active;
-  }
 
   clear() {
     this.searchForm.patchValue({
@@ -342,7 +323,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
       //searchBatchId: this.SelectedBatchId
     });
   }
-  
+
   delete(element) {
     let toupdate = {
       Active: element.Active == 1 ? 0 : 1
@@ -355,95 +336,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
 
         });
   }
-  UpdateOrSave(row, element) {
-    //debugger;
-    let checkFilterString = this.FilterOrgSubOrgBatchId + " and ClassSubjectId eq " + row.ClassSubjectId +
-      " and StudentClassId eq " + row.StudentClassId
 
-
-    if (row.StudentClassSubjectId > 0)
-      checkFilterString += " and StudentClassSubjectId ne " + row.StudentClassSubjectId;
-    let list: List = new List();
-    list.fields = ["ClassSubjectId"];
-    list.PageName = "StudentClassSubjects";
-    list.filter = [checkFilterString];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          console.log("row.ClassSubjectId", row.ClassSubjectId)
-          this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText, globalconstants.RedBackground);
-          return;
-        }
-        else {
-
-          this.StudentSubjectData.Active = row.Active;
-          this.StudentSubjectData.StudentClassSubjectId = row.StudentClassSubjectId;
-          this.StudentSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentSubjectData.SubOrgId = this.SubOrgId;
-          this.StudentSubjectData.BatchId = this.SelectedBatchId;
-          this.StudentSubjectData.StudentClassId = row.StudentClassId;
-          this.StudentSubjectData.SubjectId = row.SubjectId;
-          this.StudentSubjectData.ClassSubjectId = row.ClassSubjectId;
-          this.StudentSubjectData.ClassId = row.ClassId;
-          this.StudentSubjectData.SectionId = row.SectionId;
-          ////console.log('data', this.StudentSubjectData);
-          if (this.StudentSubjectData.StudentClassSubjectId == 0) {
-            this.StudentSubjectData["CreatedDate"] = new Date();
-            this.StudentSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.StudentSubjectData["UpdatedDate"];
-            delete this.StudentSubjectData["UpdatedBy"];
-            ////console.log('insert', this.StudentSubjectData);
-            this.insert(row, element);
-          }
-          else {
-            delete this.StudentSubjectData["CreatedDate"];
-            delete this.StudentSubjectData["CreatedBy"];
-            this.StudentSubjectData["UpdatedDate"] = new Date();
-            this.StudentSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(row, element);
-          }
-          row.Action = false;
-
-        }
-      });
-  }
-
-  insert(row, element) {
-
-    //debugger;
-    this.dataservice.postPatch('StudentClassSubjects', this.StudentSubjectData, 0, 'post')
-      .subscribe(
-        (data: any) => {
-          this.edited = false;
-          this.rowCount += 1;
-          row.StudentClassSubjectId = data.StudentClassSubjectId;
-
-          if (this.rowCount == Object.keys(row).length - 3) {
-            this.loading = false; this.PageLoading = false;
-            element.Action = false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          }
-        });
-  }
-  update(row, element) {
-
-    this.dataservice.postPatch('StudentClassSubjects', this.StudentSubjectData, this.StudentSubjectData.StudentClassSubjectId, 'patch')
-      .subscribe(
-        (data: any) => {
-          this.edited = false;
-
-          this.rowCount += 1;
-          if (this.rowCount == Object.keys(row).length - 3) {
-            element.Action = false;
-            this.loading = false; this.PageLoading = false;
-            //this.GetStudentClassSubject();
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          }
-          //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
-        });
-  }
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -454,9 +347,9 @@ export class EmployeeAttendanceReportComponent implements OnInit {
   GetMasterData() {
     debugger;
     this.allMasterData = this.tokenStorage.getMasterData();
-    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-    this.shareddata.ChangeSubjects(this.Subjects);
+    //this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    //this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {

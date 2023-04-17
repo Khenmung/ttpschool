@@ -174,7 +174,7 @@ export class LoginComponent implements OnInit {
     list.PageName = "RoleUsers";
     list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
 
-    list.filter = ["OrgId eq " + localStorage.getItem("orgId") + " and SubOrgId eq "+ localStorage.getItem("subOrgId") + " and Active eq 1 and UserId eq '" + localStorage.getItem("userId") + "'"];
+    list.filter = ["OrgId eq " + localStorage.getItem("orgId") + " and SubOrgId eq " + localStorage.getItem("subOrgId") + " and Active eq 1 and UserId eq '" + localStorage.getItem("userId") + "'"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -198,13 +198,13 @@ export class LoginComponent implements OnInit {
   GetMasterData(UserRole) {
     debugger;
     //this.Applications = this.tokenStorage.getPermittedApplications();
-    
+
     this.contentservice.GetParentZeroMasters().subscribe((data: any) => {
       var TopMasters = [...data.value];
       var countryparentId = TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
       var appId = TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].ApplicationId;
-      var filterorgsuborg='OrgId eq 0 and SubOrgId eq 0';
-      this.contentservice.GetDropDownDataFromDB(countryparentId,filterorgsuborg , 0)
+      var filterorgsuborg = 'OrgId eq 0 and SubOrgId eq 0';
+      this.contentservice.GetDropDownDataFromDB(countryparentId, filterorgsuborg, 0)
         .subscribe((data: any) => {
           this.Applications = [...data.value];
           var commonappId = this.Applications.filter(f => f.MasterDataName.toLowerCase() == 'common')[0].MasterDataId;
@@ -218,7 +218,7 @@ export class LoginComponent implements OnInit {
               var __organization = '';
               if (UserRole[0].OrgId != null)
                 __organization = UserRole[0].Org.OrganizationName;
-              
+
               this.UserDetail = [{
                 employeeId: this.userInfo["employeeId"],
                 userId: this.userInfo["Id"],
@@ -295,9 +295,9 @@ export class LoginComponent implements OnInit {
     ];
 
     list.PageName = "ApplicationFeatureRolesPerms";
-    list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PageId;$expand=Page($select=Active,PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
-    
-    list.filter = [this.FilterOrgSubOrg + " and Active eq 1 " + this.RoleFilter];
+    list.lookupFields = ["PlanFeature($select=PageId,Active,PlanId;$expand=Page($select=Active,PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
+
+    list.filter = [this.FilterOrgSubOrg + this.RoleFilter + " and Active eq 1"];
     debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -305,12 +305,12 @@ export class LoginComponent implements OnInit {
         //console.log("all",data.value)
         var _allPermission = [];
         data.value.forEach(m => {
-          if (m.PlanFeature.Page.Active == 1) {
+          if (m.PlanFeature.Page.Active == 1 && m.PlanFeature.Active == 1 && m.PlanFeature.PlanId == localStorage.getItem("planId")) {
             _allPermission.push(m);
           }
         })
 
-        console.log("all permission",_allPermission)
+        console.log("all permission", _allPermission)
         if (_allPermission.length > 0) {
 
           var _applicationName = '';
@@ -329,6 +329,7 @@ export class LoginComponent implements OnInit {
               if (item.PermissionId != null)
                 _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
               this.UserDetail[0]["applicationRolePermission"].push({
+                'planId':item.PlanFeature.PlanId,
                 'pageId': item.PlanFeature.PageId,
                 'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,
                 'roleId': item.RoleId,

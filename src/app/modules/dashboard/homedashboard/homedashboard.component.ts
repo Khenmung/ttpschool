@@ -194,20 +194,22 @@ export class HomeDashboardComponent implements OnInit {
       "PageId",
       "ApplicationId"
     ];
-
+    this.sideMenu = [];
     list.PageName = "PlanFeatures";
     list.lookupFields = ["Page($select=PageId,PageTitle,label,faIcon,link,ParentId,HasSubmenu,UpdateDate,DisplayOrder)"];
     //list.orderBy = "DisplayOrder";
     list.filter = [strFilter];
     var permission;
     this.dataservice.get(list).subscribe((data: any) => {
-      this.sideMenu = [];
+      
+
       data.value.forEach(m => {
         // if(m.Page.PageTitle=="Question Bank")
         // {
         //   debugger;
         // }
-        permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
+        permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() 
+        && r.applicationId == pSelectedAppId && m.Page.ParentId == 0)
         if (permission.length > 0 && permission[0].permission != 'deny') {
           m.PageId = m.Page.PageId;
           m.PageTitle = m.Page.PageTitle;

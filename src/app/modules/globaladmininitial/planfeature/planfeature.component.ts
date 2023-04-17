@@ -10,23 +10,24 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-PlanFeature',
   templateUrl: './planfeature.component.html',
   styleUrls: ['./planfeature.component.scss']
 })
-export class PlanFeatureComponent implements OnInit { PageLoading=true;
+export class PlanFeatureComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  SubOrgId=0;
+  SubOrgId = 0;
   PlanFeatureListName = 'PlanFeatures';
   loading = false;
   SelectedBatchId = 0;
-  SelectedApplicationId =0;
+  SelectedApplicationId = 0;
   RowToUpdateCount = -1;
   Topfeatures = [];
   Plans = [];
@@ -59,7 +60,7 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
-    
+
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
@@ -88,7 +89,7 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
 
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.SubOrgId = this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -144,7 +145,7 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -157,9 +158,8 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
       this.RowToUpdateCount--;
       this.UpdateOrSave(element);
     });
-    if(toUpdate.length==0)
-    {
-      this.loading=false;
+    if (toUpdate.length == 0) {
+      this.loading = false;
     }
 
   }
@@ -173,14 +173,15 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
     this.loading = true;
 
     if (row.PlanId == 0) {
-      this.contentservice.openSnackBar("Please enter PlanFeature name.",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+      this.contentservice.openSnackBar("Please enter PlanFeature name.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
       row.Action = false;
       return;
     }
-    let checkFilterString = "PageId eq " + row.PageId + 
-                            " and PlanId eq " + this.searchForm.get("searchPlanId").value +
-                            " and ApplicationId eq " + row.ApplicationId
+    let checkFilterString = "PageId eq " + row.PageId +
+      " and PlanId eq " + this.searchForm.get("searchPlanId").value +
+      " and ApplicationId eq " + row.ApplicationId +
+      " and Active eq 1"
 
     if (row.PlanFeatureId > 0)
       checkFilterString += " and PlanFeatureId ne " + row.PlanFeatureId;
@@ -195,7 +196,7 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -217,7 +218,7 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -242,7 +243,7 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
           row.Action = false;
           if (this.RowToUpdateCount == 0) {
             this.RowToUpdateCount = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.loadingFalse();
           }
         });
@@ -254,162 +255,164 @@ export class PlanFeatureComponent implements OnInit { PageLoading=true;
         record.Active = 1;
         record.Action = true;
       });
-      }
+    }
     else {
       this.PlanFeatureList.forEach(record => {
         record.Active = 0;
         record.Action = true;
       });
-    }  
-}
-GetPlans() {
-  this.loading = true;
-  let list: List = new List();
-  list.fields = [
-    "PlanId",
-    "Title",
-    "Description",
-    "Logic"
-  ];
-
-  list.PageName = "Plans";
-  list.filter = ["Active eq 1"];
-  this.dataservice.get(list)
-    .subscribe((data: any) => {
-      this.Plans = [...data.value];
-    })
-}
-GetTopFeature() {
-  var ApplicationId = this.searchForm.get("searchApplicationId").value;
-  this.GetFeatures(ApplicationId).subscribe((d: any) => {
-    this.Features = [...d.value];
-    this.Topfeatures = this.Features.filter(f => f.ParentId == 0);
-    this.loading = false; this.PageLoading=false;
-  });
-}
-GetFeatures(appId) {
-  this.loading = true;
-  let list: List = new List();
-  list.fields = [
-    "PageId",
-    "PageTitle",
-    "ParentId"
-  ];
-
-  list.PageName = "Pages";
-  list.filter = ["Active eq 1 and ApplicationId eq " + appId];
-  return this.dataservice.get(list)
-  // .subscribe((data: any) => {
-  //   this.Features = [...data.value];
-  // })
-}
-GetPlanFeature() {
-
-  debugger;
-  var _PlanId = this.searchForm.get("searchPlanId").value;
-
-  if (_PlanId == 0) {
-    this.contentservice.openSnackBar("Please select plan.", globalconstants.ActionText,globalconstants.RedBackground);
-    return;
+    }
   }
-  var _applicationId = this.searchForm.get("searchApplicationId").value;
-  if (_applicationId == 0) {
-    this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText,globalconstants.RedBackground);
-    return;
-  }
+  GetPlans() {
+    this.loading = true;
+    let list: List = new List();
+    list.fields = [
+      "PlanId",
+      "Title",
+      "Description",
+      "Logic"
+    ];
 
-  this.loading = true;
-
-  let list: List = new List();
-  list.fields = [
-    "PlanFeatureId",
-    "PlanId",
-    "PageId",
-    //"ParentId",
-    "ApplicationId",
-    "Active"
-  ];
-
-  list.PageName = this.PlanFeatureListName;
-  list.filter = ["ApplicationId eq " + _applicationId + " and PlanId eq " + _PlanId];
-  this.PlanFeatureList = [];
-  this.dataservice.get(list)
-    .subscribe((data: any) => {
-      var _ParentId = 0;
-      if (this.searchForm.get("searchTopfeatureId").value > 0)
-        _ParentId = this.searchForm.get("searchTopfeatureId").value;
-
-      this.SelectedFeatures = this.Features.filter(f => f.ParentId == _ParentId);
-      this.SelectedFeatures.forEach(f => {
-
-        var existing = data.value.filter(d => d.PageId == f.PageId);
-        if (existing.length > 0) {
-          existing[0].ParentId = _ParentId;
-          existing[0].FeatureName = f.PageTitle;
-          existing[0].Action = false;
-          this.PlanFeatureList.push(existing[0]);
-        }
-        else {
-          this.PlanFeatureList.push(
-            {
-              PlanFeatureId: 0,
-              PlanId: _PlanId,
-              PageId: f.PageId,
-              //ParentId: _ParentId,
-              FeatureName: f.PageTitle,
-              ApplicationId: this.searchForm.get("searchApplicationId").value,
-              Active: 0,
-              Action: false
-            });
-        }
+    list.PageName = "Plans";
+    list.filter = ["Active eq 1"];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.Plans = [...data.value];
       })
-      if (this.PlanFeatureList.length == 0) {
-        this.contentservice.openSnackBar("No record found.", globalconstants.ActionText,globalconstants.RedBackground);
-      }
-      this.PlanFeatureList.sort((a, b) => b.Active - a.Active);
-      this.dataSource = new MatTableDataSource<IPlanFeature>(this.PlanFeatureList);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      this.loadingFalse();
+  }
+  GetTopFeature() {
+    var ApplicationId = this.searchForm.get("searchApplicationId").value;
+    this.GetFeatures(ApplicationId).subscribe((d: any) => {
+      this.Features = [...d.value];
+      this.Topfeatures = this.Features.filter(f => f.ParentId == 0);
+      this.loading = false; this.PageLoading = false;
     });
+  }
+  GetFeatures(appId) {
+    this.loading = true;
+    let list: List = new List();
+    list.fields = [
+      "PageId",
+      "PageTitle",
+      "ParentId"
+    ];
 
-}
+    list.PageName = "Pages";
+    list.filter = ["Active eq 1 and ApplicationId eq " + appId];
+    return this.dataservice.get(list)
+    // .subscribe((data: any) => {
+    //   this.Features = [...data.value];
+    // })
+  }
+  GetPlanFeature() {
 
-GetMasterData() {
-  var globaladminId = this.contentservice.GetPermittedAppId("globaladmin");
-  var ids= globaladminId +","+this.SelectedApplicationId
-  this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, ids)
-    .subscribe((data: any) => {
-      this.allMasterData = [...data.value];
-      //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-      var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
+    debugger;
+    var _PlanId = this.searchForm.get("searchPlanId").value;
+
+    if (_PlanId == 0) {
+      this.contentservice.openSnackBar("Please select plan.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var _applicationId = this.searchForm.get("searchApplicationId").value;
+    if (_applicationId == 0) {
+      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
+    this.loading = true;
+
+    let list: List = new List();
+    list.fields = [
+      "PlanFeatureId",
+      "PlanId",
+      "PageId",
+      //"ParentId",
+      "ApplicationId",
+      "Active"
+    ];
+
+    list.PageName = this.PlanFeatureListName;
+    list.filter = ["ApplicationId eq " + _applicationId + " and PlanId eq " + _PlanId];
+    this.PlanFeatureList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        var _ParentId = 0;
+        if (this.searchForm.get("searchTopfeatureId").value > 0)
+          _ParentId = this.searchForm.get("searchTopfeatureId").value;
+
+        this.SelectedFeatures = this.Features.filter(f => f.ParentId == _ParentId);
+        this.SelectedFeatures.forEach(f => {
+
+          var existing = data.value.filter(d => d.PageId == f.PageId);
+          if (existing.length > 0) {
+            existing.forEach(x => {
+              x.ParentId = _ParentId;
+              x.FeatureName = f.PageTitle;
+              x.Action = false;
+              this.PlanFeatureList.push(x);
+            })
+          }
+          else {
+            this.PlanFeatureList.push(
+              {
+                PlanFeatureId: 0,
+                PlanId: _PlanId,
+                PageId: f.PageId,
+                //ParentId: _ParentId,
+                FeatureName: f.PageTitle,
+                ApplicationId: this.searchForm.get("searchApplicationId").value,
+                Active: 0,
+                Action: false
+              });
+          }
+        })
+        if (this.PlanFeatureList.length == 0) {
+          this.contentservice.openSnackBar("No record found.", globalconstants.ActionText, globalconstants.RedBackground);
+        }
+        this.PlanFeatureList.sort((a, b) => b.Active - a.Active);
+        this.dataSource = new MatTableDataSource<IPlanFeature>(this.PlanFeatureList);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.loadingFalse();
+      });
+
+  }
+
+  GetMasterData() {
+    var globaladminId = this.contentservice.GetPermittedAppId("globaladmin");
+    var ids = globaladminId + "," + this.SelectedApplicationId
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, ids)
+      .subscribe((data: any) => {
+        this.allMasterData = [...data.value];
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+        var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
         var FilterOrgSubOrg = "OrgId eq 0 and SubOrgId eq 0";
-        this.contentservice.GetDropDownDataFromDB(_ParentId, FilterOrgSubOrg, 0,1)
+        this.contentservice.GetDropDownDataFromDB(_ParentId, FilterOrgSubOrg, 0, 1)
           .subscribe((data: any) => {
             this.Applications = [...data.value];
           });
-      this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-      this.loading = false; this.PageLoading=false;
-    });
-}
-getDropDownData(dropdowntype) {
-  return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
+        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+        this.loading = false; this.PageLoading = false;
+      });
+  }
+  getDropDownData(dropdowntype) {
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
 
-  // let Id = 0;
-  // let Ids = this.allMasterData.filter((item, indx) => {
-  //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-  // })
-  // if (Ids.length > 0) {
-  //   Id = Ids[0].MasterDataId;
-  //   return this.allMasterData.filter((item, index) => {
-  //     return item.ParentId == Id
-  //   })
-  // }
-  // else
-  //   return [];
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
-}
+  }
 }
 export interface IPlanFeature {
   PlanFeatureId: number;
