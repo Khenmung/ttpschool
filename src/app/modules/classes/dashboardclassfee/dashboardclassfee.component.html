@@ -58,11 +58,29 @@
                 {{element.FeeName}}
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="Rate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Rate </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input [disabled]="element.FeeName=='Discount'" matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Rate"
+                        [value]="element.Rate" autocomplete="Off">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Quantity">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Quantity </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input [disabled]="element.FeeName=='Discount'" matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Quantity"
+                        [value]="element.Quantity" autocomplete="Off">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="Amount">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input [disabled]="element.FeeName=='Discount'" matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Amount"
+                    <input [disabled]="true" matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Amount"
                         [value]="element.Amount" autocomplete="Off">
                 </mat-form-field>
             </mat-cell>

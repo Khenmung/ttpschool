@@ -65,9 +65,13 @@ svg {
     display        : flex;
     justify-content: flex-end;
 }
-@media print {
-    .pagebreak {
-        clear: both;
-        page-break-after: always;
-    }
-}
+// @media print {
+//     .pagebreak {
+//         clear: both;
+//         page-break-after: always;
+//     }
+//     .HideInPrint{
+//         //position: absolute;
+//         display: none !important;
+//     }
+// }

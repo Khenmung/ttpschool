@@ -88,6 +88,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     "LedgerAccount": [],
     "AccountingVoucher": []
   }
+  ReceiptHeading=[];
   SelectedApplicationId = 0;
   OriginalAmountForCalc = 0;
   VariableObjList: any[] = [];
@@ -268,6 +269,15 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.studentInfoTodisplay.StudentId = this.tokenStorage.getStudentId()
+        var _currentStudent:any;
+        var _studentObj = this.tokenStorage.getStudents();
+        this.CustomerHeading =[];
+        if(_studentObj.length>0)
+        {
+          _currentStudent = _studentObj.filter((s:any)=>s.StudentId ==this.studentInfoTodisplay.StudentId)
+          this.CustomerHeading.push({Text:_currentStudent[0].FirstName,'Description':"'font-weight':'bold'"});
+          this.CustomerHeading.push({Text:_currentStudent[0].PresentAddress,'Description':''});
+        }
         this.studentInfoTodisplay.StudentClassId = this.tokenStorage.getStudentClassId();
         this.shareddata.CurrentStudentName.subscribe(fy => (this.StudentName = fy));
 
@@ -337,6 +347,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
   //       this.GeneralLedgers = [...data.value];
   //     })
   // }
+  logourl='';
+  CustomerHeading=[];
   GetMasterData() {
     this.allMasterData = this.tokenStorage.getMasterData();
     //this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
@@ -360,7 +372,17 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
     this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
     this.PaymentTypeId = this.PaymentTypes.filter(p => p.MasterDataName.toLowerCase() == "cash")[0].MasterDataId;
-
+    this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.RECEIPTHEADING);
+    
+    var imgobj= this.ReceiptHeading.filter(f=>f.MasterDataName=='img');
+    if(imgobj.length>0)
+    {
+      this.logourl = imgobj[0].Description;
+    }
+    this.ReceiptHeading = this.ReceiptHeading.filter(m=>m.MasterDataName.toLowerCase()!='img');
+    this.ReceiptHeading.forEach(f => {
+      f.Description = f.Description ? JSON.parse("{" + f.Description + "}") : ''
+    })
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);

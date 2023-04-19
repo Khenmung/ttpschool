@@ -45,7 +45,8 @@ button {
     }
 
     .description {
-        display: none;
+        position: absolute;
+        display: none !important;
     }
 
     .loginbox {
@@ -54,7 +55,7 @@ button {
     }
     .overallcontainer {
         display        : flex;
-        justify-content: space-around;
+        justify-content: space-evenly;
         width          : 100%;
         flex-wrap      : wrap;
         margin-top     : 0px
@@ -79,13 +80,13 @@ button {
     }
 
     .loginbox {
-        margin-top: 150px;
+        margin: 60px;
     }
     .overallcontainer {
         display        : flex;
-        justify-content: space-around;
+        justify-content: space-evenly;
         width          : 100%;
         flex-wrap      : wrap;
-        margin-top     : 100px
+        margin-top     : 60px
     }
 }

@@ -309,7 +309,8 @@ export class StudentattendancereportComponent implements OnInit {
           if (this.displayedColumns.indexOf("Ab") == -1)
             this.displayedColumns.push("Ab");
           stud["Pre"] = Present;
-          stud["Ab"] = absent - (weekdaysCount + Holidays);
+          var _ab =(absent - (weekdaysCount + Holidays));
+          stud["Ab"] = _ab<0?0:_ab;
         })
         //console.log("employee",this.Employees)
         this.StudentAttendanceList = this.StudentAttendanceList.sort((a, b) => a.RollNo - b.RollNo)

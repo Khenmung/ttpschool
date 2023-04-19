@@ -149,7 +149,7 @@ export class studentprimaryinfoComponent implements OnInit {
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private tokenStorage: TokenStorageService,
-    private dialog:MatDialog
+    private dialog: MatDialog
 
   ) {
     //this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
@@ -290,7 +290,7 @@ export class studentprimaryinfoComponent implements OnInit {
   }
   deActivate(event) {
     debugger;
-    if (this.StudentActivatePermission !="deny" && this.StudentActivatePermission !="read") {
+    if (this.StudentActivatePermission != "deny" && this.StudentActivatePermission != "read") {
       if (!event.checked)
         this.StudentLeaving = true;
       else {
@@ -298,7 +298,7 @@ export class studentprimaryinfoComponent implements OnInit {
         this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
       }
       this.OnBlur();
-    }   
+    }
   }
   feepayment() {
     this.generateDetail();
@@ -344,7 +344,7 @@ export class studentprimaryinfoComponent implements OnInit {
         this.Students = this.tokenStorage.getStudents();
         var indx = this.Students.findIndex(s => s.StudentId == StudentId);
         if (indx > -1)
-          this.Students.splice(indx,1);
+          this.Students.splice(indx, 1);
         this.tokenStorage.saveStudents(this.Students);
         this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
@@ -643,7 +643,6 @@ export class studentprimaryinfoComponent implements OnInit {
 
   update() {
     ////console.log('student', this.studentForm.value)
-
     this.dataservice.postPatch('Students', this.studentData[0], this.StudentId, 'patch')
       .subscribe((result: any) => {
         this.loading = false; this.PageLoading = false;

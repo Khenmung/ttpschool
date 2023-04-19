@@ -703,7 +703,9 @@ export class HomeDashboardComponent implements OnInit {
       "EmailAddress",
       "UserId",
       "ReasonForLeavingId",
-      "AdmissionStatusId"
+      "AdmissionStatusId",
+      "PresentAddress",
+      "DOB"
     ];
     list.PageName = "Students";
     list.lookupFields = ["StudentClasses($filter=" + this.filterOrgSubOrgBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
@@ -722,11 +724,13 @@ export class HomeDashboardComponent implements OnInit {
 
         var _classNameobj = [];
         var _className = '';
+        var _house = '';
         var _studentClassId = 0;
         data.value.forEach(d => {
           _classNameobj = [];
           _className = '';
           _studentClassId = 0;
+          _house ='';
           //var studcls = this.StudentClasses.filter(f => f.StudentId == d.StudentId);
           if (d.StudentClasses.length > 0) {
             _classNameobj = this.Classes.filter(c => c.ClassId == d.StudentClasses[0].ClassId);
@@ -744,7 +748,7 @@ export class HomeDashboardComponent implements OnInit {
             d.StudentClasses = [];
 
           var _lastname = d.LastName == null ? '' : " " + d.LastName;
-
+          //this.House
           var _name = d.FirstName + _lastname;
           var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
           d.StudentClassId = _studentClassId;

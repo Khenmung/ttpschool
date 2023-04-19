@@ -56,6 +56,8 @@ export class DashboardclassfeeComponent implements OnInit {
     ClassFeeId: 0,
     FeeDefinitionId: 0,
     ClassId: 0,
+    Rate:0,
+    Quantity:1,
     Amount: 0,
     BatchId: 0,
     Month: 0,
@@ -153,6 +155,8 @@ export class DashboardclassfeeComponent implements OnInit {
   displayedColumns = [
     'ClassFeeId',
     'FeeName',
+    'Rate',
+    'Quantity',
     'Amount',
     'Month',
     'Active',
@@ -247,7 +251,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
                 })
               })
-              console.log("studentfeedetailxxxx", studentfeedetail)
+              //console.log("studentfeedetailxxxx", studentfeedetail)
               this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"],this.SubOrgId)
                 .subscribe((data: any) => {
                   this.loading = false;
@@ -376,6 +380,8 @@ export class DashboardclassfeeComponent implements OnInit {
         else {
           this.classFeeData.Active = row.Active;
           this.classFeeData.Amount = row.Amount;
+          this.classFeeData.Rate = row.Rate;
+          this.classFeeData.Quantity = row.Quantity;
           this.classFeeData.BatchId = row.BatchId;
           this.classFeeData.ClassFeeId = row.ClassFeeId;
           this.classFeeData.ClassId = row.ClassId;
@@ -505,6 +511,8 @@ export class DashboardclassfeeComponent implements OnInit {
       "FeeDefinitionId",
       "ClassId",
       "Amount",
+      "Rate",
+      "Quantity",
       "Month",
       "BatchId",
       "Active",
@@ -619,7 +627,10 @@ export class DashboardclassfeeComponent implements OnInit {
       row.Recurring = 0;
   }
   updateAmount(row, value) {
-
+    // if(row.Rate>0 && row.Quantity>0)
+    // {
+      row.Amount = row.Rate * row.Quantity;
+    //}
     row.Action = true;
     // row.Amount = value;
   }

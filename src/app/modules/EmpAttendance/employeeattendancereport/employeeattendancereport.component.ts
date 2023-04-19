@@ -271,7 +271,9 @@ export class EmployeeAttendanceReportComponent implements OnInit {
           if (this.displayedColumns.indexOf("Ab") == -1)
             this.displayedColumns.push("Ab");
           emp["Pre"] = Present;//toDate.getDate() - absent;
-          emp["Ab"] = absent - (weekdaysCount + Holidays);
+          var _ab =absent - (weekdaysCount + Holidays);
+         
+          emp["Ab"] = _ab<0?0:_ab;
         })
         //console.log("employee",this.Employees)
         //this.EmployeeAttendanceList = this.EmployeeAttendanceList.sort((a, b) => a.RollNo - b.RollNo)

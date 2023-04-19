@@ -10,7 +10,7 @@ export class globalconstants {
     public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:5000";
     public static fileUrl: string = '';
     public static CompanyParentId = 31850;//31850;// 27762; //536870912; 
-    public static PremiumPlusId = 5;//5;//2 
+    public static PremiumPlusId = 4;//4;//2 
     public static globalAdminBillingSubOrgId = 30880;//5;//2 
     
     //public static BloodGroupParentId = 27762; //536870912;

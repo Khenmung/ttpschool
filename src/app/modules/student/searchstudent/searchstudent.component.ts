@@ -505,13 +505,11 @@ export class searchstudentComponent implements OnInit {
 
     var _studentId = 0;
     var objstudent = this.studentSearchForm.get("searchStudentName").value;
-    if (objstudent != "")
+    if (objstudent.StudentId)
       _studentId = objstudent.StudentId;
 
     var fatherObj = this.studentSearchForm.get("FatherName").value;
     var _fathername = fatherObj.FatherName;
-
-
 
     var motherObj = this.studentSearchForm.get("MotherName").value;
     var _mothername = motherObj.MotherName;
@@ -563,21 +561,23 @@ export class searchstudentComponent implements OnInit {
       if (_ClassId == 0) {
         this.loading = false;
         this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
       }
-      else
+      else {
         classfilter = ' and ClassId eq ' + _ClassId;
-      if (_sectionId > 0)
-        classfilter += ' and SectionId eq ' + _sectionId;
-      if (_remarkId > 0) {
-        var obj = [];
-        this.Groups.forEach(f => {
-          var check = f.group.filter(h => h.MasterDataId == _remarkId);
-          if (check.length > 0)
-            obj.push(check[0]);
-        });
-        this.StudentSearch.push({ Text: obj[0].type, Value: _remarkId });
-        //checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
-        filteredStudents = filteredStudents.filter(fromallstud => fromallstud[obj[0].type] == _remarkId)
+        if (_sectionId > 0)
+          classfilter += ' and SectionId eq ' + _sectionId;
+        if (_remarkId > 0) {
+          var obj = [];
+          this.Groups.forEach(f => {
+            var check = f.group.filter(h => h.MasterDataId == _remarkId);
+            if (check.length > 0)
+              obj.push(check[0]);
+          });
+          this.StudentSearch.push({ Text: obj[0].type, Value: _remarkId });
+          //checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
+          filteredStudents = filteredStudents.filter(fromallstud => fromallstud[obj[0].type] == _remarkId)
+        }
       }
     }
     if (_searchAdmissionNo > 0) {
