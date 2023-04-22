@@ -9,9 +9,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NgxPrintModule } from 'ngx-print';
+import { SubjectcomponentComponent } from './subjectcomponent/subjectcomponent.component';
 
 @NgModule({
-  declarations: [StudentSubjectComponents],
+  declarations: [StudentSubjectComponents, SubjectcomponentComponent],
   imports: [
     CommonModule,
     SharedhomepageModule,

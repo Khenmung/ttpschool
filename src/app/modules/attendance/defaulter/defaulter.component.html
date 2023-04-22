@@ -26,7 +26,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Absence not approved days or more</mat-label>
-        <input matInput formControlName="searchAbsentCount" autocomplete="Off" type="number">           
+        <input matInput [value]="DefaultDays" formControlName="searchAbsentCount" autocomplete="Off" type="number">           
     </mat-form-field>
     <!-- <mat-form-field appearance="outline" [style.width.px]="150">
         <mat-label>Attendance Date</mat-label>
@@ -41,7 +41,7 @@
         </mat-icon>
     </button>
 </form>
-<mat-table #table [dataSource]="dataSource" matSort>
+<mat-table #table [dataSource]="dataSource" matSort style="max-width: 700px;">
     <ng-container matColumnDef="ClassName">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Class
         </mat-header-cell>

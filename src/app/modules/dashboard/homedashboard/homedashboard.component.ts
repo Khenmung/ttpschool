@@ -615,7 +615,7 @@ export class HomeDashboardComponent implements OnInit {
     list.PageName = "StudentClasses";
     list.lookupFields = ["Student($select=StudentId," +
       "FirstName,LastName,FatherName,MotherName,PersonalNo,FatherContactNo,MotherContactNo,PID,Active,RemarkId," +
-      "GenderId,HouseId,EmailAddress,UserId,ReasonForLeavingId,AdmissionStatusId)"];
+      "PresentAddress,DOB,GenderId,HouseId,EmailAddress,UserId,ReasonForLeavingId,AdmissionStatusId)"];
 
 
     list.filter = [this.filterOrgSubOrgBatchId];

@@ -229,6 +229,7 @@ export class globalconstants {
                     'CLASSSTUDENT': 'class student',
                     'SUBJECTTYPE': 'subject type',
                     'TEACHERSUBJECT': 'teacher subject',
+                    'SUBJECTCOMPONENT': 'subject component'
 
                 },
                 'TIMETABLE': {

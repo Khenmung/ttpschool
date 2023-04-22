@@ -88,7 +88,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     "LedgerAccount": [],
     "AccountingVoucher": []
   }
-  ReceiptHeading=[];
+  ReceiptHeading = [];
   SelectedApplicationId = 0;
   OriginalAmountForCalc = 0;
   VariableObjList: any[] = [];
@@ -114,6 +114,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   allMasterData = [];
   PaymentName = '';
   MonthlyDueDetail = [];
+  CurrentTotalAmount = 0;
   StudentReceiptData = {
     StudentFeeReceiptId: 0,
     StudentClassId: 0,
@@ -269,14 +270,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.studentInfoTodisplay.StudentId = this.tokenStorage.getStudentId()
-        var _currentStudent:any;
+        var _currentStudent: any;
         var _studentObj = this.tokenStorage.getStudents();
-        this.CustomerHeading =[];
-        if(_studentObj.length>0)
-        {
-          _currentStudent = _studentObj.filter((s:any)=>s.StudentId ==this.studentInfoTodisplay.StudentId)
-          this.CustomerHeading.push({Text:_currentStudent[0].FirstName,'Description':"'font-weight':'bold'"});
-          this.CustomerHeading.push({Text:_currentStudent[0].PresentAddress,'Description':''});
+        this.CustomerHeading = [];
+        if (_studentObj.length > 0) {
+          _currentStudent = _studentObj.filter((s: any) => s.StudentId == this.studentInfoTodisplay.StudentId)
+          this.CustomerHeading.push({ Text: _currentStudent[0].FirstName, 'Description': '' });
+          this.CustomerHeading.push({ Text: _currentStudent[0].PresentAddress, 'Description': '' });
         }
         this.studentInfoTodisplay.StudentClassId = this.tokenStorage.getStudentClassId();
         this.shareddata.CurrentStudentName.subscribe(fy => (this.StudentName = fy));
@@ -347,8 +347,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
   //       this.GeneralLedgers = [...data.value];
   //     })
   // }
-  logourl='';
-  CustomerHeading=[];
+  logourl = '';
+  CustomerHeading = [];
   GetMasterData() {
     this.allMasterData = this.tokenStorage.getMasterData();
     //this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
@@ -373,13 +373,12 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
     this.PaymentTypeId = this.PaymentTypes.filter(p => p.MasterDataName.toLowerCase() == "cash")[0].MasterDataId;
     this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.RECEIPTHEADING);
-    
-    var imgobj= this.ReceiptHeading.filter(f=>f.MasterDataName=='img');
-    if(imgobj.length>0)
-    {
+
+    var imgobj = this.ReceiptHeading.filter(f => f.MasterDataName == 'img');
+    if (imgobj.length > 0) {
       this.logourl = imgobj[0].Description;
     }
-    this.ReceiptHeading = this.ReceiptHeading.filter(m=>m.MasterDataName.toLowerCase()!='img');
+    this.ReceiptHeading = this.ReceiptHeading.filter(m => m.MasterDataName.toLowerCase() != 'img');
     this.ReceiptHeading.forEach(f => {
       f.Description = f.Description ? JSON.parse("{" + f.Description + "}") : ''
     })
@@ -741,7 +740,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
         var AmountAfterFormulaApplied = 0;
         SelectedMonthFees.forEach((f, indx) => {
           this.VariableObjList.push(f);
-          var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
+          var withoutTaxOrDiscount = this.MonthlyDueDetail.filter(x => x.FeeName != 'Discount' && x.FeeCategory != 'Tax')
+          this.CurrentTotalAmount = withoutTaxOrDiscount.reduce((acc, current) => acc + current.Amount, 0);
+          var myFormula = this.studentInfoTodisplay.Formula.replaceAll("[CurrentTotalAmount]", this.CurrentTotalAmount + "");
+          var formula = this.ApplyVariables(myFormula);
           this.VariableObjList.splice(this.VariableObjList.indexOf(f), 1);
           AmountAfterFormulaApplied = evaluate(formula).toFixed(2);
           // if (AmountAfterFormulaApplied > f.Amount)

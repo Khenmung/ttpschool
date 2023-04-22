@@ -104,6 +104,7 @@ export class StudentAttendanceComponent implements OnInit {
     // })
     debugger;
     this.loading = true;
+    this.PageLoading=true;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.StudentClassId = 0;
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
@@ -515,6 +516,7 @@ export class StudentAttendanceComponent implements OnInit {
           }
         })
         this.loading=false;
+        this.PageLoading=false;
       })
   }
   GetSubjectTypes() {
@@ -527,7 +529,7 @@ export class StudentAttendanceComponent implements OnInit {
     list.PageName = "SubjectTypes";
     list.filter = [orgIdSearchstr];
     //list.orderBy = "ParentId";
-
+    
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SubjectTypes = [...data.value];

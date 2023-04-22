@@ -165,6 +165,7 @@ export class FeereceiptComponent implements OnInit {
     this.studentInfoTodisplay.StudentFeeReceiptId = row.StudentFeeReceiptId;
     this.studentInfoTodisplay.ReceiptNo = row.ReceiptNo;
     this.studentInfoTodisplay.OffLineReceiptNo = row.OffLineReceiptNo;
+    this.studentInfoTodisplay.ReceiptDate = row.ReceiptDate;
     this.PaymentType = row.PaymentType;
     this.TotalAmount = row.TotalAmount;
     this.Balance = row.Balance == null ? 0 : row.Balance;

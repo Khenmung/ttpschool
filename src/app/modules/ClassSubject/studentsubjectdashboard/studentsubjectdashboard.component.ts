@@ -592,7 +592,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
     if (row.StudentClassSubjectId > 0)
       checkFilterString += " and StudentClassSubjectId ne " + row.StudentClassSubjectId;
-    checkFilterString += " and " + this.FilterOrgSubOrg;
+    
     let list: List = new List();
     list.fields = ["ClassSubjectId"];
     list.PageName = "StudentClassSubjects";

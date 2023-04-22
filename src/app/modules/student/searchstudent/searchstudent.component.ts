@@ -835,12 +835,12 @@ export class searchstudentComponent implements OnInit {
 
         if (_SectionObj.length > 0)
           _section = _SectionObj[0].MasterDataName;
-        _RollNo = student.StudentClasses[0].RollNo == null ? '' : student.StudentClasses[0].RollNo;
+        _RollNo = student.StudentClasses[0].RollNo?student.StudentClasses[0].RollNo:'';
         _classId = student.StudentClasses[0].ClassId;
         _sectionId = student.StudentClasses[0].SectionId;
       }
       student.PersonalNo = student.PersonalNo == null ? '' : student.PersonalNo;
-      var _lastname = student.LastName == null ? '' : " " + student.LastName;
+      var _lastname = student.LastName? " " + student.LastName :'' ;
       _name = student.FirstName + _lastname;
       var _fullDescription = student.PID + "-" + _name + "-" + _className + "-" + _section + "-" + _RollNo;
       student.StudentClassId = _studentClassId;

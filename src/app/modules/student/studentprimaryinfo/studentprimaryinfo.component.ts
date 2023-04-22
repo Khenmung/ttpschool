@@ -535,11 +535,11 @@ export class studentprimaryinfoComponent implements OnInit {
       _genderId = 0;
     this.studentData.push({
       StudentId: this.StudentId,
-      FirstName: this.studentForm.get("FirstName").value,
-      LastName: this.studentForm.get("LastName").value,
-      FatherName: this.studentForm.get("FatherName").value,
+      FirstName: this.studentForm.get("FirstName").value?this.studentForm.get("FirstName").value.trim():'',
+      LastName: this.studentForm.get("LastName").value?this.studentForm.get("LastName").value.trim():'',
+      FatherName: this.studentForm.get("FatherName").value?this.studentForm.get("FatherName").value.trim():'',
       FatherOccupation: this.studentForm.get("FatherOccupation").value,
-      MotherName: this.studentForm.get("MotherName").value,
+      MotherName: this.studentForm.get("MotherName").value?this.studentForm.get("MotherName").value.trim():'',
       MotherOccupation: this.studentForm.get("MotherOccupation").value,
       GenderId: _genderId,
       PermanentAddress: this.studentForm.get("PermanentAddress").value,

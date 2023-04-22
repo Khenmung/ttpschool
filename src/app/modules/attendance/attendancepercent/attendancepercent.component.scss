@@ -14,7 +14,7 @@ mat-cell:first-of-type{
 .mat-column-StudentRollNo{
     flex:1 0 150px;
 }
-.mat-column-PresentCount,.mat-column-AbsentCount{
+.mat-column-Percent, .mat-column-PresentCount,.mat-column-AbsentCount{
     justify-content: center;
     flex:1 1 100px;
 }

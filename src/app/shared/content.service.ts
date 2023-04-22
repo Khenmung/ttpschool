@@ -66,7 +66,7 @@ export class ContentService implements OnInit {
   GetExams(pOrgSubOrgBatchId, pReleaseResult) {
 
     var _releaseResult = '';
-    if (pReleaseResult == 0 || pReleaseResult == 1) {
+    if (pReleaseResult === 0 || pReleaseResult === 1) {
       _releaseResult = " and ReleaseResult eq " + pReleaseResult;
     }
     var orgIdSearchstr = pOrgSubOrgBatchId + _releaseResult + " and Active eq 1";

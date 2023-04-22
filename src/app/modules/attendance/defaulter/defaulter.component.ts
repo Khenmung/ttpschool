@@ -66,7 +66,7 @@ export class DefaulterComponent implements OnInit {
     BatchId: 0
   };
   displayedColumns = [
-    'ClassName',
+    //'ClassName',
     'StudentRollNo',
     'PersonalNo',
     'AbsentCount',
@@ -76,6 +76,7 @@ export class DefaulterComponent implements OnInit {
   ];
   SelectedApplicationId = 0;
   Students = [];
+  DefaultDays:number=1;
   constructor(private servicework: SwUpdate,
 
     private fb: UntypedFormBuilder,
@@ -181,8 +182,8 @@ export class DefaulterComponent implements OnInit {
     let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1"
     //' and StudentClassId eq ' + this.StudentClassId;
     var _AbsentDays = this.searchForm.get("searchAbsentCount").value;
-    if (_AbsentDays < 2) {
-      this.contentservice.openSnackBar("Absent days criteria should be greater than or equal to 2.", globalconstants.ActionText, globalconstants.RedBackground);
+    if (_AbsentDays < 1) {
+      this.contentservice.openSnackBar("Absent days criteria should be greater than zero.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var _classId = this.searchForm.get("searchClassId").value;

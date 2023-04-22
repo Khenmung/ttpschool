@@ -16,18 +16,19 @@ mat-header-cell{
     border-right: 1px solid lightgray;
     justify-content: center;
     align-self: stretch;
-    background: var(--background-color)
-    
+    background: var(--background-color);
+    min-width:40px;
 }
 
 mat-cell{
     border-right: 1px solid lightgray;
     justify-content: center;   
     align-self: stretch;
+    min-width:40px;
 }
 .mat-column-Student{
     justify-content: flex-start;
-    flex:1 1 150px;
+    flex:1 0 150px;
 }
 .mat-column-Action{
     padding: 10px;

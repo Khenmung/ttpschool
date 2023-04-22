@@ -10,7 +10,9 @@ mat-cell:first-of-type{
 .normalwidth{
     display: flex;flex-direction: column;justify-content:space-between;width: 100%;
 }
-
+.element-row{
+    min-height: 29px;   
+}
 .mat-column-RatingId //, .mat-column-CategoryId,.mat-column-SubCategoryId
 {
     flex:0 0 150px;

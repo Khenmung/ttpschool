@@ -37,7 +37,7 @@ export class PrintprogressreportComponent implements OnInit {
   loading = false;
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
   MarkComponents = [];
@@ -73,7 +73,7 @@ export class PrintprogressreportComponent implements OnInit {
     ClassSubjectMarkComponentId: 0,
     Marks: 0,
     ExamStatus: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -114,17 +114,18 @@ export class PrintprogressreportComponent implements OnInit {
     });
     this.PageLoad();
   }
-  filterOrgSubOrg='';
+  filterOrgSubOrg = '';
   StudentName = [];
   FeePaymentPermission = '';
   ExamClassGroups = [];
+  AllStudents = [];
   PageLoad() {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
     if (this.LoginUserDetail == null)
@@ -144,6 +145,7 @@ export class PrintprogressreportComponent implements OnInit {
 
         //console.log("StudentName",this.StudentName);
         //this.LoginUserDetail = this.tokenStorage.getUserDetail();
+        this.AllStudents = this.tokenStorage.getStudents();
         this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
         var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
         if (perObj.length > 0) {
@@ -151,7 +153,7 @@ export class PrintprogressreportComponent implements OnInit {
         }
 
         this.StudentClassId = this.tokenStorage.getStudentClassId();
-        this.filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.contentservice.GetClasses(this.filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
@@ -208,6 +210,7 @@ export class PrintprogressreportComponent implements OnInit {
     );
     popupWin.document.close();
   }
+  logourl = '';
   CommonHeader = [];
   Organization = [];
   GetOrganization() {
@@ -280,13 +283,24 @@ export class PrintprogressreportComponent implements OnInit {
         })
         //console.log("this.Organization",this.Organization);
         //console.log("this.CommonHeader.",this.CommonHeader);
-
+        var imgobj = this.CommonHeader.filter(f => f.MasterDataName == 'img');
+        if (imgobj.length > 0) {
+          this.logourl = imgobj[0].Description;
+        }
+        this.CommonHeader = this.CommonHeader.filter(f => f.MasterDataName != 'img');
+        //console.log("this.commonheadersetting.",commonheadersetting);
         this.CommonHeader.forEach(header => {
           this.Organization[0].forEach(orgdet => {
             header.Description = header.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
             // header.Description = header.Description.replaceAll("[" + orgdet.OrganizationAddress + "]", orgdet.val);
           })
         })
+        // this.CommonHeader.forEach(header => {
+        //   this.Organization[0].forEach(orgdet => {
+        //     header.Description = header.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
+        //     // header.Description = header.Description.replaceAll("[" + orgdet.OrganizationAddress + "]", orgdet.val);
+        //   })
+        // })
 
         this.loading = false; this.PageLoading = false;
       });
@@ -297,7 +311,7 @@ export class PrintprogressreportComponent implements OnInit {
     this.nav.navigate(['/edu']);
   }
   GetClassGroupMapping() {
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         //debugger;
@@ -356,7 +370,7 @@ export class PrintprogressreportComponent implements OnInit {
     debugger;
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and Active eq 1';
+    let filterStr = this.filterOrgSubOrg + ' and Active eq 1';
 
     //filterStr += ' and StudentClassId eq ' + this.StudentClassId;
     filterStr += " and ClassId eq " + _classId + " and SectionId eq " + _sectionId;
@@ -420,6 +434,7 @@ export class PrintprogressreportComponent implements OnInit {
   GradedDataSourceArray = [];
   NonGradedDataSourceArray = [];
   ExamResultArray = [];
+  CurrentStudent = [];
   GetGradedNonGradedSubjectMark() {
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
@@ -443,12 +458,22 @@ export class PrintprogressreportComponent implements OnInit {
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.GradedMarksResults = [];
-        this.NonGradedMarkResults = [];
-        var studentsForSelectedClassSection = alasql("select distinct StudentClassId from ? ", [data.value]);
-        studentsForSelectedClassSection.forEach(stud => {
 
+        var studentsForSelectedClassSection = alasql("select distinct StudentClassId from ? ", [data.value]);
+        this.CurrentStudent = [];
+        studentsForSelectedClassSection.forEach(stud => {
+          this.GradedMarksResults = [];
+          this.NonGradedMarkResults = [];
+          var _studcurrent = this.AllStudents.filter(s => s.StudentClasses[0].StudentClassId == stud.StudentClassId)
+          if (_studcurrent.length > 0) {
+
+            var objhouse = this.Houses.filter(h => h.MasterDataId == _studcurrent[0].HouseId);
+            if (objhouse.length > 0)
+              _studcurrent[0].House = objhouse[0].MasterDataName;
+            this.CurrentStudent.push(_studcurrent[0]);
+          }//console.log("this.currentstudent", this.CurrentStudent);
           var detailForEachStudent = data.value.filter(db => db.StudentClassId == stud.StudentClassId);
+
           detailForEachStudent.forEach(eachexam => {
             var examName = '';
             var objSubject = this.StudentSubjects.filter(subject => subject.StudentClassSubjectId == eachexam.StudentClassSubjectId);
@@ -527,7 +552,7 @@ export class PrintprogressreportComponent implements OnInit {
             this.GradedMarksResults.push(OverAllGradeRow);
           }
 
-          console.log("this.NonGradedMarkResults",this.NonGradedMarkResults);
+          console.log("this.NonGradedMarkResults", this.NonGradedMarkResults);
 
           this.GradedDataSourceArray.push(JSON.parse(JSON.stringify(this.GradedMarksResults)));
           this.NonGradedDataSourceArray.push(this.NonGradedMarkResults);
@@ -544,7 +569,7 @@ export class PrintprogressreportComponent implements OnInit {
     return new MatTableDataSource<any>(data);
   }
   GetStudentGradeDefn() {
-    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetStudentGrade(filterOrgSubOrg)
       .subscribe((data: any) => {
         this.StudentGrades = data.value.map(m => {
@@ -562,6 +587,7 @@ export class PrintprogressreportComponent implements OnInit {
   GetProgressReport() {
     this.GetStudentSubject();
   }
+  Houses = [];
   GetMasterData() {
     debugger;
     this.allMasterData = this.tokenStorage.getMasterData();
@@ -570,17 +596,17 @@ export class PrintprogressreportComponent implements OnInit {
     this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
     this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-    //this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+    this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
     this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
     this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
     this.Batches = this.tokenStorage.getBatches()
     this.CommonHeader = this.getDropDownData(globalconstants.MasterDefinitions.common.COMMONPRINTHEADING);
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMappings = [...data.value];
       })
-      
+
     this.contentservice.GetClassGroups(this.filterOrgSubOrg)
       .subscribe((data: any) => {
         this.ClassGroups = [...data.value];
@@ -731,7 +757,7 @@ export class PrintprogressreportComponent implements OnInit {
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
 
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;

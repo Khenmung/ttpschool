@@ -70,7 +70,7 @@ export class AttendancepercentComponent implements OnInit {
     SubOrgId: 0
   };
   displayedColumns = [
-    'ClassName',
+    // 'ClassName',
     'StudentRollNo',
     'Percent',
     'PresentCount',

@@ -106,7 +106,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-
+    
     this.GetMasterData();
     var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)

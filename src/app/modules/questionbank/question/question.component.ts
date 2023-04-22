@@ -42,7 +42,7 @@ export class QuestionComponent implements OnInit {
   QuestionBankOptionList = [];
   QuestionBankList: IQuestionBank[] = [];
   //EvaluationMasterId = 0;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   QuestionnaireTypes = [];
   SubCategories = [];
   Classes = [];
@@ -61,7 +61,7 @@ export class QuestionComponent implements OnInit {
     DifficultyLevelId: 0,
     Question: '',
     Diagram: '',
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: false
   };
   EvaluationMasterForClassGroup = [];
@@ -147,7 +147,7 @@ export class QuestionComponent implements OnInit {
         //this.GetEvaluationNames();
         this.GetMasterData();
         if (this.Classes.length == 0) {
-          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
           this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
             this.loading = false; this.PageLoading = false;
@@ -277,8 +277,8 @@ export class QuestionComponent implements OnInit {
     });
   }
   GetExams() {
-   
-    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId,2)
+
+    this.contentservice.GetExams(this.FilterOrgSubOrgBatchId, 2)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(e => {
@@ -377,7 +377,7 @@ export class QuestionComponent implements OnInit {
       checkFilterString += " and DifficultyLevelId eq " + row.DifficultyLevelId
 
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.QuestionBankForUpdate = [];;
     this.QuestionBankData.QuestionBankId = row.QuestionBankId;
     this.QuestionBankData.SyllabusId = row.SyllabusId;
@@ -385,10 +385,11 @@ export class QuestionComponent implements OnInit {
     this.QuestionBankData.DifficultyLevelId = row.DifficultyLevelId;
     this.QuestionBankData.Question = row.Question;
     this.QuestionBankData.OrgId = this.LoginUserDetail[0]['orgId'];
+    this.QuestionBankData.SubOrgId = this.SubOrgId;
     this.QuestionBankData.Active = row.Active;
 
     this.QuestionBankForUpdate.push(this.QuestionBankData);
-    console.log('dta', this.QuestionBankForUpdate);
+    //console.log('dta', this.QuestionBankForUpdate);
 
     if (this.QuestionBankForUpdate[0].QuestionBankId == 0) {
       this.QuestionBankForUpdate[0]["CreatedDate"] = new Date();
@@ -461,7 +462,7 @@ export class QuestionComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr = this.FilterOrgSubOrg + " and Active eq true";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _classId = this.searchForm.get("searchClassId").value;
@@ -543,8 +544,8 @@ export class QuestionComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
-    let filterStr =this.FilterOrgSubOrg + " and Active eq true";// 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true";// 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
@@ -651,8 +652,8 @@ export class QuestionComponent implements OnInit {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
-    let filterStr =this.FilterOrgSubOrg + " and Active eq true";// 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true";// 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     if (row.SyllabusId > 0)
       filterStr += " and SyllabusId eq " + row.SyllabusId;
