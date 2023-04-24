@@ -42,7 +42,7 @@ export class SubjectcomponentComponent implements OnInit {
     ClassSubjectId: 0,
     ClassId: 0,
     SubjectId: 0,
-    BatchId: 0,
+    Sequence: 0,
     OrgId: 0,
     SubOrgId: 0,
     Active: 0,
@@ -51,7 +51,9 @@ export class SubjectcomponentComponent implements OnInit {
   displayedColumns = [
     "SubjectComponentId",
     "ComponentName",
+    "ClassId",
     "ClassSubjectId",
+    "Sequence",
     "Active",
     "Action"
   ];
@@ -75,7 +77,8 @@ export class SubjectcomponentComponent implements OnInit {
     // })
     //debugger;
     this.searchForm = this.fb.group({
-      searchClassId: [0]
+      searchClassId: [0],
+      searchClassSubjectId: [0]
     });
     this.PageLoad();
   }
@@ -95,13 +98,10 @@ export class SubjectcomponentComponent implements OnInit {
         this.Permission = perObj[0].permission;
       this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
       this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-      if (this.Permission == 'deny') {
-        //this.nav.navigate(['/edu']);
-      }
-      else if (this.ClassMasters.length == 0) {
+      if (this.Permission != 'deny') {
         this.GetMasterData();
-        this.GetSubjectComponents();
-
+        // this.GetSubjectComponents();
+        this.GetClassSubject();
         this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.ClassMasters = [...data.value];
           this.loading = false;
@@ -126,6 +126,7 @@ export class SubjectcomponentComponent implements OnInit {
       ClassSubjectId: 0,
       ClassId: 0,
       SubjectId: 0,
+      Sequence: 0,
       OrgId: 0,
       SubOrgId: 0,
       Active: 0,
@@ -140,7 +141,7 @@ export class SubjectcomponentComponent implements OnInit {
   }
   updateActive(row, value) {
     row.Action = true;
-    row.Active = value.checked ? 1 : 0;
+    row.Active = value.checked;// ? 1 : 0;
   }
   delete(element) {
     this.openDialog(element);
@@ -168,7 +169,7 @@ export class SubjectcomponentComponent implements OnInit {
   UpdateAsDeleted(row) {
     debugger;
     let toUpdate = {
-      Active: 0,
+      Active: false,
       Deleted: true,
       UpdatedDate: new Date()
     }
@@ -194,13 +195,14 @@ export class SubjectcomponentComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    if (row.SubjectComponentTypeId == 0) {
-      this.contentservice.openSnackBar("Please select class group type.", globalconstants.ActionText, globalconstants.RedBackground);
+    if (row.ClassSubjectId == 0) {
+      this.contentservice.openSnackBar("Please select subject.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     this.loading = true;
-    let checkFilterString = this.FilterOrgSubOrg + " and GroupName eq '" + row.GroupName + "'"
+    let checkFilterString = this.FilterOrgSubOrg + " and ComponentName eq '" + row.ComponentName + "'" +
+      " and ClassSubjectId eq " + row.ClassSubjectId
 
     if (row.SubjectComponentId > 0)
       checkFilterString += " and SubjectComponentId ne " + row.SubjectComponentId;
@@ -217,13 +219,15 @@ export class SubjectcomponentComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
+          var objClassSubject = this.ClassSubjectList.filter(s => s.ClassSubjectId == row.ClassSubjectId);
 
           this.SubjectComponentData.SubjectComponentId = row.SubjectComponentId;
           this.SubjectComponentData.ComponentName = row.ComponentName;
           this.SubjectComponentData.ClassSubjectId = row.ClassSubjectId;
           this.SubjectComponentData.ClassId = row.ClassId;
-          this.SubjectComponentData.SubjectId = row.SubjectId;
-          this.SubjectComponentData.BatchId = this.SelectedBatchId;
+          this.SubjectComponentData.SubjectId = objClassSubject?objClassSubject[0].SubjectId:0;
+          this.SubjectComponentData.Sequence = row.Sequence;
+          //this.SubjectComponentData.BatchId = this.SelectedBatchId;
           this.SubjectComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.SubjectComponentData.SubOrgId = this.SubOrgId;
           //this.SubjectComponentData.Deleted = 0;
@@ -272,24 +276,40 @@ export class SubjectcomponentComponent implements OnInit {
           this.loadingFalse();
         });
   }
-  SelectedClassSubjects=[];
+  SelectedClassSubjects = [];
   SelectClassSubject() {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value
-      && f.SelectHowMany > 0);
+      && f.SubjectType.SelectHowMany > 0);
+    //this.GetSpecificStudentGrades();
+  }
+  RowSelectClassSubject(row) {
+    debugger;
+    row.ClassSubjects = this.ClassSubjectList.filter(f => f.ClassId == row.ClassId && f.SubjectType.SelectHowMany > 0);
     //this.GetSpecificStudentGrades();
   }
   GetSubjectComponents() {
     //debugger;
+    var _classId = this.searchForm.get("searchClassId").value;
+    var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
 
+    let filterStr = this.FilterOrgSubOrg + " and Active eq true";// 'OrgId eq ' + this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
+    if (_classId > 0)
+      filterStr += " and ClassId eq " + _classId;
+    else {
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_classSubjectId > 0)
+      filterStr += " and ClassSubjectId eq " + _classSubjectId;
     this.loading = true;
-    let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
     let list: List = new List();
     list.fields = [
       "SubjectComponentId",
       "ComponentName",
       "ClassSubjectId",
       "ClassId",
+      "Sequence",
       "SubjectId",
       "Active"
     ];
@@ -300,7 +320,10 @@ export class SubjectcomponentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.SubjectComponentList = [...data.value];
+          this.SubjectComponentList = data.value.map(r => {
+            r.ClassSubjects = this.ClassSubjectList.filter(f => f.ClassId == r.ClassId)
+            return r;
+          })
         }
         else {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -321,17 +344,28 @@ export class SubjectcomponentComponent implements OnInit {
     ];
     let filterStr = this.FilterOrgSubOrgBatchId + " and Active eq 1";
     list.PageName = "ClassSubjects";
+    list.lookupFields = ["SubjectType($select=SubjectTypeName,SelectHowMany)"];
     list.filter = [filterStr];
     this.ClassSubjectList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.ClassSubjectList = [...data.value];
+
+        this.ClassSubjectList = data.value.map(s => {
+          s.SubjectName = ''
+          var obj = this.Subjects.filter(subj => subj.MasterDataId == s.SubjectId);
+          if (obj.length > 0) {
+            s.SubjectName = obj[0].MasterDataName;
+          }
+          return s;
+        })
       });
   }
+  Subjects = [];
   GetMasterData() {
 
     this.allMasterData = this.tokenStorage.getMasterData();
-    //this.SubjectComponentType = this.getDropDownData(globalconstants.MasterDefinitions.school.SubjectComponentTYPE)
+
+    this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT)
     this.loading = false; this.PageLoading = false;
   }
   getDropDownData(dropdowntype) {

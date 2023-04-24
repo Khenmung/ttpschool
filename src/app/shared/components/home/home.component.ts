@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { Subscription } from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout'
@@ -8,9 +8,6 @@ import { List } from '../../interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { SidenavService } from '../../sidenav.service';
-import { ConnectionService } from 'ng-connection-service';
-import { ContentService } from '../../content.service';
-import { globalconstants } from '../../globalconstant';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +16,8 @@ import { globalconstants } from '../../globalconstant';
 })
 export class HomeComponent implements OnInit {
   @ViewChild('sidenav') public sidenav: MatSidenav;
+  @ViewChildren('scroller') public scroller;
+  displayDiv = true;
   PageLoading = true;
   mediaSub: Subscription;
   deviceXs: boolean;
@@ -63,6 +62,7 @@ export class HomeComponent implements OnInit {
     //     }
     //   })
     // })
+
     this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
       ////console.log('result',result);
       this.deviceXs = result[0].mqAlias === "xs" ? true : false;
@@ -87,12 +87,26 @@ export class HomeComponent implements OnInit {
       // if (this.SelectedApplicationId > 1)
       this.sideMenu = this.tokenStorage.getMenuData();
       //console.log("home init this.sideMenu", this.sideMenu)
+      console.log("this.scroller.nativeElement.scrollTop", this.scroller)
+      this.scroller._elementRef.onscroll = () => {
+
+        let top = this.scroller.nativeElement.scrollTop;
+
+        if (top > 0) {               // We scrolled down
+          this.displayDiv = false;
+        }
+        else {
+          this.displayDiv = true;
+        }
+
+      }
     })
 
 
   }
 
   ngOnDestroy() {
+
     this.mediaSub.unsubscribe();
   }
   busy(event) {

@@ -201,7 +201,8 @@ export class StudentSubjectReportComponent implements OnInit {
         var _studname = '';
 
         this.StudentSubjects = [];
-        var filteredStudents = this.Students.filter(f => f.StudentClasses.length > 0 && f.StudentClasses[0].ClassId == _classId && f.Active == 1);
+        var filteredStudents = this.Students.filter(f => f.StudentClasses.length > 0 
+          && f.StudentClasses[0].ClassId == _classId && f.Active == 1);
 
         //dbdata = data.value.filter(x =>x.StudentClassSubjects.filter(y=>y.StudentClass.SectionId == _sectionId).length>0)
         //console.log("this.StudentSubjects", this.StudentSubjects);

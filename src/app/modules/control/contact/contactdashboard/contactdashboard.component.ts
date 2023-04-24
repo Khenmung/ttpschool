@@ -5,12 +5,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { IMessage, List } from '../../../shared/interface';
-import { NaomitsuService } from '../../../shared/databaseService';
 import { SelectionModel } from '@angular/cdk/collections';
-import { TokenStorageService } from '../../../_services/token-storage.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
+import { IMessage, List } from 'src/app/shared/interface';
+import { NaomitsuService } from 'src/app/shared/databaseService';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-contactdashboard',

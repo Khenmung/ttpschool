@@ -116,8 +116,6 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-
-
         this.GetStudents();
         this.GetClassGroupMapping();
         this.GetStudentGradeDefn();
@@ -339,8 +337,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     ];
 
     list.PageName = "StudentClassSubjects";
-    //list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)",
-    //  "StudentClass($select=StudentId,RollNo,SectionId)"]
+    //list.lookupFields = ["StudentClass($select=Active)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {

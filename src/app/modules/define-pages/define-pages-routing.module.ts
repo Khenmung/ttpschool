@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { ContactComponent } from '../contact/addMessage/contact.component';
-import { ContactdashboardComponent } from '../contact/contactdashboard/contactdashboard.component';
+// import { ContactComponent } from '../contact/addMessage/contact.component';
+// import { ContactdashboardComponent } from '../contact/contactdashboard/contactdashboard.component';
 import { NewsdashboardComponent } from './newsdashboard/newsdashboard.component';
 import { DisplaypageComponent } from './displaypage/displaypage.component';
 import { pageDashboardComponent } from './pageDashboard/pageDashboard.component';
@@ -21,9 +21,9 @@ const routes: Routes = [
       { path: 'pages/:id', component: pageDashboardComponent },
       { path: 'pages', component: pageDashboardComponent },      
       { path: 'details', component: pageViewComponent },
-      { path: 'messages', component: ContactdashboardComponent },
-      { path: 'addmessage', component: ContactComponent },
-      { path: 'message/:id', component: ContactComponent },
+      // { path: 'messages', component: ContactdashboardComponent },
+      // { path: 'addmessage', component: ContactComponent },
+      // { path: 'message/:id', component: ContactComponent },
       { path: 'about/:parentid', component: NewsdashboardComponent },
     ]
   }
@@ -40,7 +40,7 @@ export const DefinePagesComponents = [
   pageDashboardComponent,
   pageViewComponent,
   DisplaypageComponent,
-  ContactdashboardComponent,
-  ContactComponent,
+  // ContactdashboardComponent,
+  // ContactComponent,
   NewsdashboardComponent
 ]

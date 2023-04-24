@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { globalconstants } from '../../globalconstant';
@@ -8,13 +8,16 @@ import { globalconstants } from '../../globalconstant';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-    PageLoading = true;
+  
+
+ 
+  PageLoading = true;
   @Input() deviceXs: boolean;
   @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
   scrollTop = 0;
   hideNav = false;
 
-  CompanyName='';
+  CompanyName = '';
   loading: false;
   userName: string = '';
   logoPath = '';
@@ -23,7 +26,7 @@ export class HeaderComponent implements OnInit {
   SelectedApplicationName = '';
   SelectedBatchName = '';
   LoginUserDetails = [];
-  SubOrgId=0;
+  SubOrgId = 0;
   constructor(
     private route: Router,
     private tokenStorage: TokenStorageService
@@ -32,6 +35,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
+    
     this.LoginUserDetails = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetails.length == 0) {
       this.loggedIn = false;
@@ -48,7 +52,7 @@ export class HeaderComponent implements OnInit {
       this.OrganizationName = this.LoginUserDetails[0].org
       var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
       this.CompanyName = this.tokenStorage.getCompanyName();
-      this.SubOrgId= this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.SelectedApplicationName = '';
 
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
@@ -63,32 +67,32 @@ export class HeaderComponent implements OnInit {
       }
     }
   }
- 
-//   private scrollChangeCallback: () => void;
-// currentPosition: any;
-// startPosition: number;
 
-// ngAfterViewInit() {
-//   this.scrollChangeCallback = () => this.onContentScrolled(event);
-//   window.addEventListener('scroll', this.scrollChangeCallback, true);
-// }
+  //   private scrollChangeCallback: () => void;
+  // currentPosition: any;
+  // startPosition: number;
 
-//  onContentScrolled(e) {
-//   this.startPosition = e.srcElement.scrollTop;
-//   let scroll = e.srcElement.scrollTop;
-//   if (scroll > this.currentPosition) {
-//     console.log("down")
-//   } else {
-//     console.log("up")
-//   }
-//   this.currentPosition = scroll;
-// }
+  // ngAfterViewInit() {
+  //   this.scrollChangeCallback = () => this.onContentScrolled(event);
+  //   window.addEventListener('scroll', this.scrollChangeCallback, true);
+  // }
 
-// ngOnDestroy() {
-//   window.removeEventListener('scroll', this.scrollChangeCallback, true);
-// }
+  //  onContentScrolled(e) {
+  //   this.startPosition = e.srcElement.scrollTop;
+  //   let scroll = e.srcElement.scrollTop;
+  //   if (scroll > this.currentPosition) {
+  //     console.log("down")
+  //   } else {
+  //     console.log("up")
+  //   }
+  //   this.currentPosition = scroll;
+  // }
 
-  
+  // ngOnDestroy() {
+  //   window.removeEventListener('scroll', this.scrollChangeCallback, true);
+  // }
+
+
   changepassword() {
     this.route.navigate(["/auth/changepassword"]);
   }

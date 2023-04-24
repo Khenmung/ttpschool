@@ -21,16 +21,17 @@ export class SubjectBoardComponent implements AfterViewInit {
   components:any = [
     SubjectTypesComponent,
     ClassSubjectDetailComponent,
+    SubjectcomponentComponent,
     StudentSubjectMarkCompComponent,
     studentsubjectdashboardComponent,
     StudentSubjectReportComponent,
-    SubjectcomponentComponent
+    
   ];
 
   tabNames = [
     { "label": "Subject Type", "faIcon": '' },
     { "label": "Subject Detail", "faIcon": '' },
-    { "label": "Subject Mark Component", "faIcon": '' },
+    { "label": "Exam Subject Component", "faIcon": '' },
     { "label": "Student Subject", "faIcon": '' },
     { "label": "example", "faIcon": '' },
     { "label": "example", "faIcon": '' },

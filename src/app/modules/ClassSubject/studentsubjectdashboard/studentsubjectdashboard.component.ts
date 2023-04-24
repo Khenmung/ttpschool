@@ -256,7 +256,8 @@ export class studentsubjectdashboardComponent implements OnInit {
         this.StoreForUpdate = [];
         var _students: any = this.tokenStorage.getStudents();
         var _filteredStudent = _students.filter(s => s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId
-          && s.StudentClasses[0].SectionId == _sectionId);
+          && s.StudentClasses[0].SectionId == _sectionId
+          && s.StudentClasses[0].Active ==1);
         if (_filteredStudent.length > 0) {
           //for all student in student class table for the selected class.
           this.displayedColumns = ["Student"];

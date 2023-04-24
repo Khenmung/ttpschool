@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NaomitsuService } from '../../../shared/databaseService';
-import { List } from '../../../shared/interface';
+import { NaomitsuService } from 'src/app/shared/databaseService';
+import { List } from 'src/app/shared/interface';
+
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',

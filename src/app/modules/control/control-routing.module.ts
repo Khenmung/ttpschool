@@ -16,6 +16,8 @@ import { CustomerPlansComponent } from './customerplans/customerplans.component'
 import { CustomfeaturerolepermissionComponent } from './customfeaturerolepermission/customfeaturerolepermission.component';
 import { InvoiceComponent } from './invoice/invoice.component';
 import { ReceiptComponent } from './receipt/receipt.component';
+import { ContactdashboardComponent } from './contact/contactdashboard/contactdashboard.component';
+import { ContactComponent } from './contact/addMessage/contact.component';
 
 const routes: Routes = [
   {
@@ -25,6 +27,9 @@ const routes: Routes = [
       { path: 'setting', component: settingboardComponent },
       { path: 'appuser', component: userComponent },
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
+      { path: 'messages', component: ContactdashboardComponent },
+      { path: 'addmessage', component: ContactComponent },
+      { path: 'message/:id', component: ContactComponent },
       
     ]
   }
@@ -50,5 +55,7 @@ export const settingsComponent = [
   CustomerPlansComponent,
   CustomfeaturerolepermissionComponent,
   InvoiceComponent,
-  ReceiptComponent
+  ReceiptComponent,
+  ContactdashboardComponent,
+  ContactComponent
 ]
