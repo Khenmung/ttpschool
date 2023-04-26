@@ -64,7 +64,10 @@ export class HomeDashboardComponent implements OnInit {
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     //console.log("HOme dashboard init")
     //console.log('role',this.Role);
-    if (this.LoginUserDetail.length == 0) {
+    var loggedTime = moment(localStorage.getItem('loggedTime'));
+    var loggedInDiff = moment().diff(moment(loggedTime), 'days');
+    //_today.setHours(0, 0, 0, 0);
+    if (this.LoginUserDetail.length == 0 || loggedInDiff) {
       this.tokenStorage.signOut();
       this.route.navigate(['/auth/login']);
     }
@@ -78,11 +81,14 @@ export class HomeDashboardComponent implements OnInit {
           if (data.value.length > 0) {
             var _validTo = new Date(data.value[0].ValidTo);//
             _validTo.setHours(0, 0, 0, 0);
-            var _today = new Date();//
-            _today.setHours(0, 0, 0, 0);
+       
             var _roleName = this.LoginUserDetail[0]['RoleUsers'][0].role;
+            //const diffTime = Math.abs(date2 - date1);
+            //const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            var _today = new Date();
+            _today.setHours(0, 0, 0, 0);
             const diffTime = Math.abs(_validTo.getTime() - _today.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
             //console.log("diffDays", diffDays)
             var alertDate = localStorage.getItem("alertdate");
             var todaystring = moment(new Date()).format('DD-MM-YYYY')
@@ -356,7 +362,7 @@ export class HomeDashboardComponent implements OnInit {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     var SubOrg = this.searchForm.get("searchSubOrgId").value;
     var _SubOrgId = SubOrg.MasterDataId;
-    if (!_SubOrgId) {
+    if (!_SubOrgId || _SubOrgId==0) {
       this.contentservice.openSnackBar("Please select company.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       return;

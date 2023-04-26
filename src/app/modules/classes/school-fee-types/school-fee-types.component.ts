@@ -39,6 +39,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     Description: '',
     Formula: '',
     DefaultType: 0,
+    Confidential:false,
     Active: 0,
     OrgId: 0,SubOrgId: 0,
     BatchId: 0
@@ -49,6 +50,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     'Description',
     'Formula',
     'DefaultType',
+    'Confidential',
     'Active',
     'Action'
   ];
@@ -118,6 +120,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       FeeCategory: '',
       FeeSubCategory: '',
       DefaultType: 0,
+      Confidential:false,
       Active: 0,
       Action: true
     };
@@ -151,6 +154,10 @@ export class SchoolFeeTypesComponent implements OnInit {
     row.Action = true;
     row.DefaultType = value.checked ? 1 : 0;
   }
+  updateConfidential(row, value) {
+    row.Action = true;
+    row.Confidential = value.checked;
+  }
   UpdateOrSave(row) {
 
     debugger;
@@ -181,6 +188,7 @@ export class SchoolFeeTypesComponent implements OnInit {
           this.FeeTypeData.DefaultType = row.DefaultType;
           this.FeeTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.FeeTypeData.SubOrgId = this.SubOrgId;
+          this.FeeTypeData.Confidential = row.Confidential;
           this.FeeTypeData.BatchId = this.SelectedBatchId;
           if (this.FeeTypeData.FeeTypeId == 0) {
             this.FeeTypeData["CreatedDate"] = new Date();
@@ -357,6 +365,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       'Description',
       'Formula',
       'DefaultType',
+      'Confidential',
       'Active'
     ];
 
@@ -402,6 +411,7 @@ export interface IFeeType {
   FeeTypeName: string;
   Description: string;
   Formula: string;
+  Confidential:boolean;
   FeeCategory: string;
   FeeSubCategory: string;
   Active: number;

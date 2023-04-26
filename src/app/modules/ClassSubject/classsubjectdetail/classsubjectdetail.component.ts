@@ -22,7 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class ClassSubjectDetailComponent implements OnInit {
     PageLoading = true;
 
-  @ViewChild("table") mattable;
+ // @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
@@ -216,7 +216,7 @@ export class ClassSubjectDetailComponent implements OnInit {
   }
   GetClassSubjectId(event) {
     this.ClassSubjectId = event;
-    this.mattable._elementRef.nativeElement.style.backgroundColor = "";
+    //this.mattable._elementRef.nativeElement.style.backgroundColor = "";
     this.GetClassSubject();
   }
 

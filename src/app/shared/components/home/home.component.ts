@@ -87,19 +87,19 @@ export class HomeComponent implements OnInit {
       // if (this.SelectedApplicationId > 1)
       this.sideMenu = this.tokenStorage.getMenuData();
       //console.log("home init this.sideMenu", this.sideMenu)
-      console.log("this.scroller.nativeElement.scrollTop", this.scroller)
-      this.scroller._elementRef.onscroll = () => {
+      // console.log("this.scroller.nativeElement.scrollTop", this.scroller)
+      // this.scroller._elementRef.onscroll = () => {
 
-        let top = this.scroller.nativeElement.scrollTop;
+      //   let top = this.scroller.nativeElement.scrollTop;
 
-        if (top > 0) {               // We scrolled down
-          this.displayDiv = false;
-        }
-        else {
-          this.displayDiv = true;
-        }
+      //   if (top > 0) {               // We scrolled down
+      //     this.displayDiv = false;
+      //   }
+      //   else {
+      //     this.displayDiv = true;
+      //   }
 
-      }
+      // }
     })
 
 

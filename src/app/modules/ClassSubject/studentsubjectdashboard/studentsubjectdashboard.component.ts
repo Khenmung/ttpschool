@@ -266,6 +266,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           _filteredStudent.forEach(cs => {
             var lastName = (cs.LastName) ? " " + cs.LastName : "";
             cs.Student = cs.StudentClasses[0].RollNo + "-" + cs.FirstName + lastName;
+           
             //var _filteredStudentClassSubjectlist = this.StudentClassSubjects.filter(c => c.StudentClassId == cs.StudentClassId);
             if (cs.StudentClasses[0].RollNo == null || cs.StudentClasses[0].RollNo == '') {
               this.contentservice.openSnackBar("Please assign roll no. for " + cs.StudentClasses[0].Student, globalconstants.ActionText, globalconstants.RedBackground);

@@ -46,7 +46,7 @@ export class VerifyResultsComponent implements OnInit {
   ExamStudentSubjectGrading: any[] = [];
   ClassFullMark = 0;
   ClassSubjectComponents = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   SelectedApplicationId = 0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
@@ -86,7 +86,7 @@ export class VerifyResultsComponent implements OnInit {
     Marks: 0,
     ActualMarks: 0,
     ExamStatus: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0,
     Active: 0
   };
@@ -137,7 +137,7 @@ export class VerifyResultsComponent implements OnInit {
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -148,8 +148,8 @@ export class VerifyResultsComponent implements OnInit {
       //console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
 
-        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+        var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
@@ -555,7 +555,7 @@ export class VerifyResultsComponent implements OnInit {
   GetExamStudentSubjectResults(pExamId, pClassId, pSectionId) {
     this.ClickedVerified = false;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     this.ExamStudentSubjectResult = [];
     this.ExamStudentSubjectGrading = [];
 
@@ -594,12 +594,12 @@ export class VerifyResultsComponent implements OnInit {
         if (pSectionId > 0) {
           StudentOwnSubjects = this.StudentSubjects.filter(studentsubject => {
             return studentsubject.ClassId == pClassId
-              && studentsubject.SectionId == pSectionId;
+              && studentsubject.SectionId == pSectionId && studentsubject.SelectHowMany > 0;
           });
         }
         else {
           StudentOwnSubjects = this.StudentSubjects.filter(studentsubject => {
-            return studentsubject.ClassId == pClassId
+            return studentsubject.ClassId == pClassId && studentsubject.SelectHowMany > 0
           });
         }
         // StudentOwnSubjects = StudentOwnSubjects.sort((a, b) => {
@@ -702,9 +702,12 @@ export class VerifyResultsComponent implements OnInit {
           // if (ss.Student == '39-K. Niangsuanching -A') {
           //   debugger;
           // }
-
+          //console.log("forEachSubjectOfStud",forEachSubjectOfStud)
           forEachSubjectOfStud.forEach(eachsubj => {
 
+            if (ss.Student.includes('Chingzakhawl')) {
+              console.log("eachsubj.Subject", eachsubj.Subject);
+            }
             var _objSubjectCategory = this.SubjectCategory.filter(f => f.MasterDataId == eachsubj.SubjectCategoryId)
             if (_objSubjectCategory.length > 0)
               _subjectCategoryName = _objSubjectCategory[0].MasterDataName.toLowerCase();
@@ -764,14 +767,14 @@ export class VerifyResultsComponent implements OnInit {
               var ExamResultSubjectMarkData = {
                 ExamResultSubjectMarkId: 0,
                 StudentClassId: 0,
-                ClassId:0,
-                SectionId:0,
+                ClassId: 0,
+                SectionId: 0,
                 ExamId: 0,
                 StudentClassSubjectId: 0,
                 Marks: 0,
                 ActualMarks: 0,
                 Grade: '',
-                OrgId: 0,SubOrgId: 0,
+                OrgId: 0, SubOrgId: 0,
                 Active: 0,
                 BatchId: 0
               }
@@ -784,6 +787,7 @@ export class VerifyResultsComponent implements OnInit {
                 ExamResultSubjectMarkData.Marks = markObtained[0].Marks;
                 ExamResultSubjectMarkData.ActualMarks = markObtained[0].Marks;
                 ExamResultSubjectMarkData.OrgId = this.LoginUserDetail[0]['orgId'];
+                ExamResultSubjectMarkData.SubOrgId = this.SubOrgId;
                 ExamResultSubjectMarkData.StudentClassId = ss.StudentClassId;
                 ExamResultSubjectMarkData.ClassId = pClassId;
                 ExamResultSubjectMarkData.SectionId = pSectionId;
@@ -849,6 +853,7 @@ export class VerifyResultsComponent implements OnInit {
                 ExamResultSubjectMarkData.Marks = 0;
                 ExamResultSubjectMarkData.ActualMarks = 0;
                 ExamResultSubjectMarkData.OrgId = this.LoginUserDetail[0]['orgId'];
+                ExamResultSubjectMarkData.SubOrgId = this.SubOrgId;
                 ExamResultSubjectMarkData.StudentClassId = ss.StudentClassId;
                 ExamResultSubjectMarkData.ClassId = pClassId;
                 ExamResultSubjectMarkData.SectionId = pSectionId;
@@ -1028,7 +1033,7 @@ export class VerifyResultsComponent implements OnInit {
       })
   }
   GetStudentGradeDefn() {
-    var filterOrgSubOrg=globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetStudentGrade(filterOrgSubOrg)
       .subscribe((data: any) => {
         this.StudentGrades = [...data.value];
@@ -1208,7 +1213,7 @@ export class VerifyResultsComponent implements OnInit {
       //list.PageName = "StudentClasses";
       //list.lookupFields = ["Attendances($filter=" + _filter + ";$select=AttendanceId,StudentClassId,AttendanceDate,AttendanceStatus)"];
       list.PageName = "Attendances";
-      list.filter = [this.FilterOrgSubOrgBatchId + 
+      list.filter = [this.FilterOrgSubOrgBatchId +
         " and ClassId eq " + _classId +
         " and SectionId eq " + _sectionId + _filter];
       //  list.limitTo=10;
@@ -1247,7 +1252,7 @@ export class VerifyResultsComponent implements OnInit {
     list.fields = ["ClassSubjectMarkComponentId", "ExamId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark", "OverallPassMark"];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=SubjectCategoryId,SubjectTypeId,ClassId,Active)"];
-    list.filter = [ this.FilterOrgSubOrgBatchId + " and ExamId ne null and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and ExamId ne null and Active eq 1"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

@@ -7,7 +7,8 @@
     "build": "nx build --proxy-config proxy.prod.conf.json",
     "test": "nx test",
     "lint": "nx lint",
-    "e2e": "nx e2e"
+    "e2e": "nx e2e",
+    "cypress:open": "cypress open"
   },
   "private": true,
   "dependencies": {
@@ -81,6 +82,7 @@
     "@types/jasmine": "~3.6.0",
     "@types/node": "^12.11.1",
     "codelyzer": "^0.0.28",
+    "cypress": "^12.10.0",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "^6.3.4",
