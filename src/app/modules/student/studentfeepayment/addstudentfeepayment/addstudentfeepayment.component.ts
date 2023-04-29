@@ -551,7 +551,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       "Month",
       "Active",
       "LocationId",
-      //"PaymentOrder"
+      "PaymentOrder"
     ];
     list.PageName = "ClassFees";
     list.lookupFields = ["FeeDefinition($select=FeeCategoryId,FeeSubCategoryId,FeeName,AmountEditable)"];
@@ -618,6 +618,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                     MonthName: studentClassFee.MonthName,
                     FeeCategory: studentClassFee.FeeCategory,
                     FeeSubCategory: studentClassFee.FeeSubCategory,
+                    PaymentOrder:studentClassFee.PaymentOrder,
                     BatchId: exitem.BatchId,
                     Action: false
                   })
@@ -638,7 +639,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
           }
         })
-        this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
+        this.StudentLedgerList.sort((a, b) => a.Month - b.Month || a.PaymentOrder - b.PaymentOrder);
         //console.log("this.StudentLedgerList", this.StudentLedgerList)
         this.dataSource = new MatTableDataSource<ILedger>(this.StudentLedgerList);
         this.loading = false; this.PageLoading = false;
@@ -767,6 +768,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               FeeSubCategory: f.FeeSubCategory,
               FeeAmount: f.Amount,
               BaseAmount: f.Amount,
+              PaymentOrder:f.PaymentOrder,
               BaseAmountForCalc: +AmountAfterFormulaApplied,
               Amount: +AmountAfterFormulaApplied,
               BalancePayment: false,
@@ -782,7 +784,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             })
           }
         })
-        this.MonthlyDueDetail = this.MonthlyDueDetail.sort((a, b) => b.BaseAmount - a.BaseAmount)
+        //this.MonthlyDueDetail = this.MonthlyDueDetail.sort((a, b) => a.PaymentOrder - b.PaymentOrder)
         //console.log("this.MonthlyDueDetail", this.MonthlyDueDetail)
         this.miscelenous();
       }//if (row.TotalDebit>0 && row.TotalDebit != row.Balance) 
@@ -851,6 +853,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
 
     //this.MonthlyDueDetail = this.MonthlyDueDetail.sort((a, b) => a.Amount - b.Amount);
+    this.MonthlyDueDetail = this.MonthlyDueDetail.sort((a, b) => a.PaymentOrder - b.PaymentOrder);
+    console.log("this.MonthlyDueDetail ",this.MonthlyDueDetail )
     this.MonthlyDueDetail.forEach((row, indx) => {
       row.SlNo = indx + 1;
     });
@@ -1158,6 +1162,7 @@ export interface ILedger {
   TotalDebit: number;
   TotalCredit: number;
   Balance1: number;
+  PaymentOrder: number;
   BatchId: number;
   Action: boolean;
 }

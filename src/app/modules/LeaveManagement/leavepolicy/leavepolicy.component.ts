@@ -17,10 +17,11 @@ import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-g
   templateUrl: './leavepolicy.component.html',
   styleUrls: ['./leavepolicy.component.scss']
 })
-export class LeavepolicyComponent implements OnInit { PageLoading=true;
+export class LeavepolicyComponent implements OnInit {
+    PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  
+
   PagePermission = '';
   LeavePolicyListName = 'LeavePolicies';
   FilterOrgSubOrg = '';
@@ -47,7 +48,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     LeaveOpenAdjustCloseId: 0,
     FormulaOrDays: '',
     BatchId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0
   };
   displayedColumns = [
@@ -57,20 +58,20 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     "Active",
     "Action"
   ];
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private shareddata: SharedataService,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
-    
+
     private nav: Router,
     private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {
-   
+
   }
   private _filter(name: string): IEmployee[] {
 
@@ -122,7 +123,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -163,7 +164,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
           })
           if (startMonth == 11) {
             startMonth = -1;
-            _Year+=1;
+            _Year += 1;
           }
         }
       }
@@ -192,7 +193,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -233,7 +234,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.LeavePolicyId = data.LeavePolicyId;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
@@ -247,13 +248,13 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.LeavePolicyListName, this.LeavePolicyData, this.LeavePolicyData.LeavePolicyId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           // this.rowCount+=1;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
 
@@ -274,7 +275,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   //   })
   // }
   onBlur(element) {
-    element.Action =true;
+    element.Action = true;
   }
 
   // UpdateAll() {
@@ -290,7 +291,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         //debugger;
         this.allMasterData = [...data.value];
@@ -303,7 +304,20 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
         this.GetLeavePolicy();
       });
   }
-
+  addnew() {
+    var newItem = {
+      "LeavePolicyId": 0,
+      "LeaveNameId": 0,
+      "LeaveOpenAdjustCloseId": 0,
+      "FormulaOrDays": '',
+      "LeaveType": '',
+      "Active": 0,
+      "Action": false
+    }
+    this.LeavePolicyList = [];
+    this.LeavePolicyList.push(newItem);
+    this.dataSource = new MatTableDataSource<ILeavePolicy>(this.LeavePolicyList);
+  }
   UpdateAll() { }
   GetEmployees() {
     this.loading = true;
@@ -327,7 +341,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
             Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
           }
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         ////console.log("employeeid", this.searchForm.get("searchEmployee").value.EmployeeId)
         //this.GetGradeComponents();
       })
@@ -373,9 +387,9 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
               this.LeavePolicyList.push({
                 "LeavePolicyId": 0,
                 "LeaveNameId": l.MasterDataId,
-                "Leave":l.MasterDataName,
-                "LeaveOpenAdjustCloseId": o.MasterDataId, 
-                "LeaveType":o.MasterDataName,               
+                "Leave": l.MasterDataName,
+                "LeaveOpenAdjustCloseId": o.MasterDataId,
+                "LeaveType": o.MasterDataName,
                 "FormulaOrDays": '',
                 "Active": 0,
                 "Action": false
@@ -384,14 +398,14 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
         })
         //console.log('LeavePolicyList',this.LeavePolicyList);
 
-        this.loading=false;this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.dataSource = new MatTableDataSource<ILeavePolicy>(this.LeavePolicyList);
       })
   }
 
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
-    
+
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

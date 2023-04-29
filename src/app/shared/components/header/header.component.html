@@ -35,7 +35,7 @@
                     <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="changepassword()">
                         <mat-icon>change_circle</mat-icon>Change password
                     </button>
-                    <button [disabled]="loading" mat-menu-item (click)="contactus()">
+                    <button [disabled]="loading" mat-menu-item (click)="contactus()" *ngIf="loggedIn">
                         <mat-icon>contact_support</mat-icon>Contact Us
                     </button>
                     <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="logout()">

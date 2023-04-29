@@ -429,7 +429,7 @@ export class LedgerBalanceComponent implements OnInit {
     ];
 
     list.PageName = "AccountingPeriods";
-    list.filter = [this.FilterOrgSubOrg + "and CurrentPeriod eq 1 and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrg + " and CurrentPeriod eq 1 and Active eq 1"];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {

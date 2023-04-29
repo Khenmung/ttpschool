@@ -1,10 +1,10 @@
-<div style="padding:15px 15px 10px 0px;"><strong>Class</strong></div>
+<div style="padding:15px 15px 10px 30px;"><strong>Class</strong></div>
 <!-- <alert></alert> -->
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <span style="font-size: smaller;margin: 20px;">If fee type is updated, please run 'create invoice' in class-fee
     page.</span> -->
 <form [formGroup]="studentclassForm">
-    <mat-grid-list style="max-width: 600px;" [cols]="2" rowHeight="80px" (window:resize)="onResize($event)">
+    <mat-grid-list style="max-width: 600px;" [cols]="2" rowHeight="70px" (window:resize)="onResize($event)">
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline">
                 <mat-label>Admission No.</mat-label>

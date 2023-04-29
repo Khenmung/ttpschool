@@ -172,7 +172,7 @@ export class ContentService implements OnInit {
     //   filter += ' and Month ge ' + minMonth + ' and Month le ' + maxMonth ;
 
     let list = new List();
-    list.fields = ["ClassId", "Active", "Amount", "Month", "FeeDefinitionId"];
+    list.fields = ["ClassId", "Active", "Amount", "Month", "FeeDefinitionId","PaymentOrder"];
     list.PageName = "ClassFees";
     list.lookupFields = ["FeeDefinition($select=FeeCategoryId,FeeSubCategoryId,FeeName,Active)"];
     list.filter = [filter];
@@ -224,7 +224,7 @@ export class ContentService implements OnInit {
       "UserId",
       "Active"]
     list.PageName = 'ReportConfigItems';
-    list.filter = ["Deleted eq false and (OrgId eq 0 or (" +pOrgSubOrg +
+    list.filter = ["Deleted eq false and (OrgId eq 0 or (" + pOrgSubOrg +
       ")) and (ApplicationId eq 0 or ApplicationId eq " + pSelectedApplicationId + ')'];
 
     return this.dataservice.get(list)
@@ -399,7 +399,7 @@ export class ContentService implements OnInit {
       "MasterDataName", "Description",
       "Logic", "Sequence",
       "ApplicationId", "Active",
-      "Confidential","SubOrgId","CustomerPlanId"
+      "Confidential", "SubOrgId", "CustomerPlanId"
     ];
     list.PageName = "MasterItems";
     list.filter = [_active + "ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
@@ -417,9 +417,30 @@ export class ContentService implements OnInit {
       "ApplicationId", "Active", "Confidential"
     ];
     list.PageName = "MasterItems";
-    list.filter = [_active + "ParentId eq " + ParentId + " and "+ pOrgSubOrg];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
+    list.filter = [_active + "ParentId eq " + ParentId + " and " + pOrgSubOrg];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     return this.dataservice.get(list)
 
+  }
+  getDropDownDataFeeType(token, pFeeType) {
+    let Permission = '';
+    for (var i = 0; i < pFeeType.length; i++) {
+      if (pFeeType[i].Confidential) {
+
+        var perObj = globalconstants.getPermission(token, pFeeType[i].FeeTypeName);
+        if (perObj.length > 0) {
+          Permission = perObj[0].permission;
+          if (Permission == 'deny') {
+            pFeeType.splice(i, 1);
+            i--;
+          }
+        }
+        else {
+          pFeeType.splice(i, 1);
+          i--;
+        }
+      }
+    }
+    return pFeeType;
   }
   getDropDownData(dropdowntype, token, pAllMasterData) {
     let Id = 0;
@@ -533,7 +554,7 @@ export class ContentService implements OnInit {
   //   Ids.push(item);
   // }
   /////
-  getInvoice(pOrgId,pSubOrgId, pSelectedBatchId, pStudentClassId) {
+  getInvoice(pOrgId, pSubOrgId, pSelectedBatchId, pStudentClassId) {
     //var selectedMonth = this.searchForm.get("searchMonth").value;
     var _function = "";
     if (pStudentClassId == 0)
@@ -543,7 +564,7 @@ export class ContentService implements OnInit {
     var OrgIdAndbatchId = {
       StudentClassId: pStudentClassId,
       OrgId: pOrgId,
-      SubOrgId:pSubOrgId,
+      SubOrgId: pSubOrgId,
       BatchId: pSelectedBatchId,
       //Month: pSelectedMonth
     }
@@ -578,7 +599,7 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list);
 
   }
-  createInvoice(data, pSelectedBatchId, pOrgId,pSubOrgId) {
+  createInvoice(data, pSelectedBatchId, pOrgId, pSubOrgId) {
     var AmountAfterFormulaApplied = 0;
     var _VariableObjList = [];
     var _LedgerData = [];
@@ -606,7 +627,7 @@ export class ContentService implements OnInit {
         Month: inv.Month,
         StudentClassId: inv.StudentClassId,
         OrgId: pOrgId,
-        SubOrgId:pSubOrgId,
+        SubOrgId: pSubOrgId,
         TotalDebit: AmountAfterFormulaApplied,
         TotalCredit: 0,
       });
@@ -616,7 +637,7 @@ export class ContentService implements OnInit {
       "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId,SubOrgId";
     var sumFeeData = alasql(query, [_LedgerData]);
     //console.log("_LedgerData", _LedgerData);
-    console.log("sumFeeData",sumFeeData);
+    console.log("sumFeeData", sumFeeData);
     return this.authservice.CallAPI(sumFeeData, 'createinvoice')
   }
   ApplyVariables(formula, pVariableObjList) {
@@ -691,9 +712,9 @@ export class ContentService implements OnInit {
 
     list.PageName = "RoleUsers";
     list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
-    var _subOrgId= +this.tokenService.getSubOrgId();
-    list.filter = ["Active eq 1 and UserId eq '" + userdetail[0]["userId"] + 
-    "' and OrgId eq " + userdetail[0]["orgId"] + ' and SubOrgId eq ' + _subOrgId];
+    var _subOrgId = +this.tokenService.getSubOrgId();
+    list.filter = ["Active eq 1 and UserId eq '" + userdetail[0]["userId"] +
+      "' and OrgId eq " + userdetail[0]["orgId"] + ' and SubOrgId eq ' + _subOrgId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

@@ -10,6 +10,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { List } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
 import * as moment from 'moment';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-homedashboard',
@@ -81,7 +82,7 @@ export class HomeDashboardComponent implements OnInit {
           if (data.value.length > 0) {
             var _validTo = new Date(data.value[0].ValidTo);//
             _validTo.setHours(0, 0, 0, 0);
-       
+
             var _roleName = this.LoginUserDetail[0]['RoleUsers'][0].role;
             //const diffTime = Math.abs(date2 - date1);
             //const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -207,15 +208,15 @@ export class HomeDashboardComponent implements OnInit {
     list.filter = [strFilter];
     var permission;
     this.dataservice.get(list).subscribe((data: any) => {
-      
+
 
       data.value.forEach(m => {
         // if(m.Page.PageTitle=="Question Bank")
         // {
         //   debugger;
         // }
-        permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() 
-        && r.applicationId == pSelectedAppId && m.Page.ParentId == 0)
+        permission = this.LoginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim()
+          && r.applicationId == pSelectedAppId && m.Page.ParentId == 0)
         if (permission.length > 0 && permission[0].permission != 'deny') {
           m.PageId = m.Page.PageId;
           m.PageTitle = m.Page.PageTitle;
@@ -362,7 +363,7 @@ export class HomeDashboardComponent implements OnInit {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     var SubOrg = this.searchForm.get("searchSubOrgId").value;
     var _SubOrgId = SubOrg.MasterDataId;
-    if (!_SubOrgId || _SubOrgId==0) {
+    if (!_SubOrgId || _SubOrgId == 0) {
       this.contentservice.openSnackBar("Please select company.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       return;
@@ -466,7 +467,7 @@ export class HomeDashboardComponent implements OnInit {
             let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
             //if selected batch is current batch.
             if (this.CurrentBatchId == this.SelectedBatchId)
-              this.GetStudents(obj);
+              this.GetStudentAndClasses(obj.appShortName);//this.GetStudents(obj);
             else
               this.GetStudentClass(obj.appShortName);
           })
@@ -573,8 +574,18 @@ export class HomeDashboardComponent implements OnInit {
           .subscribe((data: any) => {
             this.tokenStorage.saveMasterData([...data.value]);
             this.allMasterData = [...data.value];
+            this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
             //this.SubOrganization = this.getDropDownData(globalconstants.MasterDefinitions.common.COMPANY)
-
+            if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
+              this.contentservice.GetClasses(this.filterOrgSubOrg).subscribe((data: any) => {
+                this.Classes = [...data.value];
+                let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
+                if (this.CurrentBatchId == this.SelectedBatchId)
+                  this.GetStudentAndClasses(obj.appShortName);//this.GetStudents(obj);
+                else
+                  this.GetStudentClass(obj.appShortName);
+              });
+            }
             //this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
           });
 
@@ -582,13 +593,7 @@ export class HomeDashboardComponent implements OnInit {
       }
       //  });
       //console.log("this.SelectedAppName.toLowerCase()",this.SelectedAppName.toLowerCase())
-      if (this.SelectedAppName && this.SelectedAppName.toLowerCase() == 'education management') {
-        let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
-        if (this.CurrentBatchId == this.SelectedBatchId)
-          this.GetStudents(obj);
-        else
-          this.GetStudentClass(obj.appShortName);
-      }
+
 
       // if (this.SelectedAppId > 0) {
       //   // this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedAppId)
@@ -688,7 +693,75 @@ export class HomeDashboardComponent implements OnInit {
 
     return this.contentservice.GetDropDownDataFromDB(pParentId, filterOrg, pAppId)
   }
-  GetStudents(selectedApp) {
+  GetStudentAndClasses(appShortName) {
+    var sources = [this.GetStudents(), this.GetStudentClasses()];
+    forkJoin(sources)
+      .subscribe((data: any) => {
+        var _students = data[0].value;
+        var __studentClasses = data[1].value;
+        //let _studentWithClass = _students.map((item, i) => Object.assign({}, item, __studentClasses[i]));
+        //console.log("_studentWithClass",_studentWithClass)
+        var _classNameobj = [];
+        var _className = '';
+        var _house = '';
+        var _studentClassId = 0;
+        _students.forEach(d => {
+          _classNameobj = [];
+          _className = '';
+          _studentClassId = 0;
+          _house = '';
+          var studcls = __studentClasses.filter(f => f.StudentId == d.StudentId);
+          if (studcls.length > 0) {
+            _classNameobj = this.Classes.filter(c => c.ClassId == studcls[0].ClassId);
+            if (_classNameobj.length > 0)
+              _className = _classNameobj[0].ClassName;
+
+            var _Section = '';
+            var _sectionobj = this.Sections.filter(f => f.MasterDataId == studcls[0].SectionId);
+            if (_sectionobj.length > 0)
+              _Section = _sectionobj[0].MasterDataName;
+            var _RollNo = studcls[0].RollNo;
+            _studentClassId = studcls[0].StudentClassId;
+          }
+          else
+            studcls = [];
+
+          var _lastname = d.LastName == null ? '' : " " + d.LastName;
+          //this.House
+          var _name = d.FirstName + _lastname;
+          var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
+          d.StudentClassId = _studentClassId;
+          d.Name = _fullDescription;
+          d.ClassName = _className;
+          d.Section = _Section;
+          d.StudentClasses = studcls;
+          this.Students.push(d);
+
+        })
+        debugger;
+        this.tokenStorage.saveStudents(this.Students);
+        //this.GetMasterData(SelectedAppId, selectedApp);
+        this.loading = false;
+        this.PageLoading = false;
+        if (this.Submitted)
+          this.route.navigate(['/', appShortName]);
+      })
+  }
+  GetStudentClasses() {
+    let list: List = new List();
+    list.fields = [
+      "StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active"
+    ];
+    list.PageName = "StudentClasses";
+    if (this.LoginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
+      this.filterOrgSubOrgBatchId += " and StudentId eq " + localStorage.getItem("studentId");
+    }
+    list.filter = [this.filterOrgSubOrgBatchId];
+    this.loading = true;
+    this.PageLoading = true;
+    return this.dataservice.get(list);
+  }
+  GetStudents() {
     //var filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     this.Students = [];
     let list: List = new List();
@@ -714,64 +787,14 @@ export class HomeDashboardComponent implements OnInit {
       "DOB"
     ];
     list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter=" + this.filterOrgSubOrgBatchId + ";$select=StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active)"]
-
-
-    //  'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-    //   ' and BatchId eq ' + this.SelectedBatchId + ' and SubOrgId eq ' + this.SubOrgId;
     if (this.LoginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
       this.filterOrgSubOrgBatchId += " and StudentId eq " + localStorage.getItem("studentId");
     }
     list.filter = [this.filterOrgSubOrgBatchId];
     this.loading = true;
     this.PageLoading = true;
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
+    return this.dataservice.get(list);
 
-        var _classNameobj = [];
-        var _className = '';
-        var _house = '';
-        var _studentClassId = 0;
-        data.value.forEach(d => {
-          _classNameobj = [];
-          _className = '';
-          _studentClassId = 0;
-          _house ='';
-          //var studcls = this.StudentClasses.filter(f => f.StudentId == d.StudentId);
-          if (d.StudentClasses.length > 0) {
-            _classNameobj = this.Classes.filter(c => c.ClassId == d.StudentClasses[0].ClassId);
-            if (_classNameobj.length > 0)
-              _className = _classNameobj[0].ClassName;
-
-            var _Section = '';
-            var _sectionobj = this.Sections.filter(f => f.MasterDataId == d.StudentClasses[0].SectionId);
-            if (_sectionobj.length > 0)
-              _Section = _sectionobj[0].MasterDataName;
-            var _RollNo = d.StudentClasses[0].RollNo;
-            _studentClassId = d.StudentClasses[0].StudentClassId;
-          }
-          else
-            d.StudentClasses = [];
-
-          var _lastname = d.LastName == null ? '' : " " + d.LastName;
-          //this.House
-          var _name = d.FirstName + _lastname;
-          var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
-          d.StudentClassId = _studentClassId;
-          d.Name = _fullDescription;
-          d.ClassName = _className;
-          d.Section = _Section;
-          //d.StudentClasses = studcls;
-          this.Students.push(d);
-
-        })
-        this.tokenStorage.saveStudents(this.Students);
-        //this.GetMasterData(SelectedAppId, selectedApp);
-        this.loading = false;
-        this.PageLoading = false;
-        if (this.Submitted)
-          this.route.navigate(['/', selectedApp.appShortName]);
-      })
   }
   sendmessage() {
     var api = "https://graph.facebook.com/v15.0/107273275514184/messages";

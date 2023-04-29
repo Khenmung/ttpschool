@@ -503,13 +503,14 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.loading = true;
     //var filter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     let list: List = new List();
-    list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
+    list.fields = ["FeeTypeId", "FeeTypeName", "Formula","Confidential"];
     list.PageName = "SchoolFeeTypes";
     list.filter = [this.FilterOrgSubOrg +" and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.FeeTypes = [...data.value];
+        //this.FeeTypes = [...data.value];
+        this.FeeTypes=this.contentservice.getDropDownDataFeeType(this.tokenStorage,data.value)
         this.shareddata.ChangeFeeType(this.FeeTypes);
         this.loading = false; this.PageLoading = false;
       })

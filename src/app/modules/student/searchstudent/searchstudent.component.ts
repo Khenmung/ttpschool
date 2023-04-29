@@ -557,7 +557,7 @@ export class searchstudentComponent implements OnInit {
       this.StudentSearch.push({ Text: "ClassId", Value: _ClassId });
 
     }
-    if (_studentId == 0 && _PID == 0 && !_mothername && !_fathername) {
+    if (_studentId == 0 && _PID == 0 && !_mothername && !_fathername && _remarkId==0) {
       if (_ClassId == 0) {
         this.loading = false;
         this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -578,6 +578,20 @@ export class searchstudentComponent implements OnInit {
           //checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
           filteredStudents = filteredStudents.filter(fromallstud => fromallstud[obj[0].type] == _remarkId)
         }
+      }
+    }
+    else
+    {
+      if (_remarkId > 0) {
+        var obj = [];
+        this.Groups.forEach(f => {
+          var check = f.group.filter(h => h.MasterDataId == _remarkId);
+          if (check.length > 0)
+            obj.push(check[0]);
+        });
+        this.StudentSearch.push({ Text: obj[0].type, Value: _remarkId });
+        //checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
+        filteredStudents = filteredStudents.filter(fromallstud => fromallstud[obj[0].type] == _remarkId)
       }
     }
     if (_searchAdmissionNo > 0) {

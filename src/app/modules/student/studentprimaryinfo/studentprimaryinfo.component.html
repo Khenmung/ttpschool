@@ -8,7 +8,8 @@
             <ng-template mat-tab-label>
                 <mat-icon>info</mat-icon>Primary
             </ng-template>
-            <div style="padding:15px 15px 10px 15px;"><strong>Primary</strong>
+            <div style="padding:15px 15px 10px 0px;">
+                <div style="padding:0px 15px 15px 30px;font-weight: bold;">Primary</div>
                 <mat-grid-list cols="3" rowHeight="70px" #basic>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
@@ -214,82 +215,90 @@
             <ng-template mat-tab-label>
                 <mat-icon>contact_page</mat-icon>Contact
             </ng-template>
-            <div style="padding:15px 15px 10px 15px;"><strong>Contact</strong></div>
-            <div class="content" fxLayout="row wrap" fxLayoutGap="130px">
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Personal no.</mat-label>
-                    <input formControlName="PersonalNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
-                        [maxlength]="10">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Messaging No.</mat-label>
-                    <input formControlName="WhatsAppNumber" (blur)="OnBlur()" autocomplete="Off" matInput
-                        [maxlength]="10">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Father's contact no.</mat-label>
-                    <input formControlName="FatherContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
-                        [maxlength]="10">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Mother's contact no.</mat-label>
-                    <input formControlName="MotherContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
-                        [maxlength]="10">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Email Id</mat-label>
-                    <input type="email" formControlName="EmailAddress" (blur)="OnBlur()" autocomplete="Off" #Pincode
-                        matInput [maxlength]="50">
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" [style.width.px]="250">
-                    <mat-label>Permanent address</mat-label>
-                    <textarea formControlName="PermanentAddress" (blur)="OnBlur()" autocomplete="Off" matInput
-                        [maxlength]="250"></textarea>
-                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                    <span class="text-danger"
-                        *ngIf="f.PermanentAddress.touched && f.PermanentAddress.hasError('required')">Permanent
-                        Address is required.</span>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="250">
-                    <mat-label>Present address</mat-label>
-                    <textarea formControlName="PresentAddress" (blur)="OnBlur()" autocomplete="Off" matInput
-                        [maxlength]="250"></textarea>
-                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                    <span class="text-danger"
-                        *ngIf="f.PresentAddress.touched && f.PresentAddress.hasError('required')">Present
-                        Address is required.</span>
-                </mat-form-field>
-                <span class="radio" fxFlex>Primary contact
-                    <!-- <span fxLayout="row" fxLayoutAlign="space-between top"> -->
-                    <mat-radio-group (change)="displayContact($event)" aria-label="Select an option"
-                        formControlName="PrimaryContactFatherOrMother">
-                        <mat-radio-button *ngFor="let p of PrimaryContact" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}</mat-radio-button>
-                    </mat-radio-group>
-                    <span *ngIf="displayContactPerson">
-                        <span class="innerspan" fxLayout="row" fxLayoutAlign="space-between center">
-                            <!-- <div fxLayout="row"></div> -->
-                            <mat-form-field appearance="outline">
-                                <mat-label>Name Of contact person
-                                </mat-label>
-                                <input formControlName="NameOfContactPerson" (blur)="OnBlur()" autocomplete="Off"
-                                    matInput [maxlength]="50">
-                            </mat-form-field>
-                            <mat-form-field appearance="outline">
-                                <mat-label>Relation with contact person</mat-label>
-                                <input formControlName="RelationWithContactPerson" (blur)="OnBlur()" autocomplete="Off"
-                                    matInput [maxlength]="50">
-                            </mat-form-field>
-                            <mat-form-field appearance="outline">
-                                <mat-label>Contact No.</mat-label>
-                                <input formControlName="ContactPersonContactNo" (blur)="OnBlur()" autocomplete="Off"
-                                    matInput [maxlength]="50">
-                            </mat-form-field>
+            <div style="display:flex;flex-direction: column; padding:15px 15px 10px 0px;">
+                <div style="padding:0px 15px 15px 30px;font-weight: bold;">Contact</div>
+                <!-- <div style="padding:15px 15px 10px 15px;"><strong>Contact</strong></div> -->
+                <div style="display:flex;margin-left: 30px;">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Personal no.</mat-label>
+                        <input formControlName="PersonalNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                            [maxlength]="10">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Messaging No.</mat-label>
+                        <input formControlName="WhatsAppNumber" (blur)="OnBlur()" autocomplete="Off" matInput
+                            [maxlength]="10">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Father's contact no.</mat-label>
+                        <input formControlName="FatherContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                            [maxlength]="10">
+                    </mat-form-field>
+                </div>
+                <div style="display:flex;margin-left: 30px;">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Mother's contact no.</mat-label>
+                        <input formControlName="MotherContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                            [maxlength]="10">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Email Id</mat-label>
+                        <input type="email" formControlName="EmailAddress" (blur)="OnBlur()" autocomplete="Off" #Pincode
+                            matInput [maxlength]="50">
+                    </mat-form-field>
+                </div>
+                <div style="display:flex;margin-left: 30px;">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Present address</mat-label>
+                        <textarea formControlName="PresentAddress" (blur)="OnBlur()" autocomplete="Off" matInput
+                            [maxlength]="250"></textarea>
+                        <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                        <span class="text-danger"
+                            *ngIf="f.PresentAddress.touched && f.PresentAddress.hasError('required')">Present
+                            Address is required.</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Permanent address</mat-label>
+                        <textarea formControlName="PermanentAddress" (blur)="OnBlur()" autocomplete="Off" matInput
+                            [maxlength]="250"></textarea>
+                        <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                        <span class="text-danger"
+                            *ngIf="f.PermanentAddress.touched && f.PermanentAddress.hasError('required')">Permanent
+                            Address is required.</span>
+                    </mat-form-field>
+                    
+                </div>
+                <div style="display:flex;margin-left: 30px;">
+                    <span class="radio" fxFlex>Primary contact
+                        <!-- <span fxLayout="row" fxLayoutAlign="space-between top"> -->
+                        <mat-radio-group (change)="displayContact($event)" aria-label="Select an option"
+                            formControlName="PrimaryContactFatherOrMother">
+                            <mat-radio-button *ngFor="let p of PrimaryContact" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}</mat-radio-button>
+                        </mat-radio-group>
+                        <span *ngIf="displayContactPerson">
+                            <span class="innerspan" fxLayout="row" fxLayoutAlign="space-between center">
+                                <!-- <div fxLayout="row"></div> -->
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Name Of contact person
+                                    </mat-label>
+                                    <input formControlName="NameOfContactPerson" (blur)="OnBlur()" autocomplete="Off"
+                                        matInput [maxlength]="50">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Relation with contact person</mat-label>
+                                    <input formControlName="RelationWithContactPerson" (blur)="OnBlur()"
+                                        autocomplete="Off" matInput [maxlength]="50">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Contact No.</mat-label>
+                                    <input formControlName="ContactPersonContactNo" (blur)="OnBlur()" autocomplete="Off"
+                                        matInput [maxlength]="50">
+                                </mat-form-field>
+                            </span>
                         </span>
                     </span>
-                </span>
-                <!-- </span> -->
+                </div>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                 <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" matTooltip="previous tab"
@@ -321,26 +330,33 @@
             <ng-template mat-tab-label>
                 <mat-icon>account_balance</mat-icon>Bank Account
             </ng-template>
-            <div style="padding:15px 15px 10px 15px;"><strong>Bank Account</strong></div>
-            <div style="display:flex;flex-direction: column;padding:15px">
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Account Holder Name</mat-label>
-                    <input formControlName="AccountHolderName" (blur)="OnBlur()" autocomplete="Off" matInput
-                        [maxlength]="30">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Account no.</mat-label>
-                    <input formControlName="BankAccountNo" (blur)="OnBlur()" autocomplete="Off" matInput
-                        [maxlength]="20">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>IFSC</mat-label>
-                    <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="15">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>MICR No.</mat-label>
-                    <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="15">
-                </mat-form-field>
+            <div style="display:flex;flex-direction: column; padding:15px 15px 10px 0px;">
+                <div style="padding:0px 15px 15px 30px;font-weight: bold;">Bank Account</div>
+                <div style="display:flex;margin-left: 30px;">
+                    <!-- <div style="padding:15px 15px 10px 15px;"><strong>Bank Account</strong></div> -->
+                    <!-- <div style="display:flex;flex-direction: column;padding:15px"> -->
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Account Holder Name</mat-label>
+                        <input formControlName="AccountHolderName" (blur)="OnBlur()" autocomplete="Off" matInput
+                            [maxlength]="30">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Account no.</mat-label>
+                        <input formControlName="BankAccountNo" (blur)="OnBlur()" autocomplete="Off" matInput
+                            [maxlength]="20">
+                    </mat-form-field>
+                </div>
+                <div style="display:flex;margin-left: 30px;">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>IFSC</mat-label>
+                        <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" matInput
+                            [maxlength]="15">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>MICR No.</mat-label>
+                        <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="15">
+                    </mat-form-field>
+                </div>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                 <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" matTooltip="previous tab"
@@ -372,9 +388,12 @@
             <ng-template mat-tab-label>
                 <mat-icon>note_add</mat-icon>Additional Info.
             </ng-template>
-            <div style="padding:15px 15px 10px 15px;"><strong>Additional Info.</strong></div>
-            <div fxLayout="column" fxLayoutAlign="space-around">
-                <div style="padding: 15px 15px 0px 15px;">
+            <div style="display:flex;flex-direction: column; padding:15px 15px 10px 0px;">
+                <div style="padding:0px 15px 15px 30px;font-weight: bold;">Additional Info.</div>
+
+                <!-- <div style="padding:15px 15px 10px 15px;"><strong>Additional Info.</strong></div> -->
+                <!-- <div fxLayout="column" fxLayoutAlign="space-around"> -->
+                <div style="display:flex;margin-left: 30px;">
                     <mat-form-field appearance="outline">
                         <mat-label>Last school attended</mat-label>
                         <input formControlName="TransferFromSchool" (blur)="OnBlur()" autocomplete="Off" #Pincode
@@ -390,7 +409,7 @@
                         <input formControlName="Height" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="5">
                     </mat-form-field>
                 </div>
-                <div style="padding: 15px 15px 0px 15px">
+                <div style="display:flex;margin-left: 30px;">
                     <mat-form-field appearance="outline">
                         <mat-label>Club</mat-label>
                         <mat-select formControlName="Club" (selectionChange)="OnBlur()">
@@ -415,7 +434,7 @@
                     </mat-form-field>
 
                 </div>
-                <div style="padding: 15px 15px 0px 15px">
+                <div style="display:flex;margin-left: 30px;">
                     <mat-form-field appearance="outline">
                         <mat-label>Remarks</mat-label>
                         <mat-select formControlName="Remarks" (selectionChange)="OnBlur()">
@@ -437,7 +456,7 @@
                             [maxlength]="15">
                     </mat-form-field>
                 </div>
-                <div style="padding: 15px 15px 0px 15px">
+                <div style="display:flex;margin-left: 30px;">
                     <mat-form-field appearance="outline">
                         <mat-label>Notes</mat-label>
                         <textarea rows="4" cols="20" (blur)="OnBlur()" [maxlength]="50" matInput autocomplete="Off"

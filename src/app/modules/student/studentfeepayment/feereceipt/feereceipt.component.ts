@@ -111,7 +111,7 @@ export class FeereceiptComponent implements OnInit {
     'PaymentType',
     'Active'
   ]
-  CompanyName='';
+  CompanyName = '';
   PageLoad() {
     debugger;
     this.loading = true;
@@ -161,7 +161,9 @@ export class FeereceiptComponent implements OnInit {
   viewDetail(row) {
     debugger;
     this.ReceivedBy = row.ReceivedBy;
-    this.clickPaymentDetails = this.StudentFeePaymentList.filter(f => f.FeeReceiptId == row.StudentFeeReceiptId);
+    this.clickPaymentDetails = this.StudentFeePaymentList.filter(f => f.FeeReceiptId == row.StudentFeeReceiptId)
+      .sort((a, b) => a.PaymentOrder - b.PaymentOrder);
+    console.log("PaymentOrder", this.clickPaymentDetails)
     this.studentInfoTodisplay.StudentFeeReceiptId = row.StudentFeeReceiptId;
     this.studentInfoTodisplay.ReceiptNo = row.ReceiptNo;
     this.studentInfoTodisplay.OffLineReceiptNo = row.OffLineReceiptNo;
@@ -354,6 +356,7 @@ export class FeereceiptComponent implements OnInit {
                 k.indx = 1
               else
                 k.indx = 0
+              k.PaymentOrder = feeObj[0].PaymentOrder;
             }
             else
               k.FeeName = '';

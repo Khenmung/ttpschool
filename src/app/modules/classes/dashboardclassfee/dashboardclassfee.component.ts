@@ -61,7 +61,9 @@ export class DashboardclassfeeComponent implements OnInit {
     Amount: 0,
     BatchId: 0,
     Month: 0,
-    OrgId: 0, SubOrgId: 0,
+    PaymentOrder:0,
+    OrgId: 0, 
+    SubOrgId: 0,
     Active: 0,
     LocationId: 0
   };
@@ -159,6 +161,7 @@ export class DashboardclassfeeComponent implements OnInit {
     'Quantity',
     'Amount',
     'Month',
+    'PaymentOrder',
     'Active',
     'Action'];
   updateActive(row, value) {
@@ -387,6 +390,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.classFeeData.ClassId = row.ClassId;
           this.classFeeData.FeeDefinitionId = row.FeeDefinitionId;
           this.classFeeData.LocationId = +row.LocationId;
+          this.classFeeData.PaymentOrder = row.PaymentOrder;
           this.classFeeData.Month = row.Month;
           this.classFeeData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.classFeeData.SubOrgId = this.SubOrgId;
@@ -400,6 +404,7 @@ export class DashboardclassfeeComponent implements OnInit {
               ClassId: objDiscount[0].ClassId,
               FeeDefinitionId: objDiscount[0].FeeDefinitionId,
               LocationId: 0,
+              PaymentOrder:objDiscount[0].PaymentOrder,
               Month: objDiscount[0].Month,
               OrgId: this.LoginUserDetail[0]["orgId"],
               SubOrgId: this.SubOrgId
@@ -577,6 +582,7 @@ export class DashboardclassfeeComponent implements OnInit {
             "FeeName": mainFeeName.FeeName,
             "Amount": 0,
             "Month": 0,
+            "PaymentOrder":0,
             "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
             "Active": mainFeeName.FeeName.toLowerCase() == 'discount' ? 1 : 0,
             "Action": false
@@ -598,6 +604,7 @@ export class DashboardclassfeeComponent implements OnInit {
           "FeeName": fee.FeeName,
           "Amount": 0,
           "Month": 0,
+          "PaymentOrder":0,
           "BatchId": this.SelectedBatchId,
           "Active": 0,
           "Action": false
@@ -684,6 +691,7 @@ export interface Element {
   ClassId: number;
   Amount: any;
   Month: number;
+  PaymentOrder:number,
   BatchId: number;
   Active: number;
   FeeName: string;

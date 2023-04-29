@@ -1,6 +1,6 @@
 <mat-card>
     <mat-card-title style="margin:20px">Student Info</mat-card-title>
-    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
+    <!-- <mat-card-subtitle>&nbsp;</mat-card-subtitle> -->
     <mat-card-content style="margin:20px">
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="studentSearchForm" style="display:flex;flex-direction: column;">
@@ -189,7 +189,7 @@
             </ng-container>
 
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;">
+            <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 29px;">
             </mat-row>
         </mat-table>
         <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,50]">

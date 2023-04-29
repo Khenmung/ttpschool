@@ -108,7 +108,8 @@ export class LeaveBalanceComponent implements OnInit { PageLoading=true;
     // })
     //debugger;
     this.searchForm = this.fb.group({
-      searchEmployee: [0]
+      searchEmployee: [0],
+      YearMonth:[0]
     });
     this.PageLoad();
     this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges

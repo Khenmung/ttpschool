@@ -689,7 +689,7 @@ export class PrintprogressreportComponent implements OnInit {
     ];
     list.PageName = "EvaluationExamMaps";
     list.lookupFields = ["EvaluationMaster($select=Active,EvaluationMasterId,ClassGroupId,EvaluationName,AppendAnswer)"];
-    list.filter = [this.filterOrgSubOrg + "and Active eq true"];
+    list.filter = [this.filterOrgSubOrg + " and Active eq true"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

@@ -7,12 +7,12 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiU+++.*-=-0983`9556'nb656RL
-    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:5000";
+    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:5000";
     public static fileUrl: string = '';
-    public static CompanyParentId = 27762;//31850;// 27762; //536870912; 
-    public static PremiumPlusId = 2;//4;//2 
+    public static CompanyParentId = 31850;//31850;// 27762; //536870912; 
+    public static PremiumPlusId = 4;//4;//2 
     public static globalAdminBillingSubOrgId = 30880;//5;//2 
-    
+
     //public static BloodGroupParentId = 27762; //536870912;
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -78,6 +78,10 @@ export class globalconstants {
 
             }
         };
+    public static FeaturePermission = {
+        'ACTIVATESTUDENT': 'activate student',
+        "FeeTypeDD": "fee type dd"
+    }
     public static Pages =
         {
             "website": {
@@ -177,7 +181,7 @@ export class globalconstants {
                     'FEERECEIPT': 'fee receipt',
                     'STUDENTAPROFILE': 'student profile',
                     'STUDENTVIEW': 'student view',
-                    'ACTIVATESTUDENT': 'activate student',
+                    
                 },
                 "SPECIALFEATURE": {
                     'GENERATECERTIFICATE': 'generate certificate',
@@ -641,7 +645,7 @@ export class globalconstants {
         //return ['readonly'];
         // else {
         var _permission = LoginUserDetail[0]["applicationRolePermission"]
-        .filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
+            .filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
         if (_permission.length > 0) {
             if (IsInCurrentBatch == 0)//not in current batch, 1 means user is in current batch.
             {

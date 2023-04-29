@@ -48,7 +48,8 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.px]="350">
-                            <textarea matInput (blur)="onBlur(element)" [(ngModel)]="element.FormulaOrDays" [value]="element.FormulaOrDays"></textarea>
+                            <textarea matInput (blur)="onBlur(element)" [(ngModel)]="element.FormulaOrDays"
+                                [value]="element.FormulaOrDays"></textarea>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -62,14 +63,14 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <!-- <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
+                        <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
                             <mat-icon>add</mat-icon>
-                        </button> -->
+                        </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action" matTooltip="save" 
-mat-raised-button color="accent" (click)="UpdateOrSave(element)">
-                             <mat-icon>save</mat-icon>
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-raised-button
+                            color="accent" (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>

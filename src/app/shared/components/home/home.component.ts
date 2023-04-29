@@ -8,6 +8,7 @@ import { List } from '../../interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { SidenavService } from '../../sidenav.service';
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -42,11 +43,16 @@ export class HomeComponent implements OnInit {
     private mediaObserver: MediaObserver,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
-    private shareddata: SharedataService
+    private shareddata: SharedataService,
+    private meta: Meta, title: Title
 
   ) {
-
-
+    this.meta.addTags([
+      { name: 'Description', content: 'Online Education Management, Employee Management' },
+      { name: 'keywords', content: 'Education, School, Employee Management' },
+      { name: 'author', content: 'TTP' }
+    ])
+    title.setTitle('Online School Management');
 
   }
   ngAfterViewInit(): void {
@@ -55,13 +61,13 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
-    // this.servicework.activateUpdate().then(() => {
-    //   this.servicework.checkForUpdate().then((value) => {
-    //     if (value) {
-    //       location.reload();
-    //     }
-    //   })
-    // })
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
 
     this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
       ////console.log('result',result);

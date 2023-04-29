@@ -85,6 +85,15 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="PaymentOrder">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Sequence </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input [disabled]="element.FeeName=='Discount'" matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.PaymentOrder"
+                        [value]="element.PaymentOrder" autocomplete="Off">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="Month">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Month Year </mat-header-cell>
             <mat-cell *matCellDef="let element">

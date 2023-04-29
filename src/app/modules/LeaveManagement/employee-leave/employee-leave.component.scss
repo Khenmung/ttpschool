@@ -1,3 +1,13 @@
 mat-form-field,button{
     margin-right: 15px;
 }
+:host{
+    width:100%;
+    //height:max-content;
+    margin: 0;
+    padding: 0;
+}
+.mat-card{
+    position: relative;
+    width: 99%;
+}

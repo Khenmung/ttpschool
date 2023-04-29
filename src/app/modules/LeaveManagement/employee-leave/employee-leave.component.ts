@@ -307,7 +307,7 @@ export class EmployeeLeaveComponent implements OnInit {
       "FirstName",
       "LastName"];
     list.PageName = "EmpEmployees";
-    list.filter = [this.FilterOrgSubOrg + "and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrg + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 

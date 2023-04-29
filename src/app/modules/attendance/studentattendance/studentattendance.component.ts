@@ -104,7 +104,7 @@ export class StudentAttendanceComponent implements OnInit {
     // })
     debugger;
     this.loading = true;
-    this.PageLoading=true;
+    this.PageLoading = true;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.StudentClassId = 0;
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
@@ -153,11 +153,23 @@ export class StudentAttendanceComponent implements OnInit {
     })
     //this.AnyEnableSave=true;
   }
-
+  AttendanceMsg = '';
   GetStudentAttendance() {
     debugger;
     //this.StudentAttendanceList=[];
     //this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+    var _subjectwise = this.searchForm.get("searchClassSubjectId").value;
+    if (_subjectwise > 0) {
+      var obj = this.FilteredClassSubjects.filter(f => f.ClassSubjectId == _subjectwise);
+      if (obj.length > 0) {
+        this.AttendanceMsg = "Attendance for " + obj[0].ClassSubject;
+      }
+      else
+        this.AttendanceMsg = 'No subject name found.'
+
+    }
+    else
+      this.AttendanceMsg = 'Daily Attendance';
 
     let filterStr = this.FilterOrgSubOrgBatchId;
     //' and StudentClassId eq ' + this.StudentClassId;
@@ -398,7 +410,7 @@ export class StudentAttendanceComponent implements OnInit {
       " and AttendanceDate ge " + moment(_AttendanceDate).format('YYYY-MM-DD') +
       " and AttendanceDate lt " + moment(_AttendanceDate).add(1, 'day').format('YYYY-MM-DD')
     //if (clssubjectid > 0)
-      checkFilterString += " and ClassSubjectId eq " + clssubjectid
+    checkFilterString += " and ClassSubjectId eq " + clssubjectid
 
     if (row.AttendanceId > 0)
       checkFilterString += " and AttendanceId ne " + row.AttendanceId;
@@ -492,7 +504,7 @@ export class StudentAttendanceComponent implements OnInit {
       'ClassId',
       'SubjectTypeId'
     ];
-    this.loading=true;
+    this.loading = true;
     list.PageName = "ClassSubjects";
     list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
@@ -515,8 +527,8 @@ export class StudentAttendanceComponent implements OnInit {
             }
           }
         })
-        this.loading=false;
-        this.PageLoading=false;
+        this.loading = false;
+        this.PageLoading = false;
       })
   }
   GetSubjectTypes() {
@@ -524,12 +536,12 @@ export class StudentAttendanceComponent implements OnInit {
     var orgIdSearchstr = this.FilterOrgSubOrg + ' and Active eq 1';
 
     let list: List = new List();
-    this.loading=true;
+    this.loading = true;
     list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
     list.PageName = "SubjectTypes";
     list.filter = [orgIdSearchstr];
     //list.orderBy = "ParentId";
-    
+
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SubjectTypes = [...data.value];

@@ -24,7 +24,7 @@ export class AddstudentclassComponent implements OnInit {
   StudentClassId = 0;
   SelectedBatchId = 0; SubOrgId = 0;
   FilterOrgSubOrgBatchId = '';
-  filterOrgSubOrg='';
+  filterOrgSubOrg = '';
   invalidId = false;
   allMasterData = [];
   Students = [];
@@ -37,6 +37,7 @@ export class AddstudentclassComponent implements OnInit {
   SelectedApplicationId = 0;
   LoginUserDetail = [];
   FeeCategories = [];
+  FeeTypePermission = '';
   studentclassData = {
     StudentClassId: 0,
     StudentId: 0,
@@ -100,6 +101,13 @@ export class AddstudentclassComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
+
+        var feetypePer = globalconstants.getPermission(this.tokenStorage, globalconstants.FeaturePermission.FeeTypeDD);
+        if (feetypePer.length > 0) {
+          this.FeeTypePermission = feetypePer[0].permission;
+        }
+        
+
         this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
@@ -110,7 +118,7 @@ export class AddstudentclassComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
         this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
-        if (this.FeeType.length == 0)
+        //if (this.FeeType.length == 0)
           this.GetFeeTypes();
         this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
         this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
@@ -118,7 +126,7 @@ export class AddstudentclassComponent implements OnInit {
         this.StudentClassId = this.tokenStorage.getStudentClassId()
         this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-       
+
         this.GetMasterData();
         //this.GetStudentClass();
       }
@@ -150,20 +158,23 @@ export class AddstudentclassComponent implements OnInit {
     debugger;
     this.loading = true;
     let list: List = new List();
-    list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
+    list.fields = ["FeeTypeId", "FeeTypeName", "Formula", "Confidential"];
     list.PageName = "SchoolFeeTypes";
     list.filter = [this.filterOrgSubOrg + " and Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.FeeType = [...data.value];
+        // this.FeeType = [...data.value];
+        this.FeeType = this.getDropDownDataFeeType(data.value);
+        if (this.FeeTypePermission.length>0 && !this.FeeTypePermission.includes("rw"))
+          this.studentclassForm.get("FeeTypeId").disable();
         this.shareddata.ChangeFeeType(this.FeeType);
         this.loading = false; this.PageLoading = false;
       })
   }
   GetStudent() {
     debugger;
-    
+
     if (this.StudentId == 0) {
       this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
       this.invalidId = true;
@@ -397,7 +408,7 @@ export class AddstudentclassComponent implements OnInit {
               })
             })
             // console.log("studentfeedetailxxxx",studentfeedetail)
-            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"],this.SubOrgId)
+            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"], this.SubOrgId)
               .subscribe((data: any) => {
                 this.loading = false;
                 this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
@@ -410,6 +421,9 @@ export class AddstudentclassComponent implements OnInit {
           })
       });
 
+  }
+  getDropDownDataFeeType(feeType) {
+    return this.contentservice.getDropDownDataFeeType(this.tokenStorage, feeType);
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);

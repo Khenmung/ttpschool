@@ -111,7 +111,7 @@ export class HeaderComponent implements OnInit {
     this.route.navigate(['/auth/login']);
   }
   contactus() {
-    this.route.navigate(["/home/addmessage"]);
+    this.route.navigate(["/edu/setting/addmessage"]);
   }
   home() {
     this.route.navigate(["/home/"]);

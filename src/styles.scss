@@ -74,6 +74,7 @@ mat-card {
     mat-card {
         margin-left : 0px;
         margin-right: 0px;
+        padding-left: 0px;
     }
     mat-form-field{
         width:100%;
@@ -86,7 +87,7 @@ mat-card {
 }
 @media only screen and (min-width: 769px) {
     mat-card {
-        margin-left : 0px;
+        margin-left : .5%;
         margin-right: 0px;
     }
     // mat-form-field{
