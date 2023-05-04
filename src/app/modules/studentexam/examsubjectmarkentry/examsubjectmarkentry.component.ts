@@ -127,6 +127,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
   GetResultReleased(source) {
     this.ResultReleased = this.Exams.filter(e => e.ExamId == source.value)[0].ReleaseResult;
     this.FilterClass();
+    this.ClearData();
   }
   updateActive(row, value) {
     //if(!row.Action)
@@ -156,6 +157,26 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
     if (row.Marks > 1000) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Marks cannot be greater than 1000.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var _classId = this.searchForm.get("searchClassId").value;
+    var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
+    
+    var _examId = this.searchForm.get("searchExamId").value
+    if (_examId == 0) {
+      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_classId == 0) {
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (this.searchForm.get("searchSectionId").value == 0) {
+      this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_classSubjectId == 0) {
+      this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -422,6 +443,7 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
   SelectClassSubject() {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
+    this.ClearData();
     //this.GetSpecificStudentGrades();
   }
   GetStudents() {
@@ -742,7 +764,10 @@ export class ExamSubjectMarkEntryComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
-
+  ClearData(){
+    this.ExamStudentSubjectResult=[];
+    this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
+  }
   MultiExamsStudentSubjectResult = [];
   GetMultiExamsStudentSubjectResults(pExamSubjectFormula) {
     debugger;

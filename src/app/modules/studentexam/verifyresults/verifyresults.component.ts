@@ -14,6 +14,7 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
 import { EMPTY } from 'rxjs';
+import { TableUtil } from 'src/app/shared/TableUtil';
 
 @Component({
   selector: 'app-verifyresults',
@@ -182,14 +183,20 @@ export class VerifyResultsComponent implements OnInit {
     }
 
     //this.GetSelectedSubjectsForSelectedExam();
-
+    this.ClearData();
   }
   clear() {
     this.searchForm.patchValue({ searchExamId: 0 });
     this.searchForm.patchValue({ searchClassId: 0 });
     this.searchForm.patchValue({ searchSectionId: 0 });
-  }
 
+  }
+  ClearData() {
+    this.ExamStudentSubjectResult = [];
+    this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
+    this.ExamStudentSubjectGrading = [];
+    this.GradingDataSource = new MatTableDataSource<any[]>(this.ExamStudentSubjectGrading);
+  }
   GetClassSubject() {
 
     //let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
@@ -500,7 +507,10 @@ export class VerifyResultsComponent implements OnInit {
           _class = '';
           _subject = '';
           //s.StudentClassSubjects.forEach(studsubj => {
-
+          // if(s.ClassSubjectId == 1059)
+          // {
+          //   debugger;
+          // }
           var _activeStudents = this.Students.filter(a => a.StudentClasses[0].StudentClassId == s.StudentClassId)
           if (_activeStudents.length > 0) {
             let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassId);
@@ -545,13 +555,19 @@ export class VerifyResultsComponent implements OnInit {
         this.GetExamStudentSubjectResults(_examId, _classId, _sectionId);
         this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], _classId, _sectionId, this.SelectedBatchId)
           .subscribe((data: any) => {
-            this.ClassStrength = data.value.length;
+            this.ClassStrength = data.value.length + "";
           })
       }, error => {
         console.log(error);
       });
   }
-
+  ExportArray() {
+    if (this.ExamStudentSubjectResult.length > 0) {
+      const datatoExport = alasql("select Student,[Total Marks],	[Total Percent],Rank,Division,,FullMark,History,Geography,Grammar,Physics,Chemistry,Biology,Civics,Spelling,Hindi,Manipuri,[General Knowledge],[Art & Craft],English,	[Value Education],	[Maths I],[Maths II],	Mathematics,Handwriting,Aptitude,Percentage from ?",[this.ExamStudentSubjectResult]);
+      //const datatoExport= ;
+      TableUtil.exportArrayToExcel(datatoExport, "examresultwithmarkdetail");
+    }
+  }
   GetExamStudentSubjectResults(pExamId, pClassId, pSectionId) {
     this.ClickedVerified = false;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
@@ -587,8 +603,8 @@ export class VerifyResultsComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((examComponentResult: any) => {
-        ////debugger;
-
+        debugger;
+        var result = examComponentResult.value.filter(x => x.StudentClassSubjectId == 40592);
         var StudentOwnSubjects = [];
 
         if (pSectionId > 0) {
@@ -627,7 +643,7 @@ export class VerifyResultsComponent implements OnInit {
             f.StudentId = stud[0].StudentId;
           }
         })
-
+        debugger;
         var filteredIndividualStud = alasql("select distinct Student,StudentId,StudentClassId,FullMark from ? ", [StudentOwnSubjects]);
         var _subjectCategoryName = '';
         this.VerifiedResult.ExamResultSubjectMark = [];
@@ -705,7 +721,8 @@ export class VerifyResultsComponent implements OnInit {
           //console.log("forEachSubjectOfStud",forEachSubjectOfStud)
           forEachSubjectOfStud.forEach(eachsubj => {
 
-            if (ss.Student.includes('Chingzakhawl')) {
+            if (eachsubj.Subject == 'Geography') {
+              debugger;
               console.log("eachsubj.Subject", eachsubj.Subject);
             }
             var _objSubjectCategory = this.SubjectCategory.filter(f => f.MasterDataId == eachsubj.SubjectCategoryId)
@@ -825,7 +842,9 @@ export class VerifyResultsComponent implements OnInit {
                   }
                   else
                     ForNonGrading["PassCount"] += 1;
-
+                  if (eachsubj.Subject == 'Geography') {
+                    debugger;
+                  }
                   if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
                     this.displayedColumns.push(eachsubj.Subject)
                   if (markObtained.length > 0) {
@@ -955,6 +974,8 @@ export class VerifyResultsComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
         //this.dataSource.paginator = this.nonGradingPaginator;//.toArray()[0];
         //this.dataSource.sort = this.sort.toArray()[0];
+        //console.log("this.ExamStudentSubjectResult",this.ExamStudentSubjectResult);
+        //console.log("columns",this.displayedColumns);
 
         this.GradingDataSource = new MatTableDataSource<any[]>(this.ExamStudentSubjectGrading);
         //this.GradingDataSource.paginator = this.paginator.toArray()[1];
@@ -977,6 +998,7 @@ export class VerifyResultsComponent implements OnInit {
         for (var i = 0; i < _gradeDefinitionsForSpecificSubjectCategory.length; i++) {
           var formula = _gradeDefinitionsForSpecificSubjectCategory[i].Formula
             .replaceAll("[Mark]", result.Marks)
+          console.log("formula", formula)
           if (evaluate(formula)) {
             _StudentGrade = _gradeDefinitionsForSpecificSubjectCategory[i].GradeName;
             break;
@@ -1085,6 +1107,7 @@ export class VerifyResultsComponent implements OnInit {
         && s.StudentClasses.length > 0 && s.StudentClasses[0].ClassId == _classId && s.StudentClasses[0].SectionId == _sectionId
 
       );
+      this.ClearData();
       if (this.Students.length == 0) {
         this.route.navigate(['/']);
       }
@@ -1096,7 +1119,7 @@ export class VerifyResultsComponent implements OnInit {
       //   this.Students.push(f);
       // })
       //this.GetStudents(_classId, _sectionId)
-
+      
     }
     this.FilterClass();
 

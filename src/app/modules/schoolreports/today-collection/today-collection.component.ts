@@ -57,6 +57,7 @@ export class TodayCollectionComponent implements OnInit {
     "Name",
     //"ClassName",
     "PaymentType",
+    "ReceivedBy",
     "Status",
     "TotalAmount"
   ]
@@ -123,8 +124,30 @@ export class TodayCollectionComponent implements OnInit {
           this.Classes = [...data.value];
         });
         this.GetMasterData();
+        this.GetEmployees();
       }
     }
+  }
+  Employees = [];
+  GetEmployees() {
+    this.loading = true;
+    let list: List = new List();
+    list.fields = [
+      "EmpEmployeeId",
+      "FirstName",
+      "ShortName",
+      "UserId"
+    ];
+
+    list.PageName = "EmpEmployees";
+    list.filter = [this.FilterOrgSubOrg]
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.Employees = [...data.value];
+        this.PageLoading=false;
+        this.loading=false;
+      })
+
   }
   private _filter(name: string): IStudent[] {
 
@@ -167,7 +190,8 @@ export class TodayCollectionComponent implements OnInit {
       'StudentClassId',
       'TotalAmount',
       'PaymentTypeId',
-      'Active'
+      'Active',
+      'CreatedBy'
     ];
     list.PageName = "StudentFeeReceipts";
     list.lookupFields = [
@@ -189,7 +213,9 @@ export class TodayCollectionComponent implements OnInit {
           _students = [...this.Students];
 
         data.value.forEach(db => {
-
+          var obj = this.Employees.filter(e => e.UserId == db.CreatedBy);
+          if (obj.length > 0)
+            db.ReceivedBy = obj[0].ShortName;
           var studcls = _students.filter(s => s.StudentClasses && s.StudentClasses.length > 0 && s.StudentClasses.findIndex(d => d.StudentClassId == db.StudentClassId) > -1);
           if (studcls.length > 0) {
             db.StudentClasses = studcls;
@@ -206,10 +232,10 @@ export class TodayCollectionComponent implements OnInit {
         this.CancelledAmount = cancelledBill.reduce((acc, current) => acc + current.TotalAmount, 0);
 
         this.DateWiseCollection = result.map(d => {
-          var pm =this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId);
-          var _paymentType='';
-          if(pm.length>0)
-          _paymentType =pm[0].MasterDataName;
+          var pm = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId);
+          var _paymentType = '';
+          if (pm.length > 0)
+            _paymentType = pm[0].MasterDataName;
           //var _lastname = d.StudentClass.Student.LastName == null ? '' : " " + d.StudentClass.Student.LastName;
           d.Name = d.StudentClasses[0].Name;
           d.ClassName = d.StudentClasses[0].ClassName

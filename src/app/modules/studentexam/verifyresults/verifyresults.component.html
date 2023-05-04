@@ -49,6 +49,22 @@
         (click)="Verified()">
         <mat-icon>checked</mat-icon>
     </button>
+    <div style="display:flex;margin-bottom: 15px;">
+        <div style="display:flex;margin-right: 15px; justify-content: center;">
+            <button [disabled]="loading || Permission=='read'"
+                *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0" matTooltip="print"
+                printSectionId="printSection" [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
+                <mat-icon>print</mat-icon>
+            </button>
+        </div>
+        <div style="display:flex;justify-content: center;">
+            <button [disabled]="loading || Permission=='read'"
+                *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0" matTooltip="print"
+                (click)="ExportArray()" [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
+                <mat-icon>download</mat-icon>
+            </button>
+        </div>
+    </div>
 </form>
 <div style="width: 100%;" id="printSection">
     <div *ngIf="ExamStudentSubjectResult.length>0">
@@ -86,17 +102,12 @@
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="GradingDisplayedColumns;sticky:true"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: GradingDisplayedColumns;" class="element-row"></mat-row>
+            <mat-row *matRowDef="let row; columns: GradingDisplayedColumns;" class="elementrow"></mat-row>
         </mat-table>
         <!-- <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginRator> -->
     </div>
 </div>
-<div style="display:flex;justify-content: center;">
-    <button [disabled]="loading || Permission=='read'" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0" matTooltip="print"
-        printSectionId="printSection" [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
-        <mat-icon>print</mat-icon>
-    </button>
-</div>
+
 <div style="margin-top:30px;" data-expand="false" #expandWrap>
     <span *ngIf="expandWrap.dataset.expand == 'false'" (click)="expandWrap.dataset.expand = 'true'">
         <mat-icon>info</mat-icon>

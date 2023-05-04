@@ -35,7 +35,7 @@ export class GrouppointComponent implements OnInit {
   ActivityCategory = [];
   RelevantEvaluationListForSelectedStudent = [];
   SportsResultList: any[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Sections = [];
   Classes = [];
   AchievementAndPoints = [];
@@ -58,7 +58,7 @@ export class GrouppointComponent implements OnInit {
     GroupId: 0,
     AchievementDate: new Date(),
     SessionId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0
   };
   SportsResultForUpdate = [];
@@ -127,7 +127,7 @@ export class GrouppointComponent implements OnInit {
         this.GetMasterData();
 
         if (this.Classes.length == 0) {
-          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
           this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
             this.loading = false;
@@ -189,34 +189,37 @@ export class GrouppointComponent implements OnInit {
     this.SportsResultList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.SportsResultList = data.value.map(m => {
+        this.SportsResultList = [];
+        data.value.forEach(m => {
           // if (m.StudentClassId > 0) {
           //   var obj = this.Students.filter(s => s.StudentClassId == m.StudentClassId);
           //   if (obj.length > 0)
           //     m.GroupId = obj[0].HouseId;
           // }
-          var objGroup = this.StudentHouses.filter(h => h.MasterDataId == m.GroupId);
-          if (objGroup.length > 0) {
-            m.GroupName = objGroup[0].MasterDataName;
-          }
-          else
-            m.GroupName = '';
+          if (m.Rank.Points > 0) {
+            var objGroup = this.StudentHouses.filter(h => h.MasterDataId == m.GroupId);
+            if (objGroup.length > 0) {
+              m.GroupName = objGroup[0].MasterDataName;
+            }
+            else
+              m.GroupName = '';
 
-          var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
-          if (obj.length > 0)
-            m.SportsName = obj[0].MasterDataName;
-          else
-            m.SportsName = '';
-          if (m.CategoryId > 0) {
-            var obj = this.allMasterData.filter(f => f.MasterDataId == m.CategoryId);
+            var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
             if (obj.length > 0)
-              m.Category = obj[0].MasterDataName;
+              m.SportsName = obj[0].MasterDataName;
+            else
+              m.SportsName = '';
+            if (m.CategoryId > 0) {
+              var obj = this.allMasterData.filter(f => f.MasterDataId == m.CategoryId);
+              if (obj.length > 0)
+                m.Category = obj[0].MasterDataName;
+            }
+            if (m.SubCategoryId > 0)
+              m.SubCategory = this.allMasterData.filter(f => f.MasterDataId == m.SubCategoryId)[0].MasterDataName;
+            m.Points = m.Rank.Points;
+            m.PointCategory = this.PointCategory.filter(c => c.MasterDataId == m.Rank.CategoryId)[0].MasterDataName;
+            this.SportsResultList.push(m);
           }
-          if (m.SubCategoryId > 0)
-            m.SubCategory = this.allMasterData.filter(f => f.MasterDataId == m.SubCategoryId)[0].MasterDataName;
-          m.Points = m.Rank.Points;
-          m.PointCategory = this.PointCategory.filter(c => c.MasterDataId == m.Rank.CategoryId)[0].MasterDataName;
-          return m;
         })
         var result = alasql("select sum(Points) as Points,GroupName from ? group by GroupName", [this.SportsResultList])
         if (this.SportsResultList.length == 0) {

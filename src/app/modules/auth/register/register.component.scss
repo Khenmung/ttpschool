@@ -14,11 +14,11 @@ button{
 .column{
     margin-right: 15px;
 }
-.mat-card{
-    position: relative;
-    margin-top:15px; 
-    width: 50%;
-}
+// .mat-card{
+//     position: relative;
+//     margin-top:15px; 
+//     width: 50%;
+// }
 .width100{
     width: 100%;
     margin-top: 100px;
@@ -29,4 +29,31 @@ button{
 }
 mat-form-field{
     margin-right: 20px;
+}
+@media only screen and (max-width: 768px) {
+    .bodyMargin {
+        margin: 0px
+    }
+    .mat-card {
+        position    : relative;
+        height      : max-content;
+        //margin-top:100px; 
+        margin      : 0px;
+        width       : 100%;
+    }
+}
+
+@media only screen and (min-width: 769px) {
+    .bodyMargin {
+        margin: 30px
+    }
+
+    .mat-card {
+        position    : relative;
+        height      : max-content;
+        //margin-top:100px; 
+        margin      : 60px;
+        width       : 50%;
+    }
+
 }

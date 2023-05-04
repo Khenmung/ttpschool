@@ -48,8 +48,8 @@ export class HomeComponent implements OnInit {
 
   ) {
     this.meta.addTags([
-      { name: 'Description', content: 'Online Education Management, Employee Management' },
-      { name: 'keywords', content: 'Education, School, Employee Management' },
+      { name: 'Description', content: 'ttpsolutions: Online Education Management, Employee Management' },
+      { name: 'keywords', content: 'ttpsolutions: Education, School, Employee Management' },
       { name: 'author', content: 'TTP' }
     ])
     title.setTitle('Online School Management');

@@ -1,6 +1,11 @@
+mat-form-field{
+    width:99%;
+    margin-right: 15px;
+}
 .mat-column-TotalAmount {
-    display    : grid;
-    place-items: center end;
+    display: flex;
+   justify-content: center;
+   text-align:end;
 }
 
 // .mat-table {
@@ -12,7 +17,7 @@
 // }
 .element-row {
     position: relative;
-    min-height: 34px;
+    min-height: 29px;
 
 }
 
@@ -29,17 +34,17 @@
 }
 .mat-column-ReceiptNo
 {
-    flex:1 1 60px;
+    flex:1 0 60px;
 }
 .mat-column-Status,.mat-column-TotalAmount{
     flex:1 1 100px;
 }
-.mat-column-ReceiptDate{
+.mat-column-ReceiptDate,.mat-column-ReceivedBy{
     flex:1 1 110px;
 }
 .mat-column-Name
 {
-    flex:1 1 250px;
+    flex:1 0 250px;
 }
 //.mat-column-ClassName,
 .mat-column-PaymentType{

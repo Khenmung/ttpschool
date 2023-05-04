@@ -257,7 +257,7 @@ body {
         //font-family: 'F25 Bank Printer', Arial, Helvetica, sans-serif;
         //width:100%;
     }
-    
+    @page{ size:auto !important}
       
 }
 .ck-editor__editable_inline {

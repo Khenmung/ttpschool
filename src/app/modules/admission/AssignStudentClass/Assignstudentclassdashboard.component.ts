@@ -16,6 +16,8 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { IStudentDownload } from '../../DataUploadDownload/studentdatadump/studentdatadump.component';
+import { TableUtil } from 'src/app/shared/TableUtil';
 
 @Component({
   selector: 'app-AssignStudentclassdashboard',
@@ -296,6 +298,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     }
   }
+  StudentClassForDownload=[];
   GenerateRollNo() {
 
     let filterStr = ' (' + this.FilterOrgSubOrg +") and SubOrgId eq " + this.SubOrgId;
@@ -422,7 +425,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.RollNoGenerationSortBy = 'Gender ' + _gendersort + ',StudentName ' + _namesort;
           var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " +
             this.RollNoGenerationSortBy;
-
+          this.StudentClassForDownload = alasql("select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,FatherName,MotherName from ?",[StudentClassRollNoGenList])
+          
           this.StudentClassList = alasql(orderbystatement, [StudentClassRollNoGenList]);
           this.StudentClassList.forEach((student, index) => {
             student.RollNo = (index + 1) + "";
@@ -601,6 +605,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
                 })
             })
         });
+    }
+  }
+  exportArray() {
+    if (this.StudentClassForDownload.length > 0) {
+      const datatoExport: Partial<IStudentDownload>[] = this.StudentClassForDownload;
+      TableUtil.exportArrayToExcel(datatoExport, "studentclassfeetypedetail");
     }
   }
   CopyFromPreviousClassAndBatch() {
@@ -854,6 +864,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
                 AdmissionDate: s.AdmissionDate,
                 ClassId: s.ClassId,
                 StudentId: s.StudentId,
+                FatherName:s.Student.FatherName,
+                MotherName:s.Student.MotherName,
                 StudentName: s.Student.FirstName + _lastname,
                 ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
                 FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
@@ -875,7 +887,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.HeaderTitle = '';
               this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
             }
-
+            this.StudentClassForDownload = alasql("select PID,StudentName,ClassName,RollNo,Section,FatherName,MotherName from ? ",[this.StudentClassList])
             this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
             this.dataSource.sort = this.sort;
             this.dataSource.paginator = this.paginator;
@@ -1259,6 +1271,8 @@ export interface IStudentClass {
   ClassName: string;
   StudentId: number;
   StudentName: string;
+  FatherName:string;
+  MotherName:string;
   RollNo: string;
   SectionId: number;
   Section: string;

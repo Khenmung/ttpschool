@@ -4,7 +4,7 @@
     <mat-card-content>
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="searchForm">
-            <mat-form-field [style.width.pc]="25" appearance="outline">
+            <mat-form-field [style.width.px]="250" appearance="outline">
                 <mat-label>Employee</mat-label>
                 <input type="text" matInput formControlName="searchEmployee" [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -13,7 +13,7 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetEmployeeLeave()">
+            <button [disabled]="loading" [style.width.px]="100" class="mat-raised-button" (click)="GetEmployeeLeave()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
@@ -39,7 +39,7 @@
             <ng-container matColumnDef="LeaveFrom">
                 <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline" [style.width.px]="200">
+                    <mat-form-field appearance="outline">
                         <mat-label>Start Date</mat-label>
                         <input [(ngModel)]="element.LeaveFrom" [value]="element.LeaveFrom" matInput
                             [matDatepicker]="LeaveFrom" autocomplete="off">
@@ -51,7 +51,7 @@
             <ng-container matColumnDef="LeaveTo">
                 <mat-header-cell *matHeaderCellDef> To </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline" [style.width.px]="200">
+                    <mat-form-field appearance="outline">
                         <mat-label>End Date</mat-label>
                         <input [value]="element.LeaveTo" [(ngModel)]="element.LeaveTo" matInput
                             [matDatepicker]="LeaveTo" autocomplete="off">
@@ -81,7 +81,7 @@
             <ng-container matColumnDef="LeaveStatusId">
                 <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-select [disabled]="!newitem" [(ngModel)]="element.LeaveStatusId" [style.width.px]="170"
+                    <mat-select [disabled]="!newitem" [(ngModel)]="element.LeaveStatusId"
                         [value]="element.LeaveStatusId">
                         <mat-option *ngFor="let item of LeaveStatus" [value]="item.MasterDataId">
                             {{item.MasterDataName}}
@@ -92,7 +92,7 @@
             <ng-container matColumnDef="Remarks">
                 <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field [style.width.px]="300" appearance="outline">
+                    <mat-form-field appearance="outline">
                         <textarea matInput autocomplete="Off" [value]="element.Remarks"
                             [(ngModel)]="element.Remarks"></textarea>
                     </mat-form-field>
@@ -113,8 +113,8 @@
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading" matTooltip="save" mat-raised-button color="accent"
+                <mat-cell *matCellDef="let element">
+                    <button [disabled]="loading" matTooltip="save" mat-mini-fab color="accent"
                         (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                         <mat-icon *ngIf="loading">

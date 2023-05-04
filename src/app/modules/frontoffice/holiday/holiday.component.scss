@@ -1,10 +1,17 @@
-.mat-column-HolidayId,.mat-column-Active,.mat-column-Action{
-    flex:1 0 50px;
-    justify-content: center;
+mat-form-field{
+    width:99%;
+    margin-right: 15px;
 }
-.mat-column-Title,.mat-column-StartDate,.mat-column-EndDate,.mat-column-HolidayTypeId{
-    flex:1 0 150px;
+.mat-column-HolidayId,.mat-column-Active,.mat-column-Action{
+    justify-content: center;
+    flex:1 0 70px;
+}
+.mat-column-StartDate,.mat-column-EndDate{
+    flex:1 0 120px;
+}
+.mat-column-Title,.mat-column-HolidayTypeId{
+    flex:1 0 130px;
 }
 .mat-column-Description{
-    flex:1 0 200px;
+    flex:1 0 180px;
 }

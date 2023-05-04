@@ -290,7 +290,7 @@ export class StudentActivityComponent implements OnInit {
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"],
               SubOrgId: this.SubOrgId,
-              BatchId: row.BatchId
+              BatchId: this.SelectedBatchId
             });
 
           if (this.SportsResultForUpdate[0].SportResultId == 0) {

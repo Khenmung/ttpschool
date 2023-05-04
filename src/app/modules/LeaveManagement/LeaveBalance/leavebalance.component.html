@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Leaves</strong></div>
+        <div><strong>Leave Balance</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
@@ -17,7 +17,9 @@
                     </mat-autocomplete>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
+                    <mat-label>Month Year</mat-label>
                     <mat-select formControlName="YearMonth">
+                        <mat-option value="0">select</mat-option>
                         <mat-option *ngFor="let month of DropDownMonths" [value]="month['val']">{{month['MonthName']}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -62,6 +64,7 @@ mat-raised-button color="accent" (click)="SaveRow(element)">
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
+            <mat-paginator style="display:flex;justify-content: center;" [pageSizeOptions]="[5,20,50,100]"></mat-paginator>
         </div>
 
     </div>

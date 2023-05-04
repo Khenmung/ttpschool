@@ -175,6 +175,7 @@ export class AchievementandpointComponent implements OnInit {
               CategoryId: row.CategoryId,
               Points: row.Points,
               OrgId: this.LoginUserDetail[0]['orgId'],
+              SubOrgId:this.SubOrgId,
               Active: row.Active
             });
 

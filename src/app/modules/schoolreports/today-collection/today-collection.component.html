@@ -4,8 +4,8 @@
 <!-- <alert></alert> -->
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="SearchForm">
-    <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
-        <mat-form-field appearance="outline" [style.width.px]="150">
+    <div style="display:flex;">
+        <mat-form-field appearance="outline">
             <mat-label>Class</mat-label>
             <mat-select formControlName="searchClassId">
                 <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
@@ -13,7 +13,7 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field [style.width.px]="250" appearance="outline">
+        <mat-form-field appearance="outline">
             <mat-label>Name-class-section-roll no</mat-label>
             <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -22,24 +22,26 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
+        <mat-form-field appearance="outline">
             <mat-label>From Date</mat-label>
             <input formControlName="FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
             <mat-datepicker #FromDate></mat-datepicker>
         </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
+        <mat-form-field appearance="outline">
             <mat-label>To Date</mat-label>
             <input formControlName="ToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
             <mat-datepicker #ToDate></mat-datepicker>
         </mat-form-field>
-        <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentDetails()">
-             <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-        </button>
+        <div style="display:flex;align-items: center;">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentFeePaymentDetails()">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </div>
     </div>
 </form>
 <!-- <div *ngIf="DateWiseCollection.length>0"> -->
@@ -49,10 +51,10 @@
             <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.Name}} </mat-cell>
         </ng-container>
-        <!-- <ng-container matColumnDef="ClassName">
-            <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.ClassName}} </mat-cell>
-        </ng-container> -->
+        <ng-container matColumnDef="ReceivedBy">
+            <mat-header-cell *matHeaderCellDef> Received By </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.ReceivedBy}} </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="ReceiptDate">
             <mat-header-cell *matHeaderCellDef> Receipt Date </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.ReceiptDate|date:'dd/MM/yyyy'}} </mat-cell>
@@ -110,7 +112,7 @@
         </mat-row>
     </mat-table>
 
-    <div style="padding-top: 15px;display:flex; flex-direction: row;">
+    <div style="padding-top: 15px;display:flex; flex-direction: row;flex-wrap: wrap;">
         <div style="margin:10px 15px 20px 10px;padding-bottom: 15px; border: 1px solid lightgray;">
             <div style="padding: 15px 20px 0px 20px;"><strong>Fee Category</strong></div>
             <div *ngFor="let item of HeadsWiseCollection"
@@ -118,7 +120,6 @@
 
                 <div style="width:100%;">{{item.FeeCategory}}</div>
                 <div style="width:100%;display: flex;justify-content: end;">&#x20b9; {{item.Amount}}</div>
-
             </div>
         </div>
         <div style="margin:10px 20px 20px 10px;padding-bottom: 15px; border: 1px solid lightgray;">
@@ -128,21 +129,24 @@
                 <div style="width:100%;">{{item.PaymentType}}</div>
                 <div style="width:100%;display: flex;justify-content: end;">&#x20b9; {{item.TotalAmount}}</div>
             </div>
-            <div style="padding: 15px 15px 0px 20px; min-width:450px;display: flex;flex-direction: row;justify-content: center;align-items: center;">
+            <div
+                style="padding: 15px 15px 0px 20px; min-width:450px;display: flex;flex-direction: row;justify-content: center;align-items: center;">
                 <div style="width:100%;">Cancelled</div>
                 <div style="width:100%;display: flex;justify-content: end;">&#x20b9; {{CancelledAmount}}</div>
             </div>
-            <hr/>
-            <div style="padding: 0px 15px 0px 20px; min-width:450px;display: flex;flex-direction: row;justify-content: center;align-items: center;">
+            <hr />
+            <div
+                style="padding: 0px 15px 0px 20px; min-width:450px;display: flex;flex-direction: row;justify-content: center;align-items: center;">
                 <div *ngIf="GrandTotalAmount>0" style="width:100%;"><strong>Total Collection</strong></div>
                 <div style="width:100%;display: flex;justify-content: end;">&#x20b9; {{GrandTotalAmount}}</div>
-                <span *ngIf="ErrorMessage.length>0" style="width:100%;display: flex;justify-content: end;">{{ErrorMessage}}</span>
+                <span *ngIf="ErrorMessage.length>0"
+                    style="width:100%;display: flex;justify-content: end;">{{ErrorMessage}}</span>
             </div>
         </div>
     </div>
     <mat-divider style="width: 100%;"></mat-divider>
 
-    
+
     <!-- <hr style="color:lightgrey;"> -->
 
 </div>

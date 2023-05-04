@@ -12,6 +12,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-gradehistory.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-employee-leave',
@@ -48,7 +49,7 @@ export class EmployeeLeaveComponent implements OnInit {
     LeaveReason: String,
     ApplyDate: Date,
     LeaveStatusId: 0,
-    ApproveRejecteDate: Date,
+    ApproveRejectedDate: Date,
     ApprovedBy: 0,
     Remarks: String,
     OrgId: 0,SubOrgId: 0,
@@ -137,7 +138,7 @@ export class EmployeeLeaveComponent implements OnInit {
   updateActive(row, value) {
     //if(!row.Action)
     row.Action = true;
-    row.Active = value.checked == 1 ? 1 : 0;
+    row.Active = value.checked? 1 : 0;
   }
   delete(element) {
     let toupdate = {
@@ -153,13 +154,13 @@ export class EmployeeLeaveComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let checkFilterString = this.FilterOrgSubOrg + " and EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId +
-      " and LeaveFrom eq " + row.LeaveFrom +
-      " and LeaveTo eq " + row.LeaveTo +
+      " and LeaveFrom eq " + moment(row.LeaveFrom).format('YYYY-MM-DD') +
+      " and LeaveTo eq " + moment(row.LeaveTo).format('YYYY-MM-DD') +
       " and Active eq 1"
 
     if (row.EmployeeLeaveId > 0)
@@ -178,7 +179,10 @@ export class EmployeeLeaveComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-
+          var _leaveStatusId =0;
+          var pendingStatusObj = this.LeaveStatus.filter(l=>l.MasterDataName.toLowerCase()=="pending")
+          if(pendingStatusObj.length>0)
+          _leaveStatusId= pendingStatusObj[0].MasterDataId;
           this.EmployeeLeaveData.EmployeeLeaveId = row.EmployeeLeaveId;
           this.EmployeeLeaveData.EmployeeId = this.searchForm.get("searchEmployee").value.EmployeeId;
           this.EmployeeLeaveData.Active = row.Active;
@@ -186,13 +190,15 @@ export class EmployeeLeaveComponent implements OnInit {
           this.EmployeeLeaveData.LeaveFrom = row.LeaveFrom;
           this.EmployeeLeaveData.LeaveTo = row.LeaveTo;
           this.EmployeeLeaveData.LeaveReason = row.LeaveReason;
-          this.EmployeeLeaveData.LeaveStatusId = row.LeaveStatusId;
-          this.EmployeeLeaveData.ApprovedBy = this.LoginUserDetail[0]["userId"];
+          this.EmployeeLeaveData.LeaveStatusId = _leaveStatusId;
+          this.EmployeeLeaveData.ApplyDate = row.ApplyDate;
+          delete this.EmployeeLeaveData.ApproveRejectedDate;
+          this.EmployeeLeaveData.ApprovedBy = this.LoginUserDetail[0]["employeeId"];
           this.EmployeeLeaveData.NoOfDays = row.NoOfDays;
           this.EmployeeLeaveData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.EmployeeLeaveData.SubOrgId = this.SubOrgId;
           this.EmployeeLeaveData.Remarks = row.Remarks;
-          //console.log('data', this.EmployeeLeaveData);
+          console.log('data', this.EmployeeLeaveData);
 
           if (this.EmployeeLeaveData.EmployeeLeaveId == 0) {
             this.EmployeeLeaveData["CreatedDate"] = new Date();
@@ -323,7 +329,7 @@ export class EmployeeLeaveComponent implements OnInit {
 
   }
   GetEmployeeLeave() {
-
+debugger;
     //var orgIdSearchstr = this.FilterOrgSubOrg;// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
@@ -338,7 +344,7 @@ export class EmployeeLeaveComponent implements OnInit {
       "LeaveReason",
       "ApplyDate",
       "LeaveStatusId",
-      "ApproveRejecteDate",
+      "ApproveRejectedDate",
       "ApprovedBy",
       "Remarks",
       "Active"
@@ -391,6 +397,7 @@ export class EmployeeLeaveComponent implements OnInit {
       "LeaveFrom",
       "LeaveTo",
       "LeaveReason",
+      "Active",
       "Action"
     ]
     var newdata = {
