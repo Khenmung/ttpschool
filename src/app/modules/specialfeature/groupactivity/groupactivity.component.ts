@@ -33,7 +33,7 @@ export class GroupactivityComponent implements OnInit {
   ActivityCategory = [];
   RelevantEvaluationListForSelectedStudent = [];
   SportsResultList: any[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Sections = [];
   Classes = [];
   AchievementAndPoints = [];
@@ -57,7 +57,7 @@ export class GroupactivityComponent implements OnInit {
     GroupId: 0,
     AchievementDate: new Date(),
     SessionId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0
   };
   SportsResultForUpdate = [];
@@ -140,7 +140,7 @@ export class GroupactivityComponent implements OnInit {
         this.GetMasterData();
 
         if (this.Classes.length == 0) {
-          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
           this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
             this.loading = false;
@@ -166,7 +166,10 @@ export class GroupactivityComponent implements OnInit {
         });
   }
 
-
+  ClearData() {
+    this.SportsResultList = [];
+    this.dataSource = new MatTableDataSource<ISportsResult>(this.SportsResultList);
+  }
   UpdateOrSave(row) {
 
     debugger;
@@ -198,8 +201,8 @@ export class GroupactivityComponent implements OnInit {
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +
       " and CategoryId eq " + row.CategoryId +
-      " and SubCategoryId eq " + row.SubCategoryId 
-      //" and BatchId eq " + this.SelectedBatchId;
+      " and SubCategoryId eq " + row.SubCategoryId
+    //" and BatchId eq " + this.SelectedBatchId;
     this.RowsToUpdate = 0;
 
     if (row.SportResultId > 0)
@@ -411,6 +414,7 @@ export class GroupactivityComponent implements OnInit {
       this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
     else
       this.ActivityCategory = [];
+    this.ClearData();
   }
   AddNew() {
     debugger;

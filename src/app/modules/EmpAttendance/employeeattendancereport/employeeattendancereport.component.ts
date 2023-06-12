@@ -107,7 +107,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employeeattendance.ATTENDANCEREPORT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -183,7 +183,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
     list.fields = [
       "EmployeeId",
       "AttendanceDate",
-      "AttendanceStatus",
+      "AttendanceStatusId",
     ];
     list.PageName = "EmployeeAttendances";
     //list.lookupFields = ["StudentClass"];
@@ -191,6 +191,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((employeeAttendance: any) => {
+        this.displayedColumns = ["Employee"];
         var weekdaysCount = 0, Holidays = 0;
         var tempdate;
         var lastDateOfMonth = new Date(moment(fromDate).endOf('month').format('YYYY-MM-DD')).getDate();
@@ -207,7 +208,7 @@ export class EmployeeAttendanceReportComponent implements OnInit {
         let Present = 0;
         let today = new Date().getDay();
         //var lastDateOfMonth = new Date(moment(fromDate).endOf('month').format('YYYY-MM-DD')).getDate();
-        var _employeeDepartmentWise = [];
+        //var _employeeDepartmentWise = [];
         if (_Department > 0)
           this.EmployeeAttendanceList = this.Employees.filter(f => f.DepartmentId == _Department)
         else
@@ -232,7 +233,14 @@ export class EmployeeAttendanceReportComponent implements OnInit {
 
               var dayattendance = existing.filter(e => new Date(e.AttendanceDate).getDate() == dayCount);
               if (dayattendance.length > 0) {
-                emp[dayHead] = dayattendance[0].AttendanceStatus == 1 ? 'P' : dayattendance[0].Approved ? 'L' : '-';
+
+                var obj = this.AttendanceStatus.filter(f => f.MasterDataId == dayattendance[0].AttendanceStatusId);
+                if (obj.length > 0)
+                  dayattendance[0].AttendanceStatus = obj[0].MasterDataName;
+                else
+                  dayattendance[0].AttendanceStatus = '';
+
+                emp[dayHead] = dayattendance[0].AttendanceStatus ? dayattendance[0].AttendanceStatus : '';
                 if (this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun' && today <= dayCount && (dayattendance[0].AttendanceStatus == 0 || !dayattendance[0].AttendanceStatus))
                   absent += 1;
                 else if (this.WeekDays[wd] != 'Sat' && this.WeekDays[wd] != 'Sun')
@@ -271,9 +279,9 @@ export class EmployeeAttendanceReportComponent implements OnInit {
           if (this.displayedColumns.indexOf("Ab") == -1)
             this.displayedColumns.push("Ab");
           emp["Pre"] = Present;//toDate.getDate() - absent;
-          var _ab =absent - (weekdaysCount + Holidays);
-         
-          emp["Ab"] = _ab<0?0:_ab;
+          var _ab = absent - (weekdaysCount + Holidays);
+
+          emp["Ab"] = _ab < 0 ? 0 : _ab;
         })
         //console.log("employee",this.Employees)
         //this.EmployeeAttendanceList = this.EmployeeAttendanceList.sort((a, b) => a.RollNo - b.RollNo)
@@ -345,12 +353,12 @@ export class EmployeeAttendanceReportComponent implements OnInit {
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
 
-
+  AttendanceStatus = [];
   GetMasterData() {
     debugger;
     this.allMasterData = this.tokenStorage.getMasterData();
     //this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    //this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.common.ATTENDANCESTATUS);
     this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
     this.loading = false; this.PageLoading = false;
   }

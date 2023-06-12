@@ -3,7 +3,6 @@
 <!-- <alert></alert> -->
 <br>
 <form [formGroup]="searchForm">
-
     <mat-form-field appearance="outline" [style.width.px]="350">
         <mat-label>Master</mat-label>
         <input type="text" matInput formControlName="ParentId" [matAutocomplete]="auto">
@@ -16,7 +15,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Sub Master</mat-label>
-        <mat-select formControlName="SubId" (selectionChange)="emptyresult()">
+        <mat-select formControlName="SubId" (selectionChange)="ClearData()">
             <mat-option [value]="0">--sub master--</mat-option>
             <mat-option *ngFor="let master of SubMasters" [value]="master.MasterDataId">
                 {{master.MasterDataName}}
@@ -163,6 +162,7 @@
                                        || Parent=='Fee Payment Type'    
                                        || Parent=='Questionnaire Type'    
                                        || Parent=='Attendance Mode'    
+                                       || Parent=='Leave Status'    
                                        || element.MasterDataName=='Grading'
                                        || element.MasterDataName=='Marking'
                                        || element.MasterDataName=='Admin'
@@ -192,7 +192,8 @@
                                        || Parent=='Exam Status'
                                        || Parent=='Fee Payment Type'    
                                        || Parent=='Questionnaire Type'    
-                                       || Parent=='Attendance Mode'    
+                                       || Parent=='Attendance Mode'   
+                                       || Parent=='Leave Status'     
                                        || element.MasterDataName=='Sports Certificate'
                                        || element.MasterDataName=='Grading'
                                        || element.MasterDataName=='Marking'

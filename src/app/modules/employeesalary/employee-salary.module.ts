@@ -6,8 +6,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
-
+import { NgxPrintModule } from 'ngx-print';
 
 @NgModule({
   declarations: [employeesalaryComponents],
@@ -19,7 +18,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     FormsModule,
     MaterialModule,
     SharedhomepageModule,
-    
+    NgxPrintModule
   ],
   exports:[employeesalaryComponents],
   //providers:[{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}]

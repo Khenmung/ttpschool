@@ -6,7 +6,7 @@
     <form [formGroup]="searchForm">
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Class</mat-label>
-            <mat-select formControlName="searchClassId">
+            <mat-select formControlName="searchClassId" (selectionChange)="ClearData()">
                 <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
                     {{item.ClassName}}</mat-option>
             </mat-select>
@@ -14,7 +14,7 @@
         <mat-form-field [style.width.px]="200" appearance="outline">
             <mat-label>Teacher</mat-label>
             <input type="text" matInput formControlName="searchTeacherId" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="ClearData()">
                 <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
                     {{option.TeacherName}}
                 </mat-option>

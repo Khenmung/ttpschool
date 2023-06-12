@@ -35,7 +35,7 @@
             {{element.Employee}}
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="AttendanceStatus">
+    <ng-container matColumnDef="AttendanceStatusId">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Present&nbsp;
             <mat-checkbox *ngIf="EmployeeAttendanceList.length>0" matTooltip="check/uncheck all" mat-mini-fab
                 (click)="$event.stopPropagation()" (change)="checkall($event)">
@@ -45,7 +45,7 @@
             <mat-checkbox 
                 (click)="$event.stopPropagation()" 
                 (change)="UpdateActive(element,$event)"
-                [checked]="element.AttendanceStatus==1?true:false">
+                [checked]="element.AttendanceStatus=='P'">
             </mat-checkbox>
         </mat-cell>
     </ng-container>
@@ -69,7 +69,7 @@
             </button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-            <button [disabled]="loading || !element.Action || Permission=='read' || !EnableSave" matTooltip="view/edit"
+            <button [disabled]="loading || !element.Action || Permission=='read' || !EnableSave || element.AttendanceStatus.toLowerCase()=='l'" matTooltip="view/edit"
                 mat-raised-button color="accent" (click)="SaveRow(element)">
                 <mat-icon>save</mat-icon>
                 <mat-icon *ngIf="loading">

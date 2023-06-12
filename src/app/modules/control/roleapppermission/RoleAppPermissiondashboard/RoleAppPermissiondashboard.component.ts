@@ -187,6 +187,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       this.enableTopEdit = true;
     else
       this.enableTopEdit = false;
+    this.ClearData();
   }
   GetPageFeatures() {
     //debugger;
@@ -306,7 +307,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         //console.log("adminFeatures",adminFeatures);
         adminFeatures.forEach(p => {
           _roleName = "";
-          var existing = roleFilteredAssigned.filter(r =>r.PlanFeatureId == p.PlanFeatureId);
+          var existing = roleFilteredAssigned.filter(r => r.PlanFeatureId == p.PlanFeatureId);
           if (existing.length > 0) {
             var obj = this.Roles.filter(r => r.MasterDataId == existing[0].RoleId)
             if (obj.length > 0)
@@ -353,6 +354,10 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         this.datasource.sort = this.sort;
         this.datasource.paginator = this.paginator;
       });
+  }
+  ClearData() {
+    this.ApplicationRoleList = [];
+    this.datasource = new MatTableDataSource<IApplicationRolePermission>(this.ApplicationRoleList);
   }
   checkall(value) {
     this.ApplicationRoleList.forEach(record => {

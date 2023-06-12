@@ -34,14 +34,14 @@ export class StudentattendancereportComponent implements OnInit {
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  // optionsNoAutoClose = {
+  //   autoClose: false,
+  //   keepAfterRouteChange: true
+  // };
+  // optionAutoClose = {
+  //   autoClose: true,
+  //   keepAfterRouteChange: true
+  // };
   SaveAll = false;
   NoOfRecordToUpdate = -1;
   StudentDetailToDisplay = '';
@@ -55,7 +55,7 @@ export class StudentattendancereportComponent implements OnInit {
   ClassSubjects = [];
   SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
-  AttendanceStatus = [];
+  //AttendanceStatus = [];
   FilteredClassSubjects = [];
   StudentAttendanceList: IStudentAttendance[] = [];
   StudentClassList = [];
@@ -282,7 +282,7 @@ export class StudentattendancereportComponent implements OnInit {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    //this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.common.ATTENDANCESTATUS);
     this.shareddata.ChangeSubjects(this.Subjects);
     this.loading = false; this.PageLoading = false;
   }

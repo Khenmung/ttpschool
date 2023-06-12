@@ -187,12 +187,13 @@ export class AppuserdashboardComponent implements OnInit {
         this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
-
+    
       this.GetStudents();
     }
     else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement) {
       this.GetEmployees();
     }
+    this.ClearData();
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
@@ -491,6 +492,10 @@ export class AppuserdashboardComponent implements OnInit {
         this.contentservice.openSnackBar(this.errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       });
 
+  }
+  ClearData() {
+    this.AppUsers = [];
+    this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
   }
   Delete(row) {
 

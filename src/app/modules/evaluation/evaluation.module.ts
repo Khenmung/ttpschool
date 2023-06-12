@@ -8,6 +8,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { NgxPrintModule } from 'ngx-print';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { EvaluationresultlistComponent } from './evaluationresultlist/evaluationresultlist.component';
+import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 
 @NgModule({
   declarations: [
@@ -22,8 +23,9 @@ import { EvaluationresultlistComponent } from './evaluationresultlist/evaluation
     MaterialModule,
     SharedhomepageModule,
     NgxPrintModule,
-    SharedModule
-
+    SharedModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule
   ],
   exports:[
     EvaluationComponents

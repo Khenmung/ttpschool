@@ -77,6 +77,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     StudentId: 0,
     ClassId: 0,
     SectionId: 0,
+    SemesterId: 0,
     SectionName: '',
     PayAmount: 0,
     StudentClassId: 0,
@@ -150,8 +151,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     Amount: 0,
     ClassFeeId: 0,
     ShortText: '',
-    OrgId: 0, SubOrgId: 0,
-
+    OrgId: 0,
+    SubOrgId: 0,
     Active: 1
   }
   StudentLedgerData = {
@@ -162,7 +163,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     TotalCredit: 0,
     Balance: 0,
     BatchId: 0,
-    OrgId: 0, SubOrgId: 0,
+    OrgId: 0,
+    SubOrgId: 0,
     Active: 1
   };
 
@@ -428,6 +430,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         "StudentClassId",
         "AdmissionNo",
         "SectionId",
+        "SemesterId",
         "StudentId",
         "BatchId",
         "ClassId",
@@ -546,6 +549,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
       "ClassFeeId",
       "FeeDefinitionId",
       "ClassId",
+      "SectionId",
+      "SemesterId",
       "Amount",
       "BatchId",
       "Month",
@@ -563,7 +568,27 @@ export class AddstudentfeepaymentComponent implements OnInit {
         debugger;
 
         if (data.value.length > 0) {
-          var result = data.value.sort((a, b) => a.Month - b.Month);
+          var result = [];
+          if (data.value.length > 1) {
+            //college with semester and sectionid
+            if (this.studentInfoTodisplay.SectionId > 0 && this.studentInfoTodisplay.SemesterId > 0)
+              result = data.value.filter(f => f.SectionId == this.studentInfoTodisplay.SectionId
+                && f.SemesterId == this.studentInfoTodisplay.SemesterId);
+                //college with semesterid
+            else if (this.studentInfoTodisplay.SectionId == 0 && this.studentInfoTodisplay.SemesterId > 0) {
+              result = data.value.filter(f => f.SemesterId == this.studentInfoTodisplay.SemesterId);
+            }
+            //high school with section wise
+            else if (this.studentInfoTodisplay.SectionId > 0 && this.studentInfoTodisplay.SemesterId == 0) {
+              result = data.value.filter(f => f.SemesterId == this.studentInfoTodisplay.SemesterId);
+            }
+            else
+              result = [...data.value];
+          }
+          else
+            result = [...data.value];
+
+          result = result.sort((a, b) => a.Month - b.Month);
           this.StudentClassFees = result.map(studclsfee => {
             //f.FeeName = this.FeeDefinitions.filter(n => n.FeeDefinitionId == f.FeeDefinitionId)[0].FeeName;
             var catObj = this.FeeCategories.filter(cat => cat.MasterDataId == studclsfee.FeeDefinition.FeeCategoryId);
@@ -618,7 +643,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                     MonthName: studentClassFee.MonthName,
                     FeeCategory: studentClassFee.FeeCategory,
                     FeeSubCategory: studentClassFee.FeeSubCategory,
-                    PaymentOrder:studentClassFee.PaymentOrder,
+                    PaymentOrder: studentClassFee.PaymentOrder,
                     BatchId: exitem.BatchId,
                     Action: false
                   })
@@ -768,7 +793,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               FeeSubCategory: f.FeeSubCategory,
               FeeAmount: f.Amount,
               BaseAmount: f.Amount,
-              PaymentOrder:f.PaymentOrder,
+              PaymentOrder: f.PaymentOrder,
               BaseAmountForCalc: +AmountAfterFormulaApplied,
               Amount: +AmountAfterFormulaApplied,
               BalancePayment: false,
@@ -854,7 +879,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     //this.MonthlyDueDetail = this.MonthlyDueDetail.sort((a, b) => a.Amount - b.Amount);
     this.MonthlyDueDetail = this.MonthlyDueDetail.sort((a, b) => a.PaymentOrder - b.PaymentOrder);
-    console.log("this.MonthlyDueDetail ",this.MonthlyDueDetail )
+    console.log("this.MonthlyDueDetail ", this.MonthlyDueDetail)
     this.MonthlyDueDetail.forEach((row, indx) => {
       row.SlNo = indx + 1;
     });

@@ -76,6 +76,7 @@ export class ClassEvaluationComponent implements OnInit {
     'QuestionnaireTypeId',
     'DisplayOrder',
     'ClassEvaluationAnswerOptionParentId',
+    'Marks',
     'ExamId',
     'MultipleAnswer',
     'Active',
@@ -175,8 +176,12 @@ export class ClassEvaluationComponent implements OnInit {
     var examsOfSelectGroup = this.ExamClassGroups.filter(exgroup => exgroup.ClassGroupId == _searchClassGroupId)
 
     this.FilteredExam = this.Exams.filter(e => examsOfSelectGroup.findIndex(x => x.ExamId == e.ExamId) > -1);
+    this.ClearData();
   }
-
+ClearData(){
+  this.ClassEvaluationList =[];
+  this.dataSource = new MatTableDataSource<any>(this.ClassEvaluationList);
+}
   GetExams() {
 
     this.contentservice.GetExams(this.FilterOrgSubOrgBatchId, 1)
@@ -278,6 +283,7 @@ export class ClassEvaluationComponent implements OnInit {
       Description: '',
       MultipleAnswer: 0,
       ExamId: 0,
+      Marks:0,
       EvaluationMasterId: _EvaluationMasterId,
       ClassEvaluationAnswerOptionParentId: 0,
       DisplayOrder: 0,
@@ -362,6 +368,7 @@ export class ClassEvaluationComponent implements OnInit {
         QuestionnaireTypeId: row.QuestionnaireTypeId,
         MultipleAnswer: row.MultipleAnswer,
         ExamId: row.ExamId,
+        Marks:row.Marks,
         ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
         EvaluationMasterId: row.EvaluationMasterId,
         Description: globalconstants.encodeSpecialChars(row.Description),
@@ -457,6 +464,7 @@ export class ClassEvaluationComponent implements OnInit {
       'EvaluationMasterId',
       'MultipleAnswer',
       'ExamId',
+      'Marks',
       'ClassEvaluationAnswerOptionParentId',
       'DisplayOrder',
       'Active'
@@ -654,6 +662,7 @@ export interface IClassEvaluation {
   MultipleAnswer: number;
   ExamId: number;
   Description: string;
+  Marks:number;
   ClassEvaluationAnswerOptionParentId: number;
   DisplayOrder: number;
   Active: number;

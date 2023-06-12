@@ -24,8 +24,8 @@ button {
 }
 
 .mat-column-Gratuity,
-.mat-column-Active {
-    flex           : 0 0 80px;
+.mat-column-Active,.mat-column-Action {
+    flex           : 1 0 80px;
     justify-content: center;
     //border-radius: 0;
 }

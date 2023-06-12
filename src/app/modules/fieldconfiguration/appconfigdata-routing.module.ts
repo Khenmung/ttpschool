@@ -4,7 +4,6 @@ import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ConfigboardComponent } from './configboard/configboard.component';
 import { UserconfigreportnameComponent } from './userconfigreportname/userconfigreportname.component';
 import { UserReportConfigColumnsComponent } from './userreportconfigColumns/userreportconfigcolumns.component';
-import { VariableConfigComponent } from './variable-config/variable-config.component';
 
 const routes: Routes = [
   {
@@ -24,7 +23,6 @@ const routes: Routes = [
 export class AppconfigdataRoutingModule { }
 export const AppConfigComponents = [
   UserReportConfigColumnsComponent,
-  VariableConfigComponent,
   UserconfigreportnameComponent,
   ConfigboardComponent,
   

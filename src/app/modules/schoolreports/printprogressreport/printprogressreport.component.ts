@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import alasql from 'alasql';
+import { string } from 'mathjs';
 import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -115,6 +116,7 @@ export class PrintprogressreportComponent implements OnInit {
     this.PageLoad();
   }
   filterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   StudentName = [];
   FeePaymentPermission = '';
   ExamClassGroups = [];
@@ -154,6 +156,19 @@ export class PrintprogressreportComponent implements OnInit {
 
         this.StudentClassId = this.tokenStorage.getStudentClassId();
         this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+        let _role = this.LoginUserDetail[0]['RoleUsers'][0].role;
+        let fields = "StudentId,PID,PresentAddress,DOB";
+        this.contentservice.GetStudentUncommonFields(fields, this.FilterOrgSubOrgBatchId, _role, localStorage.getItem('studentId'))
+          .subscribe((all: any) => {
+            this.AllStudents.forEach(stud => {
+              let match = all.value.filter(a => a.StudentId == stud.StudentId);
+              if (match.length > 0) {
+                stud.PresentAddress = match[0].PresentAddress;
+                stud.DOB = match[0].DOB;
+              }
+            })
+          })
         this.contentservice.GetClasses(this.filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         });

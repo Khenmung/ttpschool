@@ -11,7 +11,7 @@
     </mat-form-field> -->
     <mat-form-field appearance="outline">
         <mat-label>Date</mat-label>
-        <input formControlName="searchToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
+        <input formControlName="searchToDate" matInput [matDatepicker]="ToDate" autocomplete="off" (dateChange)="ClearData()">
         <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
         <mat-datepicker #ToDate></mat-datepicker>
     </mat-form-field>

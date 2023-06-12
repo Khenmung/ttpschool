@@ -53,7 +53,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   EmployeeAttendanceData = {
     EmployeeAttendanceId: 0,
     EmployeeId: 0,
-    AttendanceStatus: 0,
+    AttendanceStatusId: 0,
     AttendanceDate: new Date(),
     ReportedTo: 0,
     Approved: false,
@@ -66,14 +66,14 @@ export class EmployeeAttendanceComponent implements OnInit {
   };
   displayedColumns = [
     'Employee',
-    'AttendanceStatus',
+    'AttendanceStatusId',
     'Remarks',
     'Action'
   ];
   SelectedApplicationId = 0;
   Employees = [];
-  constructor(private servicework: SwUpdate,
-
+  constructor(
+    private servicework: SwUpdate,
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -140,15 +140,20 @@ export class EmployeeAttendanceComponent implements OnInit {
   checkall(value) {
     debugger;
     this.EmployeeAttendanceList.forEach(record => {
+      var _attendancePresentObj = this.AttendanceStatus.filter(a => a.MasterDataName.toLowerCase() == 'p');
+      var _attendanceAbsentObj = this.AttendanceStatus.filter(a => a.MasterDataName.toLowerCase() == 'a');
       if (value.checked) {
-        record.AttendanceStatus = 1;
+        record.AttendanceStatus = "P";
+        record.AttendanceStatusId = _attendancePresentObj[0].MasterDataId;
       }
       else
-        record.AttendanceStatus = 0;
+      {
+        record.AttendanceStatus = 'A';      
+        record.AttendanceStatusId = _attendanceAbsentObj[0].MasterDataId;
+      }
       record.Action = true;
       record["Active"] = true;
-    })
-    //this.AnyEnableSave=true;
+    })    
   }
 
   GetEmployeeAttendance() {
@@ -200,7 +205,7 @@ export class EmployeeAttendanceComponent implements OnInit {
       "ReportedTo",
       "ApprovedBy",
       "AttendanceDate",
-      "AttendanceStatus",
+      "AttendanceStatusId",
       "Remarks",
       "OrgId",
       "BatchId"
@@ -221,6 +226,11 @@ export class EmployeeAttendanceComponent implements OnInit {
           var empName = emp.FirstName + (emp.LastName ? " " + emp.LastName : "");
           let existing = employeeAttendance.value.filter(db => db.EmployeeId == emp.EmpEmployeeId);
           if (existing.length > 0) {
+            var _status = '';
+            var obj = this.AttendanceStatus.filter(a => a.MasterDataId == existing[0].AttendanceStatusId);
+            if (obj.length > 0)
+              _status = obj[0].MasterDataName;
+
             this.EmployeeAttendanceList.push({
               Employee: empName,
               EmployeeAttendanceId: existing[0].EmployeeAttendanceId,
@@ -228,7 +238,8 @@ export class EmployeeAttendanceComponent implements OnInit {
               Approved: existing[0].Approved,
               ApprovedBy: existing[0].ApprovedBy,
               ReportedTo: existing[0].ReportedTo,
-              AttendanceStatus: existing[0].AttendanceStatus,
+              AttendanceStatusId: existing[0].AttendanceStatusId,
+              AttendanceStatus:_status,
               AttendanceDate: existing[0].AttendanceDate,
               Remarks: existing[0].Remarks,
               Action: false
@@ -239,10 +250,11 @@ export class EmployeeAttendanceComponent implements OnInit {
               EmployeeAttendanceId: 0,
               EmployeeId: emp.EmpEmployeeId,
               Employee: empName,
+              AttendanceStatus:'',
               Approved: false,
               ApprovedBy: '',
               ReportedTo: 0,
-              AttendanceStatus: 0,
+              AttendanceStatusId: 0,
               AttendanceDate: new Date(),
               Remarks: '',
               Action: false
@@ -264,9 +276,22 @@ export class EmployeeAttendanceComponent implements OnInit {
     });
   }
   UpdateActive(element, event) {
+    //var _attendanceStatusId = 0;
+
+    if (event.checked) {
+      var _attendanceStatusObj = this.AttendanceStatus.filter(a => a.MasterDataName.toLowerCase() == 'p');
+      element.AttendanceStatus = "P";
+      element.AttendanceStatusId = _attendanceStatusObj[0].MasterDataId;
+    }
+    else {
+      //if (_attendanceStatusObj.length > 0)
+      element.AttendanceStatus = 'A';
+      var _attendanceStatusObj = this.AttendanceStatus.filter(a => a.MasterDataName.toLowerCase() == 'a');
+      if (_attendanceStatusObj.length > 0)
+        element.AttendanceStatusId = _attendanceStatusObj[0].MasterDataId;
+    }
     element.Action = true;
     element.Active = true;
-    element.AttendanceStatus = event.checked == true ? 1 : 0;
   }
   onChangeEvent(row, value) {
     //debugger;
@@ -333,7 +358,7 @@ export class EmployeeAttendanceComponent implements OnInit {
           this.EmployeeAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.EmployeeAttendanceData.SubOrgId = this.SubOrgId;
           this.EmployeeAttendanceData.BatchId = this.SelectedBatchId;
-          this.EmployeeAttendanceData.AttendanceStatus = row.AttendanceStatus;
+          this.EmployeeAttendanceData.AttendanceStatusId = row.AttendanceStatusId;
           this.EmployeeAttendanceData.EmployeeId = row.EmployeeId;
           this.EmployeeAttendanceData.Approved = false;
           this.EmployeeAttendanceData.ApprovedBy = '';
@@ -434,7 +459,7 @@ export class EmployeeAttendanceComponent implements OnInit {
   GetMasterData() {
 
     this.allMasterData = this.tokenStorage.getMasterData();
-    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.common.ATTENDANCESTATUS);
     this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
     this.loading = false; this.PageLoading = false;
   }
@@ -460,7 +485,8 @@ export interface IEmployeeAttendance {
   EmployeeAttendanceId: number;
   EmployeeId: number;
   Employee: string;
-  AttendanceStatus: number;
+  AttendanceStatusId: number;
+  AttendanceStatus: string;
   AttendanceDate: Date;
   Remarks: string;
   ReportedTo: number;

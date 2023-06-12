@@ -14,12 +14,10 @@ import { FeereceiptComponent } from '../studentfeepayment/feereceipt/feereceipt.
 import { SharedataService } from '../../../shared/sharedata.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { environment } from 'src/environments/environment';
 import { SwUpdate } from '@angular/service-worker';
 import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-studentprimaryinfo',
   templateUrl: './studentprimaryinfo.component.html',

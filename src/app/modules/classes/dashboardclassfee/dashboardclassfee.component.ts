@@ -28,7 +28,8 @@ export class DashboardclassfeeComponent implements OnInit {
   Months = [];
   VariableObjList = [];
   LedgerData = [];
-  FeeDefinitionListName = 'FeeDefinitions'
+  ClassCategory = [];
+  FeeDefinitionListName = 'FeeDefinitions';
   DataCountToUpdate = -1;
   LoginUserDetail = [];
   FilterOrgSubOrgBatchId = '';
@@ -41,8 +42,10 @@ export class DashboardclassfeeComponent implements OnInit {
   PreviousBatchId = 0;
   FeeDefinitions = [];
   Classes = [];
+  Sections = [];
+  Semesters = [];
   Batches = [];
-  //Locations = [];
+  Selectzero = 0;
   Permission = 'deny';
   DataToSaveInLoop = [];
   ClassStatuses = [];
@@ -56,13 +59,13 @@ export class DashboardclassfeeComponent implements OnInit {
     ClassFeeId: 0,
     FeeDefinitionId: 0,
     ClassId: 0,
-    Rate:0,
-    Quantity:1,
+    Rate: 0,
+    Quantity: 1,
     Amount: 0,
     BatchId: 0,
     Month: 0,
-    PaymentOrder:0,
-    OrgId: 0, 
+    PaymentOrder: 0,
+    OrgId: 0,
     SubOrgId: 0,
     Active: 0,
     LocationId: 0
@@ -141,15 +144,9 @@ export class DashboardclassfeeComponent implements OnInit {
             this.FeeDefinitions = [...d.value];
           })
           this.GetMasterData();
-          if (this.Classes.length == 0) {
-            var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-            this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
-              this.Classes = [...data.value];
-              //this.GetMasterData();
-            })
-            this.GetDistinctClassFee();
-            this.loading = false; this.PageLoading = false;
-          }
+          // if (this.Classes.length == 0) {
+          
+          //}
         }
       }
     }
@@ -192,7 +189,19 @@ export class DashboardclassfeeComponent implements OnInit {
   onBlur(element) {
     element.Action = true;
   }
+  CategoryName = '';
+  ChangeClass(element) {
+    debugger;
+    var _categoryObj = this.Classes.filter(c => c.ClassId == element.value);
+    //var _category = ''
+    if (_categoryObj.length > 0)
+      this.CategoryName = _categoryObj[0].Category.toLowerCase();
 
+  }
+  ClearData() {
+    this.ELEMENT_DATA = [];
+    this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
+  }
   CreateInvoice() {
     debugger;
     var _classId = this.searchForm.get("ClassId").value;
@@ -255,7 +264,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 })
               })
               //console.log("studentfeedetailxxxx", studentfeedetail)
-              this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"],this.SubOrgId)
+              this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"], this.SubOrgId)
                 .subscribe((data: any) => {
                   this.loading = false;
                   this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
@@ -404,7 +413,7 @@ export class DashboardclassfeeComponent implements OnInit {
               ClassId: objDiscount[0].ClassId,
               FeeDefinitionId: objDiscount[0].FeeDefinitionId,
               LocationId: 0,
-              PaymentOrder:objDiscount[0].PaymentOrder,
+              PaymentOrder: objDiscount[0].PaymentOrder,
               Month: objDiscount[0].Month,
               OrgId: this.LoginUserDetail[0]["orgId"],
               SubOrgId: this.SubOrgId
@@ -582,7 +591,7 @@ export class DashboardclassfeeComponent implements OnInit {
             "FeeName": mainFeeName.FeeName,
             "Amount": 0,
             "Month": 0,
-            "PaymentOrder":0,
+            "PaymentOrder": 0,
             "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
             "Active": mainFeeName.FeeName.toLowerCase() == 'discount' ? 1 : 0,
             "Action": false
@@ -604,7 +613,7 @@ export class DashboardclassfeeComponent implements OnInit {
           "FeeName": fee.FeeName,
           "Amount": 0,
           "Month": 0,
-          "PaymentOrder":0,
+          "PaymentOrder": 0,
           "BatchId": this.SelectedBatchId,
           "Active": 0,
           "Action": false
@@ -636,7 +645,7 @@ export class DashboardclassfeeComponent implements OnInit {
   updateAmount(row, value) {
     // if(row.Rate>0 && row.Quantity>0)
     // {
-      row.Amount = row.Rate * row.Quantity;
+    row.Amount = row.Rate * row.Quantity;
     //}
     row.Action = true;
     // row.Amount = value;
@@ -662,8 +671,27 @@ export class DashboardclassfeeComponent implements OnInit {
   GetMasterData() {
 
     this.allMasterData = this.tokenStorage.getMasterData();
-    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
+    this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Semesters = this.getDropDownData(globalconstants.MasterDefinitions.school.SEMESTER);
+    this.ClassCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSCATEGORY);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+
+    this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+      this.Classes = data.value.map(m => {
+        m.Category = '';
+        var obj = this.ClassCategory.filter(c => c.MasterDataId == m.CategoryId);
+        if (obj.length > 0)
+          m.Category = obj[0].MasterDataName;
+          return m;
+      })
+      //[...data.value];
+      //this.GetMasterData();
+      this.GetDistinctClassFee();
+    })
+
+    
   }
 
   getDropDownData(dropdowntype) {
@@ -691,7 +719,7 @@ export interface Element {
   ClassId: number;
   Amount: any;
   Month: number;
-  PaymentOrder:number,
+  PaymentOrder: number,
   BatchId: number;
   Active: number;
   FeeName: string;

@@ -33,6 +33,7 @@ export class StudentEvaluationComponent implements OnInit {
   EvaluationExamMaps = [];
   ClassSubjects = [];
   Ratings = [];
+  NowTime = new Date();
   //ExamModes = [];
   SelectedApplicationId = 0;
   StudentId = 0;
@@ -44,7 +45,7 @@ export class StudentEvaluationComponent implements OnInit {
   loading = false;
   RelevantEvaluationListForSelectedStudent = [];
   StudentEvaluationList: any[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   QuestionnaireTypes = [];
   Sections = [];
   Classes = [];
@@ -78,7 +79,7 @@ export class StudentEvaluationComponent implements OnInit {
     ExamId: 0,
     StudentClassId: 0,
     StudentId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0
   };
   ResultDetail = {
@@ -257,7 +258,7 @@ export class StudentEvaluationComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    var _sectionId= this.searchForm.get("searchSectionId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
     let checkFilterString = this.FilterOrgSubOrg + " and ClassEvaluationId eq " + row.ClassEvaluationId;
     if (!row.Updatable) {
       checkFilterString += " and EvaluationExamMapId eq " + row.EvaluationExamMapId +
@@ -270,7 +271,7 @@ export class StudentEvaluationComponent implements OnInit {
     if (row.StudentEvaluationResultId > 0)
       checkFilterString += " and StudentEvaluationResultId ne " + row.StudentEvaluationResultId;
 
-      let list: List = new List();
+    let list: List = new List();
     list.fields = ["StudentEvaluationResultId"];
     list.PageName = "StudentEvaluationResults";
     list.filter = [checkFilterString];
@@ -286,7 +287,7 @@ export class StudentEvaluationComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+          this.SubOrgId = this.tokenStorage.getSubOrgId();
 
           var _toappend = '', _answerText = '', _history = '', _studentClassId = 0;
           _answerText = row.AnswerText;
@@ -322,7 +323,7 @@ export class StudentEvaluationComponent implements OnInit {
               StudentClassId: _studentClassId,
               StudentId: row.StudentId,
               ClassId: this.ClassId,
-              SectionId:_sectionId,
+              SectionId: _sectionId,
               ClassEvaluationId: row.ClassEvaluationId,
               AnswerText: _answerText,
               History: _history,
@@ -400,8 +401,8 @@ export class StudentEvaluationComponent implements OnInit {
   }
   interval;
   startTimer(row) {
-    //  row.tempDuration = row.Duration;
-    row.TempDuration *= 60;
+    if (row.tempDuration == row.Duration)
+      row.TempDuration *= 60;
     this.interval = setInterval(() => {
       if (row.TempDuration > 0) {
         row.TempDuration--;
@@ -412,14 +413,19 @@ export class StudentEvaluationComponent implements OnInit {
       }
     }, 1000)
   }
-
+  ClearData() {
+    this.StudentEvaluationList = [];
+    this.RelevantEvaluationListForSelectedStudent = [];
+    this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
+    this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
+  }
   StartEvaluation(row) {
     debugger;
     this.loading = true;
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
 
     var objstudent = this.searchForm.get("searchStudentName").value;
     this.ClassId = this.searchForm.get("searchClassId").value;
@@ -454,6 +460,7 @@ export class StudentEvaluationComponent implements OnInit {
       'EvaluationExamMapId',
       'AnswerText',
       'History',
+      'Points',
       'Submitted',
       'Active'
     ];
@@ -470,7 +477,7 @@ export class StudentEvaluationComponent implements OnInit {
           row.Submitted = data.value[0].Submitted;
         }
         if (!row.Updatable && row.Duration > 0 && data.value.length == 0) {
-          if (row.TempDuration == undefined || row.TempDuration==0)
+          if (row.TempDuration == undefined || row.TempDuration == 0)
             row.TempDuration = row.Duration;
           this.startTimer(row);
         }
@@ -479,7 +486,7 @@ export class StudentEvaluationComponent implements OnInit {
         _classEvaluations.forEach((clseval, index) => {
 
           if (clseval.QuestionnaireType.toLowerCase() == 'questionnaire') {
-            indx+=1;
+            indx += 1;
             SlNo = indx + "";
           }
           else
@@ -521,6 +528,7 @@ export class StudentEvaluationComponent implements OnInit {
               QuestionnaireType: clseval.QuestionnaireType,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationExamMapId: existing[0].EvaluationExamMapId,
+              Points: existing[0].Points,
               Updatable: row.Updatable,
               Description: globalconstants.decodeSpecialChars(clseval.Description),
               History: existing[0].History,
@@ -545,6 +553,7 @@ export class StudentEvaluationComponent implements OnInit {
               Description: globalconstants.decodeSpecialChars(clseval.Description),
               AnswerText: '',
               History: '',
+              Points: 0,
               Updatable: row.Updatable,
               StudentEvaluationResultId: 0,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
@@ -594,6 +603,7 @@ export class StudentEvaluationComponent implements OnInit {
         })
         this.contentservice.GetEvaluationExamMaps(this.FilterOrgSubOrg, 1)
           .subscribe((data: any) => {
+            this.NowTime = new Date();
             data.value.forEach(m => {
               let EvaluationObj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == m.EvaluationMasterId);
               if (EvaluationObj.length > 0) {
@@ -601,6 +611,15 @@ export class StudentEvaluationComponent implements OnInit {
                 m.Duration = EvaluationObj[0].Duration;
                 m.TempDuration = EvaluationObj[0].Duration;
                 m.Updatable = EvaluationObj[0].AppendAnswer;
+                m.StartTime = EvaluationObj[0].StartTime;
+                //m.EndTime = EvaluationObj[0].EndTime;
+                if (m.StartTime && new Date(m.StartTime).getTime() <= this.NowTime.getTime()
+                  && new Date(m.StartTime).getTime() + (m.Duration * 60 * 1000) < this.NowTime.getTime())
+                  m.TimeStarted = true;
+                // else if (m.Duration > 0)
+                //   m.TimeStarted = true;
+                else
+                  m.TimeStarted = false;
 
                 var _clsObj = this.ClassGroups.filter(f => f.MasterDataId == m.ClassGroupId);
                 if (_clsObj.length > 0)
@@ -628,7 +647,7 @@ export class StudentEvaluationComponent implements OnInit {
     list.PageName = "ClassSubjects";
     list.fields = ["ClassSubjectId,ClassId,SubjectId"];
     //list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-    list.filter = [ this.FilterOrgSubOrgBatchId + " and Active eq 1"];
+    list.filter = [this.FilterOrgSubOrgBatchId + " and Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(m => {
@@ -657,8 +676,8 @@ export class StudentEvaluationComponent implements OnInit {
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = data.value;
     });
 
@@ -701,7 +720,7 @@ export class StudentEvaluationComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+    this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr = this.FilterOrgSubOrg + " and Active eq true";// and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
@@ -710,6 +729,7 @@ export class StudentEvaluationComponent implements OnInit {
       'EvaluationName',
       'Description',
       'Duration',
+      'StartTime',
       'ClassGroupId',
       'DisplayResult',
       'AppendAnswer',
@@ -782,6 +802,7 @@ export class StudentEvaluationComponent implements OnInit {
     this.CheckIfEvaluationWasSubmitted()
       .subscribe((data: any) => {
         this.StudentSubmittedEvaluations = [...data.value];
+        this.NowTime = new Date();
         this.RelevantEvaluationListForSelectedStudent = [];
         if (_EvaluationExamMapSelectedStudentObj.length > 0) {
           _EvaluationExamMapSelectedStudentObj.forEach(m => {
@@ -913,7 +934,7 @@ export class StudentEvaluationComponent implements OnInit {
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
     list.PageName = "StudentClasses";
     list.filter = [filterOrgIdNBatchId + _filter];
-
+    this.ClearData();
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //this.StudentClasses = [...data.value];

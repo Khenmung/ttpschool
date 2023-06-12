@@ -41,6 +41,7 @@ export class EvaluationMasterComponent implements OnInit {
     EvaluationName: '',
     Description: '',
     Duration: 0,
+    StartTime: new Date(),
     ClassGroupId: 0,
     DisplayResult: false,
     AppendAnswer: false,
@@ -56,6 +57,7 @@ export class EvaluationMasterComponent implements OnInit {
     "EvaluationName",
     "ClassGroupId",
     "Duration",
+    "StartTime",
     "FullMark",
     "PassMark",
     "AppendAnswer",
@@ -128,6 +130,7 @@ export class EvaluationMasterComponent implements OnInit {
       EvaluationName: '',
       Description: '',
       Duration: 0,
+      StartTime:new Date(),
       ClassGroupId: 0,
       DisplayResult: false,
       ProvideCertificate: false,
@@ -142,6 +145,10 @@ export class EvaluationMasterComponent implements OnInit {
     this.EvaluationMasterList.push(newdata);
     this.dataSource = new MatTableDataSource<IEvaluationMaster>(this.EvaluationMasterList);
     this.dataSource.paginator = this.paging;
+  }
+  ClearData(){
+    this.EvaluationMasterList =[];
+    this.dataSource = new MatTableDataSource<IEvaluationMaster>(this.EvaluationMasterList);
   }
   onBlur(element) {
     element.Action = true;
@@ -256,6 +263,7 @@ export class EvaluationMasterComponent implements OnInit {
           this.EvaluationMasterData.ProvideCertificate = row.ProvideCertificate;
           this.EvaluationMasterData.AppendAnswer = row.AppendAnswer;
           this.EvaluationMasterData.Duration = row.Duration == null ? 0 : row.Duration;
+          this.EvaluationMasterData.StartTime = row.StartTime;
           this.EvaluationMasterData.ClassGroupId = row.ClassGroupId;
           this.EvaluationMasterData.FullMark = row.FullMark == null ? 0 : row.FullMark;
           this.EvaluationMasterData.PassMark = row.PassMark == null ? 0 : row.PassMark;
@@ -342,6 +350,7 @@ export class EvaluationMasterComponent implements OnInit {
         "Description",
         "AppendAnswer",
         "Duration",
+        "StartTime",
         "ClassGroupId",
         "FullMark",
         "PassMark",
@@ -427,6 +436,7 @@ export interface IEvaluationMaster {
   EvaluationName: string;
   Description: string;
   Duration: number;
+  StartTime:Date;
   ClassGroupId: number;
   DisplayResult: boolean;
   AppendAnswer: boolean;

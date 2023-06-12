@@ -8,7 +8,7 @@
         <mat-form-field appearance="outline" style="width:300px">
             <mat-label>parent</mat-label>
             <input type="text" matInput formControlName="searchParent" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="ClearData()">
                 <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
                     {{option.Title}}
                 </mat-option>

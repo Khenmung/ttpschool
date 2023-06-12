@@ -281,7 +281,12 @@ export class SubjectcomponentComponent implements OnInit {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value
       && f.SubjectType.SelectHowMany > 0);
+      this.ClearData();
     //this.GetSpecificStudentGrades();
+  }
+  ClearData(){
+    this.SubjectComponentList =[];
+    this.dataSource = new MatTableDataSource<ISubjectComponent>(this.SubjectComponentList);
   }
   RowSelectClassSubject(row) {
     debugger;

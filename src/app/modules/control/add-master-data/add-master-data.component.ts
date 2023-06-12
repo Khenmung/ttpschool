@@ -215,10 +215,7 @@ export class AddMasterDataComponent implements OnInit {
       })
     }
   }
-  emptyresult() {
-    this.MasterList = [];
-    this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
-  }
+  
   GetOrganizations() {
     this.loading = true;
     let list: List = new List();
@@ -280,13 +277,18 @@ export class AddMasterDataComponent implements OnInit {
     this.loading = true;
     var _appId = this.MasterData.filter(f => f.MasterDataId == element.MasterDataId)[0].ApplicationId;
     this.SubMasters = [];
-    this.emptyresult();
+    this.ClearData();
     this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.FilterOrgSubOrg, _appId, 0)
       .subscribe((data: any) => {
         this.SubMasters = [...data.value];
         this.searchForm.patchValue({ "SubId": 0 });
         this.loading = false; this.PageLoading = false;
       })
+    
+  }
+  ClearData() {
+    this.MasterList = [];
+    this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
   }
   AddData() {
     debugger;

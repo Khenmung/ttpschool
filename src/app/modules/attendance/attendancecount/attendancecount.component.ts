@@ -48,7 +48,7 @@ export class AttendanceCountComponent implements OnInit {
   SelectedBatchId = 0;SubOrgId = 0;
 
   Batches = [];
-  AttendanceStatus = [];
+  //AttendanceStatus = [];
   FilteredClassSubjects = [];
   StudentAttendanceList: IStudentAttendance[] = [];
   StudentClassList = [];
@@ -241,6 +241,10 @@ export class AttendanceCountComponent implements OnInit {
       searchSection: ''
     });
   }
+  ClearData(){
+    this.StudentAttendanceList =[];
+    this.dataSource = new MatTableDataSource<any>(this.StudentAttendanceList);
+  }
   UpdateActive(element, event) {
     element.Action = true;
     //this.AnyEnableSave=true;
@@ -324,7 +328,7 @@ export class AttendanceCountComponent implements OnInit {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    //this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
     this.shareddata.ChangeSubjects(this.Subjects);
     this.GetClassSubject();
     this.loading = false; this.PageLoading = false;

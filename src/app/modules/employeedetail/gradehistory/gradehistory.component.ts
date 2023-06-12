@@ -21,14 +21,14 @@ export class GradehistoryComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  // optionsNoAutoClose = {
+  //   autoClose: false,
+  //   keepAfterRouteChange: true
+  // };
+  // optionAutoClose = {
+  //   autoClose: true,
+  //   keepAfterRouteChange: true
+  // };
   EmploymentHistoryListName = 'EmpEmployeeGradeSalHistories';
   Employees = [];
   Grades = [];
@@ -144,6 +144,7 @@ export class GradehistoryComponent implements OnInit {
       }
       else {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+        this.SubOrgId = +this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrgStr = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
 
         this.GetEmployees();

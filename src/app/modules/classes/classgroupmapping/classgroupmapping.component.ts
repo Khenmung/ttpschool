@@ -176,6 +176,10 @@ export class ClassgroupmappingComponent implements OnInit {
 
       });
   }
+  ClearData(){
+    this.ClassGroupMapping =[];
+    this.dataSource = new MatTableDataSource<any>(this.ClassGroupMapping);
+  }
   createFilter(): (data: any, filter: string) => boolean {
     let filterFunction = function (data, filter): boolean {
       let searchTerms = JSON.parse(filter);

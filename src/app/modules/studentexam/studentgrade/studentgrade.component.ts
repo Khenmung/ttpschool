@@ -337,6 +337,8 @@ export class StudentgradeComponent implements OnInit {
       })
 
     this.EnableCopyButton();
+    this.ClearData();
+
   }
   SelectCopyFromClassGroup() {
     debugger;
@@ -464,6 +466,10 @@ export class StudentgradeComponent implements OnInit {
         this.loadingFalse();
       });
   }
+  ClearData() {
+    this.StudentGradeList = [];
+    this.dataSource = new MatTableDataSource<IStudentGrade>(this.StudentGradeList);
+  }
   EnableCopy = false;
   EnableCopyButton() {
 
@@ -474,6 +480,7 @@ export class StudentgradeComponent implements OnInit {
       this.EnableCopy = true;
     else
       this.EnableCopy = false;
+    this.ClearData();
   }
   SelectAll(event) {
     //var event ={checked:true}

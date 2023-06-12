@@ -13,7 +13,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" style="min-width: 130px;">
                 <mat-label>Section</mat-label>
-                <mat-select formControlName="searchSectionId">
+                <mat-select formControlName="searchSectionId" (selectionChange)="ClearData()">
                     <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">{{item.MasterDataName}}
                     </mat-option>
                 </mat-select>
@@ -21,7 +21,7 @@
             <mat-form-field appearance="outline"  style="min-width: 130px;">
                 <mat-label>Date</mat-label>
                 <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate"
-                    autocomplete="off">
+                    autocomplete="off" (dateChange)="ClearData()">
                 <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
                 <mat-datepicker #AttendanceDate></mat-datepicker>
             </mat-form-field>

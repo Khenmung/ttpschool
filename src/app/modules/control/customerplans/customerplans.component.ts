@@ -128,7 +128,10 @@ export class CustomerPlansComponent implements OnInit { PageLoading=true;
   login() {
     this.nav.navigate(['auth/login']);
   }
-
+  ClearData(){
+    this.CustomerPlansList =[];
+    this.dataSource = new MatTableDataSource<any>(this.CustomerPlansList);
+  }
   UpdateOrSave(row) {
 
     if (row.PersonOrItemCount == 0) {

@@ -37,7 +37,7 @@ export class ExcelDataManagementComponent implements OnInit {
 
   }
   SelectedApplicationName = '';
-  SubOrgId=0;
+  SubOrgId = 0;
   NoOfStudent = 0;
   NoOfStudentInPlan = 0;
   UploadType = {
@@ -69,7 +69,7 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentPrimaryContact.subscribe(c => (this.PrimaryContact = c));
     this.shareddata.CurrentLocation.subscribe(c => (this.Location = c));
 
-    
+
     this.Batches = this.tokenStorage.getBatches();
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
@@ -104,7 +104,7 @@ export class ExcelDataManagementComponent implements OnInit {
       }
       this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
         this.Classes = [...data.value];
-  
+
       });
 
 
@@ -147,6 +147,8 @@ export class ExcelDataManagementComponent implements OnInit {
   Classes = [];
   Batches = [];
   Sections = [];
+  Semesters = [];
+  CourseYears = [];
   FeeTypes = [];
   Genders = [];
   Category = [];
@@ -679,7 +681,7 @@ export class ExcelDataManagementComponent implements OnInit {
       if (this.ErrorMessage.length == 0)
         this.ELEMENT_DATA.push(element);
     });
-   // console.log("this.ELEMENT_DATA", this.ELEMENT_DATA)
+    // console.log("this.ELEMENT_DATA", this.ELEMENT_DATA)
   }
   // DateCheck(datestr){
   //     var strArray = datestr.split('/');
@@ -757,6 +759,28 @@ export class ExcelDataManagementComponent implements OnInit {
       else
         element.Section = 0;
 
+      if (element.Semester) {
+        let semesterFilter = this.Semesters.filter(g => g.MasterDataName.toUpperCase() == element.Semester.trim().toUpperCase());
+        if (semesterFilter.length == 0)
+          this.ErrorMessage += "Invalid semester at row " + slno + ":" + element.Semester + "<br>";
+        else {
+          element.SemesterId = semesterFilter[0].MasterDataId;
+        }
+      }
+      else
+        element.SemesterId = 0;
+
+      // if (element.CourseYear) {
+      //   let CourseYearFilter = this.CourseYears.filter(g => g.MasterDataName.toUpperCase() == element.CourseYear.trim().toUpperCase());
+      //   if (CourseYearFilter.length == 0)
+      //     this.ErrorMessage += "Invalid Course Year at row " + slno + ":" + element.CourseYear + "<br>";
+      //   else {
+      //     element.CourseYearId = CourseYearFilter[0].MasterDataId;
+      //   }
+      // }
+      // else
+      //   element.CourseYearId = 0;
+
       let classFilter = this.Classes.filter(g => g.ClassName == element.ClassName);
       if (classFilter.length == 0)
         this.ErrorMessage += "Invalid Class at row " + slno + ":" + element.ClassName + "<br>";
@@ -768,7 +792,7 @@ export class ExcelDataManagementComponent implements OnInit {
         element.StudentClassId = _studentclass[0].StudentClassId
       else
         element.StudentClassId = 0;
-      //}
+
       var _regularFeeTypeIds = this.FeeTypes.filter(f => f.FeeTypeName.toLowerCase() == 'regular');
       var _regularFeeTypeId = 0;
       if (_regularFeeTypeIds.length > 0)
@@ -781,26 +805,30 @@ export class ExcelDataManagementComponent implements OnInit {
             StudentId: +studentFilter[0].StudentId,
             SectionId: element.Section,
             RollNo: element.RollNo ? element.RollNo : '',
+            SemesterId: element.SemesterId,
+            IsCurrent: false,
             StudentClassId: element.StudentClassId,
             FeeTypeId: _regularFeeTypeId,
             BatchId: this.SelectedBatchId,
             OrgId: this.loginDetail[0]["orgId"],
-            SubOrgId:this.SubOrgId
+            SubOrgId: this.SubOrgId
           });
         }
         else {
-        
+
           this.ELEMENT_DATA.push({
             StudentId: +studentFilter[0].StudentId,
             ClassId: element.ClassId,
             SectionId: element.Section,
             RollNo: element.RollNo ? element.RollNo : '',
             StudentClassId: element.StudentClassId,
+            SemesterId: element.SemesterId,
+            IsCurrent: true,
             FeeTypeId: _regularFeeTypeId,
             BatchId: this.SelectedBatchId,
             OrgId: this.loginDetail[0]["orgId"],
-            SubOrgId:this.SubOrgId,
-            Active:0
+            SubOrgId: this.SubOrgId,
+            Active: 0
           });
         }
       }
@@ -1379,8 +1407,8 @@ export class ExcelDataManagementComponent implements OnInit {
       },
         error => {
           console.log(error);
-          this.loading=false;
-          var errmsg=globalconstants.formatError(error);
+          this.loading = false;
+          var errmsg = globalconstants.formatError(error);
           this.contentservice.openSnackBar(errmsg, globalconstants.ActionText, globalconstants.BlueBackground);
           this.ErrorCount += 1;
 
@@ -1458,9 +1486,9 @@ export class ExcelDataManagementComponent implements OnInit {
 
       })
   }
-  
+
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.loginDetail[0]["orgId"],this.SubOrgId, this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.loginDetail[0]["orgId"], this.SubOrgId, this.SelectedApplicationId)
       .subscribe((data: any) => {
         //var SelectedApplicationName = '';
         this.AllMasterData = [...data.value];

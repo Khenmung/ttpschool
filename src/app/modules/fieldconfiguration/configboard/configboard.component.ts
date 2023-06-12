@@ -5,7 +5,6 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { UserconfigreportnameComponent } from '../userconfigreportname/userconfigreportname.component';
 import { UserReportConfigColumnsComponent } from '../userreportconfigColumns/userreportconfigcolumns.component';
-import { VariableConfigComponent } from '../variable-config/variable-config.component';
 
 @Component({
   selector: 'app-configboard',
@@ -17,11 +16,9 @@ export class ConfigboardComponent implements AfterViewInit {
   components:any = [  
   UserconfigreportnameComponent,
   UserReportConfigColumnsComponent,
-  VariableConfigComponent,
 ];
 
 tabNames = [
-  { "label": "khat peuhpeuh", "faIcon": '' },
   { "label": "khat peuhpeuh", "faIcon": '' },
   { "label": "khat peuhpeuh", "faIcon": '' },
 ];
@@ -55,7 +52,6 @@ public ngAfterViewInit(): void {
   
   this.GenerateComponent(globalconstants.Pages.edu.REPORTCONFIGURATION.REPORTNAME)
   this.GenerateComponent(globalconstants.Pages.edu.REPORTCONFIGURATION.REPORTCOLUMN)
-  this.GenerateComponent(globalconstants.Pages.edu.REPORTCONFIGURATION.VARIABLECONFIG)
   
   this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
   if (this.Permissions.ParentPermission != 'deny') {
@@ -89,9 +85,7 @@ GenerateComponent(featureName){
     case globalconstants.Pages.edu.REPORTCONFIGURATION.REPORTCOLUMN:
       comindx =this.components.indexOf(UserReportConfigColumnsComponent);
       break;
-    case globalconstants.Pages.edu.REPORTCONFIGURATION.VARIABLECONFIG:
-      comindx =this.components.indexOf(VariableConfigComponent);
-      break;    
+   
   } 
   
   if (perObj.length > 0) {

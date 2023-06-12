@@ -8,7 +8,7 @@
             <mat-form-field appearance="outline" [style.width.px]="350">
                 <mat-label>For Student</mat-label>
                 <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="ClearData()">
                     <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
                         {{option.Name}}
                     </mat-option>

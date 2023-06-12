@@ -195,10 +195,7 @@ export class GenerateCertificateComponent implements OnInit {
     }
   }
 
-  ClearData() {
-    this.GeneratedCertificatelist = [];
-    this.dataSource = new MatTableDataSource<any>(this.GeneratedCertificatelist);
-  }
+  
   GetStudentAndGenerateCerts() {
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = this.FilterOrgSubOrgBatchId;// + ' and Active eq 1';
@@ -784,17 +781,17 @@ export class GenerateCertificateComponent implements OnInit {
     }
     else
       this.SportsCertificate = false;
-    this.clear();
+    this.ClearData();
   }
   SetCategory() {
     var _activityId = this.searchForm.get("searchActivityId").value;
     this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
-    this.clear();
+    this.ClearData();
   }
   SetSubCategory() {
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     this.ActivitySubCategory = this.allMasterData.filter(f => f.ParentId == _categoryId);
-    this.clear();
+    this.ClearData();
   }
   SportsCertificate = false;
   ActivitySubCategory = [];
@@ -861,7 +858,7 @@ export class GenerateCertificateComponent implements OnInit {
     //this.GetTotalAttendance();
     this.GetExams();
   }
-  clear() {
+  ClearData() {
     this.SportsResultList = [];
     this.ActivityResultDataSource = new MatTableDataSource<any>(this.SportsResultList);
     this.CertificateElements = [];

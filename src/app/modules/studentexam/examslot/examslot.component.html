@@ -14,25 +14,26 @@
                             {{item.ExamName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>          
+                </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Exam Date</mat-label>
-                    <input formControlName="searchExamDate" matInput [matDatepicker]="ExamDate" autocomplete="off">
+                    <input formControlName="searchExamDate" (dateChange)="ClearData()" matInput
+                        [matDatepicker]="ExamDate" autocomplete="off">
                     <mat-datepicker-toggle matSuffix [for]="ExamDate"></mat-datepicker-toggle>
                     <mat-datepicker #ExamDate></mat-datepicker>
-                </mat-form-field>      
+                </mat-form-field>
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetExamSlots()">
-                     <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
                 <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
                 </button> -->
             </form>
             <mat-table #table [dataSource]="dataSource">
-                
+
                 <ng-container matColumnDef="ExamSlotId">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Id
                     </mat-header-cell>
@@ -50,7 +51,7 @@
                 <ng-container matColumnDef="ExamDate">
                     <mat-header-cell *matHeaderCellDef> Exam Date </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.ExamDate|date:'dd/MM/yyyy'}} - {{element.WeekDay}}   
+                        {{element.ExamDate|date:'dd/MM/yyyy'}} - {{element.WeekDay}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="SlotName">
@@ -59,16 +60,14 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         {{element.SlotName}}
                     </mat-cell>
-                </ng-container>                
+                </ng-container>
                 <ng-container matColumnDef="StartTime">
                     <mat-header-cell *matHeaderCellDef> Start Time </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="legacy" [style.width.px]="200">
                             <mat-label>Start Time</mat-label>
-                            <input [value]="element.StartTime" 
-                            (blur)="onBlur(element)"
-                            [(ngModel)]="element.StartTime" matInput
-                                autocomplete="off">
+                            <input [value]="element.StartTime" (blur)="onBlur(element)" [(ngModel)]="element.StartTime"
+                                matInput autocomplete="off">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -77,10 +76,8 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="legacy" [style.width.px]="200">
                             <mat-label>End Time</mat-label>
-                            <input [value]="element.EndTime"
-                            (blur)="onBlur(element)"
-                            [(ngModel)]="element.EndTime" matInput
-                               autocomplete="off">                            
+                            <input [value]="element.EndTime" (blur)="onBlur(element)" [(ngModel)]="element.EndTime"
+                                matInput autocomplete="off">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -90,10 +87,8 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="legacy" [style.width.px]="100">
                             <mat-label>sequence</mat-label>
-                            <input [value]="element.Sequence"
-                            (blur)="onBlur(element)"
-                            [(ngModel)]="element.Sequence" matInput
-                               autocomplete="off">                            
+                            <input [value]="element.Sequence" (blur)="onBlur(element)" [(ngModel)]="element.Sequence"
+                                matInput autocomplete="off">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -107,16 +102,18 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                        <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab
+                            (click)="SaveAll()">
                             <mat-icon>all_out</mat-icon>
-                <mat-icon *ngIf="loading">
-                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                </mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="view/edit" mat-mini-fab (click)="Save(element)">
-                             <mat-icon>save</mat-icon>
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="view/edit"
+                            mat-mini-fab (click)="Save(element)">
+                            <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>

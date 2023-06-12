@@ -9,6 +9,7 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-addstudentclass',
@@ -32,7 +33,10 @@ export class AddstudentclassComponent implements OnInit {
   Houses = [];
   Sections = [];
   FeeType = [];
-  studentclassForm: UntypedFormGroup;
+  dataSource: MatTableDataSource<any>;
+  Semesters = [];
+  NewItem = false;
+  //studentclassForm: UntypedFormGroup;
   StudentName = '';
   SelectedApplicationId = 0;
   LoginUserDetail = [];
@@ -46,14 +50,30 @@ export class AddstudentclassComponent implements OnInit {
     RollNo: '',
     BatchId: 0,
     FeeTypeId: 0,
+    SemesterId: 0,
     AdmissionNo: '',
     AdmissionDate: new Date(),
     Remarks: '',
+    IsCurrent:false,
     Promoted: 0,
     Active: 1,
     OrgId: 0,
     SubOrgId: 0
   }
+  displayedColumns = [
+    "StudentClassId",
+    "AdmissionNo",
+    "ClassId",
+    "SectionId",
+    "RollNo",
+    "FeeTypeId",
+    "SemesterId",
+    "AdmissionDate",
+    "IsCurrent",
+    "Remarks",
+    "Active",
+    "Action"
+  ]
   Permission = '';
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
@@ -74,17 +94,18 @@ export class AddstudentclassComponent implements OnInit {
     // })
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
     var today = new Date();
-    this.studentclassForm = this.fb.group({
-      AdmissionNo: [''],
-      StudentName: [{ value: this.StudentName, disabled: true }],
-      ClassId: [0, [Validators.required]],
-      SectionId: [0],
-      RollNo: [''],
-      FeeTypeId: [0],
-      Remarks: [''],
-      AdmissionDate: [today],
-      Active: [1],
-    });
+    // this.studentclassForm = this.fb.group({
+    //   AdmissionNo: [''],
+    //   StudentName: [{ value: this.StudentName, disabled: true }],
+    //   ClassId: [0, [Validators.required]],
+    //   SemesterId: [0],
+    //   SectionId: [0],
+    //   RollNo: [''],
+    //   FeeTypeId: [0],
+    //   Remarks: [''],
+    //   AdmissionDate: [today],
+    //   Active: [1],
+    // });
     this.PageLoad();
   }
   PageLoad() {
@@ -106,20 +127,26 @@ export class AddstudentclassComponent implements OnInit {
         if (feetypePer.length > 0) {
           this.FeeTypePermission = feetypePer[0].permission;
         }
-        
+
 
         this.SubOrgId = this.tokenStorage.getSubOrgId();
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.contentservice.GetClasses(this.filterOrgSubOrg).subscribe((data: any) => {
-          this.Classes = [...data.value];
+          this.Classes = data.value.map(m => {
+            m.Category = '';
+            var obj = this.ClassCategory.filter(f => f.MasterDataId == m.CategoryId)
+            if (obj.length > 0)
+              m.Category = obj[0].MasterDataName;
+            return m;
+          })
         });
 
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
         this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
         //if (this.FeeType.length == 0)
-          this.GetFeeTypes();
+        this.GetFeeTypes();
         this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
         this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
         this.StudentId = this.tokenStorage.getStudentId();
@@ -132,15 +159,18 @@ export class AddstudentclassComponent implements OnInit {
       }
     }
   }
-  get f() { return this.studentclassForm.controls }
-
+  //get f() { return this.studentclassForm.controls }
+  ClassCategory = [];
   GetMasterData() {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
     this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+    this.Semesters = this.getDropDownData(globalconstants.MasterDefinitions.school.SEMESTER);
+    this.ClassCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSCATEGORY);
+
     this.aRoute.paramMap.subscribe(param => {
-      this.GetStudent();
+      this.GetStudentClass();
     })
   }
   StudentChange(event) {
@@ -166,11 +196,31 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe((data: any) => {
         // this.FeeType = [...data.value];
         this.FeeType = this.getDropDownDataFeeType(data.value);
-        if (this.FeeTypePermission.length>0 && !this.FeeTypePermission.includes("rw"))
-          this.studentclassForm.get("FeeTypeId").disable();
+        // if (this.FeeTypePermission.length > 0 && !this.FeeTypePermission.includes("rw"))
+        //   this.studentclassForm.get("FeeTypeId").disable();
         this.shareddata.ChangeFeeType(this.FeeType);
         this.loading = false; this.PageLoading = false;
       })
+  }
+  StudentClassList = [];
+  addnew() {
+    this.NewItem = true;
+    this.StudentClassList = [];
+    var newitem = {
+      StudentClassId: 0,
+      ClassId: 0,
+      SectionId: 0,
+      RollNo: '',
+      FeeTypeId: 0,
+      SemesterId: 0,
+      AdmissionNo: '',
+      AdmissionDate: new Date(),
+      Remarks: '',
+      Promoted: 0,
+      Active: 1,
+    }
+    this.StudentClassList.push(newitem);
+    this.dataSource = new MatTableDataSource<any>(this.StudentClassList);
   }
   GetStudent() {
     debugger;
@@ -196,7 +246,7 @@ export class AddstudentclassComponent implements OnInit {
           // })
           // let ValidStudent = this.Students.filter(student => student.StudentId == this.StudentId)
           // if (ValidStudent.length > 0) {
-          this.studentclassForm.patchValue({ StudentId: this.StudentId });
+          //this.studentclassForm.patchValue({ StudentId: this.StudentId });
           this.GetStudentClass();
         }
         else {
@@ -209,51 +259,68 @@ export class AddstudentclassComponent implements OnInit {
       });
 
   }
+  //ClassCategory = '';
   GetStudentClass() {
     debugger;
-
+    this.NewItem = false;
     if (this.StudentId > 0 && this.StudentClassId > 0) {
 
       let list: List = new List();
       list.fields = [
         "StudentClassId", "ClassId",
-        "StudentId", "RollNo", "SectionId", "AdmissionNo",
-        "BatchId", "FeeTypeId",
+        "StudentId", "RollNo", "SectionId", "AdmissionNo", "SemesterId",
+        "BatchId", "FeeTypeId","IsCurrent",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
-      list.filter = [this.FilterOrgSubOrgBatchId + " and StudentClassId eq " + this.StudentClassId];
+      list.filter = [this.FilterOrgSubOrgBatchId + " and StudentId eq " + this.StudentId]// + " and IsCurrent eq true"];
 
       this.dataservice.get(list)
         .subscribe((data: any) => {
           if (data.value.length > 0) {
-            var admissiondate = moment(data.value[0].AdmissionDate).isBefore("1970-01-01")
-            this.studentclassForm.patchValue({
-              StudentId: data.value[0].StudentId,
-              AdmissionNo: data.value[0].AdmissionNo,
-              ClassId: data.value[0].ClassId,
-              SectionId: data.value[0].SectionId,
-              RollNo: data.value[0].RollNo,
-              BatchId: data.value[0].BatchId,
-              FeeTypeId: data.value[0].FeeTypeId,
-              AdmissionDate: admissiondate ? moment() : data.value[0].AdmissionDate,
-              Remarks: data.value[0].Remarks,
-              Active: data.value[0].Active,
+            var obj = this.Classes.filter(c => c.ClassId == data.value[0].ClassId);
+            if (obj.length > 0) {
+              var _ClassCategory = obj[0].Category.toLowerCase();
+              if (_ClassCategory == 'high school')
+                this.displayedColumns = [
+                  "StudentClassId",
+                  "ClassId",
+                  "SectionId",
+                  "RollNo",
+                  "FeeTypeId",
+                  "AdmissionDate",
+                  "AdmissionNo",
+                  "IsCurrent",
+                  "Remarks",
+                  "Active",
+                  "Action"
+                ]
+              else if (_ClassCategory == 'college')
+                this.displayedColumns = [
+                  "StudentClassId",
+                  "ClassId",
+                  "SemesterId",
+                  "SectionId",
+                  "RollNo",
+                  "FeeTypeId",
+                  "AdmissionDate",
+                  "AdmissionNo",
+                  "IsCurrent",
+                  "Remarks",
+                  "Active",
+                  "Action"
+                ]
+            }
+
+            var studentcls = data.value.map(m => {
+              var admissiondate = moment(m.AdmissionDate).isBefore("1970-01-01");
+              m.AdmissionDate = admissiondate ? moment() : data.value[0].AdmissionDate;
+              m.Action =false;
+              return m;
             });
+            studentcls = studentcls.sort((a,b)=>b.StudentClassId - a.StudentClassId);
+            this.dataSource = new MatTableDataSource<any>(studentcls);
           }
           else {
-            this.studentclassForm.patchValue({
-              StudentClassId: 0,
-              StudentName: this.StudentName,
-              ClassId: 0,
-              AdmissionNo: '',
-              SectionId: 0,
-              RollNo: '',
-              BatchId: this.SelectedBatchId,
-              FeeTypeId: 0,
-              AdmissionDate: moment(),
-              Remarks: '',
-              Active: 1
-            });
             this.contentservice.openSnackBar("Class yet to be defined for this student", globalconstants.ActionText, globalconstants.RedBackground);
           }
           this.loading = false;
@@ -271,11 +338,11 @@ export class AddstudentclassComponent implements OnInit {
   back() {
     this.nav.navigate(['/edu']);
   }
-  UpdateOrSave() {
+  UpdateOrSave(row) {
     debugger;
     let ErrorMessage = '';
 
-    if (this.studentclassForm.get("ClassId").value == 0) {
+    if (row.ClassId == 0) {
       ErrorMessage += "Please select class.<br>";
     }
     // if (this.studentclassForm.get("RollNo").value == null) {
@@ -284,10 +351,10 @@ export class AddstudentclassComponent implements OnInit {
     // if (this.studentclassForm.get("SectionId").value == 0) {
     //   ErrorMessage += "Please select Section.<br>";
     // }
-    if (this.studentclassForm.get("FeeTypeId").value == 0) {
+    if (row.FeeTypeId == 0) {
       ErrorMessage += "Please select Fee Type.<br>";
     }
-    if (this.studentclassForm.get("AdmissionDate").value == 0) {
+    if (row.AdmissionDate == 0) {
       ErrorMessage += "Admission date is required.<br>";
     }
     if (ErrorMessage.length > 0) {
@@ -295,70 +362,81 @@ export class AddstudentclassComponent implements OnInit {
       return;
     }
     else {
-      var _classId = this.studentclassForm.get("ClassId").value;
+      //var _classId = this.studentclassForm.get("ClassId").value;
       var ClassStrength = 0;
-      if (_classId > 0) {
+      if (row.ClassId > 0) {
         this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0, 0, this.SelectedBatchId)
           .subscribe((data: any) => {
             ClassStrength = data.value.length;
             ClassStrength += 1;
             var _batchName = this.tokenStorage.getSelectedBatchName();
-            var _admissionNo = this.studentclassForm.get("AdmissionNo").value;
+            var _admissionNo = row.AdmissionNo;
             var _year = _batchName.split('-')[0].trim();
             this.loading = true;
-            this.studentclassData.Active = this.studentclassForm.get("Active").value ? 1 : 0;
+            this.studentclassData.Active = row.Active ? 1 : 0;
             this.studentclassData.BatchId = this.SelectedBatchId;
-            this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
-            this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
-            this.studentclassData.SectionId = this.studentclassForm.value.SectionId;
-            this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
+            this.studentclassData.ClassId = row.ClassId;
+            this.studentclassData.RollNo = row.RollNo;
+            this.studentclassData.SectionId = row.SectionId;
+            this.studentclassData.SemesterId = row.SemesterId;
+            this.studentclassData.FeeTypeId = row.FeeTypeId;
             this.studentclassData.AdmissionNo = _admissionNo;// ?_year + ClassStrength : _admissionNo;
-            this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
-            this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
+            this.studentclassData.Remarks = row.Remarks;
+            this.studentclassData.AdmissionDate = row.AdmissionDate;
             this.studentclassData.OrgId = this.LoginUserDetail[0]["orgId"];
             this.studentclassData.SubOrgId = this.SubOrgId;
             this.studentclassData.StudentId = this.StudentId;
-            if (!this.StudentClassId || this.StudentClassId == 0) {
+            this.studentclassData.StudentClassId = row.StudentClassId;
+            this.studentclassData.IsCurrent = row.IsCurrent;
+            console.log("this.studentclassData", this.studentclassData)
+            if (this.studentclassData.StudentClassId == 0) {
               this.StudentClassId = 0;
               this.studentclassData.AdmissionNo = _year + ClassStrength;
-              this.insert();
+              this.insert(row);
             }
             else {
-              this.studentclassData.StudentClassId = this.StudentClassId;
-              this.update();
+              this.update(row);
             }
           })
       }
     }
   }
-
-  insert() {
+  updateIsCurrent(row, element) {
+    row.IsCurrent = element.checked;
+    row.Action = true;
+  }
+  updateActive(row, element) {
+    row.Active = element.checked;
+    row.Action = true;
+  }
+  insert(row) {
 
     //debugger;
     this.dataservice.postPatch('StudentClasses', this.studentclassData, 0, 'post')
       .subscribe(
         (data: any) => {
+          row.Action=false;
           this.loading = false; this.PageLoading = false;
           this.StudentClassId = data.StudentClassId;
-          this.studentclassForm.patchValue({ "AdmissionNo": this.studentclassData.AdmissionNo })
+          row.AdmissionNo = this.studentclassData.AdmissionNo;
           this.tokenStorage.saveStudentClassId(this.StudentClassId + "")
           this.CreateInvoice();
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
 
   }
-  update() {
+  update(row) {
 
-    this.dataservice.postPatch('StudentClasses', this.studentclassData, this.StudentClassId, 'patch')
-      .subscribe(
-        (data: any) => {
-          this.CreateInvoice();
-          this.studentclassForm.patchValue({ "AdmissionNo": this.studentclassData.AdmissionNo })
-        }, error => {
-          var msg = globalconstants.formatError(error);
-          this.contentservice.openSnackBar(msg, globalconstants.ActionText, globalconstants.RedBackground);
-          this.loading = false;
-        });
+    this.dataservice.postPatch('StudentClasses', this.studentclassData, this.studentclassData.StudentClassId, 'patch')
+      .subscribe((data: any) => {
+        this.CreateInvoice();
+        row.AdmissionNo = this.studentclassData.AdmissionNo;
+        row.Action=false;
+      }, error => {
+        var msg = globalconstants.formatError(error);
+        this.contentservice.openSnackBar(msg, globalconstants.ActionText, globalconstants.RedBackground);
+        this.loading = false;
+      });
   }
   CreateInvoice() {
     debugger;

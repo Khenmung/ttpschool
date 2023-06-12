@@ -42,6 +42,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   Sections = [];
   Classes = [];
   Subjects = [];
+  Semesters =[];
   SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
   StudentClassSubjects = [];
@@ -50,8 +51,9 @@ export class studentsubjectdashboardComponent implements OnInit {
   StudentSubjectList: IStudentSubject[] = [];
   dataSource: MatTableDataSource<IStudentSubject>;
   allMasterData = [];
+  Defaultvalue=0;
   searchForm = this.fb.group({
-    //searchBatchId: [0],
+    searchSemesterId: [0],
     searchClassId: [0],
     searchSubjectId: [0],
     searchSectionId: [0],
@@ -198,6 +200,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     var orgIdSearchstr = this.FilterOrgSubOrgBatchId; //"OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
     var _classId = this.searchForm.get("searchClassId").value;
     var _sectionId = this.searchForm.get("searchSectionId").value;
+    var _semesterId = this.searchForm.get("searchSemesterId").value;
     orgIdSearchstr += ' and ClassId eq ' + _classId;
     orgIdSearchstr += ' and SectionId eq ' + _sectionId;
 
@@ -221,7 +224,11 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentClassSubjects = [];
-        var filteredClassSubjects = this.ClassSubjectList.filter(clssubj => clssubj.ClassId == _classId && clssubj.SelectHowMany > 0);
+        var filteredClassSubjects = this.ClassSubjectList.filter(clssubj => 
+          clssubj.ClassId == _classId 
+          && clssubj.SemesterId == (_semesterId?_semesterId:clssubj.SemesterId)
+          && clssubj.SectionId == (_sectionId?_sectionId:clssubj.SectionId)
+          && clssubj.SelectHowMany > 0);
         filteredClassSubjects.forEach(clssubj => {
           var existing = data.value.filter(db => db.ClassSubjectId == clssubj.ClassSubjectId);
           if (existing.length > 0) {
@@ -344,13 +351,14 @@ export class studentsubjectdashboardComponent implements OnInit {
         /////////////
       })
   }
+  ClearData(){
+    this.StudentSubjectList = [];
+    this.dataSource = new MatTableDataSource<IStudentSubject>(this.StudentSubjectList);
+  }
   createFilter(): (data: any, filter: string) => boolean {
     let filterFunction = function (data, filter): boolean {
       let searchTerms = JSON.parse(filter);
       return data.Student.toLowerCase().indexOf(searchTerms.Student) !== -1
-      // && data.id.toString().toLowerCase().indexOf(searchTerms.id) !== -1
-      // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
-      // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
     }
     return filterFunction;
   }
@@ -385,7 +393,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     }
     this.StudentDetail[_subjectName] = clssubject.Active;
     topush[_subjectName] = clssubject.Active;
-    this.StoreForUpdate.push(topush)
+    this.StoreForUpdate.push(topush);
     //console.log('this.StoreForUpdate',this.StoreForUpdate)
   }
   GetClassSubjects() {
@@ -395,6 +403,8 @@ export class studentsubjectdashboardComponent implements OnInit {
     list.fields = [
       "ClassSubjectId",
       "ClassId",
+      "SectionId",
+      "SemesterId",
       "SubjectId",
       "SubjectTypeId"
     ];
@@ -412,6 +422,8 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.ClassSubjectList.push({
             'ClassSubjectId': fromdb.ClassSubjectId,
             'ClassId': fromdb.ClassId,
+            'SemesterId': fromdb.SemesterId,
+            'SectionId': fromdb.SectionId,
             'SubjectId': fromdb.SubjectId,
             'SubjectTypeId': fromdb.SubjectTypeId,
             'SubjectTypeName': fromdb.SubjectType.SubjectTypeName,
@@ -688,6 +700,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.Semesters =this.getDropDownData(globalconstants.MasterDefinitions.school.SEMESTER);
     this.shareddata.ChangeSubjects(this.Subjects);
     this.GetClassSubjects();
     this.loading = false; this.PageLoading = false;

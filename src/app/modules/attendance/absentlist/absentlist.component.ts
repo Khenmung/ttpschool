@@ -40,7 +40,7 @@ export class AbsentListComponent implements OnInit {
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
   AttendanceStatus = [];
   FilteredClassSubjects = [];
@@ -61,7 +61,7 @@ export class AbsentListComponent implements OnInit {
     ReportedTo: 0,
     Approved: false,
     ApprovedBy: '',
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     BatchId: 0
   };
   displayedColumns = [
@@ -117,8 +117,8 @@ export class AbsentListComponent implements OnInit {
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         this.GetTeachers();
-        var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+        var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+        this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
 
@@ -133,7 +133,7 @@ export class AbsentListComponent implements OnInit {
     debugger;
     var classId = this.searchForm.get("searchClassId").value;
     this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
-
+    this.ClearData();
   }
   saveall() {
     debugger;
@@ -341,6 +341,10 @@ export class AbsentListComponent implements OnInit {
       searchSection: ''
     });
   }
+  ClearData() {
+    this.StudentAttendanceList = [];
+    this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+  }
   UpdateApproved(element, event) {
     debugger;
     element.Action = true;
@@ -504,7 +508,7 @@ export class AbsentListComponent implements OnInit {
     //this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    //this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
     this.shareddata.ChangeSubjects(this.Subjects);
     this.GetClassSubject();
     this.loading = false; this.PageLoading = false;

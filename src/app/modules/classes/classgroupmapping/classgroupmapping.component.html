@@ -9,7 +9,7 @@
             <form [formGroup]="searchForm">
                 <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Class Group</mat-label>
-                    <mat-select formControlName="searchClassGroupId">
+                    <mat-select formControlName="searchClassGroupId" (selectionChange)="ClearData()">
                         <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
                             {{item.GroupName}}
                         </mat-option>

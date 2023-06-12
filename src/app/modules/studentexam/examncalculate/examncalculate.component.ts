@@ -284,6 +284,11 @@ export class ExamncalculateComponent implements OnInit {
         this.loadingFalse();
       });
   }
+  ClearData()
+  {
+    this.ExamNCalculateList =[];
+    this.dataSource = new MatTableDataSource<IExamNCalculate>(this.ExamNCalculateList);
+  }
   RowsToUpdate = 0;
   SaveAll() {
     var toupdate = this.ExamNCalculateList.filter(f => f.Action);

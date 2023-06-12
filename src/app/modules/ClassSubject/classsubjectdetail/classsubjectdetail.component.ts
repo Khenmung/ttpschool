@@ -20,28 +20,21 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./classsubjectdetail.component.scss']
 })
 export class ClassSubjectDetailComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
 
- // @ViewChild("table") mattable;
+  // @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+
   ClassSubjectListName = "ClassSubjects";
   Permission = '';
   SelectedApplicationId = 0;
-  OrgSubOrgBatchFilter='';
-  OrgSubOrgFilter='';
+  OrgSubOrgBatchFilter = '';
+  OrgSubOrgFilter = '';
   StandardFilterWithBatchId = '';
   StandardFilterWithPreviousBatchId = '';
   PreviousBatchId = 0;
@@ -53,7 +46,7 @@ export class ClassSubjectDetailComponent implements OnInit {
   SubjectTypes = [];
   SubjectCategory = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   CheckBatchIDForEdit = 1;
   DataCountToSave = -1;
   Batches = [];
@@ -62,16 +55,17 @@ export class ClassSubjectDetailComponent implements OnInit {
   dataSource: MatTableDataSource<IClassSubject>;
   allMasterData = [];
   searchForm = this.fb.group({
-    //searchBatchId: [0],
-    //searchSubjectId: [0],
-    //searchSubjectTypeId: [0],
+    searchSemesterId: [0],
     searchClassId: [0],
+    searchSectionId: [0]
   });
   ClassSubjectId = 0;
 
   ClassSubjectData = {
     ClassSubjectId: 0,
     ClassId: 0,
+    SectionId: 0,
+    SemesterId: 0,
     Credits: 0,
     OrgId: 0,
     SubOrgId: 0,
@@ -79,7 +73,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     SubjectTypeId: 0,
     SubjectCategoryId: 0,
     Confidential: 0,
-    BatchId:0,
+    BatchId: 0,
     Active: 1
   };
   displayedColumns = [
@@ -97,12 +91,15 @@ export class ClassSubjectDetailComponent implements OnInit {
   filterValues = {
     SubjectName: ''
   };
+  Semesters = [];
+  Sections = [];
+  Defaultvalue = 0;
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
-    private dialog:MatDialog,
+    private dialog: MatDialog,
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -128,9 +125,9 @@ export class ClassSubjectDetailComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
-        this.OrgSubOrgBatchFilter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
-        this.OrgSubOrgFilter = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
+      this.OrgSubOrgBatchFilter = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+      this.OrgSubOrgFilter = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
       this.nameFilter.valueChanges
         .subscribe(
           name => {
@@ -152,7 +149,7 @@ export class ClassSubjectDetailComponent implements OnInit {
         this.GetMasterData();
         this.GetSubjectTypes();
         if (this.Classes.length == 0) {
-          var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+          var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
           this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
             this.Classes = [...data.value];
           });
@@ -207,13 +204,14 @@ export class ClassSubjectDetailComponent implements OnInit {
           })
           if (startMonth == 11) {
             startMonth = -1;
-            _Year+=1;
+            _Year += 1;
           }
         }
       }
     });
     return monthArray;
   }
+
   GetClassSubjectId(event) {
     this.ClassSubjectId = event;
     //this.mattable._elementRef.nativeElement.style.backgroundColor = "";
@@ -248,13 +246,21 @@ export class ClassSubjectDetailComponent implements OnInit {
     let filterStr = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //debugger;
     this.loading = true;
-    if (this.searchForm.get("searchClassId").value != 0)
-      filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
+    var _classId = this.searchForm.get("searchClassId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
+    var _semesterId = this.searchForm.get("searchSemesterId").value;
+    if (_classId > 0)
+      filterStr += " and ClassId eq " + _classId;
     else {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select class/course", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    if (_sectionId > 0)
+      filterStr += " and SectionId eq " + _sectionId;
+    if (_semesterId > 0)
+      filterStr += " and SemesterId eq " + _semesterId;
+
     //list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId + " and Active eq 1"];
     //filterStr += ' and (' + this.FilterOrgSubOrg +") and BatchId eq " + this.SelectedBatchId;
     //filterStr += " and " + ;
@@ -274,6 +280,8 @@ export class ClassSubjectDetailComponent implements OnInit {
       'ClassSubjectId',
       'SubjectId',
       'ClassId',
+      'SectionId',
+      'SemesterId',
       'Credits',
       'Confidential',
       'SubjectTypeId',
@@ -299,6 +307,8 @@ export class ClassSubjectDetailComponent implements OnInit {
             Confidential: item.Confidential,
             SubjectCategoryId: item.SubjectCategoryId,
             ClassId: item.ClassId,
+            SectionId: item.SectionId,
+            SemesterId: item.SemesterId,
             Credits: item.Credits,
             TeacherId: item.TeacherId,
             SelectHowMany: item.SubjectType.SelectHowMany,
@@ -326,6 +336,8 @@ export class ClassSubjectDetailComponent implements OnInit {
               TeacherId: existing[0].TeacherId,
               Credits: existing[0].Credits,
               ClassId: existing[0].ClassId,
+              SectionId: existing[0].SectionId,
+              SemesterId: existing[0].SemesterId,
               Active: existing[0].Active,
               Action: false
             });
@@ -341,6 +353,8 @@ export class ClassSubjectDetailComponent implements OnInit {
               Confidential: false,
               Credits: 0,
               ClassId: this.searchForm.get("searchClassId").value,
+              SectionId: this.searchForm.get("searchSectionId").value,
+              SemesterId: this.searchForm.get("searchSemesterId").value,
               SubjectName: s.MasterDataName,
               TeacherId: 0,
               Active: 0,
@@ -365,6 +379,10 @@ export class ClassSubjectDetailComponent implements OnInit {
 
       //searchBatchId: this.SelectedBatchId
     });
+  }
+  ClearData() {
+    this.ClassSubjectList = [];
+    this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
   }
   onBlur(element) {
     element.Action = true;
@@ -420,7 +438,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     this.dataservice.postPatch(this.ClassSubjectListName, toUpdate, row.ClassSubjectId, 'patch')
       .subscribe(res => {
         row.Action = false;
-        this.loading = false; 
+        this.loading = false;
         this.PageLoading = false;
         var idx = this.ClassSubjectList.findIndex(x => x.ClassSubjectId == row.ClassSubjectId)
         this.ClassSubjectList.splice(idx, 1);
@@ -473,9 +491,10 @@ export class ClassSubjectDetailComponent implements OnInit {
     }
 
     let checkFilterString = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage) +
-     " and ClassId eq " + row.ClassId +
-    //" and BatchId eq " + this.SelectedBatchId +
-    " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
+      " and ClassId eq " + row.ClassId +
+      " and SectionId eq " + row.SectionId +
+      " and SemesterId eq " + row.SemesterId +
+      " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
     // " and Active eq " + row.Active +
 
 
@@ -503,6 +522,8 @@ export class ClassSubjectDetailComponent implements OnInit {
           this.ClassSubjectData.Active = row.Active;
           this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
           this.ClassSubjectData.ClassId = row.ClassId;
+          this.ClassSubjectData.SectionId = row.SectionId;
+          this.ClassSubjectData.SemesterId = row.SemesterId;
           this.ClassSubjectData.Credits = row.Credits;
           this.ClassSubjectData.Confidential = row.Confidential == null ? false : row.Confidential;
           this.ClassSubjectData.SubjectId = row.SubjectId;
@@ -619,6 +640,8 @@ export class ClassSubjectDetailComponent implements OnInit {
     this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
     this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
+    this.Semesters = this.getDropDownData(globalconstants.MasterDefinitions.school.SEMESTER);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.Batches = this.tokenStorage.getBatches()
 
@@ -654,6 +677,8 @@ export class ClassSubjectDetailComponent implements OnInit {
 export interface IClassSubject {
   ClassSubjectId: number;
   ClassId: number;
+  SectionId: number;
+  SemesterId: number;
   Credits: number;
   SubjectId: number;
   SubjectName: string;
@@ -661,9 +686,9 @@ export interface IClassSubject {
   SubjectCategoryId: number;
   SelectHowMany: number;
   Confidential: boolean;
-  TeacherId: number,
-  Active;
-  Action: false;
+  TeacherId: number;
+  Active: number;
+  Action: boolean;
 }
 export interface ITeachers {
   TeacherId: number;

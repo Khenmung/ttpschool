@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
       { name: 'keywords', content: 'ttpsolutions: Education, School, Employee Management' },
       { name: 'author', content: 'TTP' }
     ])
-    title.setTitle('Online School Management');
+    title.setTitle('Online Education Management');
 
   }
   ngAfterViewInit(): void {

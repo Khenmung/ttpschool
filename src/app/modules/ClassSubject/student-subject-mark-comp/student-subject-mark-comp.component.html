@@ -21,11 +21,29 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="250">
+                <mat-label>section</mat-label>
+                <mat-select formControlName="searchSectionId" (selectionChange)="ClearData()">
+                    <mat-option [value]="Defaultvalue">select</mat-option>
+                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="250">
+                <mat-label>semester</mat-label>
+                <mat-select formControlName="searchSemesterId" (selectionChange)="ClearData()">
+                    <mat-option [value]="Defaultvalue">select</mat-option>
+                    <mat-option *ngFor="let item of Semesters" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Subject</mat-label>
-                <mat-select formControlName="searchSubjectId" #SubjectId (selectionChange)="cleardata()">
+                <mat-select formControlName="searchSubjectId" #SubjectId (selectionChange)="ClearData()">
                     <mat-option value="0">All</mat-option>
-                    <mat-option *ngFor="let p of SelectedClassSubjects" [value]="p.SubjectId">
+                    <mat-option *ngFor="let p of SelectedClassSubjects" [value]="p.ClassSubjectId">
                         {{p.SubjectName}}
                     </mat-option>
                 </mat-select>

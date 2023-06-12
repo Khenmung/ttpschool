@@ -125,7 +125,7 @@ export class StudentattendancereportComponent implements OnInit {
     debugger;
     var classId = this.searchForm.get("searchClassId").value;
     this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
-
+    this.ClearData();
   }
   ClassSubjects = [];
   GetClassSubject() {
@@ -323,6 +323,10 @@ export class StudentattendancereportComponent implements OnInit {
     //});
 
   }
+  ClearData(){
+    this.StudentAttendanceList =[];
+    this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+  }
   HolidayListName = 'Holidays';
   HolidayList = [];
   GetHoliday() {
@@ -381,6 +385,7 @@ export class StudentattendancereportComponent implements OnInit {
       if (clssubjectid > 0)
         this.contentservice.openSnackBar("Please select class, section, subject.", globalconstants.ActionText, globalconstants.RedBackground);
     }
+    this.ClearData();
   }
   AssignNameClassSection(pStudents) {
     this.Students = [];

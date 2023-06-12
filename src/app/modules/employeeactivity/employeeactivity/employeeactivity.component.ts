@@ -44,7 +44,7 @@ export class EmployeeactivityComponent implements OnInit {
   EmployeeActivityData = {
     EmployeeActivityId: 0,
     Achievement: '',
-    RankId: 0,
+    Secured: '',
     ActivityNameId: 0,
     GroupId: 0,
     CategoryId: 0,
@@ -59,12 +59,14 @@ export class EmployeeactivityComponent implements OnInit {
   EmployeeActivityForUpdate = [];
   displayedColumns = [
     'EmployeeActivityId',
+    'Employee',
     'Achievement',
     'Secured',
+    'ActivityNameId',
     'CategoryId',
     'SubCategoryId',
-    'AchievementDate',
     'SessionId',
+    'AchievementDate',
     'Active',
     'Action'
   ];
@@ -90,7 +92,8 @@ export class EmployeeactivityComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchEmployeeName: [0],
       searchActivity: [0],
-      searchSession: [0]
+      searchSession: [0],
+      searchCategoryId:[0]
     });
     this.filteredOptions = this.searchForm.get("searchEmployeeName").valueChanges
       .pipe(
@@ -98,7 +101,7 @@ export class EmployeeactivityComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Employees.slice())
       );
-    this.EmployeeId = this.tokenStorage.getEmployeeId();
+    //this.EmployeeId = this.tokenStorage.getEmployeeId();
     this.PageLoad();
   }
   private _filter(name: string): IEmployee[] {
@@ -145,36 +148,43 @@ export class EmployeeactivityComponent implements OnInit {
         });
   }
   AddNew() {
-    var newItem = {
-      EmployeeActivityId: 0,
-      Achievement: '',
-      RankId: 0,
-      ActivityNameId: 0,
-      GroupId: 0,
-      CategoryId: 0,
-      SubCategoryId: 0,
-      EmployeeId: 0,
-      AchievementDate: new Date(),
-      SessionId: 0,
-      BatchId: 0,
-      Action: false
+    var _employee = this.searchForm.get("searchEmployeeName").value.name;
+    if (!_employee) {
+      this.contentservice.openSnackBar("Please select employee.", globalconstants.ActionText, globalconstants.RedBackground);
     }
-    this.EmployeeActivityList = [];
-    this.EmployeeActivityList.push(newItem);
-    this.dataSource = new MatTableDataSource(this.EmployeeActivityList);
+    else {
+      var newItem = {
+        EmployeeActivityId: 0,
+        Employee: _employee,
+        Achievement: '',
+        Secured: '',
+        ActivityNameId: 0,
+        GroupId: 0,
+        CategoryId: 0,
+        SubCategoryId: 0,
+        EmployeeId: 0,
+        AchievementDate: new Date(),
+        SessionId: 0,
+        BatchId: 0,
+        Action: false
+      }
+      this.EmployeeActivityList = [];
+      this.EmployeeActivityList.push(newItem);
+      this.dataSource = new MatTableDataSource(this.EmployeeActivityList);
+    }
   }
   UpdateOrSave(row) {
 
     //debugger;
     var _employeeId = this.searchForm.get("searchEmployeeName").value.EmployeeId;
-    var _sessionId = this.searchForm.get("searchSessionId").value;
+    var _ActivityId = this.searchForm.get("searchActivity").value;
     this.loading = true;
     if (_employeeId == undefined) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select employee.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (_sessionId == 0) {
+    if (row.SessionId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -185,9 +195,9 @@ export class EmployeeactivityComponent implements OnInit {
     if (row.SubCategoryId > 0)
       checkFilterString += " and SubCategoryId eq " + row.SubCategoryId;
 
-    if (_sessionId > 0)
-      checkFilterString += " and SessionId eq " + _sessionId;
-    checkFilterString += " and EmployeeId eq " + _employeeId
+    if (row.SessionId > 0)
+      checkFilterString += " and SessionId eq " + row.SessionId;
+    checkFilterString += " and EmployeeId eq " + _employeeId;
 
     if (row.EmployeeActivityId > 0)
       checkFilterString += " and EmployeeActivityId ne " + row.EmployeeActivityId;
@@ -211,16 +221,17 @@ export class EmployeeactivityComponent implements OnInit {
           //console.log("inserting-1",this.EmployeeActivityForUpdate);
 
           this.EmployeeActivityData.EmployeeActivityId = row.EmployeeActivityId;
-          this.EmployeeActivityData.ActivityNameId = row.ActivityNameId;
+          this.EmployeeActivityData.ActivityNameId = _ActivityId;
           this.EmployeeActivityData.CategoryId = row.CategoryId;
+          this.EmployeeActivityData.Secured = row.Secured;
           this.EmployeeActivityData.SubCategoryId = row.SubCategoryId;
           this.EmployeeActivityData.AchievementDate = row.AchievementDate;
-          this.EmployeeActivityData.EmployeeId = this.EmployeeId;
+          this.EmployeeActivityData.EmployeeId = _employeeId;
           this.EmployeeActivityData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.EmployeeActivityData.SubOrgId = this.SubOrgId;
           this.EmployeeActivityData.Achievement = row.Achievement;
           this.EmployeeActivityData.SessionId = row.SessionId;
-          this.EmployeeActivityData.BatchId = row.BatchId;
+          this.EmployeeActivityData.BatchId = this.SelectedBatchId;
           this.EmployeeActivityData.Active = row.Active;
 
           if (this.EmployeeActivityData.EmployeeActivityId == 0) {
@@ -228,6 +239,7 @@ export class EmployeeactivityComponent implements OnInit {
             this.EmployeeActivityData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.EmployeeActivityData["UpdatedDate"] = new Date();
             delete this.EmployeeActivityData["UpdatedBy"];
+            console.log("this.EmployeeActivityData", this.EmployeeActivityData)
             this.insert(row, this.EmployeeActivityData);
           }
           else {
@@ -271,15 +283,28 @@ export class EmployeeactivityComponent implements OnInit {
     debugger;
     this.loading = true;
     var _employeeId = this.searchForm.get("searchEmployeeName").value.EmployeeId;
-    if (_employeeId == undefined) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select employee.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    var _activityId = this.searchForm.get("searchActivity").value;
+    var _sessionId = this.searchForm.get("searchSession").value;
+    var _categoryId = this.searchForm.get("searchCategoryId").value;
+
+    // if (_employeeId == undefined) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select employee.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    //this.EmployeeId = _employeeId;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     this.SubOrgId = this.tokenStorage.getSubOrgId();
     let filterStr = this.FilterOrgSubOrg;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    filterStr += ' and EmployeeId eq ' + _employeeId
+    if (_employeeId)
+      filterStr += ' and EmployeeId eq ' + _employeeId;
+    if (_activityId > 0)
+      filterStr += ' and ActivityNameId eq ' + _activityId;
+    if (_sessionId > 0)
+      filterStr += ' and SessionId eq ' + _sessionId;
+    if (_categoryId > 0)
+      filterStr += ' and CategoryId eq ' + _categoryId;
+
     let list: List = new List();
     list.fields = [
       'EmployeeActivityId',
@@ -292,7 +317,8 @@ export class EmployeeactivityComponent implements OnInit {
       'EmployeeId',
       'AchievementDate',
       'SessionId',
-      'BatchId'
+      'BatchId',
+      'Active'
     ];
 
     list.PageName = "EmployeeActivities";
@@ -305,11 +331,13 @@ export class EmployeeactivityComponent implements OnInit {
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.EmployeeActivityList = data.value.map(item => {
+            var _lastname = item.Employee.LastName ? " " + item.Employee.LastName : '';
+            item.Employee = item.Employee.FirstName + _lastname;
             item.Action = false;
             return item;
           })
         }
-        if (this.EmployeeActivityList.length > 0) {
+        if (this.EmployeeActivityList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         //console.log('EmployeeActivity', this.EmployeeActivityList)
@@ -345,7 +373,7 @@ export class EmployeeactivityComponent implements OnInit {
 
   }
   UpdateActive(row, event) {
-    row.Active = event.checked ? 1 : 0;
+    row.Active = event.checked;
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
@@ -395,7 +423,6 @@ export class EmployeeactivityComponent implements OnInit {
 export interface IEmployeeActivity {
   EmployeeActivityId: number;
   Achievement: string;
-  RankId: number;
   ActivityNameId: number;
   GroupId: number;
   CategoryId: number;

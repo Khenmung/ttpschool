@@ -252,6 +252,10 @@ export class StudentfamilynfriendComponent implements OnInit {
     this.StudentFamilyNFriendList.push(newdata);
     this.dataSource = new MatTableDataSource<IStudentFamilyNFriends>(this.StudentFamilyNFriendList);
   }
+  ClearData(){
+    this.StudentFamilyNFriendList =[];
+    this.dataSource = new MatTableDataSource<IStudentFamilyNFriends>(this.StudentFamilyNFriendList);
+  }
   onBlur(element) {
     element.Action = true;
   }

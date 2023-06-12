@@ -46,7 +46,7 @@ export class StudentAttendanceComponent implements OnInit {
   FilterOrgSubOrgBatchId = '';
   FilterOrgSubOrg = '';
   Batches = [];
-  AttendanceStatus = [];
+  //AttendanceStatus = [];
   FilteredClassSubjects = [];
   StudentAttendanceList: IStudentAttendance[] = [];
   StudentClassList = [];
@@ -139,7 +139,7 @@ export class StudentAttendanceComponent implements OnInit {
     debugger;
     var classId = this.searchForm.get("searchClassId").value;
     this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
-
+    this.ClearData();
   }
   checkall(value) {
     debugger;
@@ -316,6 +316,10 @@ export class StudentAttendanceComponent implements OnInit {
     //this.changeDetectorRefs.detectChanges();
     //});
   }
+  ClearData() {
+    this.StudentAttendanceList = [];
+    this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+  }
   StudentClassSubjects = [];
   GetExistingStudentClassSubjects() {
     var clssubjectid = this.searchForm.get("searchClassSubjectId").value;
@@ -350,6 +354,7 @@ export class StudentAttendanceComponent implements OnInit {
       if (clssubjectid > 0)
         this.contentservice.openSnackBar("Please select class, section, subject.", globalconstants.ActionText, globalconstants.RedBackground);
     }
+    this.ClearData();
   }
   clear() {
     this.searchForm.patchValue({
@@ -554,7 +559,7 @@ export class StudentAttendanceComponent implements OnInit {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    //this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
     //this.SubjectTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTTYPE);
 
     this.shareddata.ChangeSubjects(this.Subjects);

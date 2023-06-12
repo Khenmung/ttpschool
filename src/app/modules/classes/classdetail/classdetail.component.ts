@@ -35,6 +35,7 @@ export class ClassdetailComponent implements OnInit {
   dataSource: MatTableDataSource<IClassMaster>;
   allMasterData = [];
   ClassMasters = [];
+  ClassCategory=[];
   Durations = [];
   StudyArea = [];
   StudyMode = [];
@@ -48,6 +49,7 @@ export class ClassdetailComponent implements OnInit {
     MaxStudent: 0,
     StartDate: Date,
     EndDate: Date,
+    CategoryId:0,
     StudyAreaId: 0,
     StudyModeId: 0,
     Confidential: false,
@@ -69,6 +71,7 @@ export class ClassdetailComponent implements OnInit {
     "MaxStudent",
     "StartDate",
     "EndDate",
+    "CategoryId",
    //"StudyAreaId",
    // "StudyModeId",
     "Confidential",
@@ -80,11 +83,7 @@ export class ClassdetailComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
-
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) { }
 
@@ -148,6 +147,7 @@ export class ClassdetailComponent implements OnInit {
       DurationId: 0,
       MinStudent: 0,
       MaxStudent: 0,
+      CategoryId:0,
       StartDate: new Date(),
       EndDate: new Date(),
       StudyAreaId: 0,
@@ -159,6 +159,10 @@ export class ClassdetailComponent implements OnInit {
     };
     this.ClassMasterList = [];
     this.ClassMasterList.push(newdata);
+    this.dataSource = new MatTableDataSource<IClassMaster>(this.ClassMasterList);
+  }
+  ClearData(){
+    this.ClassMasterList =[];
     this.dataSource = new MatTableDataSource<IClassMaster>(this.ClassMasterList);
   }
   onBlur(element) {
@@ -204,6 +208,11 @@ export class ClassdetailComponent implements OnInit {
       this.loading = false; this.PageLoading = false;
       return;
     }
+    if (row.CategoryId ==0) {
+      this.contentservice.openSnackBar("Please select category", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      return;
+    }
     this.loading = true;
     let checkFilterString = this.FilterOrgSubOrg + " and ClassName eq '" + row.ClassName + "'"
 
@@ -231,9 +240,10 @@ export class ClassdetailComponent implements OnInit {
           this.ClassMasterData.EndDate = row.EndDate;
           this.ClassMasterData.MaxStudent = row.MaxStudent;
           this.ClassMasterData.MinStudent = row.MinStudent;
+          this.ClassMasterData.CategoryId = row.CategoryId;
           this.ClassMasterData.StudyAreaId = row.StudyAreaId;
           this.ClassMasterData.StudyModeId = row.StudyModeId;
-          this.ClassMasterData.Confidential = row.Confidential;
+          this.ClassMasterData.Confidential = row.Confidential?row.Confidential:false;
           this.ClassMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ClassMasterData.SubOrgId = this.SubOrgId;
           this.ClassMasterData.BatchId = this.SelectedBatchId;
@@ -246,6 +256,7 @@ export class ClassdetailComponent implements OnInit {
             this.ClassMasterData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.ClassMasterData["UpdatedDate"] = new Date();
             delete this.ClassMasterData["UpdatedBy"];
+            console.log('ClassMasterData', this.ClassMasterData)
             this.insert(row);
           }
           else {
@@ -253,6 +264,7 @@ export class ClassdetailComponent implements OnInit {
             delete this.ClassMasterData["CreatedBy"];
             this.ClassMasterData["UpdatedDate"] = new Date();
             this.ClassMasterData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            console.log('ClassMasterData update', this.ClassMasterData)
             this.update(row);
           }
         }
@@ -304,6 +316,7 @@ export class ClassdetailComponent implements OnInit {
       "MaxStudent",
       "StartDate",
       "EndDate",
+      "CategoryId",
       "StudyAreaId",
       "StudyModeId",
       "Confidential",
@@ -338,7 +351,7 @@ export class ClassdetailComponent implements OnInit {
   GetMasterData() {
 
     this.allMasterData = this.tokenStorage.getMasterData();
-    //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+    this.ClassCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSCATEGORY);
     this.Durations = this.getDropDownData(globalconstants.MasterDefinitions.school.DURATION);
     this.StudyArea = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYAREA);
     this.StudyMode = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYMODE);
@@ -369,6 +382,7 @@ export interface IClassMaster {
   MaxStudent: number;
   StartDate: Date;
   EndDate: Date;
+  CategoryId:number,
   StudyAreaId: number;
   StudyModeId: number;
   Sequence: number;

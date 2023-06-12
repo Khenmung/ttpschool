@@ -286,6 +286,10 @@ export class ClassmasterdashboardComponent implements OnInit {
         //this.changeDetectorRefs.detectChanges();
       });
   }
+  ClearData(){
+    this.ClassSubjectTeacherList =[];
+    this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
+  }
   onBlur(row) {
     row.Action = true;
   }

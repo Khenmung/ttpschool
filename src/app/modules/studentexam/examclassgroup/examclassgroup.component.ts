@@ -142,6 +142,10 @@ export class ExamclassgroupComponent implements OnInit {
 
         });
   }
+  ClearData(){
+    this.ExamClassGroupMapList =[];
+    this.dataSource = new MatTableDataSource<IExamClassGroupMap>(this.ExamClassGroupMapList);
+  }
   UpdateOrSave(row) {
     this.ToUpdateCount = 1;
     //debugger;

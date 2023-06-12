@@ -467,9 +467,9 @@ export class HomeDashboardComponent implements OnInit {
             let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
             //if selected batch is current batch.
             if (this.CurrentBatchId == this.SelectedBatchId)
-              this.GetStudentAndClasses(obj.appShortName);//this.GetStudents(obj);
+              this.GetStudentAndClassesWithForkJoin(obj.appShortName);//this.GetStudents(obj);
             else
-              this.GetStudentClass(obj.appShortName);
+              this.GetClassJoinStudent(obj.appShortName);
           })
         }
         else {
@@ -581,9 +581,9 @@ export class HomeDashboardComponent implements OnInit {
                 this.Classes = [...data.value];
                 let obj = { appShortName: 'edu', applicationName: this.SelectedAppName };
                 if (this.CurrentBatchId == this.SelectedBatchId)
-                  this.GetStudentAndClasses(obj.appShortName);//this.GetStudents(obj);
+                  this.GetStudentAndClassesWithForkJoin(obj.appShortName);//this.GetStudents(obj);
                 else
-                  this.GetStudentClass(obj.appShortName);
+                  this.GetClassJoinStudent(obj.appShortName);
               });
             }
             //this.searchForm.patchValue({ "searchSubOrgId": this.SubOrgId });
@@ -612,22 +612,22 @@ export class HomeDashboardComponent implements OnInit {
   }
   Students = [];
   StudentClasses = [];
-  GetStudentClass(appShortName) {
+  GetClassJoinStudent(appShortName) {
     //var filterOrgSubOrgBatchId =globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
     //  this.FilterOrgSubOrg +
     //   " and BatchId eq " + this.SelectedBatchId ;
     let list: List = new List();
     list.fields = [
-      "StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active"
+      "StudentClassId,StudentId,ClassId,SectionId,SemesterId,RollNo,FeeTypeId,Remarks,Active"
     ];
     if (this.LoginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
       this.filterOrgSubOrgBatchId += " and StudentId eq " + localStorage.getItem("studentId");
     }
+    this.filterOrgSubOrgBatchId += " and IsCurrent eq true";
     list.PageName = "StudentClasses";
     list.lookupFields = ["Student($select=StudentId," +
-      "FirstName,LastName,FatherName,MotherName,PersonalNo,FatherContactNo,MotherContactNo,PID,Active,RemarkId," +
-      "PresentAddress,DOB,GenderId,HouseId,EmailAddress,UserId,ReasonForLeavingId,AdmissionStatusId)"];
-
+      "FirstName,LastName,FatherName,MotherName,PID,Active,RemarkId," +
+      "GenderId,HouseId,ReasonForLeavingId,AdmissionStatusId)"];
 
     list.filter = [this.filterOrgSubOrgBatchId];
     this.loading = true;
@@ -693,7 +693,7 @@ export class HomeDashboardComponent implements OnInit {
 
     return this.contentservice.GetDropDownDataFromDB(pParentId, filterOrg, pAppId)
   }
-  GetStudentAndClasses(appShortName) {
+  GetStudentAndClassesWithForkJoin(appShortName) {
     var sources = [this.GetStudents(), this.GetStudentClasses()];
     forkJoin(sources)
       .subscribe((data: any) => {
@@ -750,12 +750,14 @@ export class HomeDashboardComponent implements OnInit {
   GetStudentClasses() {
     let list: List = new List();
     list.fields = [
-      "StudentClassId,StudentId,ClassId,SectionId,RollNo,FeeTypeId,Remarks,Active"
+      "StudentClassId,StudentId,ClassId,SectionId,SemesterId,RollNo,FeeTypeId,Remarks,Active"
     ];
     list.PageName = "StudentClasses";
     if (this.LoginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {
       this.filterOrgSubOrgBatchId += " and StudentId eq " + localStorage.getItem("studentId");
     }
+    this.filterOrgSubOrgBatchId += " and IsCurrent eq true";
+    
     list.filter = [this.filterOrgSubOrgBatchId];
     this.loading = true;
     this.PageLoading = true;
@@ -772,19 +774,19 @@ export class HomeDashboardComponent implements OnInit {
       'FatherName',
       'MotherName',
       'PersonalNo',
-      'FatherContactNo',
-      'MotherContactNo',
+      //'FatherContactNo',
+      //'MotherContactNo',
       "PID",
       "Active",
       "RemarkId",
       "GenderId",
       "HouseId",
       "EmailAddress",
-      "UserId",
+      //"UserId",
       "ReasonForLeavingId",
       "AdmissionStatusId",
-      "PresentAddress",
-      "DOB"
+      //"PresentAddress",
+      //"DOB"
     ];
     list.PageName = "Students";
     if (this.LoginUserDetail[0]['RoleUsers'][0].role.toLowerCase() == 'student') {

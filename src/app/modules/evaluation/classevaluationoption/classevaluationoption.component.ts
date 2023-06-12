@@ -17,7 +17,7 @@ import { SwUpdate } from '@angular/service-worker';
   styleUrls: ['./classevaluationoption.component.scss']
 })
 export class ClassEvaluationOptionComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @Input() ClassEvaluationId: number;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -27,7 +27,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   FilterOrgSubOrg = '';
   loading = false;
   ClassEvaluationOptionList: IClassEvaluationOption[] = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   QuestionnaireTypes = [];
   EvaluationOptionAutoComplete = [];
   Classes = [];
@@ -171,6 +171,10 @@ export class ClassEvaluationOptionComponent implements OnInit {
     this.ClassEvaluationOptionList.push(newItem);
     this.dataSource = new MatTableDataSource(this.ClassEvaluationOptionList);
   }
+  ClearData() {
+    this.ClassEvaluationOptionList = [];
+    this.dataSource = new MatTableDataSource(this.ClassEvaluationOptionList);
+  }
   UpdateOrSave(row) {
 
     debugger;
@@ -203,7 +207,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+          this.SubOrgId = this.tokenStorage.getSubOrgId();
           this.ClassEvaluationOptionForUpdate = [];
           this.ClassEvaluationOptionForUpdate.push(
             {
@@ -216,7 +220,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
               ParentId: row.ParentId,
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"],
-              SubOrgId:this.SubOrgId
+              SubOrgId: this.SubOrgId
             });
           //console.log('dta', this.ClassEvaluationOptionForUpdate);
 

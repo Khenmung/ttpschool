@@ -7,10 +7,10 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiU+++.*-=-0983`9556'nb656RL
-    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:5000";
+    public static apiUrl: string = "http://localhost:8020"; //"https://api.ttpsolutions.in";//"http://localhost:5000";
     public static fileUrl: string = '';
-    public static CompanyParentId = 31850;//31850;// 27762; //536870912; 
-    public static PremiumPlusId = 4;//4;//2 
+    public static CompanyParentId = 24740;//31850;// 27762; //536870912; 
+    public static PremiumPlusId = 2;//4;//2 
     public static globalAdminBillingSubOrgId = 30880;//5;//2 
 
     //public static BloodGroupParentId = 27762; //536870912;
@@ -21,9 +21,9 @@ export class globalconstants {
     public static BlueBackground = { duration: 3000, panelClass: 'blue-snackbar' };
     public static RedBackground = { duration: 10000, panelClass: 'red-snackbar' };
     public static GreenBackground = { duration: 10000, panelClass: 'green-snackbar' };
-    public static AddedMessage = 'Data saved sucessfully.';
-    public static UpdatedMessage = 'Data updated sucessfully.';
-    public static DeletedMessage = 'Data deleted sucessfully.';
+    public static AddedMessage = 'Data saved successfully.';
+    public static UpdatedMessage = 'Data updated successfully.';
+    public static DeletedMessage = 'Data deleted successfully.';
     public static RecordAlreadyExistMessage = 'Record already exists!';
     public static NoRecordFoundMessage = 'No record found!';
     public static NoEvaluationRecordFoundMessage = 'No evaluation record found!';
@@ -146,6 +146,9 @@ export class globalconstants {
                     "EMPLOYEE": "employee",
                     "EMPLOYEEDETAIL": "employee detail",
                     "SALARY": "salary",
+                    "SALARYSLIP": "salary slip",
+                    "SALARYCOMPONENTS": "salary components",
+                    "EMPSALARYCOMPONENTS": "employee salary components",
                     "DOCUMENT": "employee document",
                     "EDUCATIONHISTORY": "education history",
                     "WORKHISTORY": "work history",
@@ -153,7 +156,9 @@ export class globalconstants {
                     "FAMILY": "family",
                     "ATTENDANCE": "attendance",
                     "EMPLOYMENTHISTORY": "employment history",
-                    "EMPLOYEEPROFILE": "employee profile"
+                    "EMPLOYEEPROFILE": "employee profile",
+                    "LEAVEAPPROVEPERMISSION": "leave approve permission",
+                    "VARIABLECONFIG": "variable config"
                 },
                 "employeeactivity": {
                     "EMPLOYEEACTIVITY": "employee activity",
@@ -330,7 +335,8 @@ export class globalconstants {
                 "RULEORPOLICYCATEGORYDISPLAYTYPE": "rules or policy display type",
                 "COMMONPRINTHEADING": "common print heading",
                 "COMPANY": "company",
-                "TABLENAMES": "table names"
+                "TABLENAMES": "table names",
+                "ATTENDANCESTATUS": "attendance status",
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",
@@ -383,8 +389,7 @@ export class globalconstants {
                 "EXAMSLOTNAME": "exam slot name",
                 "EXAMSTATUS": "exam status",
                 "SUBJECT": "subject",
-                "SUBJECTTYPE": "subject type",
-                "ATTENDANCESTATUS": "attendance status",
+                "SUBJECTTYPE": "subject type",              
                 "ATTENDANCESMODE": "attendance mode",
                 "ROLLNOGENERATION": "Roll No Generation",
                 "CLASSPROMOTION": "class promotion",
@@ -401,12 +406,15 @@ export class globalconstants {
                 "STUDENTREMARKS": "student remark",
                 "EXAMRESULTPROPERTY": "exam result property",
                 "DIFFICULTYLEVEL": "question difficulty level",
-                "POINTSCATEGORY": "points category"
+                "POINTSCATEGORY": "points category",
+                "COURSEYEAR": "course year",
+                "SEMESTER": "semester",
+                "CLASSCATEGORY":"Class Category"
             },
             "leave": {
                 "REPORTNAMES": "leave report name",
                 "OPENADJUSTCLOSE": "open adjust close",
-                "LEAVE": "employee leave",
+                "EMPLOYEELEAVE": "employee leave",
                 "LEAVESTATUS": "leave status"
             },
             "employee": {
@@ -432,7 +440,8 @@ export class globalconstants {
                 "EMPLOYEEUPLOADTYPE": "employee upload type",
                 "EMPLOYEEACTIVITYSESSION": "employee activity session",
                 "EMPLOYEEACTIVITYCATEGORY": "employee activity category",
-                "EMPLOYEEACTIVITY": "employee activity"
+                "EMPLOYEEACTIVITY": "employee activity",
+                "SALARYSLIPHEADER": "salary slip header"
             },
             "StudentVariableName": [
                 "Today",
@@ -492,49 +501,19 @@ export class globalconstants {
                 "Grade",
                 "Department",
                 "CTC",
-                "GradeFromDate",
-                "GradeToDate",
-                "ApprovedBy",
                 "WorkAccount",
                 "JobTitle",
                 "Designation",
-                "EmployeeId",
-                "FirstName",
-                "LastName",
-                "FatherName",
-                "MotherName",
                 "Gender",
-                "Address",
-                "DOB",
                 "DOJ",
                 "City",
-                "Pincode",
                 "State",
                 "Country",
-                "Bloodgroup",
-                "Category",
-                "BankAccountNo",
-                "IFSCcode",
-                "MICRNo",
-                "AdhaarNo",
-                "Religion",
-                "ContactNo",
-                "AlternateContactNo",
-                "EmailAddress",
-                "Location",
                 "EmploymentStatus",
                 "EmploymentType",
                 "Nature",
                 "ConfirmationDate",
-                "NoticePeriodDays",
-                "ProbationPeriodDays",
-                "PAN",
-                "PassportNo",
                 "MaritalStatus",
-                "MarriedDate",
-                "PFAccountNo",
-                "Active",
-                "EmployeeCode"
             ],
             "accounting": {
                 "ACCOUNTNATURE": "account nature",

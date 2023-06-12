@@ -30,19 +30,21 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   SelectedBatchId = 0;
   SubOrgId = 0;
   SelectedApplicationId = 0;
-  
+  Defaultvalue = 0;
   FilterOrgSubOrg = '';
   FilterOrgSubOrgBatchId = '';
   StandardOrgIdWithPreviousBatchId = '';
   PreviousBatchId = 0;
   Classes = [];
   Subjects = [];
+  Sections = [];
   ClassSubjectnComponents = [];
   ClassSubjects = [];
   ClassGroups = [];
   MarkComponents = [];
   SelectedClassSubjects = [];
   Batches = [];
+  Semesters = [];
   ELEMENT_DATA: ISubjectMarkComponent[] = [];
   dataSource: MatTableDataSource<ISubjectMarkComponent>;
   allMasterData = [];
@@ -56,7 +58,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     PassMark: 0,
     OverallPassMark: 0,
     BatchId: 0,
-    OrgId: 0,SubOrgId: 0,
+    OrgId: 0, SubOrgId: 0,
     Active: 0
   };
   Exams = [];
@@ -94,7 +96,9 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           searchExamId: [0],
           searchSubjectId: [0],
           searchClassId: [0],
-          searchCopyExamId: [0]
+          searchCopyExamId: [0],
+          searchSemesterId: [0],
+          searchSectionId: [0],
         });
         //debugger;
         //this.GetClassFee();
@@ -106,9 +110,9 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-    
+
     this.GetMasterData();
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMappings = data.value.map(m => {
@@ -122,10 +126,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   ClassGroupMappings = [];
   displayedColumns = ['ClassSubjectMarkComponentId', 'ClassSubject', 'SubjectComponent', 'FullMark', 'PassMark', 'OverallPassMark', 'Active', 'Action'];
-  cleardata() {
-    this.ELEMENT_DATA = [];
-    this.dataSource = new MatTableDataSource<any>([]);
-  }
+
   SelectClassSubject() {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
@@ -254,6 +255,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+    this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
     this.Batches = this.tokenStorage.getBatches()
     var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
@@ -276,8 +278,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       });
 
     //if (this.Classes.length == 0) {
-    var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
+    var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+    this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];
       this.GetClassSubject();
     });
@@ -305,9 +307,11 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       "ClassSubjectId",
-      "Active",
       "SubjectId",
-      "ClassId"
+      "ClassId",
+      "SemesterId",
+      "SectionId",
+      "Active"
     ];
     list.PageName = "ClassSubjects";
     list.filter = [filterStr];
@@ -330,6 +334,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
               Active: cs.Active,
               SubjectId: cs.SubjectId,
               ClassId: cs.ClassId,
+              SemesterId: cs.SemesterId,
+              SectionId: cs.SectionId,
               ClassSubject: _class + ' - ' + _subject,
               SubjectName: _subject
             })
@@ -365,23 +371,33 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>([]);
     this.FilterClass();
-    //var _selectedClassGroupId = examobj[0].ClassGroupId;
-
-    //this.SelectedClasses = this.ClassGroupMappings.filter(g => g.ClassGroupId == _selectedClassGroupId);
-
+  }
+  ClearData() {
+    this.ELEMENT_DATA = [];
+    this.dataSource = new MatTableDataSource<any>([]);
   }
   datafromotherexam = '';
   GetClassSubjectComponent(otherExamId) {
     debugger;
     //var _copyExamId = this.searchForm.get("searchCopyExamId").value;
     var _examId = this.searchForm.get("searchExamId").value;
+    var _classId = this.searchForm.get("searchClassId").value;
+    var _classSubjectId = this.searchForm.get("searchSubjectId").value;//.SubjectId;
+    var _subjectId = 0;
+    var obj = this.SelectedClassSubjects.filter(f => f.ClassSubjectId == _classSubjectId);
+    if (obj.length > 0)
+      _subjectId = obj[0].SubjectId;
+    var _semesterId = this.searchForm.get("searchSemesterId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
 
     var filterstr = this.FilterOrgSubOrgBatchId;
     if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
+    if (_classSubjectId > 0) {
+      filterstr += " and ClassSubjectId eq " + _classSubjectId;
+    }
     if (otherExamId > 0) {
       this.datafromotherexam = "Data from '" + this.Exams.filter(e => e.ExamId == otherExamId)[0].ExamName + "'";
       filterstr += " and (ExamId eq " + _examId + " or ExamId eq " + otherExamId + ")";
@@ -391,7 +407,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       this.datafromotherexam = '';
       filterstr += " and ExamId eq " + _examId;
     }
-    if (this.searchForm.get("searchClassId").value == 0) {
+    if (_classId == 0) {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -412,7 +428,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ClassSubjectMarkComponents";
-    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)"];
+    //list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)"];
     list.filter = [filterstr];
     //list.orderBy = "ParentId";
     //this.ELEMENT_DATA = [];
@@ -421,13 +437,29 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         //debugger;
         var clsSubjFiltered = [];
         //if all subject is selected.
-        clsSubjFiltered = data.value.filter(item => item.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
+
+        // clsSubjFiltered = data.value.filter(item => item.ClassSubject.ClassId == _classId);
+        clsSubjFiltered = data.value.map(item => {
+          var _clssubject = this.ClassSubjects.filter(c => c.ClassSubjectId == item.ClassSubjectId)
+          if (_clssubject.length > 0) {
+            item.SubjectId = _clssubject[0].SubjectId;
+            item.SectionId = _clssubject[0].SectionId;
+            item.SemesterId = _clssubject[0].SemesterId;
+            item.ClassId = _clssubject[0].ClassId;
+          }
+          return item;
+        });
         var filteredClassSubjectnComponents = this.ClassSubjectnComponents.filter(clssubjcomponent =>
-          clssubjcomponent.ClassId == this.searchForm.get("searchClassId").value);
-        if (this.searchForm.get("searchSubjectId").value > 0) {
-          clsSubjFiltered = clsSubjFiltered.filter(item => item.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value);
-          filteredClassSubjectnComponents = filteredClassSubjectnComponents.filter(clssubjcomponent => clssubjcomponent.SubjectId == this.searchForm.get("searchSubjectId").value);
+          clssubjcomponent.ClassId == _classId);
+        if (_subjectId > 0) {
+          clsSubjFiltered = clsSubjFiltered.filter(item => item.SubjectId == _subjectId);
+          filteredClassSubjectnComponents = filteredClassSubjectnComponents.filter(clssubjcomponent => clssubjcomponent.SubjectId == _subjectId);
         }
+        if (_semesterId > 0) 
+          clsSubjFiltered = clsSubjFiltered.filter(item => item.SemesterId == _semesterId);
+        if (_sectionId > 0) 
+          clsSubjFiltered = clsSubjFiltered.filter(item => item.SectionId == _sectionId);
+
         this.ELEMENT_DATA = [];
         ////////////////////
         var _CopyFromExam = [];
@@ -438,7 +470,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           this.ELEMENT_DATA = _CopyFromExam.map(f => {
             f.ExamId = _examId;
 
-            let existing = _SelectedExam.filter(fromdb => fromdb.ClassSubject.SubjectId == f.ClassSubject.SubjectId
+            let existing = _SelectedExam.filter(fromdb => fromdb.SubjectId == f.ClassSubject.SubjectId
               && fromdb.SubjectComponentId == f.SubjectComponentId)
 
             if (existing.length > 0) {
@@ -458,7 +490,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           filteredClassSubjectnComponents.forEach((subj, indx) => {
             subj.Components.forEach(component => {
 
-              let existing = clsSubjFiltered.filter(fromdb => fromdb.ClassSubject.SubjectId == subj.SubjectId
+              let existing = clsSubjFiltered.filter(fromdb => fromdb.SubjectId == subj.SubjectId
                 && fromdb.SubjectComponentId == component.MasterDataId)
               if (existing.length > 0) {
                 existing.forEach(e => {

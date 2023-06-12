@@ -61,9 +61,11 @@ export class StudentviewComponent implements OnInit {
   studentData = [];
   AdmissionStatuses = [];
   ColumnsOfSelectedReports = [];
+  Semesters = [];
+  CourseYears = [];
   CountryId = 0;
-  FilterOrgSubOrg='';
-  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
@@ -115,7 +117,7 @@ export class StudentviewComponent implements OnInit {
     this.formdata.append("batchId", "0");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
     this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
-    this.formdata.append("subOrgId", this.SubOrgId+"");
+    this.formdata.append("subOrgId", this.SubOrgId + "");
     this.formdata.append("pageId", "0");
 
     if (this.StudentId != null && this.StudentId != 0)
@@ -185,7 +187,7 @@ export class StudentviewComponent implements OnInit {
         this.GetFeeTypes();
         this.GetStudentAttendance();
         this.GetAchievementAndPoint();
-       
+
         this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.loading = false;
@@ -254,10 +256,10 @@ export class StudentviewComponent implements OnInit {
       list.fields = [
         "StudentClassId", "ClassId",
         "StudentId", "RollNo", "SectionId", "AdmissionNo",
-        "BatchId", "FeeTypeId",
+        "BatchId", "FeeTypeId", "CourseYearId", "SemesterId",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
-      list.filter = ["StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId + " and SubOrgId eq " + this.SubOrgId];
+      list.filter = [filterOrgIdNBatchId + " and StudentClassId eq " + this.StudentClassId];
 
       this.dataservice.get(list)
         .subscribe((data: any) => {
@@ -266,6 +268,14 @@ export class StudentviewComponent implements OnInit {
             var _classObj = this.Classes.filter(f => f.ClassId == data.value[0].ClassId);
             if (_classObj.length > 0)
               _class = _classObj[0].ClassName;
+            var _semester = ''
+            var _semesterObj = this.Semesters.filter(f => f.MasterDataId == data.value[0].SemesterId);
+            if (_semesterObj.length > 0)
+              _semester = _semesterObj[0].MasterDataName;
+            var _courseYear = ''
+            var _courseYearObj = this.Classes.filter(f => f.MasterDataId == data.value[0].CourseYearId);
+            if (_courseYearObj.length > 0)
+              _courseYear = _courseYearObj[0].MasterDataName;
 
             var _section = ''
             var _sectionObj = this.Sections.filter(f => f.MasterDataId == data.value[0].SectionId);
@@ -289,6 +299,8 @@ export class StudentviewComponent implements OnInit {
               { Text: 'Admission No.', Value: data.value[0].AdmissionNo },
               { Text: 'Class', Value: _class },
               { Text: 'Section', Value: _section },
+              { Text: 'Semester', Value: _semester },
+              { Text: 'Year', Value: _courseYear },
               { Text: 'Roll No.', Value: data.value[0].RollNo },
               { Text: 'Batch', Value: _batch },
               { Text: 'Fee Type', Value: _feeType },
@@ -304,6 +316,8 @@ export class StudentviewComponent implements OnInit {
               { Text: 'Class', Value: '' },
               { Text: 'Section', Value: '' },
               { Text: 'RollNo', Value: '' },
+              { Text: 'Semester', Value: '' },
+              { Text: 'Year', Value: '' },
               { Text: 'BatchId', Value: '' },
               { Text: 'Fee Type', Value: '' },
               { Text: 'Admission Date', Value: '' },
@@ -742,10 +756,10 @@ export class StudentviewComponent implements OnInit {
       })
   }
   CreateInvoice() {
-    this.contentservice.getInvoice(this.LoginUserDetail[0]['orgId'],this.SubOrgId,this.SelectedBatchId, this.StudentClassId)
+    this.contentservice.getInvoice(this.LoginUserDetail[0]['orgId'], this.SubOrgId, this.SelectedBatchId, this.StudentClassId)
       .subscribe((data: any) => {
 
-        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"],this.SubOrgId)
+        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"], this.SubOrgId)
           .subscribe((data: any) => {
             //this.loading = false; this.PageLoading=false;
             //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);

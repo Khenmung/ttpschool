@@ -242,6 +242,10 @@ export class StudentDocumentComponent implements OnInit {
       });
 
   }
+  ClearData(){
+    this.StudentDocuments =[];
+    this.documentUploadSource = new MatTableDataSource<IUploadDoc>(this.StudentDocuments);
+  }
   pageview(path) {
     window.open(path, "_blank");
     return;

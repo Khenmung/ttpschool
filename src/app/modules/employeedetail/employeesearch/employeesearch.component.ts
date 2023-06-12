@@ -222,7 +222,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
     //debugger;
     this.generateDetail(element);
     //  this.route.navigate(['/admin/addEmployee/' + id], { queryParams: { scid: this.EmployeeClassId, bid: this.BatchId } });
-    this.route.navigate(['/employee/info']);
+    this.route.navigate(['/emp/info']);
   }
   feepayment(element) {
     this.generateDetail(element);
@@ -239,7 +239,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
   addNew() {
     //var url = this.route.url;
     this.tokenStorage.saveEmployeeId("0");
-    this.route.navigate(['/employee/info']);
+    this.route.navigate(['/emp/info']);
   }
   ExportTOExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.tableRef.nativeElement);

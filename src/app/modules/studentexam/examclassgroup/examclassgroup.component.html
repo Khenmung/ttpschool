@@ -8,7 +8,7 @@
             <form [formGroup]="searchForm">
                 <mat-form-field appearance="outline" style="width:250px">
                     <mat-label>Exam</mat-label>
-                    <mat-select formControlName="searchExamId">
+                    <mat-select formControlName="searchExamId" (selectionChange)="ClearData()">
                         <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
                             {{item.ExamName}}
                         </mat-option>

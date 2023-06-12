@@ -6,6 +6,7 @@ import { ClassdetailComponent } from './classdetail/classdetail.component';
 import { ClassgroupComponent } from './classgroup/classgroup.component';
 import { ClassgroupmappingComponent } from './classgroupmapping/classgroupmapping.component';
 import { ClassmasterdashboardComponent } from './classsmastermapping/classmasterdashboard.component';
+import { CourseYearsemesterComponent } from './courseyearsemester/courseyearsemester.component';
 import { DashboardclassfeeComponent } from './dashboardclassfee/dashboardclassfee.component';
 import { FeeDefinitionComponent } from './feedefinition/feedefinition.component';
 import { SchoolFeeTypesComponent } from './school-fee-types/school-fee-types.component';
@@ -33,5 +34,6 @@ export const ClassesComponents = [
   SchoolFeeTypesComponent,
   FeeDefinitionComponent ,
   ClassgroupComponent,
-  ClassgroupmappingComponent
+  ClassgroupmappingComponent,
+  CourseYearsemesterComponent
 ]

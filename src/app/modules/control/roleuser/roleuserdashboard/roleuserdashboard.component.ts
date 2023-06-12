@@ -162,6 +162,10 @@ export class roleuserdashboardComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+  ClearData() {
+    this.RoleUserList = [];
+    this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
+  }
   // removeadmin() {
   //   this.RolesTemp = this.Roles.filter(f => f.MasterDataName != 'Admin');
 

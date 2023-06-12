@@ -37,16 +37,9 @@ export class PromoteclassComponent implements OnInit {
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  
-  FilterOrgSubOrgBatchId= '';
+  ClassCategory = [];
+  ExamStatuses = [];
+  FilterOrgSubOrgBatchId = '';
   FilterOrgSubOrg = '';
   StandardFilterWithPreviousBatchId = '';
   SameClassPreviousBatch = "SameClassPreviousBatch";
@@ -64,9 +57,11 @@ export class PromoteclassComponent implements OnInit {
   FeeTypes = [];
   Sections = [];
   Remarks = [];
+  Semesters = [];
   StudentGrades = [];
   CurrentBatchId = 0;
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0;
+  SubOrgId = 0;
   PreviousBatchId = 0;
   NextBatchId = 0;
   Batches = [];
@@ -81,7 +76,10 @@ export class PromoteclassComponent implements OnInit {
   StudentClassData = {
     StudentClassId: 0,
     ClassId: 0,
-    OrgId: 0,SubOrgId: 0,
+    SemesterId: 0,
+    IsCurrent:false,
+    OrgId: 0,
+    SubOrgId: 0,
     BatchId: 0,
     StudentId: 0,
     RollNo: 0,
@@ -96,10 +94,11 @@ export class PromoteclassComponent implements OnInit {
     'StudentName',
     'GenderName',
     'Remark',
-    'SectionId',
-    'RollNo',
+    //'SectionId',
+    //'RollNo',
     'FeeTypeId',
     'ClassId',
+    'SemesterId',
     'ExamStatus',
     'AdmitTo',
     'Remarks',
@@ -171,7 +170,7 @@ export class PromoteclassComponent implements OnInit {
   displayFn(user: IStudent): string {
     return user && user.Name ? user.Name : '';
   }
-  CurrentBatchStudents=[];
+  CurrentBatchStudents = [];
   PageLoad() {
     debugger;
     this.loading = true;
@@ -181,16 +180,14 @@ export class PromoteclassComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-      var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
-        this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
-      })
+      //var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
+
       this.Batches = this.tokenStorage.getBatches()
 
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.CurrentBatchStudents = this.tokenStorage.getStudents();
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SubOrgId = this.tokenStorage.getSubOrgId();
+      this.SubOrgId = this.tokenStorage.getSubOrgId();
       this.NextBatchId = +this.tokenStorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenStorage.getPreviousBatchId();
       this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
@@ -211,6 +208,7 @@ export class PromoteclassComponent implements OnInit {
           'RollNo',
           'GenderName',
           'SectionId',
+          'SemesterId',
           'FeeTypeId',
           'Action'
         ];
@@ -350,6 +348,7 @@ export class PromoteclassComponent implements OnInit {
       'AdmissionNo',
       'FeeTypeId',
       'ClassId',
+      'SemesterId',
       'RollNo',
       'SectionId',
       'Remarks',
@@ -552,10 +551,50 @@ export class PromoteclassComponent implements OnInit {
       this.SameClassPreviousBatchLabel = "";
     }
   }
-
+  ClassCategoryName = '';
+  SetCategory(event) {
+    this.ClassCategoryName = '';
+    var obj = this.Classes.filter(f => f.ClassId == event.value.ClassId);
+    if (obj.length > 0) {
+      this.ClassCategoryName = obj[0].Category;
+    }
+    if(this.ClassCategoryName=='high school')
+    {
+      this.displayedColumns = [
+        'StudentName',
+        'GenderName',
+        'Remark',
+        'SectionId',
+        'FeeTypeId',
+        'ClassId',
+        'ExamStatus',
+        'AdmitTo',
+        'Remarks',
+        'Active',
+        'Action'
+      ];
+    }
+    else if(this.ClassCategoryName=='college')
+    {
+      this.displayedColumns = [
+        'StudentName',
+        'GenderName',
+        'Remark',
+        'SectionId',
+        'FeeTypeId',
+        'ClassId',
+        'SemesterId',
+        'ExamStatus',
+        'AdmitTo',
+        'Remarks',
+        'Active',
+        'Action'
+      ];
+    }
+  }
   GetExams() {
     var previousBatchId = this.tokenStorage.getPreviousBatchId();
-    this.contentservice.GetExams(this.StandardFilterWithPreviousBatchId,1)
+    this.contentservice.GetExams(this.StandardFilterWithPreviousBatchId, 1)
       .subscribe((data: any) => {
         this.Exams = [];
         data.value.forEach(e => {
@@ -565,11 +604,13 @@ export class PromoteclassComponent implements OnInit {
               ExamId: e.ExamId,
               ExamName: obj[0].MasterDataName,
               ClassGroupId: e.ClassGroupId,
-              StartDate:e.StartDate
+              StartDate: e.StartDate
             })
         })
-        this.Exams = this.Exams.sort((a,b)=>new Date(b.StartDate).getTime() - new Date(a.StartDate).getTime());
-        this.searchForm.patchValue({"searchExamId":this.Exams[0].ExamId});
+        if (this.Exams.length > 0) {
+          this.Exams = this.Exams.sort((a, b) => new Date(b.StartDate).getTime() - new Date(a.StartDate).getTime());
+          this.searchForm.patchValue({ "searchExamId": this.Exams[0].ExamId });
+        }
         //console.log("this.exams",this.Exams);
       })
   }
@@ -633,6 +674,7 @@ export class PromoteclassComponent implements OnInit {
         'StudentId',
         'FeeTypeId',
         'ClassId',
+        'SemesterId',
         'RollNo',
         'SectionId',
         'Remarks',
@@ -672,7 +714,7 @@ export class PromoteclassComponent implements OnInit {
     this.loading = true;
     this.GetExamResult(this.PreviousBatchId, _StudentId)
       .subscribe((examresult: any) => {
-        
+
         this.StudentClassList = [];
         var _defaultTypeId = 0;
         var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
@@ -865,8 +907,8 @@ export class PromoteclassComponent implements OnInit {
     //debugger;
     this.loading = true;
 
-    let checkFilterString = "StudentId eq " + row.StudentId + ' and BatchId eq ' + this.SelectedBatchId //"ClassId eq " + row.ClassId +
-
+    let checkFilterString = "StudentId eq " + row.StudentId + ' and BatchId eq ' + this.SelectedBatchId +
+      " and SemesterId eq " + row.SemesterId;
 
     if (row.StudentClassId > 0)
       checkFilterString += " and StudentClassId ne " + row.StudentClassId;
@@ -901,6 +943,7 @@ export class PromoteclassComponent implements OnInit {
               this.StudentClassData.StudentClassId = row.StudentClassId;
               this.StudentClassData.StudentId = row.StudentId;
               this.StudentClassData.ClassId = row.AdmitTo;
+              this.StudentClassData.SemesterId = row.SemesterId;
               this.StudentClassData.FeeTypeId = row.FeeTypeId;
               this.StudentClassData.RollNo = row.RollNo;
               this.StudentClassData.SectionId = row.SectionId;
@@ -913,6 +956,7 @@ export class PromoteclassComponent implements OnInit {
               this.StudentClassData.BatchId = this.SelectedBatchId;
               if (this.StudentClassData.StudentClassId == 0) {
                 this.StudentClassData.AdmissionNo = _year + ClassStrength;
+                this.StudentClassData.IsCurrent=true;
                 //this.StudentClassData.AdmissionDate = new Date();
                 this.StudentClassData["CreatedDate"] = new Date();
                 this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -924,6 +968,7 @@ export class PromoteclassComponent implements OnInit {
               else {
                 delete this.StudentClassData["CreatedDate"];
                 delete this.StudentClassData["CreatedBy"];
+                this.StudentClassData.IsCurrent=false;
                 this.StudentClassData["UpdatedDate"] = new Date();
                 this.StudentClassData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
                 console.log('to update', this.StudentClassData)
@@ -956,7 +1001,7 @@ export class PromoteclassComponent implements OnInit {
           }];
           NewStudentFromPrevious[0].StudentClasses = [...cls];
           row.Action = false;
-          
+
           var stud = this.CurrentBatchStudents.filter((f: any) => f.StudentId == this.StudentClassData.StudentId);
           if (stud.length > 0) {
             stud["StudentClasses"] = [...cls];
@@ -1039,7 +1084,7 @@ export class PromoteclassComponent implements OnInit {
               })
             })
             // console.log("studentfeedetailxxxx",studentfeedetail)
-            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"],this.SubOrgId)
+            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"], this.SubOrgId)
               .subscribe((data: any) => {
                 this.loading = false;
                 this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
@@ -1059,7 +1104,7 @@ export class PromoteclassComponent implements OnInit {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
-  ExamStatuses = [];
+  
   GetExamResult(pBatchId, pStudentId) {
     var _examId = this.searchForm.get("searchExamId").value;
     var _PId = this.searchForm.get("searchPID").value;
@@ -1134,6 +1179,7 @@ export class PromoteclassComponent implements OnInit {
         this.PageLoading = false;
       })
   }
+
   GetMasterData() {
     this.allMasterData = this.tokenStorage.getMasterData();
     // this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -1143,12 +1189,25 @@ export class PromoteclassComponent implements OnInit {
     this.RollNoGeneration = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLLNOGENERATION);
     this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+    this.ClassCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSCATEGORY);
     this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
     this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
     this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
     this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
     this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
-    this.loading = false; this.PageLoading = false;
+    this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
+      this.Classes = data.value.map(m => {
+        m.Category = '';
+        let obj = this.ClassCategory.filter(c => c.MasterDataId == m.CategoryId);
+        if (obj.length > 0) {
+          m.Cagegory = obj[0].MasterDataName.toLowerCase();
+        }
+        return m;
+      })
+      this.Classes = this.Classes.sort((a, b) => a.Sequence - b.Sequence);
+    })
+    //this.loading = false; this.PageLoading = false;
+
     this.GetExams();
     // });
   }

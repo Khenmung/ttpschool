@@ -13,7 +13,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Subject</mat-label>
-            <mat-select formControlName="searchClassSubjectId">
+            <mat-select formControlName="searchClassSubjectId" (selectionChange)="ClearData()">
                 <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.ClassSubjectId">
                     {{item.SubjectName}}
                 </mat-option>

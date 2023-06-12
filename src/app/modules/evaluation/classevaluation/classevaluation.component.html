@@ -17,7 +17,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline" [style.width.px]="250">
                         <mat-label>Evaluation type</mat-label>
-                        <mat-select formControlName="searchEvaluationMasterId">
+                        <mat-select formControlName="searchEvaluationMasterId" (selectionChange)="ClearData()">
                             <mat-option *ngFor="let item of EvaluationMasterForClassGroup"
                                 [value]="item.EvaluationMasterId">
                                 {{item.EvaluationName}}
@@ -48,6 +48,16 @@
                         <mat-form-field appearance="outline">
                             <input [maxlength]="256" autocomplete="Off" matInput (blur)="onBlur(element)"
                                 [value]="element.Description" [(ngModel)]="element.Description">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Marks">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Mark
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input type="number" autocomplete="Off" matInput (blur)="onBlur(element)"
+                                [value]="element.Marks" [(ngModel)]="element.Marks">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>

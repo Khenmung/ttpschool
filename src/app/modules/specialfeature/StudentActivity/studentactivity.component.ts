@@ -155,7 +155,10 @@ export class StudentActivityComponent implements OnInit {
       }
     }
   }
-
+  ClearData(){
+    this.SportsResultList =[];
+    this.dataSource = new MatTableDataSource<ISportsResult>([]);
+  }
   delete(element) {
     this.openDialog(element);
   }

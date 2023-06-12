@@ -113,6 +113,7 @@ export class ExamslotComponent implements OnInit {
     //console.log("value", selected.value)
 
     this.searchForm.patchValue({ "searchExamDate": startdate });
+    this.ClearData();
   }
   updateActive(row, value) {
     row.Action = true;
@@ -388,6 +389,10 @@ export class ExamslotComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
         this.loading = false; this.PageLoading = false;
       })
+  }
+  ClearData(){
+    this.ExamSlots =[];
+    this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
   }
   onBlur(row) {
     row.Action = true;

@@ -195,6 +195,10 @@ export class EvaluationExamMapComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.EvaluationExamMapList);
     this.SelectEvaluation();
   }
+  ClearData() {
+    this.EvaluationExamMapList = [];
+    this.dataSource = new MatTableDataSource(this.EvaluationExamMapList);
+  }
   UpdateOrSave(row) {
     debugger;
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
@@ -247,7 +251,7 @@ export class EvaluationExamMapComponent implements OnInit {
               Active: row.Active,
               Deleted: false,
               OrgId: this.LoginUserDetail[0]["orgId"],
-              SubOrgId:this.SubOrgId
+              SubOrgId: this.SubOrgId
             });
 
           //console.log("for udpate",this.EvaluationExamMapForUpdate[0])
@@ -357,7 +361,7 @@ export class EvaluationExamMapComponent implements OnInit {
     //this.searchForm.patchValue({ searchEvaluationMasterId: 0 });
     //this.EvaluationExamMapList = [];
     //this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);
-
+    this.ClearData();
   }
   EvaluationExamMap = [];
   GetEvaluationExamMap() {
@@ -537,6 +541,7 @@ export class EvaluationExamMapComponent implements OnInit {
     this.EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     this.EvaluationUpdatable = this.EvaluationNames.filter(f => f.EvaluationMasterId == this.EvaluationMasterId)[0].AppendAnswer;
     //console.log("EvaluationUpdatable", this.EvaluationUpdatable);
+    this.ClearData();
   }
   UpdateActive(row, event) {
     row.Active = event.checked;

@@ -15,8 +15,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     LeaveManagementRoutingModule,
     SharedhomepageModule,
     MaterialModule,
-    SharedModule,
-    
+    SharedModule,    
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule

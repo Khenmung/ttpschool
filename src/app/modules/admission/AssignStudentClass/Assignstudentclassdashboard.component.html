@@ -13,11 +13,20 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline" style="width: 150px;">
+            <mat-form-field appearance="outline" style="width: 150px;" *ngIf="CategoryName=='high school'">
                 <mat-label>Section</mat-label>
                 <mat-select formControlName="searchSectionId">
                     <mat-option value="0">--section--</mat-option>
                     <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 150px;" *ngIf="CategoryName=='college'">
+                <mat-label>Semester</mat-label>
+                <mat-select formControlName="searchSemesterId">
+                    <mat-option [value]="Selectzero">select</mat-option>
+                    <mat-option *ngFor="let item of Semesters" [value]="item.MasterDataId">
                         {{item.MasterDataName}}
                     </mat-option>
                 </mat-select>
@@ -30,6 +39,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            
             <mat-form-field appearance="outline" style="width: 150px;">
                 <mat-label>Remarks</mat-label>
                 <mat-select formControlName="searchRemarkId">
@@ -79,7 +89,7 @@
         </div> -->
     </div>
     <mat-divider style="position:relative; margin-top:10px;margin-bottom: 15px;"></mat-divider>
-    <div *ngIf="StudentClassList.length>0" style="padding-top:10px;border:1px solid lightgray">
+    <!-- <div *ngIf="StudentClassList.length>0" style="padding-top:10px;border:1px solid lightgray">
         <span style="padding: 15px;">Sort By - Gender, Name</span>
         <mat-form-field appearance="outline" style="width: 100px;">
             <mat-label>Gender</mat-label>
@@ -99,7 +109,7 @@
             class="mat-raised-button" (click)="GenerateRollNoOnList()">
             <mat-icon>hdr_auto</mat-icon>
         </button>
-    </div>
+    </div> -->
 </form>
 <div style="font-size: medium;padding: 15px 0px 15px 0px;font-weight: bold;color:darkgreen">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
@@ -152,6 +162,28 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="SemesterId">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Semester </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-select (selectionChange)="onBlur(element)" [value]="element.SemesterId" [(ngModel)]="element.SemesterId">
+                    <mat-option *ngFor="let item of Semesters" [value]="item.SemesterId">{{item.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <!-- <ng-container matColumnDef="CourseYearId">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Course Year </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-select (selectionChange)="onBlur(element)" [value]="element.CourseYearId" [(ngModel)]="element.CourseYearId">
+                    <mat-option *ngFor="let item of CourseYears" [value]="item.CourseYearId">{{item.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container> -->
     <ng-container matColumnDef="RollNo">
         <mat-header-cell *matHeaderCellDef mat-sort-header>RollNo
         </mat-header-cell>

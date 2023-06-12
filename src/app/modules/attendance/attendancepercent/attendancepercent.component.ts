@@ -34,16 +34,16 @@ export class AttendancepercentComponent implements OnInit {
   NoOfRecordToUpdate = -1;
   StudentDetailToDisplay = '';
   StudentClassId = 0;
-  FilterOrgSubOrg='';
-  FilterOrgSubOrgBatchId='';
+  FilterOrgSubOrg = '';
+  FilterOrgSubOrgBatchId = '';
   loading = false;
   Sections = [];
   Classes = [];
   Subjects = [];
   ClassSubjects = [];
-  SelectedBatchId = 0;SubOrgId = 0;
+  SelectedBatchId = 0; SubOrgId = 0;
   Batches = [];
-  AttendanceStatus = [];
+  //AttendanceStatus = [];
   FilteredClassSubjects = [];
   StudentAttendanceList: IStudentAttendance[] = [];
   StudentClassList = [];
@@ -113,12 +113,12 @@ export class AttendancepercentComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.SubOrgId = this.tokenStorage.getSubOrgId();
-        
+
         this.FilterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
         this.FilterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
         this.GetMasterData();
         //var filterOrgSubOrg= globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-          this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.FilterOrgSubOrg).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
       }
@@ -132,7 +132,7 @@ export class AttendancepercentComponent implements OnInit {
     debugger;
     var classId = this.searchForm.get("searchClassId").value;
     this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
-
+    this.ClearData();
   }
   distinctStudent = [];
   GetStudentAttendance() {
@@ -148,7 +148,7 @@ export class AttendancepercentComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    var filterStrClsSub = '';
+    //var filterStrClsSub = '';
     var _sectionId = this.searchForm.get("searchSectionId").value;
     var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
     // if (_sectionId == 0 && _classSubjectId == 0) {
@@ -307,6 +307,10 @@ export class AttendancepercentComponent implements OnInit {
       searchSection: ''
     });
   }
+  ClearData() {
+    this.distinctStudent = [];
+    this.dataSource = new MatTableDataSource<IStudentAttendance>(this.distinctStudent);
+  }
   UpdateActive(element, event) {
     element.Action = true;
     //this.AnyEnableSave=true;
@@ -464,7 +468,7 @@ export class AttendancepercentComponent implements OnInit {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
+    //this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
     this.shareddata.ChangeSubjects(this.Subjects);
     this.GetClassSubject();
     this.loading = false;

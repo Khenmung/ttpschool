@@ -17,19 +17,18 @@
                 <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center" *ngIf="Org=='TTP'">
                     <mat-form-field appearance="outline">
                         <mat-label>Organisation</mat-label>
-                        <mat-select [disabled]="Org !='TTP'" formControlName="searchCustomerId" [(ngModel)]="OrgId">
+                        <mat-select [disabled]="Org !='TTP'" formControlName="searchCustomerId" [(ngModel)]="OrgId" (selectionChange)="ClearData()">
                             <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
                                 {{item.OrganizationName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-
                     <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
                         (click)="GetCustomerPlans()">
-                         <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                        <mat-icon>search</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
                     </button>
                 </div>
             </form>

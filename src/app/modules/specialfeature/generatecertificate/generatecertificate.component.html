@@ -26,7 +26,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="330">
                     <mat-label>Student</mat-label>
-                    <input type="text" matInput (change)="clear()" [readonly]="loading"
+                    <input type="text" matInput (change)="ClearData()" [readonly]="loading"
                         formControlName="searchStudentName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                         <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
@@ -49,7 +49,7 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Group</mat-label>
                         <mat-select formControlName="searchStudentGroupId" [disabled]="loading"
-                            (selectionChange)="clear()">
+                            (selectionChange)="ClearData()">
                             <mat-option value="0">select</mat-option>
                             <!-- <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled"> -->
                             <mat-option *ngFor="let list of Houses" [value]="list.MasterDataId">
@@ -60,7 +60,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Activity</mat-label>
-                        <mat-select formControlName="searchActivityId" (selectionChange)="clear()">
+                        <mat-select formControlName="searchActivityId" (selectionChange)="ClearData()">
                             <mat-option value="0">select</mat-option>
                             <mat-option *ngFor="let item of ActivityNames" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}</mat-option>
@@ -75,14 +75,14 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Sub Category</mat-label>
-                        <mat-select formControlName="searchSubCategoryId" (selectionChange)="clear()">
+                        <mat-select formControlName="searchSubCategoryId" (selectionChange)="ClearData()">
                             <mat-option *ngFor="let item of ActivitySubCategory" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Session</mat-label>
-                        <mat-select formControlName="searchSessionId" (selectionChange)="clear()">
+                        <mat-select formControlName="searchSessionId" (selectionChange)="ClearData()">
                             <mat-option value="0">select</mat-option>
                             <mat-option *ngFor="let item of ActivitySessions" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}</mat-option>

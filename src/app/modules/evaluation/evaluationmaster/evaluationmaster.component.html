@@ -8,20 +8,20 @@
 <form [formGroup]="searchForm">
     <mat-form-field appearance="outline" [style.width.px]="350">
         <mat-label>Evaluation</mat-label>
-        <mat-select formControlName="searchEvaluationMasterId">
-            <mat-option *ngFor="let item of EvaluationMasterList" [value]="item.EvaluationMasterId">{{item.EvaluationName}}
+        <mat-select formControlName="searchEvaluationMasterId" (selectionChange)="ClearData()">
+            <mat-option *ngFor="let item of EvaluationMasterList"
+                [value]="item.EvaluationMasterId">{{item.EvaluationName}}
             </mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="150">
         <mat-label>class group</mat-label>
-        <mat-select formControlName="searchClassGroupId">
+        <mat-select formControlName="searchClassGroupId" (selectionChange)="ClearData()">
             <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">{{item.GroupName}}
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <button [disabled]="loading" matTooltip="save" mat-raised-button
-        color="accent" (click)="GetEvaluationMaster()">
+    <button [disabled]="loading" matTooltip="save" mat-raised-button color="accent" (click)="GetEvaluationMaster()">
         <mat-icon>search</mat-icon>
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20" color="Blue"></mat-spinner>
@@ -66,6 +66,20 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="StartTime">
+            <mat-header-cell *matHeaderCellDef> Start Date and Time </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input [value]="element.StartTime" matInput [(ngModel)]="element.StartTime"
+                        [ngxMatDatetimePicker]="StartTime" autocomplete="off">
+                    <mat-datepicker-toggle matSuffix [for]="$any(StartTime)"></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #StartTime [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
+                        [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [enableMeridian]="true">
+                    </ngx-mat-datetime-picker>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        
         <ng-container matColumnDef="ClassGroupId">
             <mat-header-cell *matHeaderCellDef> Class Group </mat-header-cell>
             <mat-cell *matCellDef="let element">

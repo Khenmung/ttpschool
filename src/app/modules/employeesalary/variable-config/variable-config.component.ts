@@ -28,14 +28,7 @@ export class VariableConfigComponent implements OnInit {
   ListName = 'VariableConfigurations';
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  
   allMasterData = [];
   StandardFilter = '';
   loading = false;
@@ -52,7 +45,7 @@ export class VariableConfigComponent implements OnInit {
     VariableName: '',
     VariableTypeId: 0,
     VariableDescription: '',
-    VariableAmount: '',
+    //VariableAmount: '',
     VariableFormula: '',
     Active: 0,
     DisplayOrder: 0,
@@ -63,7 +56,7 @@ export class VariableConfigComponent implements OnInit {
     "VariableDescription",
     "VariableFormula",
     "DisplayOrder",
-    "VariableAmount",
+   // "VariableAmount",
     "Active",
     "Action"
   ];
@@ -115,7 +108,7 @@ export class VariableConfigComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.VARIABLECONFIG);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
@@ -134,9 +127,8 @@ export class VariableConfigComponent implements OnInit {
   addnew() {
     var newdata = {
       VariableConfigurationId: 0,
-      VariableName: 'edit me..',
-      VariableDescription: 'edit me..',
-      VariableAmount: '0',
+      VariableName: '',
+      VariableDescription: '',
       VariableFormula: '',
       Active: 0,
       DisplayOrder: 0,
@@ -191,10 +183,10 @@ export class VariableConfigComponent implements OnInit {
 
           this.VariableConfigData.VariableConfigurationId = row.VariableConfigurationId;
           this.VariableConfigData.VariableName = row.VariableName;
-          this.VariableConfigData.VariableAmount = row.VariableAmount.toString();
+          //this.VariableConfigData.VariableAmount = row.VariableAmount.toString();
           this.VariableConfigData.Active = row.Active;
           this.VariableConfigData.VariableDescription = row.VariableDescription;
-          this.VariableConfigData.VariableTypeId = this.searchForm.get("searchTypeId").value;
+          //this.VariableConfigData.VariableTypeId = this.searchForm.get("searchTypeId").value;
           this.VariableConfigData.DisplayOrder = row.DisplayOrder;
           this.VariableConfigData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.VariableConfigData.SubOrgId = this.SubOrgId;
@@ -325,14 +317,14 @@ export class VariableConfigComponent implements OnInit {
     var orgIdSearchstr = this.StandardFilter;// 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var filter = '';
-    if (this.searchForm.get("searchTypeId").value > 0)
-      filter += ' and VariableTypeId eq ' + this.searchForm.get("searchTypeId").value;
-    else {
-      this.contentservice.openSnackBar("Please select type", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-
-    if (this.searchForm.get("searchVariableName").value.VariableConfigurationId > 0)
+    // if (this.searchForm.get("searchTypeId").value > 0)
+    //   filter += ' and VariableTypeId eq ' + this.searchForm.get("searchTypeId").value;
+    // else {
+    //   this.contentservice.openSnackBar("Please select type", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    var configId =this.searchForm.get("searchVariableName").value.VariableConfigurationId;
+    if (configId)
       " and VariableName eq '" + this.searchForm.get("searchVariableName").value.VariableName + "'";
 
 
@@ -342,7 +334,7 @@ export class VariableConfigComponent implements OnInit {
       "VariableConfigurationId",
       "VariableName",
       "VariableDescription",
-      "VariableAmount",
+      //"VariableAmount",
       "VariableFormula",
       "VariableTypeId",
       "Active",
@@ -375,7 +367,7 @@ export class VariableConfigComponent implements OnInit {
       "VariableConfigurationId",
       "VariableName",
       "VariableDescription",
-      "VariableAmount",
+      //"VariableAmount",
       "VariableFormula",
       "VariableTypeId",
       "Active",
@@ -415,7 +407,7 @@ export interface IVariableConfig {
   VariableConfigurationId: number;
   VariableName: string;
   VariableDescription: string;
-  VariableAmount: string;
+  //VariableAmount: string;
   VariableFormula: string;
   Active: number;
   DisplayOrder: number;

@@ -553,6 +553,12 @@ export class EvaluationresultlistComponent implements OnInit {
         this.PageLoading = false;
       })
   }
+  ClearData(){
+    this.EvaluatedStudent =[];
+    this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.EvaluatedStudent);
+    this.StudentEvaluationList =[];
+    this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
+  }
   GetEvaluationOption() {
     let list: List = new List();
     list.fields = [

@@ -88,7 +88,7 @@ export class ContentService implements OnInit {
   }
   GetClasses(pOrgSubOrgFilter: string) {
     let list = new List();
-    list.fields = ["ClassId,ClassName,Sequence,BatchId,OrgId,MinStudent,MaxStudent,StartDate,EndDate"];
+    list.fields = ["ClassId,ClassName,Sequence,BatchId,CategoryId,MinStudent,MaxStudent,StartDate,EndDate"];
     list.filter = [pOrgSubOrgFilter + " and Active eq 1"];
     list.PageName = "ClassMasters";
     list.orderBy = "Sequence";
@@ -571,7 +571,29 @@ export class ContentService implements OnInit {
 
     return this.authservice.CallAPI(OrgIdAndbatchId, _function);
   }
+  GetStudentUncommonFields(fields,filterOrgSubOrgBatchId,role,studentId) {
+    //var filterOrgSubOrgBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);
+    //this.Students = [];
+    let list: List = new List();
+    
+    // 'StudentId',
+    // 'FatherContactNo',
+    // 'MotherContactNo',
+    // "PID",
+    // "EmailAddress",
+    // "UserId",
+    // "PresentAddress",
+    // "DOB"
+    
+    list.fields = [fields];
+    list.PageName = "Students";
+    if (role.toLowerCase() == 'student') {
+      filterOrgSubOrgBatchId += " and StudentId eq " + studentId;
+    }
+    list.filter = [filterOrgSubOrgBatchId];
+    return this.dataservice.get(list);
 
+  }
   getStudentClassWithFeeType(pOrgSubOrgBatchId, pClassId, pStudentClassId, pFeeTypeId) {
 
     var filterstr = '';

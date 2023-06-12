@@ -5,15 +5,6 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AchievementandpointComponent } from '../../specialfeature/achievementandpoint/achievementandpoint.component';
-import { CertificateconfigComponent } from '../../specialfeature/certificateconfig/certificateconfig.component';
-import { GenerateCertificateComponent } from '../../specialfeature/generatecertificate/generatecertificate.component';
-import { GroupactivityComponent } from '../../specialfeature/groupactivity/groupactivity.component';
-import { GroupactivityparticipantComponent } from '../../specialfeature/groupactivityparticipant/groupactivityparticipant.component';
-import { GrouppointComponent } from '../../specialfeature/grouppoint/grouppoint.component';
-import { StudentActivityComponent } from '../../specialfeature/StudentActivity/studentactivity.component';
-import { StudentfamilynfriendComponent } from '../../specialfeature/studentfamilynfriend/studentfamilynfriend.component';
-import { StudentDocumentComponent } from '../../specialfeature/uploadstudentdocument/uploadstudentdoc.component';
 import { EmployeeactivityComponent } from '../employeeactivity/employeeactivity.component';
 
 @Component({
@@ -59,7 +50,7 @@ export class EmployeeactivityboardComponent implements AfterViewInit {
       this.Permissions.ParentPermission = perObj[0].permission;
     }
 
-    this.GenerateComponent(globalconstants.Pages.emp.employeeactivity.ACTIVITY)
+    this.GenerateComponent(globalconstants.Pages.emp.employeeactivity.EMPLOYEEACTIVITY)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -88,7 +79,7 @@ export class EmployeeactivityboardComponent implements AfterViewInit {
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
     var comindx = 0;
     switch (featureName) {
-      case globalconstants.Pages.emp.employeeactivity.ACTIVITY:
+      case globalconstants.Pages.emp.employeeactivity.EMPLOYEEACTIVITY:
         comindx = this.components.indexOf(EmployeeactivityComponent);
         break;
     }

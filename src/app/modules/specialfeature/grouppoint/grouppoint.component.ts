@@ -230,7 +230,10 @@ export class GrouppointComponent implements OnInit {
         this.loadingFalse();
       });
   }
-
+  ClearData(){
+    this.SportsResultList =[];
+    this.dataSource = new MatTableDataSource<ISportsResult>([]);
+  }
   GetStudentClasses() {
     //debugger;
     var filterOrgIdNBatchId = globalconstants.getOrgSubOrgBatchIdFilter(this.tokenStorage);

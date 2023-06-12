@@ -132,7 +132,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
     this.formdata.append("subOrgId", this.SubOrgId+"");
     this.formdata.append("pageId", "0");
     this.formdata.append("studentId", "0");
-    this.formdata.append("EmployeeId", this.EmployeeId.toString());
+    this.formdata.append("employeeId", this.EmployeeId.toString());
     this.formdata.append("docTypeId", this.uploadForm.get("DocTypeId").value);
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
     this.uploadImage();

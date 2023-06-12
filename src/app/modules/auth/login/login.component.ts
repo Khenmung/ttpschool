@@ -174,7 +174,8 @@ export class LoginComponent implements OnInit {
     list.PageName = "RoleUsers";
     list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
 
-    list.filter = ["OrgId eq " + localStorage.getItem("orgId") + " and SubOrgId eq " + localStorage.getItem("subOrgId") + " and Active eq 1 and UserId eq '" + localStorage.getItem("userId") + "'"];
+    list.filter = ["OrgId eq " + localStorage.getItem("orgId") + " and SubOrgId eq " + localStorage.getItem("subOrgId") +
+     " and Active eq 1 and UserId eq '" + localStorage.getItem("userId") + "'"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -190,7 +191,8 @@ export class LoginComponent implements OnInit {
         }
         else {
           //if no roleuser data present redirect to select apps.
-          this.route.navigate(["/auth/selectplan"]);
+          //this.route.navigate(["/auth/selectplan"]);
+          this.contentservice.openSnackBar("No role user defined.",globalconstants.ActionText,globalconstants.RedBackground);
         }
       })
   }

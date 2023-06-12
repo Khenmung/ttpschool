@@ -266,7 +266,7 @@
                             *ngIf="f.PermanentAddress.touched && f.PermanentAddress.hasError('required')">Permanent
                             Address is required.</span>
                     </mat-form-field>
-                    
+
                 </div>
                 <div style="display:flex;margin-left: 30px;">
                     <span class="radio" fxFlex>Primary contact
@@ -515,10 +515,10 @@
         Guides..
     </span>
     <span *ngIf="expandWrap.dataset.expand == 'true'" (click)="expandWrap.dataset.expand = 'false'">
-        <b>Settings required before student can be added.</b>
+        <b></b>
         <ol>
             <li>
-                Define the following in initial setting.
+                The following required in initial setting, before before student can be added.
                 <ul>
                     <li>Blood group,Gender, Religion, Student Category, Admission Status, House, Club, Remarks.</li>
                 </ul>
@@ -526,7 +526,11 @@
             <li>
                 Define Class-course -> Detail, Fee definition, class fee, fee type.
             </li>
-
+            <li>Student's class of current batch will be de-activated if student is de-activated.
+                If student is active, the system checks if admission status is <b>Admitted</b>.</li>
+            <li>
+                If admitted is selected, student's class is activated otherwise de-activated.
+            </li>
         </ol>
     </span>
 </div>

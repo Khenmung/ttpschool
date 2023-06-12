@@ -151,6 +151,10 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   displayFn(customfeature: ICustomFeature): string {
     return customfeature && customfeature.CustomFeatureName ? customfeature.CustomFeatureName : '';
   }
+  ClearData(){
+    this.CustomerFeaturePermissionList =[];
+    this.datasource = new MatTableDataSource<ICustomFeatureRolePermission>(this.CustomerFeaturePermissionList);
+  }
   createFilter(): (data: any, filter: string) => boolean {
     let filterFunction = function (data, filter): boolean {
       let searchTerms = JSON.parse(filter);
@@ -241,6 +245,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       this.enableTopEdit = false;
     var _tableNameId = this.searchForm.get("searchTableName").value;
     this.FilteredCustomFeatures = this.CustomFeatures.filter(c => c.TableNameId == _tableNameId);
+    this.ClearData();
   }
   GetPageFeatures() {
     //debugger;

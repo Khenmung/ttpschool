@@ -14,7 +14,7 @@
             <mat-form-field appearance="outline" [style.width.px]="300">
                 <mat-label>Student</mat-label>
                 <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="SetCategory($event)">
                     <mat-option *ngFor="let option of filteredStudents|async" [value]="option">
                         {{option.Name}}
                     </mat-option>
@@ -91,6 +91,29 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="SemesterId">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Semester </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-select (selectionChange)="onBlur(element)" [value]="element.SemesterId" [(ngModel)]="element.SemesterId">
+                    <mat-option *ngFor="let item of Semesters" [value]="item.MasterDataId">{{item.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <!-- <ng-container matColumnDef="CourseYearId">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Course Year </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-select (selectionChange)="onBlur(element)" [value]="element.CourseYearId" [(ngModel)]="element.CourseYearId">
+                    <mat-option *ngFor="let item of CourseYears" [value]="item.MasterDataId">{{item.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container> -->
+   
     <ng-container matColumnDef="RollNo">
         <mat-header-cell *matHeaderCellDef mat-sort-header>RollNo
         </mat-header-cell>

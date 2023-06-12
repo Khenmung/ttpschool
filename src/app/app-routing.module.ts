@@ -47,14 +47,7 @@ const routes: Routes = [
     path: 'edu/uploaddownload',
     loadChildren: () => import('./modules/DataUploadDownload/generalreport.module').then(m=>m.GeneralreportModule)
   },
-  {
-    path: 'emp/uploaddownload',
-    loadChildren: () => import('./modules/DataUploadDownload/generalreport.module').then(m=>m.GeneralreportModule)
-  },
-  {
-    path: 'emp/attendance',
-    loadChildren: () => import('./modules/EmpAttendance/employeeattendance.module').then(m=>m.EmployeeattendanceModule)
-  },
+ 
   {
     path: 'edu',
     loadChildren: () => import('./modules/student/student.module').then(m => m.StudentModule)
@@ -92,41 +85,53 @@ const routes: Routes = [
     loadChildren: () => import('./modules/frontoffice/misc.module').then(m => m.MiscModule)
   },
   {
-    path: 'edu/Admission',
+    path: 'edu/admission',
     loadChildren: () => import('./modules/admission/admission.module').then(m=>m.AdmissionModule)
-  },
-  {
-    path: 'edu/specialfeature',
-    loadChildren: () => import('./modules/specialfeature/studentactivity.module').then(m => m.StudentactivityModule)
-  },
-  {
-    path: 'employee',
-    loadChildren: () => import('./modules/employeedetail/employeedetail.module').then(m => m.EmployeedetailModule)
-  },
-  {
-    path: 'employee/sal',
-    loadChildren: () => import('./modules/employeesalary/employee-salary.module').then(m => m.EmployeeManagementModule)
-  },
-  {
-    path: 'employee/setting',
-    loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
-  },
-  {
-    path: 'accounting/setting',
-    loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
-  },
-  {
-    path: 'employee/leave',
-    loadChildren: () => import('./modules/LeaveManagement/leave-management.module').then(m => m.LeaveManagementModule)
   },
   {
     path: 'edu/evaluation',
     loadChildren: () => import('./modules/evaluation/evaluation.module').then(m => m.EvaluationModule)
   },
   {
+    path: 'edu/specialfeature',
+    loadChildren: () => import('./modules/specialfeature/studentactivity.module').then(m => m.StudentactivityModule)
+  },
+  {
+    path: 'emp',
+    loadChildren: () => import('./modules/employeedetail/employeedetail.module').then(m => m.EmployeedetailModule)
+  },
+  {
+    path: 'emp/sal',
+    loadChildren: () => import('./modules/employeesalary/employee-salary.module').then(m => m.EmployeeManagementModule)
+  },
+  {
+    path: 'emp/setting',
+    loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
+  },
+  {
+    path: 'emp/leave',
+    loadChildren: () => import('./modules/LeaveManagement/leave-management.module').then(m => m.LeaveManagementModule)
+  },
+  {
+    path: 'emp/uploaddownload',
+    loadChildren: () => import('./modules/DataUploadDownload/generalreport.module').then(m=>m.GeneralreportModule)
+  },
+  {
+    path: 'emp/attendance',
+    loadChildren: () => import('./modules/EmpAttendance/employeeattendance.module').then(m=>m.EmployeeattendanceModule)
+  },  
+  {
+    path: 'emp/activity',
+    loadChildren: () => import('./modules/employeeactivity/employeeactivity.module').then(m=>m.EmployeeactivityModule)
+  },
+  {
     path: 'accounting',
     loadChildren: () => import('./modules/Accounting/accounting.module').then(m => m.AccountingModule)
   },  
+  {
+    path: 'accounting/setting',
+    loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
+  },
   {
     path: 'globaladmin',
     loadChildren: () => import('./modules/globaladmininitial/globaladminInitial.module').then(m => m.GlobaladminInitialModule)
@@ -139,10 +144,7 @@ const routes: Routes = [
     path: 'globaladmin/inv',
     loadChildren: () => import('./modules/globaladmininvoice/globaladmininvoice.module').then(m => m.GlobaladmininvoiceModule)
   },
-  {
-    path: 'emp/employeeactivity',
-    loadChildren: () => import('./modules/employeeactivity/employeeactivity.module').then(m=>m.EmployeeactivityModule)
-  },
+  
   { path: '**', component: NotfoundComponent },
   
 

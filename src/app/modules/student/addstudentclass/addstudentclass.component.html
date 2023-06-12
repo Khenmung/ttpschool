@@ -3,7 +3,147 @@
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <span style="font-size: smaller;margin: 20px;">If fee type is updated, please run 'create invoice' in class-fee
     page.</span> -->
-<form [formGroup]="studentclassForm">
+<div style="display:flex;justify-content: flex-end;">
+    <button [disabled]="loading" matTooltip="refresh" mat-raised-button color="accent" (click)="GetStudentClass()">
+        <mat-icon>search</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
+    </button>
+</div>
+<mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="StudentClassId" [style.width.px]="30">
+        <mat-header-cell *matHeaderCellDef>StudentClassId</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.StudentClassId}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ClassId">
+        <mat-header-cell *matHeaderCellDef>Class
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="legacy">
+                <mat-select [disabled]="!NewItem" [(ngModel)]="element.ClassId" [value]="element.ClassId">
+                    <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                        {{item.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="SectionId">
+        <mat-header-cell *matHeaderCellDef>Section
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="legacy">
+                <mat-select [(ngModel)]="element.SectionId" [value]="element.SectionId">
+                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="SemesterId">
+        <mat-header-cell *matHeaderCellDef>Semester
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="legacy">
+                <mat-select [disabled]="!NewItem" [(ngModel)]="element.SemesterId" [value]="element.SemesterId">
+                    <mat-option *ngFor="let item of Semesters" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="RollNo">
+        <mat-header-cell *matHeaderCellDef> Roll No. </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="legacy">
+                <mat-label>roll no.</mat-label>
+                <input [(ngModel)]="element.RollNo" [value]="element.RollNo" matInput autocomplete="off">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="FeeTypeId">
+        <mat-header-cell *matHeaderCellDef>Fee Type
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="legacy" *ngIf="!this.FeeTypePermission.includes('rw')">
+                <mat-select [(ngModel)]="element.FeeTypeId" [value]="element.FeeTypeId">
+                    <mat-option *ngFor="let item of FeeType" [value]="item.FeeTypeId">
+                        {{item.FeeTypeName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="AdmissionDate">
+        <mat-header-cell *matHeaderCellDef> Admission Date </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="legacy">
+                <mat-label>admission date</mat-label>
+                <input [(ngModel)]="element.AdmissionDate" [value]="element.AdmissionDate" matInput
+                    [matDatepicker]="AdmissionDate" autocomplete="off">
+                <mat-datepicker-toggle matSuffix [for]="AdmissionDate"></mat-datepicker-toggle>
+                <mat-datepicker #AdmissionDate></mat-datepicker>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Remarks">
+        <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="legacy">
+                <mat-label>remarks</mat-label>
+                <input [(ngModel)]="element.Remarks" [value]="element.Remarks" matInput autocomplete="off">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="AdmissionNo">
+        <mat-header-cell *matHeaderCellDef> Admission No. </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="legacy">
+                <mat-label>admission no.</mat-label>
+                <input [(ngModel)]="element.AdmissionNo" [value]="element.AdmissionNo" matInput autocomplete="off">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="IsCurrent">
+        <mat-header-cell *matHeaderCellDef> Is Current </mat-header-cell>
+        <mat-cell style="justify-content: center;" *matCellDef="let element">
+            <mat-checkbox [checked]="element.IsCurrent" (change)="updateIsCurrent(element,$event)"
+                (click)="$event.stopPropagation()">
+            </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Active">
+        <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+        <mat-cell style="justify-content: center;" *matCellDef="let element">
+            <mat-checkbox [checked]="element.Active" (change)="updateActive(element,$event)"
+                (click)="$event.stopPropagation()">
+            </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Action">
+        <mat-header-cell *matHeaderCellDef>
+            <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="addnew()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab color="accent"
+                (click)="UpdateOrSave(element)">
+                <mat-icon>save</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 29px;">
+    </mat-row>
+</mat-table>
+<!-- <form [formGroup]="studentclassForm">
     <mat-grid-list style="max-width: 600px;" [cols]="2" rowHeight="70px" (window:resize)="onResize($event)">
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline">
@@ -25,9 +165,20 @@
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline">
+                <mat-label>Semester</mat-label>
+                <mat-select formControlName="SemesterId">
+                    <mat-option [value]="0">select</mat-option>
+                    <mat-option *ngFor="let p of Semesters" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline">
                 <mat-label>Roll No.</mat-label>
                 <input formControlName="RollNo" autocomplete="Off" #RollNo matInput [maxlength]="30">
-                <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint>
                 <span class="text-danger" *ngIf="f.RollNo.touched && f.RollNo.hasError('required')">
                     Roll No. is required.</span>
             </mat-form-field>
@@ -64,7 +215,7 @@
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
         </mat-grid-tile>
-        <!-- <mat-grid-tile [colspan]="1" [rowspan]="1">
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline">
                 <mat-label>House</mat-label>
                 <mat-select formControlName="HouseId">
@@ -74,7 +225,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-        </mat-grid-tile> -->
+        </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline">
                 <mat-label>Remarks</mat-label>
@@ -87,16 +238,10 @@
         </mat-grid-tile>
     </mat-grid-list>
 
-</form>
+</form> -->
 <!-- </div> -->
 <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
     <button [disabled]="loading || Permission=='read'" class="mat-raised-button" (click)="back()">
         <mat-icon>arrow_back</mat-icon>
-    </button>
-    <button [disabled]="loading || Permission=='read'" mat-raised-button color="accent" (click)="UpdateOrSave()">
-        <mat-icon>save</mat-icon>
-        <mat-icon *ngIf="loading">
-            <mat-spinner diameter="20" color="Blue"></mat-spinner>
-        </mat-icon>
     </button>
 </mat-card-actions>

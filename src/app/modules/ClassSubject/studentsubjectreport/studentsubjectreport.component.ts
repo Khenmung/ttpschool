@@ -22,7 +22,9 @@ export class StudentSubjectReportComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   PageLoading = true;
   ResultReleased = 0;
+  Defaultvalue = 0;
   LoginUserDetail: any[] = [];
+  Semesters = [];
   CurrentRow: any = {};
   ClassSubjects = [];
   AllowedSubjectIds = [];
@@ -119,7 +121,7 @@ export class StudentSubjectReportComponent implements OnInit {
 
   GetClassGroupMapping() {
     var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
-     this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
+    this.contentservice.GetClassGroupMapping(filterOrgSubOrg, 1)
       .subscribe((data: any) => {
         this.ClassGroupMapping = data.value.map(f => {
           f.ClassName = f.Class.ClassName;
@@ -201,7 +203,7 @@ export class StudentSubjectReportComponent implements OnInit {
         var _studname = '';
 
         this.StudentSubjects = [];
-        var filteredStudents = this.Students.filter(f => f.StudentClasses.length > 0 
+        var filteredStudents = this.Students.filter(f => f.StudentClasses.length > 0
           && f.StudentClasses[0].ClassId == _classId && f.Active == 1);
 
         //dbdata = data.value.filter(x =>x.StudentClassSubjects.filter(y=>y.StudentClass.SectionId == _sectionId).length>0)
@@ -314,6 +316,8 @@ export class StudentSubjectReportComponent implements OnInit {
       "Active",
       "SubjectId",
       "ClassId",
+      "SectionId",
+      "SemesterId",
       "SubjectCategoryId",
       "Confidential"
     ];
@@ -340,6 +344,8 @@ export class StudentSubjectReportComponent implements OnInit {
               Active: cs.Active,
               SubjectId: cs.SubjectId,
               ClassId: cs.ClassId,
+              SemesterId: cs.SemesterId,
+              SectionId: cs.SectionId,
               Confidential: cs.Confidential,
               ClassSubject: _class + '-' + _subject,
               SubjectName: _subject,
@@ -373,13 +379,23 @@ export class StudentSubjectReportComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ClassSubjectMarkComponents";
-    list.lookupFields = ["ClassSubject($select=Active,ClassId,SubjectId)"];
+    //list.lookupFields = ["ClassSubject($select=Active,ClassId,SubjectId)"];
     list.filter = [orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.SubjectMarkComponents = data.value.filter(x => x.ClassSubject.Active == 1)
+        this.SubjectMarkComponents = [];
+        data.value.forEach(x => {
+          var clsSubject = this.ClassSubjects.filter(f => f.ClassSubjectId == x.ClassSubjectId)
+          if (clsSubject.length > 0) {
+            x.SubjectId = clsSubject[0].SubjectId;
+            x.SemesterId = clsSubject[0].SemesterId;
+            x.SectionId = clsSubject[0].SectionId;
+            x.ClassId = clsSubject[0].ClassId;
+            this.SubjectMarkComponents.push(x);
+          }          
+        })
         this.SubjectMarkComponents = this.SubjectMarkComponents.map(c => {
           var _sequence = 0;
           var _sequenceObj = this.MarkComponents.filter(s => s.MasterDataId == c.SubjectComponentId);
@@ -388,8 +404,10 @@ export class StudentSubjectReportComponent implements OnInit {
           }
           return {
             "ClassSubjectMarkComponentId": c.ClassSubjectMarkComponentId,
-            "ClassId": c.ClassSubject.ClassId,
-            "SubjectId": c.ClassSubject.SubjectId,
+            "ClassId": c.ClassId,
+            "SemesterId": c.SemesterId,
+            "SectionId": c.SectionId,
+            "SubjectId": c.SubjectId,
             "ClassSubjectId": c.ClassSubjectId,
             "SubjectComponentId": c.SubjectComponentId,
             "Sequence": _sequence,
@@ -465,14 +483,8 @@ export class StudentSubjectReportComponent implements OnInit {
     this.allMasterData = this.tokenStorage.getMasterData();
     this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
     this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-    //this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
-    // this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
-    // this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-    // this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
-    // this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-    //   .subscribe((data: any) => {
-    //     this.ClassGroups = [...data.value];
-    //   });
+    this.Semesters = this.getDropDownData(globalconstants.MasterDefinitions.school.SEMESTER);
+
     var filterOrgSubOrg = globalconstants.getOrgSubOrgFilter(this.tokenStorage);
     this.contentservice.GetClasses(filterOrgSubOrg).subscribe((data: any) => {
       this.Classes = [...data.value];

@@ -50,7 +50,7 @@ export class EmployeeattendanceboardComponent implements AfterViewInit {
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
     //console.log("this.SelectedAppName",this.SelectedAppName);
-    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENDANCE)
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employeeattendance.EMPLOYEEATTENDANCE)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
 

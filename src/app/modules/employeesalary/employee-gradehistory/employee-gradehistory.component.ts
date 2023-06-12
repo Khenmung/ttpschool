@@ -65,6 +65,8 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
     "SubOrgId": 0
   };
   displayedColumns = [
+    "Action",
+    "Active",
     "DepartmentId",
     "EmpGradeId",
     "WorkAccountId",
@@ -73,8 +75,6 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
     "CTC",
     "FromDate",
     "ToDate",
-    "Active",
-    "Action"
   ];
   searchForm: UntypedFormGroup;
   SelectedApplicationId=0;

@@ -1,68 +1,110 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { LeaveBalanceComponent } from '../LeaveBalance/leavebalance.component';
 import { EmployeeLeaveComponent } from '../employee-leave/employee-leave.component';
 import { LeavepolicyComponent } from '../leavepolicy/leavepolicy.component';
+import { SwUpdate } from '@angular/service-worker';
+import { ContentService } from 'src/app/shared/content.service';
+import { globalconstants } from 'src/app/shared/globalconstant';
+import { SharedataService } from 'src/app/shared/sharedata.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-leaveboard',
   templateUrl: './leaveboard.component.html',
   styleUrls: ['./leaveboard.component.scss']
 })
-export class LeaveboardComponent implements OnInit { PageLoading=true;
-  @ViewChild(LeaveBalanceComponent) leavebalance:LeaveBalanceComponent;
-  @ViewChild(EmployeeLeaveComponent) empleave:EmployeeLeaveComponent;
-  @ViewChild(LeavepolicyComponent) leavepolicy:LeavepolicyComponent;
-  selectedIndex = 0;
-  constructor() { }
+export class LeaveboardComponent implements AfterViewInit { 
+  PageLoading = true;
+  components: any = [
+    LeavepolicyComponent,
+    EmployeeLeaveComponent,
+    LeaveBalanceComponent,
+  ];
 
-  ngOnInit(): void {
+  tabNames = [
+    { 'label': '1Exam Time Table', 'faIcon': '' },
+    { 'label': '1Exam Result', 'faIcon': '' },
+    { 'label': '1Fee Payment Status', 'faIcon': '' },
+  ];
+
+  Permissions =
+    {
+      ParentPermission: '',
+      ExamTimeTablePermission: '',
+      ExamResultPermission: '',
+    };
+  LoginUserDetail = [];
+  @ViewChild('container', { read: ViewContainerRef, static: false })
+  public viewContainer: ViewContainerRef;
+  constructor(private servicework: SwUpdate,
+    private cdr: ChangeDetectorRef,
+    private tokenStorage: TokenStorageService,
+    private shareddata: SharedataService,
+    private contentservice: ContentService,
+  ) {
+  }
+
+  public ngAfterViewInit(): void {
+
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
+
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPLOYEE)
+    if (perObj.length > 0) {
+      this.Permissions.ParentPermission = perObj[0].permission;
+
+    }
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.VARIABLECONFIG)
+    var comindx = this.components.indexOf(LeavepolicyComponent);
+    this.AddRemoveComponent(perObj, comindx);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.SALARYCOMPONENTS)
+    var comindx = this.components.indexOf(LeaveBalanceComponent);
+    this.AddRemoveComponent(perObj, comindx);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPSALARYCOMPONENTS)
+    var comindx = this.components.indexOf(EmployeeLeaveComponent);
+    this.AddRemoveComponent(perObj, comindx);
+    
+    this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
+    //console.log('this.Permissions.ParentPermission', this.Permissions.ParentPermission);
+    if (this.Permissions.ParentPermission != 'deny') {
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 1000);
+      this.cdr.detectChanges();
+    }
+  }
+
+  public tabChange(index: number) {
+    //    //console.log("index", index)
     setTimeout(() => {
-      this.leavepolicy.PageLoad();
-    }, 50);
+      this.renderComponent(index);
+    }, 1000);
 
   }
-  tabChanged(tabChangeEvent: number) {
-    this.selectedIndex = tabChangeEvent;
-    this.navigateTab(this.selectedIndex);
-    //   //console.log('tab selected: ' + tabChangeEvent);
-  }
-  public nextStep() {
-    this.selectedIndex += 1;
-    this.navigateTab(this.selectedIndex);
-  }
+  selectedIndex = 0;
 
-  public previousStep() {
-    this.selectedIndex -= 1;
-    this.navigateTab(this.selectedIndex);
-  }
-  navigateTab(indx) {
-    //debugger;
-    switch (indx) {
-      case 0:
-        this.leavepolicy.PageLoad();
-        break;
-      case 1:
-        this.leavebalance.PageLoad();
-        break;
-      case 2:
-        this.empleave.PageLoad();
-        break;
-      case 3:
-      //   this.teacherMapping.PageLoad();
-      //   break;
-      // case 4:
-      //   this.subjectmarkComponent.PageLoad();
-      //   break;
-      // case 5:
-      //   this.studentclass.PageLoad();
-      //   break;
-      // case 6:
-      //   this.studentsubject.PageLoad();
-      //   break;
-      // case 7:
-      //   this.Classperiod.PageLoad();
-      //   break;
 
+  private renderComponent(index: number): any {
+    //
+    const component = this.viewContainer.createComponent(this.components[index]);
+
+    //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
+  }
+  AddRemoveComponent(perObj, comindx) {
+    if (perObj.length > 0) {
+      if (perObj[0].permission == 'deny') {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      else {
+        this.tabNames[comindx].faIcon = perObj[0].faIcon;
+        this.tabNames[comindx].label = perObj[0].label;
+      }
+    }
+    else {
+      this.components.splice(comindx, 1);
+      this.tabNames.splice(comindx, 1);
     }
   }
 }

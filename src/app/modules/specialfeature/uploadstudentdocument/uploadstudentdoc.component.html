@@ -6,7 +6,7 @@
         <mat-form-field appearance="outline" [style.width.px]="350">
             <mat-label>Student</mat-label>
             <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="ClearData()">
                 <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
                     {{option.Name}}
                 </mat-option>
@@ -37,7 +37,6 @@
                             type
                             is required.</span>
                     </mat-form-field>
-
                     <span style="margin-top: 15px;">
                         <button [disabled]="loading || Permission=='read' || !EnableUploadButton" type="submit"
                             (click)="uploadFile()" matTooltip="upload file" mat-raised-button color="accent">
